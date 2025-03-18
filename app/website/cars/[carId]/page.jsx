@@ -230,7 +230,7 @@ const page = () => {
             <h3 className="text-xl font-bold mb-2">PRICE</h3>
             <p className="text-4xl font-bold text-black">13,000 zł</p>
 
-            {/* Expert Estimate */}
+            {/* Expert Estimatee */}
             <div className="flex items-center space-x-3 my-4">
               <Image
                 src="/images/expert.jpg"
