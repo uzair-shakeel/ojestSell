@@ -11,7 +11,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
   const unseenMessagesCount = 3; // Example, replace with real data
 
   const menuItems = [
-    { label: "Dashboard", href: "/dashboard", icon: <RiDashboardHorizontalLine className="w-6 h-6" /> },
+    { label: "Dashboard", href: "/dashboard/home", icon: <RiDashboardHorizontalLine className="w-6 h-6" /> },
     { label: "Create Car", href: "/dashboard/cars/add", icon: <BiAddToQueue className="w-6 h-6" /> },
     { label: "My Cars", href: "/dashboard/cars", icon: <FaCar className="w-6 h-6" /> },
     { label: "Messages", href: "/dashboard/messages", icon: <BsChatLeftDots className="w-6 h-6" /> },
