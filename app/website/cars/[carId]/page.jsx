@@ -176,7 +176,7 @@ const page = () => {
           </div>
           <div className="col-span-2 bg-white p-1 sm:p-6 rounded-md mt-5">
             {/* Tab Buttons */}
-            <div className="gap-2 mb-4 grid grid-cols-4">
+            <div className="gap-2 mb-4 grid grid-cols-2 md:grid-cols-4">
               <button
                 className={`px-4 py-2 border border-gray-200 ${
                   activeTab === "description"
@@ -224,7 +224,7 @@ const page = () => {
           </div>
         </div>
         {/* right side */}
-        <div className="col-span-1 ">
+        <div className="col-span-1 mt-28">
           <div className="w-full  p-6 bg-white rounded-sm border sticky top-4 shadow">
             {/* Current Bid Section */}
             <h3 className="text-xl font-bold mb-2">PRICE</h3>
