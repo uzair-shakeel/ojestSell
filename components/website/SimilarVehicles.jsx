@@ -6,43 +6,43 @@ const vehicles = [
     id: 14,
     name: "BMW 3 Series",
     price: "$47,125",
-    image: "/images/bmw-3series.jpg", // Replace with actual image path
+    image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Replace with actual image path
   },
   {
     id: 1,
     name: "BMW 2 Series",
     price: "$40,775",
-    image: "/images/bmw-2series.jpg",
+    image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
   {
     id: 2,
     name: "Mercedes-Benz EQE Sedan",
     price: "$76,050",
-    image: "/images/mercedes-eqe.jpg",
+    image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
   {
     id: 3,
     name: "Audi A3",
     price: "$39,495",
-    image: "/images/audi-a3.jpg",
+    image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
   {
     id: 4,
     name: "BMW 2 Series",
     price: "$40,775",
-    image: "/images/bmw-2series.jpg",
+    image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
   {
     id: 5,
     name: "Mercedes-Benz EQE Sedan",
     price: "$76,050",
-    image: "/images/mercedes-eqe.jpg",
+    image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
   {
     id:6,
     name: "Audi A3",
     price: "$39,495",
-    image: "/images/audi-a3.jpg",
+    image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
 ];
 
@@ -101,11 +101,12 @@ const SimilarVehicles = () => {
           onMouseLeave={handleMouseUp}
         >
           {vehicles.map((car) => (
-            <div key={car.id} className="min-w-[250px] md:min-w-[300px] p-2 bg-white shadow-md border">
-              <img src={car.image} alt={car.name} className="w-full h-56 object-cover rounded-md" />
-              <div className="mt-2">
+            <div key={car.id} className="min-w-[250px] md:min-w-[300px] bg-white shadow-md border">
+              <img src={car.image} alt={car.name} className="w-full h-56 object-cover " />
+              <div className="mt-2 p-5">
                 <h3 className="font-semibold">{car.name}</h3>
                 <p className="text-gray-500">Starting at {car.price}</p>
+                <button className="bg-gray-900 text-white px-4 py-2 mt-2">See more</button>
               </div>
             </div>
           ))}

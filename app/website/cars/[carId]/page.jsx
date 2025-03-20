@@ -85,7 +85,7 @@ const page = () => {
   return (
     <div className="mx-auto p-2 sm:p-5">
       {/* Header */}
-      <header className="flex justify-between items-center pb-4 border-b">
+      {/* <header className="flex justify-between items-center pb-4 border-b">
         <div className="flex items-center gap-2">
           <Image src="/images/logo.png" alt="Logo" width={120} height={40} />
           <input
@@ -97,10 +97,10 @@ const page = () => {
         <button className="bg-blue-600 text-white px-4 py-2 rounded-md">
           Sign In
         </button>
-      </header>
+      </header> */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* left side */}
-        <div className="col-span-2">
+        <div className="col-span-1 md:col-span-2">
           {/* Car Title */}
           <h1 className="text-3xl font-bold mt-6">FORD BRONKO 2024</h1>
           <p className="text-gray-500 text-lg">
@@ -224,8 +224,8 @@ const page = () => {
           </div>
         </div>
         {/* right side */}
-        <div className="relative col-span-1">
-          <div className="w-full bg-white p-6 rounded-sm border sticky top-4 shadow">
+        <div className="col-span-1 ">
+          <div className="w-full  p-6 bg-white rounded-sm border sticky top-4 shadow">
             {/* Current Bid Section */}
             <h3 className="text-xl font-bold mb-2">PRICE</h3>
             <p className="text-4xl font-bold text-black">13,000 zł</p>
