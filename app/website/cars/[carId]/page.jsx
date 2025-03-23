@@ -76,28 +76,12 @@ const page = () => {
   const [mainImage, setMainImage] = useState("/images/hamer1.png");
   // const [showMore, setShowMore] = useState(false);
 
-  const images = [
-    "/images/hamer1.png",
-  ];
+  const images = ["/images/hamer1.png"];
   const description =
     "Fiat Croma turbo second series 155 hp, all completely original, preserved, never restored. Double original keys.Fiat Croma turbo second series 155 hp, all completely original, preserved, never restored. Double original keys.Fiat Croma turbo second series 155 hp, all completely original, preserved, never restored. Double original keys";
 
   return (
-    <div className="mx-auto p-2 sm:p-5">
-      {/* Header */}
-      {/* <header className="flex justify-between items-center pb-4 border-b">
-        <div className="flex items-center gap-2">
-          <Image src="/images/logo.png" alt="Logo" width={120} height={40} />
-          <input
-            type="text"
-            placeholder="Search for brand, model..."
-            className="border px-4 py-2 rounded-md w-80"
-          />
-        </div>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-md">
-          Sign In
-        </button>
-      </header> */}
+    <div className="md:mx-10 p-2 sm:p-5">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* left side */}
         <div className="col-span-1 md:col-span-2">
@@ -111,12 +95,12 @@ const page = () => {
           <div className="grid grid-cols-2 mt-6">
             {/* Main Image */}
             <div className="col-span-2">
-              <Image
-                src={mainImage}
+              <img
+                src="https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 alt="Fiat Croma Turbo"
                 width={900}
                 height={500}
-                className="w-full h-[450px] object-cover rounded-lg"
+                className="w-full h-[450px] object-cover rounded"
               />
             </div>
 
@@ -225,34 +209,49 @@ const page = () => {
         </div>
         {/* right side */}
         <div className="col-span-1 mt-28">
-          <div className="w-full  p-6 bg-white rounded-sm border sticky top-4 shadow">
-            {/* Current Bid Section */}
-            <h3 className="text-xl font-bold mb-2">PRICE</h3>
-            <p className="text-4xl font-bold text-black">13,000 zł</p>
-
+          <div className="w-full  p-4 bg-white rounded-sm border sticky top-4 shadow">
             {/* Expert Estimatee */}
             <div className="flex items-center space-x-3 my-4">
-              <Image
-                src="/images/expert.jpg"
-                alt="Expert"
-                width={40}
-                height={40}
-                className="rounded-full bg-blue-500"
-              />
-              <div>
-                <p className="text-gray-700 text-sm">
-                  <strong>Yousri Ben Ali</strong>
-                </p>
-                <p className="text-xs text-gray-500">Private Saller</p>
+              <div className="w-24 h-20  overflow-hidden rounded-full">
+                <Image
+                  src="/website/seller.jpg"
+                  alt="Expert"
+                  width={70}
+                  height={70}
+                  className=" w-full object-center"
+                />
+              </div>
+              <div className="w-full">
+                <div className="flex justify-between items-center">
+                  <p className="text-black text-xl">
+                    <strong>Yousri Ben Ali</strong>
+                  </p>
+                  <div className="flex justify-center space-x-2 items-center border border-gray-200 bg-gray-50 rounded-xl p-1">
+                    <img src="/website/verify.svg" alt="" className="w-5 h-5" />
+                    <p className="text-base text-[#7ED321]">Verified host</p>
+                  </div>
+                </div>
+                <p className="text-base text-gray-500">Private Saller</p>
+                <div className="flex justify-start items-center space-x-2">
+                  <img src="/website/map.svg" alt="" className="w-5 h-5" />
+                  <p className="text-base text-gray-500">Kaskantyú, Hungary</p>
+                </div>
               </div>
             </div>
+
+            <hr className="my-4" />
             {/* Place Bid & Set Max Bid Buttons */}
-            <div className="grid grid-cols-1 gap-2 mt-4">
-              <button className="w-full bg-white-500 text-blue-600 py-3 border border-blue-600 rounded-md font-semibold">
-                Message
+            <div className="grid grid-cols-2 gap-2 mt-4">
+              <h2 className="text-base font-medium mb-2 col-span-2">
+                Contact Seller
+              </h2>
+              <button className="w-full bg-white-500 text-blue-600 py-3 border border-blue-600 rounded-md font-semibold flex items-center justify-center space-x-2">
+                <img src="/website/whats.svg" alt="" className="w-5 h-5" />
+                <span className=""> Message</span>
               </button>
-              <button className="w-full border py-3 rounded-md font-semibold bg-gray-200">
-                Call
+              <button className="w-full border py-3 rounded-md font-semibold bg-blue-500 flex items-center justify-center space-x-2">
+                <img src="/website/call.svg" alt="" className="w-5 h-5" />
+                <span className="text-white"> Call</span>
               </button>
             </div>
 
@@ -262,13 +261,17 @@ const page = () => {
               <p className="px-2 text-gray-500 text-sm">OR</p>
               <div className="flex-grow border-b"></div>
             </div>
+            {/* Current Bid Section */}
 
             {/* Buttons */}
             <div className="gap-2 flex flex-col">
-              {/* Buy Now Button */}
-              <button className="w-full border py-3 rounded-md  font-semibold text-lg">
+              <button className="w-full border border-gray-500 py-3 rounded-md  font-semibold">
                 See more Financial Details
               </button>
+            </div>
+            <div className="py-5 flex flex-col items-start ">
+              <h3 className="text-base font-medium mb-2">PRICE</h3>
+              <p className="text-4xl font-bold text-gray-900">13,000 zł</p>
             </div>
           </div>
         </div>
