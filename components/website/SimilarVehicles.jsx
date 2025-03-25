@@ -79,7 +79,7 @@ const SimilarVehicles = () => {
   };
 
   return (
-    <div className="relative w-full p-4 ">
+    <div className="relative w-full py-5 sm:py-12">
       <h2 className="text-2xl font-semibold">Similar Vehicles</h2>
       <p className="text-gray-600 text-sm mb-4">Best Compact Croma Turbo for 2025</p>
 
@@ -93,24 +93,30 @@ const SimilarVehicles = () => {
         </button>
 
         <div
-          ref={scrollRef}
-          className="flex overflow-x-auto gap-4 scroll-smooth scrollbar-hide p-4"
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-        >
-          {vehicles.map((car) => (
-            <div key={car.id} className="min-w-[250px] md:min-w-[300px] bg-white shadow-md border">
-              <img src={car.image} alt={car.name} className="w-full h-56 object-cover " />
-              <div className="mt-2 p-5">
-                <h3 className="font-semibold">{car.name}</h3>
-                <p className="text-gray-500">Starting at {car.price}</p>
-                <button className="bg-gray-900 text-white px-4 py-2 mt-2">See more</button>
-              </div>
-            </div>
-          ))}
-        </div>
+  ref={scrollRef}
+  className="flex overflow-x-auto gap-4 scroll-smooth scrollbar-hide py-4 "
+  onMouseDown={handleMouseDown}
+  onMouseMove={handleMouseMove}
+  onMouseUp={handleMouseUp}
+  onMouseLeave={handleMouseUp}
+>
+  {vehicles.map((car) => (
+    <div key={car.id} className="min-w-[250px] md:min-w-[300px] bg-white border box-border overflow-hidden group transition-all hover:shadow-md duration-300 hover:border-gray-300 ">
+      <div className="overflow-hidden relative h-56"> {/* Container for the image */}
+        <img
+          src={car.image}
+          alt={car.name}
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+        />
+      </div>
+      <div className="mt-2 p-5">
+        <h3 className="font-semibold">{car.name}</h3>
+        <p className="text-gray-500">Starting at {car.price}</p>
+        <button className="bg-white text-gray-900 font-medium px-4 py-2 mt-2  border border-gray-800">See more</button>
+      </div>
+    </div>
+  ))}
+</div>
 
         <button
           className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-2"
