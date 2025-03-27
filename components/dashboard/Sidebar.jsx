@@ -82,6 +82,11 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
               <Link
                 href={item.href}
                 className="flex flex-row items-center p-3 rounded-md hover:bg-blue-500 transition-all m-2 justify-normal"
+                onClick={() => {
+                  if (window.innerWidth < 768) {
+                    toggleSidebar();
+                  }
+                }}
               >
                 {item.icon}
                 {isOpen && <span className="ml-3 text-white text-sm">{item.label}</span>}
