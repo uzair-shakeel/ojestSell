@@ -50,7 +50,7 @@ const CustomMap = ({ location, setLocation }) => {
       <GoogleMap
         zoom={10}
         center={{ lat: location.coordinates.lat || 52.2298, lng: location.coordinates.lng || 21.0122 }}
-        mapContainerClassName="w-full h-80 rounded-lg"
+        mapContainerClassName="w-full min-h-96 h-auto rounded-lg"
         onClick={(e) => {
           setLocation({
             ...location,

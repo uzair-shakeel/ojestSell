@@ -38,7 +38,7 @@ export default function DashboardLayout({ children }) {
           }`}
         >
           <DashboardNavbar />
-          <div className="p-6 min-h-screen">{children}</div>
+          <div className="p-4 min-h-screen">{children}</div>
         </main>
       </div>
     </div>
