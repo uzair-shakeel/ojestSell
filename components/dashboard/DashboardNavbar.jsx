@@ -2,8 +2,9 @@
 import { useState } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import { UserButton, SignOutButton } from "@clerk/nextjs";
+import { FiMenu , FiX} from "react-icons/fi";
 
-export default function DashboardNavbar() {
+export default function DashboardNavbar({ isOpen, toggleSidebar }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -20,18 +21,19 @@ export default function DashboardNavbar() {
         </button>
 
         {/* Clerk UserButton for profile dropdown */}
-        <div className="hidden md:block">
+        <div className="block">
           <UserButton />
         </div>
 
         {/* Mobile Menu Button */}
-        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden text-gray-700">
-          <IoPersonCircleOutline size={30} />
+        <button onClick={toggleSidebar} className=" text-gray-700 block md:hidden">
+        {isOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
+
         </button>
       </div>
 
       {/* Mobile Dropdown Menu */}
-      {isMenuOpen && (
+      {/* {isMenuOpen && (
         <div className="absolute right-4 top-16 bg-white border border-gray-200 shadow-lg rounded-lg p-2 w-48 flex flex-col space-y-2 md:hidden">
           <button className="w-full text-left hover:bg-gray-100 p-1 duration-300">Profile</button>
           <button className="w-full text-left hover:bg-gray-100 p-1 duration-300">Add Car</button>
@@ -39,7 +41,7 @@ export default function DashboardNavbar() {
             <button className="w-full text-left hover:bg-gray-100 p-1 duration-300">Logout</button>
           </SignOutButton>
         </div>
-      )}
+      )} */}
     </header>
   );
 }

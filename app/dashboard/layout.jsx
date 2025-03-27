@@ -34,10 +34,13 @@ export default function DashboardLayout({ children }) {
         />
         <main
           className={`flex-1 flex flex-col transition-all duration-300 ${
-            isSidebarOpen ? "ml-20 md:ml-64" : "ml-20"
+            isSidebarOpen ? "ml-0 md:ml-64" : " md:ml-64"
           }`}
         >
-          <DashboardNavbar />
+          <DashboardNavbar
+           isOpen={isSidebarOpen}
+           toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+            />
           <div className="p-4 min-h-screen">{children}</div>
         </main>
       </div>
