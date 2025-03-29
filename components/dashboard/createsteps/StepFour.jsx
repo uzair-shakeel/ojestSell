@@ -84,7 +84,7 @@ export default function StepFour({ nextStep, prevStep, updateFormData }) {
       <div className="mb-4">
         <label className="block text-gray-700 font-semibold mb-1">Seller Type</label>
         <select
-          className="border p-2 w-full rounded"
+          className="border p-3 w-full rounded h-12"
           value={localData.sellerType}
           onChange={(e) => setLocalData({ ...localData, sellerType: e.target.value })}
         >
@@ -101,7 +101,7 @@ export default function StepFour({ nextStep, prevStep, updateFormData }) {
             <input
               type="number"
               placeholder="Enter Price"
-              className="border p-2 w-full rounded"
+              className="border p-3 w-full rounded h-12"
               value={localData.priceNetto}
               onChange={(e) => setLocalData({ ...localData, priceNetto: e.target.value })}
             />
@@ -113,7 +113,7 @@ export default function StepFour({ nextStep, prevStep, updateFormData }) {
               <input
                 type="number"
                 placeholder="Enter Netto Price"
-                className="border p-2 w-full rounded"
+                className="border p-3 w-full rounded h-12"
                 value={localData.priceNetto}
                 onChange={(e) => setLocalData({ ...localData, priceNetto: e.target.value })}
               />
@@ -123,7 +123,7 @@ export default function StepFour({ nextStep, prevStep, updateFormData }) {
               <input
                 type="number"
                 placeholder="Enter Price with VAT"
-                className="border p-2 w-full rounded"
+                className="border p-3 w-full rounded h-12"
                 value={localData.priceWithVat}
                 onChange={(e) => setLocalData({ ...localData, priceWithVat: e.target.value })}
               />

@@ -74,7 +74,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Make</label>
           <select
-            className="border p-2 w-full rounded"
+            className="border p-3 w-full rounded h-12 "
             value={localData.make}
             onChange={(e) =>
               setLocalData({ ...localData, make: e.target.value, model: "" })
@@ -93,7 +93,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Model</label>
           <select
-            className="border p-2 w-full rounded"
+            className="border p-3 w-full rounded h-12 "
             value={localData.model}
             onChange={(e) =>
               setLocalData({ ...localData, model: e.target.value })
@@ -115,7 +115,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
           <input
             type="text"
             placeholder="Trim (Daraja Kroz, Normal, etc.)"
-            className="border p-2 w-full rounded"
+            className="border p-3 w-full rounded h-12 "
             value={localData.trim}
             onChange={(e) =>
               setLocalData({ ...localData, trim: e.target.value })
@@ -127,7 +127,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Type</label>
           <select
-            className="border p-2 w-full rounded"
+            className="border p-3 w-full rounded h-12 "
             value={localData.type}
             onChange={(e) =>
               setLocalData({ ...localData, type: e.target.value })
@@ -145,7 +145,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Year</label>
           <select
-            className="border p-2 w-full rounded"
+            className="border p-3 w-full rounded h-12 "
             value={localData.year}
             onChange={(e) =>
               setLocalData({ ...localData, year: e.target.value })
@@ -164,7 +164,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Condition</label>
           <select
-            className="border p-2 w-full rounded"
+            className="border p-3 w-full rounded h-12 "
             value={localData.condition}
             onChange={(e) =>
               setLocalData({ ...localData, condition: e.target.value })
@@ -183,7 +183,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
           <input
             type="number"
             placeholder="Mileage"
-            className="border p-2 w-full rounded"
+            className="border p-3 w-full rounded h-12 "
             value={localData.mileage}
             onChange={(e) =>
               setLocalData({ ...localData, mileage: e.target.value })
@@ -195,7 +195,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Drivetrain</label>
           <select
-            className="border p-2 w-full rounded"
+            className="border p-3 w-full rounded h-12 "
             value={localData.drivetrain}
             onChange={(e) =>
               setLocalData({ ...localData, drivetrain: e.target.value })
@@ -212,7 +212,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Transmission</label>
           <select
-            className="border p-2 w-full rounded"
+            className="border p-3 w-full rounded h-12 "
             value={localData.transmission}
             onChange={(e) =>
               setLocalData({ ...localData, transmission: e.target.value })
@@ -228,7 +228,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Fuel Type</label>
           <select
-            className="border p-2 w-full rounded"
+            className="border p-3 w-full rounded h-12 "
             value={localData.fuel}
             onChange={(e) =>
               setLocalData({ ...localData, fuel: e.target.value })
@@ -249,7 +249,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
           <input
             type="number"
             placeholder="Horsepower"
-            className="border p-2 w-full rounded"
+            className="border p-3 w-full rounded h-12 "
             value={localData.horsepower}
             onChange={(e) =>
               setLocalData({ ...localData, horsepower: e.target.value })
@@ -266,7 +266,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
             list="engines"
             type="number"
             placeholder="Engine Displacement"
-            className="border p-2 w-full rounded"
+            className="border p-3 w-full rounded h-12 "
             value={localData.engine}
             onChange={(e) =>
               setLocalData({ ...localData, engine: e.target.value })
@@ -282,7 +282,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Service History</label>
           <select
-            className="border p-2 w-full rounded"
+            className="border p-3 w-full rounded h-12 "
             value={localData.serviceHistory}
             onChange={(e) =>
               setLocalData({ ...localData, serviceHistory: e.target.value })
@@ -298,7 +298,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Accident</label>
           <select
-            className="border p-2 w-full rounded"
+            className="border p-3 w-full rounded h-12 "
             value={localData.accident}
             onChange={(e) =>
               setLocalData({ ...localData, accident: e.target.value })
@@ -315,7 +315,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
           <input
             type="text"
             placeholder="VIN"
-            className="border p-2 w-full rounded"
+            className="border p-3 w-full rounded h-12 "
             value={localData.vin}
             onChange={(e) =>
               setLocalData({ ...localData, vin: e.target.value })
@@ -327,7 +327,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Registered</label>
           <select
-            className="border p-2 w-full rounded"
+            className="border p-3 w-full rounded h-12 "
             value={localData.registered}
             onChange={(e) =>
               setLocalData({ ...localData, registered: e.target.value })

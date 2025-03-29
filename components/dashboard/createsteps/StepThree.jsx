@@ -27,7 +27,7 @@ export default function StepThree({ nextStep, prevStep, updateFormData }) {
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Condition Interior</label>
           <select
-            className="border p-2 w-full rounded"
+            className="border p-3 w-full rounded h-12 "
             value={localData.interior}
             onChange={(e) => setLocalData({ ...localData, interior: e.target.value })}
           >
@@ -42,7 +42,7 @@ export default function StepThree({ nextStep, prevStep, updateFormData }) {
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Condition Mechanical</label>
           <select
-            className="border p-2 w-full rounded"
+            className="border p-3 w-full rounded h-12 "
             value={localData.mechanical}
             onChange={(e) => setLocalData({ ...localData, mechanical: e.target.value })}
           >
@@ -57,7 +57,7 @@ export default function StepThree({ nextStep, prevStep, updateFormData }) {
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Condition Paint & Body</label>
           <select
-            className="border p-2 w-full rounded"
+            className="border p-3 w-full rounded h-12 "
             value={localData.paint}
             onChange={(e) => setLocalData({ ...localData, paint: e.target.value })}
           >
@@ -72,7 +72,7 @@ export default function StepThree({ nextStep, prevStep, updateFormData }) {
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Condition Frame & Underbody</label>
           <select
-            className="border p-2 w-full rounded"
+            className="border p-3 w-full rounded h-12 "
             value={localData.frame}
             onChange={(e) => setLocalData({ ...localData, frame: e.target.value })}
           >
@@ -87,7 +87,7 @@ export default function StepThree({ nextStep, prevStep, updateFormData }) {
         <div className="col-span-2">
           <label className="block text-gray-700 mb-1">Condition Overall</label>
           <select
-            className="border p-2 w-full rounded"
+            className="border p-3 w-full rounded h-12 "
             value={localData.overall}
             onChange={(e) => setLocalData({ ...localData, overall: e.target.value })}
           >
