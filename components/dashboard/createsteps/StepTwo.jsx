@@ -71,7 +71,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
       {/* Grid Layout */}
       <div className="grid grid-cols-2 gap-4">
         {/* Make */}
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Make</label>
           <select
             className="border p-2 w-full rounded"
@@ -90,7 +90,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         </div>
 
         {/* Model */}
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Model</label>
           <select
             className="border p-2 w-full rounded"
@@ -110,7 +110,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         </div>
 
         {/* Trim */}
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Trim</label>
           <input
             type="text"
@@ -124,7 +124,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         </div>
 
         {/* Type */}
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Type</label>
           <select
             className="border p-2 w-full rounded"
@@ -142,7 +142,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         </div>
 
         {/* Year */}
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Year</label>
           <select
             className="border p-2 w-full rounded"
@@ -161,7 +161,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         </div>
 
         {/* Condition */}
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Condition</label>
           <select
             className="border p-2 w-full rounded"
@@ -178,7 +178,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         </div>
 
         {/* Mileage */}
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Mileage (KM)</label>
           <input
             type="number"
@@ -192,7 +192,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         </div>
 
         {/* Drivetrain */}
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Drivetrain</label>
           <select
             className="border p-2 w-full rounded"
@@ -209,7 +209,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         </div>
 
         {/* Transmission */}
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Transmission</label>
           <select
             className="border p-2 w-full rounded"
@@ -225,7 +225,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         </div>
 
         {/* Fuel */}
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Fuel Type</label>
           <select
             className="border p-2 w-full rounded"
@@ -244,7 +244,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         </div>
 
         {/* Horsepower */}
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Horsepower</label>
           <input
             type="number"
@@ -258,7 +258,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         </div>
 
         {/* Engine Displacement */}
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">
             Engine Displacement
           </label>
@@ -279,7 +279,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
           </datalist>
         </div>
         {/* Service History */}
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Service History</label>
           <select
             className="border p-2 w-full rounded"
@@ -295,7 +295,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         </div>
 
         {/* Accident */}
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Accident</label>
           <select
             className="border p-2 w-full rounded"
@@ -310,7 +310,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
           </select>
         </div>
         {/* VIN */}
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">VIN</label>
           <input
             type="text"
@@ -324,7 +324,7 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         </div>
 
         {/* Registered */}
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Registered</label>
           <select
             className="border p-2 w-full rounded"

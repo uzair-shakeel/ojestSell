@@ -24,7 +24,7 @@ export default function StepThree({ nextStep, prevStep, updateFormData }) {
       {/* Grid Layout */}
       <div className="grid grid-cols-2 gap-4">
         {/* Condition Interior */}
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Condition Interior</label>
           <select
             className="border p-2 w-full rounded"
@@ -39,7 +39,7 @@ export default function StepThree({ nextStep, prevStep, updateFormData }) {
         </div>
 
         {/* Condition Mechanical */}
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Condition Mechanical</label>
           <select
             className="border p-2 w-full rounded"
@@ -54,7 +54,7 @@ export default function StepThree({ nextStep, prevStep, updateFormData }) {
         </div>
 
         {/* Condition Paint & Body */}
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Condition Paint & Body</label>
           <select
             className="border p-2 w-full rounded"
@@ -69,7 +69,7 @@ export default function StepThree({ nextStep, prevStep, updateFormData }) {
         </div>
 
         {/* Condition Frame & Underbody */}
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Condition Frame & Underbody</label>
           <select
             className="border p-2 w-full rounded"

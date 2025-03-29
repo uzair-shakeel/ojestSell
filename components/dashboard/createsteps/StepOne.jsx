@@ -58,7 +58,7 @@ export default function StepOne({ nextStep, updateFormData }) {
       <h2 className="text-xl font-bold mb-4">Step 1: Basic Information</h2>
 
       {/* Title Input */}
-      <p className="text-gray-700 font-semibold mb-2">Title</p>
+      <p className="text-gray-700  mb-2">Title</p>
       <input
         type="text"
         placeholder="Car Title"
@@ -68,7 +68,7 @@ export default function StepOne({ nextStep, updateFormData }) {
       />
 
       {/* Description Input */}
-      <p className="text-gray-700 font-semibold mb-2">Description</p>
+      <p className="text-gray-700  mb-2">Description</p>
       <textarea
         placeholder="Car Description"
         className="border p-2 w-full rounded mb-3"
@@ -82,7 +82,7 @@ export default function StepOne({ nextStep, updateFormData }) {
         type="file"
         accept="image/*"
         multiple
-        className="border p-2 w-full rounded mb-3"
+        className="block text-base text-gray-500 file:mr-4 file:py-2 file:px-7 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gray-700 file:text-white hover:file:bg-gray-600 file:duration-300 border border-gray-300 p-1 w-auto rounded-md"
         onChange={handleImageUpload}
       />
 

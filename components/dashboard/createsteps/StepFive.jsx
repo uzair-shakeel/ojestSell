@@ -1,23 +1,21 @@
 'use client'
 export default function StepFive({ prevStep, handleSubmit, formData }) {
   return (
-    <div className=" bg-white p-5 rounded-lg">
+    <div className=" bg-white rounded-lg">
       <h2 className="text-xl font-bold mb-6">Step 5: Review & Submit</h2>
 
       {/* Grid Layout */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-20 gap-y-5 text-gray-700">
+      <div className="sm:grid sm:grid-cols-2 space-y-5 gap-y-5 text-gray-700">
         
         {/* Title & Description */}
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Title</p>
-          <p className="font-medium text-black">{formData.title}</p>
+          <p className="font-medium text-black">title test</p>
         </div>
-
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Description</p>
           <p className="font-medium text-black">{formData.description}</p>
         </div>
-
         {/* Car Details */}
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Make</p>

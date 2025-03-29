@@ -23,18 +23,18 @@ export default function StepFour({ nextStep, prevStep, updateFormData }) {
   };
 
   const handleNext = () => {
-    if (localData.sellOptions.length === 0) {
-      alert("Please select at least one Sell option.");
-      return;
-    }
-    if (localData.invoiceOptions.length === 0) {
-      alert("Please select at least one Invoice option.");
-      return;
-    }
-    if (!localData.priceNetto) {
-      alert("Please enter the price.");
-      return;
-    }
+    // if (localData.sellOptions.length === 0) {
+    //   alert("Please select at least one Sell option.");
+    //   return;
+    // }
+    // if (localData.invoiceOptions.length === 0) {
+    //   alert("Please select at least one Invoice option.");
+    //   return;
+    // }
+    // if (!localData.priceNetto) {
+    //   alert("Please enter the price.");
+    //   return;
+    // }
 
     updateFormData(localData);
     nextStep();
