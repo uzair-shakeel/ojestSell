@@ -7,11 +7,22 @@ const conversations = [
     id: 1,
     name: "Jasmin Trewen",
     messages: [
-      { text: "Hello! Is this the number of the Champion store?", sender: "user", time: "9:56 AM" },
+      { text: "Hello!", sender: "user", time: "9:56 AM" },
       { text: "Hello, Jasmin Trewen! Welcome to the Champion Store WhatsApp! Let me know how I can help you.", sender: "agent", time: "9:57 AM" },
       { text: "Nothing.\nI just want to talk to you.", sender: "user", time: "10:07 AM" },
       { text: "What would you like to talk about? Can I help you?", sender: "agent", time: "10:15 AM" },
       { text: "I bought a book some time ago, but I lost it. What should I do? Should I buy it again here or just try to find it?", sender: "user", time: "10:28 AM" },
+    ]
+  },
+  {
+    id: 2,
+    name: "Jonas Kahnwald",
+    messages: [
+      { text: "Hello! Is this the number of the Champion store?", sender: "user", time: "9:56 AM" },
+      { text: "Hello, Jonas Kahnwald! Welcome to the dashboard.", sender: "agent", time: "9:57 AM" },
+      { text: "I want to add a new car to the website.", sender: "user", time: "10:07 AM" },
+      { text: "What would you like to talk about? Can I help you?", sender: "agent", time: "10:15 AM" },
+      { text: "I bought a book  What should I do? Should I buy it again here or just try to find it?", sender: "user", time: "10:28 AM" },
     ]
   }
 ];
@@ -21,6 +32,11 @@ const MessagesPage = () => {
   const [newMessage, setNewMessage] = useState("");
   const [showSidebar, setShowSidebar] = useState(false);
   const messagesEndRef = useRef(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredConversations = conversations.filter(conversation =>
+    conversation.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -40,39 +56,32 @@ const MessagesPage = () => {
     <div className="flex h-screen bg-white font-sans relative">
       <div className={`fixed md:static z-20 bg-white h-full w-[320px] border-r border-gray-300 flex flex-col transition-transform duration-300 ${showSidebar ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
         <div className="p-4 border-b border-gray-300">
-          <input type="text" placeholder="Search here..." className="w-full px-3 py-2 border rounded-full text-sm" />
+          <input type="text" placeholder="Search here..." className="w-full px-3 py-2 border rounded-full text-sm" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
         </div>
-        <div className="flex-1 overflow-auto">
-          <div className="text-sm text-gray-500 px-4 py-2">Unread</div>
-          <div className="px-4 space-y-2">
-            <div className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg cursor-pointer">
-              <div className="w-10 h-10 bg-green-500 rounded-full"></div>
-              <div>
-                <div className="font-medium text-sm">Jonas Kahnwald</div>
-                <div className="text-xs text-gray-500">How is the payment process?</div>
-              </div>
-            </div>
-          </div>
-          <div className="text-sm text-gray-500 px-4 py-2 mt-4">All Messages</div>
-          <div className="px-4">
+        <div className="flex-1 overflow-auto px-4 space-y-2 py-4">
+          {filteredConversations.map((conversation) => (
             <div
-              className="flex items-center gap-2 p-2 bg-gray-200 rounded-lg cursor-pointer"
-              onClick={() => setShowSidebar(false)}
+              key={conversation.id}
+              className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg cursor-pointer"
+              onClick={() => {
+                setSelectedConversation(conversation);
+                setShowSidebar(false);
+              }}
             >
-              <div className="w-10 h-10 bg-blue-400 rounded-full"></div>
+              <div className="w-10 h-10 bg-green-400 rounded-full"></div>
               <div>
-                <div className="font-medium text-sm">Jasmin Trewen</div>
-                <div className="text-xs text-gray-500 truncate w-40">I bought a book some time ago...</div>
+                <div className="font-medium text-sm">{conversation.name}</div>
+                <div className="text-xs text-gray-500 truncate w-40">{conversation.messages[conversation.messages.length - 1].text}</div>
               </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
 
       <div className="flex-1 flex flex-col">
         <div className="border-b border-gray-300 p-4 flex items-center justify-between">
           <div>
-            <div className="font-medium text-lg">Jasmin Trewen</div>
+            <div className="font-medium text-lg">{selectedConversation.name}</div>
             <div className="text-xs text-gray-500">#85120</div>
           </div>
           <button className="md:hidden p-2" onClick={() => setShowSidebar(!showSidebar)}>
