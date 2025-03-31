@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect, useRef } from "react";
-import { FaSearch, FaPaperPlane, FaBars } from "react-icons/fa";
+import { FaSearch, FaPaperPlane, FaBars, FaEnvelope } from "react-icons/fa";
 
 const conversations = [
   {
@@ -30,7 +30,7 @@ const conversations = [
 const MessagesPage = () => {
   const [selectedConversation, setSelectedConversation] = useState(conversations[0]);
   const [newMessage, setNewMessage] = useState("");
-  const [showSidebar, setShowSidebar] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(true);
   const messagesEndRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -54,7 +54,7 @@ const MessagesPage = () => {
 
   return (
     <div className="flex min-h-[570px] h-auto bg-white font-sans relative">
-      <div className={`fixed md:static z-20 bg-white h-full w-[320px] border-r border-gray-300 flex flex-col transition-transform duration-300 ${showSidebar ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+      <div className={`fixed md:static top-0 z-20 bg-white h-full w-full sm:w-[320px] border-r border-gray-300 flex flex-col transition-transform duration-300 ${showSidebar ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
         <div className="p-4 border-b border-gray-300">
           <input type="text" placeholder="Search here..." className="w-full px-3 py-2 border rounded-full text-sm" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
         </div>
@@ -83,9 +83,12 @@ const MessagesPage = () => {
           <div>
             <div className="font-medium text-lg">{selectedConversation.name}</div>
           </div>
-          <button className="md:hidden p-2" onClick={() => setShowSidebar(!showSidebar)}>
-            <FaBars size={18} />
-          </button>
+          <button
+  className="md:hidden fixed top-24 right-4 z-10 p-2 px-5 bg-white border rounded-md shadow"
+  onClick={() => setShowSidebar(!showSidebar)}
+>
+  <FaEnvelope className="text-blue-500" size={20} />
+</button>
         </div>
         <div className="flex-1 overflow-auto p-6 space-y-4 bg-gray-50">
           {selectedConversation.messages.map((message, index) => (
