@@ -1,27 +1,25 @@
 'use client'
 import React, { useState, useEffect, useRef } from "react";
+import { FaSearch, FaPaperPlane, FaBars } from "react-icons/fa";
 
 const conversations = [
-  { id: 1, name: "John Doe", messages: [
-    { text: "Hello!", sender: "other" },
-    { text: "How are you?", sender: "other" },
-    { text: "What's up?", sender: "other" }
-  ]},
-  { id: 2, name: "Jane Smith", messages: [
-    { text: "Hey!", sender: "other" },
-    { text: "Let's meet up.", sender: "other" },
-    { text: "See you soon!", sender: "other" }
-  ]},
-  { id: 3, name: "Alice Johnson", messages: [
-    { text: "Good morning!", sender: "other" },
-    { text: "Hope you have a great day.", sender: "other" }
-  ]},
+  {
+    id: 1,
+    name: "Jasmin Trewen",
+    messages: [
+      { text: "Hello! Is this the number of the Champion store?", sender: "user", time: "9:56 AM" },
+      { text: "Hello, Jasmin Trewen! Welcome to the Champion Store WhatsApp! Let me know how I can help you.", sender: "agent", time: "9:57 AM" },
+      { text: "Nothing.\nI just want to talk to you.", sender: "user", time: "10:07 AM" },
+      { text: "What would you like to talk about? Can I help you?", sender: "agent", time: "10:15 AM" },
+      { text: "I bought a book some time ago, but I lost it. What should I do? Should I buy it again here or just try to find it?", sender: "user", time: "10:28 AM" },
+    ]
+  }
 ];
 
 const MessagesPage = () => {
-  const [selectedConversation, setSelectedConversation] = useState(null);
+  const [selectedConversation, setSelectedConversation] = useState(conversations[0]);
   const [newMessage, setNewMessage] = useState("");
-  const [isMobileView, setIsMobileView] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -29,87 +27,84 @@ const MessagesPage = () => {
   }, [selectedConversation?.messages]);
 
   const handleSendMessage = () => {
-    if (newMessage.trim() && selectedConversation) {
+    if (newMessage.trim()) {
       setSelectedConversation((prev) => ({
         ...prev,
-        messages: [...prev.messages, { text: newMessage, sender: "user" }],
+        messages: [...prev.messages, { text: newMessage, sender: "agent", time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }],
       }));
       setNewMessage("");
     }
   };
 
   return (
-    <div className="flex h-screen border border-gray-300 relative">
-      <button
-        className="md:hidden absolute top-4 right-4 bg-blue-500 text-white p-2 rounded"
-        onClick={() => setIsMobileView(!isMobileView)}
-      >
-        {isMobileView ? "Hide" : "Show Conversations"}
-      </button>
-      {/* Left side - Conversations list */}
-      <div
-        className={`w-1/3 border-r border-gray-300 p-4 bg-gray-100 md:block ${
-          isMobileView ? "absolute top-0 left-0 w-full h-full bg-white z-10" : "hidden"
-        }`}
-      >
-        <h2 className="text-lg font-bold mb-4">Conversations</h2>
-        <ul>
-          {conversations.map((conversation) => (
-            <li
-              key={conversation.id}
-              onClick={() => {
-                setSelectedConversation(conversation);
-                setIsMobileView(false);
-              }}
-              className="p-2 cursor-pointer hover:bg-gray-200 rounded-lg"
+    <div className="flex h-screen bg-white font-sans relative">
+      <div className={`fixed md:static z-20 bg-white h-full w-[320px] border-r border-gray-300 flex flex-col transition-transform duration-300 ${showSidebar ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+        <div className="p-4 border-b border-gray-300">
+          <input type="text" placeholder="Search here..." className="w-full px-3 py-2 border rounded-full text-sm" />
+        </div>
+        <div className="flex-1 overflow-auto">
+          <div className="text-sm text-gray-500 px-4 py-2">Unread</div>
+          <div className="px-4 space-y-2">
+            <div className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg cursor-pointer">
+              <div className="w-10 h-10 bg-green-500 rounded-full"></div>
+              <div>
+                <div className="font-medium text-sm">Jonas Kahnwald</div>
+                <div className="text-xs text-gray-500">How is the payment process?</div>
+              </div>
+            </div>
+          </div>
+          <div className="text-sm text-gray-500 px-4 py-2 mt-4">All Messages</div>
+          <div className="px-4">
+            <div
+              className="flex items-center gap-2 p-2 bg-gray-200 rounded-lg cursor-pointer"
+              onClick={() => setShowSidebar(false)}
             >
-              {conversation.name}
-            </li>
-          ))}
-        </ul>
+              <div className="w-10 h-10 bg-blue-400 rounded-full"></div>
+              <div>
+                <div className="font-medium text-sm">Jasmin Trewen</div>
+                <div className="text-xs text-gray-500 truncate w-40">I bought a book some time ago...</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Right side - Messages display */}
-      <div className="w-full md:w-2/3 p-4 flex flex-col">
-        {selectedConversation ? (
-          <div className="flex flex-col flex-grow">
-            <h2 className="text-lg font-bold mb-4">{selectedConversation.name}</h2>
-            <div className="space-y-2 flex-grow overflow-auto">
-              {selectedConversation.messages.map((message, index) => (
-                <div
-                  key={index}
-                  className={`p-2 rounded-lg w-fit max-w-xs ${
-                    message.sender === "user" 
-                      ? "bg-blue-500 text-white ml-auto" 
-                      : "bg-gray-200 text-gray-700 mr-auto"
-                  }`}
-                >
-                  {message.text}
-                </div>
-              ))}
-              <div ref={messagesEndRef} />
-            </div>
-            <div className="mt-4 flex">
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                className="flex-grow p-2 border border-gray-300 rounded-l-lg"
-                placeholder="Type a message..."
-              />
-              <button
-                onClick={handleSendMessage}
-                className="p-2 bg-blue-500 text-white rounded-r-lg"
-              >
-                Send
-              </button>
-            </div>
+      <div className="flex-1 flex flex-col">
+        <div className="border-b border-gray-300 p-4 flex items-center justify-between">
+          <div>
+            <div className="font-medium text-lg">Jasmin Trewen</div>
+            <div className="text-xs text-gray-500">#85120</div>
           </div>
-        ) : (
-          <div className="text-gray-500 text-center flex-grow flex items-center justify-center">
-            Select a conversation to view messages
-          </div>
-        )}
+          <button className="md:hidden p-2" onClick={() => setShowSidebar(!showSidebar)}>
+            <FaBars size={18} />
+          </button>
+        </div>
+        <div className="flex-1 overflow-auto p-6 space-y-4 bg-gray-50">
+          {selectedConversation.messages.map((message, index) => (
+            <div key={index} className={`flex ${message.sender === 'user' ? 'justify-start' : 'justify-end'}`}>
+              <div className={`max-w-[60%] px-4 py-2 rounded-lg text-sm whitespace-pre-line ${message.sender === 'user' ? 'bg-white border border-gray-300' : 'bg-blue-100 text-gray-800'}`}>
+                {message.text}
+                <div className="text-right text-[10px] text-gray-500 mt-1">{message.time}</div>
+              </div>
+            </div>
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
+        <div className="p-4 border-t border-gray-300 flex items-center gap-2">
+          <input
+            type="text"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            className="flex-1 p-2 border border-gray-300 rounded-full px-4 text-sm"
+            placeholder="Enter message..."
+          />
+          <button
+            onClick={handleSendMessage}
+            className="p-2 bg-blue-500 text-white rounded-full"
+          >
+            <FaPaperPlane size={14} />
+          </button>
+        </div>
       </div>
     </div>
   );

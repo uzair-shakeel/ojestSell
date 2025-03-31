@@ -47,14 +47,14 @@ export default function StepOne({ nextStep, updateFormData }) {
     updateFormData({
       title: localData.title,
       description: localData.description,
-      images: localData.images.map((img) => img.file), // Store only the file for backend upload
+      // images: localData.images.map((img) => img.file), // Store only the file for backend upload
     });
 
     nextStep();
   };
 
   return (
-    <div className="bg-white">
+    <div className="bg-white max-w-4xl mx-auto">
       <h2 className="text-xl font-bold mb-4">Step 1: Basic Information</h2>
 
       {/* Title Input */}
@@ -87,7 +87,7 @@ export default function StepOne({ nextStep, updateFormData }) {
       />
 
       {/* Image Preview */}
-      {localData.images.length > 0 && (
+      {/* {localData.images.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-2">
           {localData.images.map((img) => (
             <div key={img.id} className="relative w-24 h-24 border rounded overflow-hidden">
@@ -101,7 +101,7 @@ export default function StepOne({ nextStep, updateFormData }) {
             </div>
           ))}
         </div>
-      )}
+      )} */}
 
       {/* Next Button */}
       <button
