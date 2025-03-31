@@ -25,7 +25,7 @@ export default function StepThree({ nextStep, prevStep, updateFormData }) {
       <div className="grid grid-cols-2 gap-4">
         {/* Condition Interior */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Condition Interior</label>
+          <label className="block text-gray-700 mb-1">Interior Condition </label>
           <select
             className="border p-3 w-full rounded h-12 "
             value={localData.interior}
@@ -40,7 +40,7 @@ export default function StepThree({ nextStep, prevStep, updateFormData }) {
 
         {/* Condition Mechanical */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Condition Mechanical</label>
+          <label className="block text-gray-700 mb-1">Mechanical Condition </label>
           <select
             className="border p-3 w-full rounded h-12 "
             value={localData.mechanical}
@@ -55,7 +55,7 @@ export default function StepThree({ nextStep, prevStep, updateFormData }) {
 
         {/* Condition Paint & Body */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Condition Paint & Body</label>
+          <label className="block text-gray-700 mb-1">Paint and Body Condition </label>
           <select
             className="border p-3 w-full rounded h-12 "
             value={localData.paint}
@@ -70,7 +70,7 @@ export default function StepThree({ nextStep, prevStep, updateFormData }) {
 
         {/* Condition Frame & Underbody */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Condition Frame & Underbody</label>
+          <label className="block text-gray-700 mb-1">Frame and Underbody Condition </label>
           <select
             className="border p-3 w-full rounded h-12 "
             value={localData.frame}
@@ -85,7 +85,7 @@ export default function StepThree({ nextStep, prevStep, updateFormData }) {
 
         {/* Condition Overall */}
         <div className="col-span-2">
-          <label className="block text-gray-700 mb-1">Condition Overall</label>
+          <label className="block text-gray-700 mb-1">Overall Condition </label>
           <select
             className="border p-3 w-full rounded h-12 "
             value={localData.overall}

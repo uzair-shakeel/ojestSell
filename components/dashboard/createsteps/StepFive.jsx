@@ -73,8 +73,8 @@ export default function StepFive({ prevStep, handleSubmit, formData }) {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Accident History</p>
-          <p className="font-medium text-black">{formData.accident}</p>
+          <p className="text-xs uppercase">accidentHistory History</p>
+          <p className="font-medium text-black">{formData.accidentHistory}</p>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
@@ -89,7 +89,7 @@ export default function StepFive({ prevStep, handleSubmit, formData }) {
 
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Registration Status</p>
-          <p className="font-medium text-black">{formData.registered}</p>
+          <p className="font-medium text-black">{formData.country}</p>
         </div>
 
         {/* Car Condition */}

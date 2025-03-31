@@ -23,17 +23,17 @@ export default function MultiStepForm() {
     trim: "",
     type: "",
     year: "",
-    condition: "",
+    color: "",
     mileage: "",
     drivetrain: "",
     transmission: "",
     fuel: "",
     engine: "",
     horsepower: "",
-    accident: "",
+    accidentHistory: "",
     serviceHistory: "",
     vin: "",
-    registered: "",
+    country: "",
 
     // Step 3: Car Condition
     condition: {

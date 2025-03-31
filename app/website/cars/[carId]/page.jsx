@@ -255,10 +255,6 @@ const page = () => {
                   <p className="text-black text-lg lg:text-xl">
                     <strong>Yousri Ben Ali</strong>
                   </p>
-                  <div className="flex justify-center space-x-2 items-center border border-gray-200 bg-gray-50 rounded-xl p-1">
-                    <img src="/website/verify.svg" alt="" className="w-5 h-5" />
-                    <p className="text-base text-[#7ED321]">Verified host</p>
-                  </div>
                 </div>
                 <p className="text-base text-gray-500">Private Saller</p>
                 <div className="flex justify-start items-center space-x-2">

@@ -54,7 +54,7 @@ export default function StepFour({ nextStep, prevStep, updateFormData }) {
                 type="checkbox"
                 checked={localData.sellOptions.includes(option)}
                 onChange={() => handleCheckboxChange("sellOptions", option)}
-                className="h-4 w-4"
+                className="h-5 w-5"
               />
               <span>{option}</span>
             </label>
@@ -72,7 +72,7 @@ export default function StepFour({ nextStep, prevStep, updateFormData }) {
                 type="checkbox"
                 checked={localData.invoiceOptions.includes(option)}
                 onChange={() => handleCheckboxChange("invoiceOptions", option)}
-                className="h-4 w-4"
+                className="h-5 w-5"
               />
               <span>{option}</span>
             </label>

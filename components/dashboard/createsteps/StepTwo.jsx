@@ -8,17 +8,17 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
     trim: "",
     type: "",
     year: "",
-    condition: "",
+    color: "",
     mileage: "",
     drivetrain: "",
     transmission: "",
     fuel: "",
     engine: "",
     horsepower: "",
-    accident: "",
+    accidentHistory: "",
     serviceHistory: "",
     vin: "",
-    registered: "",
+    country: "",
   });
 
   const [makes, setMakes] = useState([]); // State for car makes
@@ -160,21 +160,18 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
           </select>
         </div>
 
-        {/* Condition */}
+        {/* color */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Condition</label>
-          <select
+          <label className="block text-gray-700 mb-1">Color</label>
+          <input
+            type="text"
+            placeholder="Color"
             className="border p-3 w-full rounded h-12 "
-            value={localData.condition}
+            value={localData.color}
             onChange={(e) =>
-              setLocalData({ ...localData, condition: e.target.value })
+              setLocalData({ ...localData, color: e.target.value })
             }
-          >
-            <option value="">Select Condition</option>
-            <option value="New">New</option>
-            <option value="Used">Used</option>
-            <option value="Demo">Demo</option>
-          </select>
+          />
         </div>
 
         {/* Mileage */}
@@ -294,17 +291,17 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
           </select>
         </div>
 
-        {/* Accident */}
+        {/* accidentHistory */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Accident</label>
+          <label className="block text-gray-700 mb-1">Accident History</label>
           <select
             className="border p-3 w-full rounded h-12 "
-            value={localData.accident}
+            value={localData.accidentHistory}
             onChange={(e) =>
-              setLocalData({ ...localData, accident: e.target.value })
+              setLocalData({ ...localData, accidentHistory: e.target.value })
             }
           >
-            <option value="">Select Accident</option>
+            <option value="">Select accidentHistory</option>
             <option value="Yes">Yes</option>
             <option value="No">No</option>
           </select>
@@ -323,21 +320,18 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
           />
         </div>
 
-        {/* Registered */}
+        {/* Country of Origin */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Registered</label>
-          <select
+          <label className="block text-gray-700 mb-1">Country of Origin</label>
+           <input
+            type="text"
+            placeholder="Poland"
             className="border p-3 w-full rounded h-12 "
-            value={localData.registered}
+            value={localData.country}
             onChange={(e) =>
-              setLocalData({ ...localData, registered: e.target.value })
+              setLocalData({ ...localData, country: e.target.value })
             }
-          >
-            <option value="">Select Registered</option>
-            <option value="Regestired">Regestired</option>
-            <option value="Import payed">Import payed</option>
-            <option value="Import not payed">Import not payed</option>
-          </select>
+          />
         </div>
       </div>
 
