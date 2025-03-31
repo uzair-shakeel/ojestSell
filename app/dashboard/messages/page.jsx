@@ -32,11 +32,7 @@ const MessagesPage = () => {
   const [newMessage, setNewMessage] = useState("");
   const [showSidebar, setShowSidebar] = useState(true);
   const messagesEndRef = useRef(null);
-  const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredConversations = conversations.filter(conversation =>
-    conversation.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -54,12 +50,9 @@ const MessagesPage = () => {
 
   return (
     <div className="flex min-h-[570px] h-auto bg-white font-sans relative">
-      <div className={`fixed md:static top-0 z-20 bg-white h-full w-full sm:w-[320px] border-r border-gray-300 flex flex-col transition-transform duration-300 ${showSidebar ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
-        <div className="p-4 border-b border-gray-300">
-          <input type="text" placeholder="Search here..." className="w-full px-3 py-2 border rounded-full text-sm" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-        </div>
+      <div className={`fixed md:static top-0 z-20 bg-white h-full md:h-auto w-full sm:w-[320px] border-r border-gray-300 flex flex-col transition-transform duration-300 ${showSidebar ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
         <div className="flex-1 overflow-auto px-4 space-y-2 py-4">
-          {filteredConversations.map((conversation) => (
+          {conversations.map((conversation) => (
             <div
               key={conversation.id}
               className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg cursor-pointer"
