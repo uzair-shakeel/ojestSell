@@ -80,55 +80,42 @@ export default function StepFour({ nextStep, prevStep, updateFormData }) {
         </div>
       </div>
 
-      {/* Seller Type Selection */}
-      <div className="mb-4">
-        <label className="block text-gray-700 font-semibold mb-1">Seller Type</label>
-        <select
-          className="border p-3 w-full rounded h-12"
-          value={localData.sellerType}
-          onChange={(e) => setLocalData({ ...localData, sellerType: e.target.value })}
-        >
-          <option value="private">Private</option>
-          <option value="company">Company</option>
-        </select>
-      </div>
-
       {/* Pricing - Different for Private and Company Sellers */}
       <div className="mb-4">
-        {localData.sellerType === "private" ? (
-          <div>
-            <label className="block text-gray-700 font-semibold mb-1">Price</label>
-            <input
-              type="number"
-              placeholder="Enter Price"
-              className="border p-3 w-full rounded h-12"
-              value={localData.priceNetto}
-              onChange={(e) => setLocalData({ ...localData, priceNetto: e.target.value })}
-            />
-          </div>
+        {localData.invoiceOptions.includes("Invoice VAT") ? (
+           <div className="grid grid-cols-2 gap-4">
+           <div>
+             <label className="block text-gray-700 font-semibold mb-1">Price (Netto)</label>
+             <input
+               type="number"
+               placeholder="Enter Netto Price"
+               className="border p-3 w-full rounded h-12"
+               value={localData.priceNetto}
+               onChange={(e) => setLocalData({ ...localData, priceNetto: e.target.value })}
+             />
+           </div>
+           <div>
+             <label className="block text-gray-700 font-semibold mb-1">Price (With VAT)</label>
+             <input
+               type="number"
+               placeholder="Enter Price with VAT"
+               className="border p-3 w-full rounded h-12"
+               value={localData.priceWithVat}
+               onChange={(e) => setLocalData({ ...localData, priceWithVat: e.target.value })}
+             />
+           </div>
+         </div>        
         ) : (
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-gray-700 font-semibold mb-1">Price (Netto)</label>
-              <input
-                type="number"
-                placeholder="Enter Netto Price"
-                className="border p-3 w-full rounded h-12"
-                value={localData.priceNetto}
-                onChange={(e) => setLocalData({ ...localData, priceNetto: e.target.value })}
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700 font-semibold mb-1">Price (With VAT)</label>
-              <input
-                type="number"
-                placeholder="Enter Price with VAT"
-                className="border p-3 w-full rounded h-12"
-                value={localData.priceWithVat}
-                onChange={(e) => setLocalData({ ...localData, priceWithVat: e.target.value })}
-              />
-            </div>
-          </div>
+          <div>
+          <label className="block text-gray-700 font-semibold mb-1">Price</label>
+          <input
+            type="number"
+            placeholder="Enter Price"
+            className="border p-3 w-full rounded h-12"
+            value={localData.priceNetto}
+            onChange={(e) => setLocalData({ ...localData, priceNetto: e.target.value })}
+          />
+        </div>
         )}
       </div>
 

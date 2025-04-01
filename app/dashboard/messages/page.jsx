@@ -102,7 +102,7 @@ const MessagesPage = () => {
           showSidebar ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0`}
       >
-        <div className="flex-1 overflow-auto px-4 space-y-2 py-4">
+        <div className="flex-1 overflow-auto px-4 space-y-2 py-20">
           {conversations.map((conversation) => (
             <div
               key={conversation.id}

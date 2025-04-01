@@ -8,7 +8,7 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="w-full p-4 bg-white shadow-md flex justify-between items-center relative z-30">
+    <header className="w-full p-4 bg-white shadow-md flex justify-between items-center z-30 sticky top-0">
       {/* Logo */}
       <div>
         <img src="/whitelogo.png" alt="Ojest Logo" className="h-10" />
