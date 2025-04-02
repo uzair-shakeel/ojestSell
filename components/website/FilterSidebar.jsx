@@ -18,7 +18,7 @@ export default function FilterSidebar() {
       <div className="divide-y overflow-auto max-h-[calc(100vh-150px)] scrollbar-hide">
         {/* 0 - Location */}
         <div
-          className={`collapse collapse-arrow px-2 ${
+          className={`collapse collapse-arrow px-2 rounded-none ${
             openIndex === 0 ? "collapse-open" : ""
           }`}
         >
@@ -45,7 +45,7 @@ export default function FilterSidebar() {
 
         {/* 1 - Make */}
         <div
-          className={`collapse collapse-arrow px-2 ${
+          className={`collapse collapse-arrow px-2 rounded-none ${
             openIndex === 1 ? "collapse-open" : ""
           }`}
         >
@@ -67,7 +67,7 @@ export default function FilterSidebar() {
 
         {/* 2 - Model */}
         <div
-          className={`collapse collapse-arrow px-2 ${
+          className={`collapse collapse-arrow px-2 rounded-none ${
             openIndex === 2 ? "collapse-open" : ""
           }`}
         >
@@ -89,7 +89,7 @@ export default function FilterSidebar() {
 
         {/* 3 - Type */}
         <div
-          className={`collapse collapse-arrow px-2 ${
+          className={`collapse collapse-arrow px-2 rounded-none ${
             openIndex === 3 ? "collapse-open" : ""
           }`}
         >
@@ -111,7 +111,7 @@ export default function FilterSidebar() {
 
         {/* 4 - Year */}
         <div
-          className={`collapse collapse-arrow px-2 ${
+          className={`collapse collapse-arrow px-2 rounded-none ${
             openIndex === 4 ? "collapse-open" : ""
           }`}
         >
@@ -141,7 +141,7 @@ export default function FilterSidebar() {
 
         {/* 5 - Condition */}
         <div
-          className={`collapse collapse-arrow px-2 ${
+          className={`collapse collapse-arrow px-2 rounded-none ${
             openIndex === 5 ? "collapse-open" : ""
           }`}
         >
@@ -175,7 +175,7 @@ export default function FilterSidebar() {
 
         {/* 6 - Mileage */}
         <div
-          className={`collapse collapse-arrow px-2 ${
+          className={`collapse collapse-arrow px-2 rounded-none ${
             openIndex === 6 ? "collapse-open" : ""
           }`}
         >
@@ -200,7 +200,7 @@ export default function FilterSidebar() {
 
         {/* 7 - Drivetrain */}
         <div
-          className={`collapse collapse-arrow px-2 ${
+          className={`collapse collapse-arrow px-2 rounded-none ${
             openIndex === 7 ? "collapse-open" : ""
           }`}
         >
@@ -224,7 +224,7 @@ export default function FilterSidebar() {
 
         {/* 8 - Transmission */}
         <div
-          className={`collapse collapse-arrow px-2 ${
+          className={`collapse collapse-arrow px-2 rounded-none ${
             openIndex === 8 ? "collapse-open" : ""
           }`}
         >
@@ -247,7 +247,7 @@ export default function FilterSidebar() {
 
         {/* 9 - Fuel type */}
         <div
-          className={`collapse collapse-arrow px-2 ${
+          className={`collapse collapse-arrow px-2 rounded-none ${
             openIndex === 9 ? "collapse-open" : ""
           }`}
         >
@@ -272,7 +272,7 @@ export default function FilterSidebar() {
 
         {/* 10 - Engine */}
         <div
-          className={`collapse collapse-arrow px-2 ${
+          className={`collapse collapse-arrow px-2 rounded-none ${
             openIndex === 10 ? "collapse-open" : ""
           }`}
         >
@@ -301,7 +301,7 @@ export default function FilterSidebar() {
 
         {/* 11 - Service History */}
         <div
-          className={`collapse collapse-arrow px-2 ${
+          className={`collapse collapse-arrow px-2 rounded-none ${
             openIndex === 11 ? "collapse-open" : ""
           }`}
         >
@@ -326,7 +326,7 @@ export default function FilterSidebar() {
 
         {/* 12 - Accident History */}
         <div
-          className={`collapse collapse-arrow px-2 ${
+          className={`collapse collapse-arrow px-2 rounded-none ${
             openIndex === 12 ? "collapse-open" : ""
           }`}
         >
