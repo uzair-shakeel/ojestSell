@@ -55,7 +55,7 @@ export default function CarCard({ view }) {
             <div className="bg-blue-400 text-sm p-1 rounded-l text-white">
               <FaTags />
             </div>
-            <span className="text-base  text-black">100,500 zł</span>
+            <span className="text-base  text-black">100500 zł</span>
           </div>
           <div
           className={`text-black flex items-center gap-1 ${view === "list" ? "block" : "hidden"}`}>

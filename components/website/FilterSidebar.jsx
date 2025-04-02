@@ -32,9 +32,9 @@ export default function FilterSidebar() {
             <input
               type="text"
               placeholder="Enter location"
-              className="w-full p-2 rounded-md bg-white border border-gray-300 text-base"
+              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
             />
-            <select className="w-full p-2 rounded-md bg-white border border-gray-300 text-base">
+            <select className="w-full p-3 rounded-md bg-white border border-gray-300 text-base">
               <option value="5">5 km</option>
               <option value="10">10 km</option>
               <option value="15">15 km</option>
@@ -56,7 +56,7 @@ export default function FilterSidebar() {
             Make
           </div>
           <div className="collapse-content space-y-2">
-            <select className="w-full p-2 rounded-md bg-white border border-gray-300 text-base">
+            <select className="w-full p-3 rounded-md bg-white border border-gray-300 text-base">
               <option value="">All</option>
               <option value="Toyota">Toyota</option>
               <option value="Honda">Honda</option>
@@ -78,7 +78,7 @@ export default function FilterSidebar() {
             Model
           </div>
           <div className="collapse-content space-y-2">
-            <select className="w-full p-2 rounded-md bg-white border border-gray-300 text-base">
+            <select className="w-full p-3 rounded-md bg-white border border-gray-300 text-base">
               <option value="">All</option>
               <option value="MX3">MX3</option>
               <option value="MX2">MX2</option>
@@ -100,7 +100,7 @@ export default function FilterSidebar() {
             Type
           </div>
           <div className="collapse-content space-y-2">
-            <select className="w-full p-2 rounded-md bg-white border border-gray-300 text-base">
+            <select className="w-full p-3 rounded-md bg-white border border-gray-300 text-base">
               <option value="">All</option>
               <option value="SUV">SUV</option>
               <option value="Sedan">Sedan</option>
@@ -123,16 +123,18 @@ export default function FilterSidebar() {
           </div>
           <div className="collapse-content space-y-2">
             <div className="flex gap-2">
-              <input
-                type="number"
-                placeholder="From"
-                className="w-full p-2 rounded-md bg-white border border-gray-300 text-base"
-              />
-              <input
-                type="number"
-                placeholder="To"
-                className="w-full p-2 rounded-md bg-white border border-gray-300 text-base"
-              />
+              <select className="w-full p-3 rounded-md bg-white border border-gray-300 text-base">
+                <option value="">From</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+              </select>
+              <select className="w-full p-3 rounded-md bg-white border border-gray-300 text-base">
+                <option value="">To</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+              </select>
             </div>
           </div>
         </div>
@@ -186,7 +188,7 @@ export default function FilterSidebar() {
           <div className="collapse-content space-y-2">
             <select
               name="mileage"
-              className="w-full p-2 rounded-md bg-white border border-gray-300 text-base"
+              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
             >
               <option value="50000">50,000 km</option>
               <option value="100000">100,000 km</option>
@@ -211,7 +213,7 @@ export default function FilterSidebar() {
           <div className="collapse-content space-y-2">
             <select
               name="drivetrain"
-              className="w-full p-2 rounded-md bg-white border border-gray-300 text-base"
+              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
             >
               <option value="FWD">FWD</option>
               <option value="RWD">RWD</option>
@@ -235,7 +237,7 @@ export default function FilterSidebar() {
           <div className="collapse-content space-y-2">
             <select
               name="transmission"
-              className="w-full p-2 rounded-md bg-white border border-gray-300 text-base"
+              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
             >
               <option value="Automatic">Automatic</option>
               <option value="Manual">Manual</option>
@@ -258,7 +260,7 @@ export default function FilterSidebar() {
           <div className="collapse-content space-y-2">
             <select
               name="fuel_type"
-              className="w-full p-2 rounded-md bg-white border border-gray-300 text-base"
+              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
             >
               <option value="Petrol">Petrol</option>
               <option value="Diesel">Diesel</option>
@@ -283,7 +285,7 @@ export default function FilterSidebar() {
           <div className="collapse-content space-y-2">
             <select
               name="engine"
-              className="w-full p-2 rounded-md bg-white border border-gray-300 text-base"
+              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
             >
               <option value="1.6L">1.6L</option>
               <option value="2.0L">2.0L</option>
@@ -312,7 +314,7 @@ export default function FilterSidebar() {
           <div className="collapse-content space-y-2">
             <select
               name="service_history"
-              className="w-full p-2 rounded-md bg-white border border-gray-300 text-base"
+              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
             >
               <option value="not specified">not specified</option>
               <option value="Full">Full</option>
@@ -337,7 +339,7 @@ export default function FilterSidebar() {
           <div className="collapse-content space-y-2">
             <select
               name="accident_history"
-              className="w-full p-2 rounded-md bg-white border border-gray-300 text-base"
+              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
             >
               <option value="not specified">not specified</option>
               <option value="Yes">Yes</option>
