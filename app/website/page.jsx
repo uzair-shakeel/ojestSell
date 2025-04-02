@@ -24,19 +24,19 @@ const page = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
   return (
-    <div className="w-full min-h-screen h-auto bg-white">
+    <div className="w-full min-h-screen h-auto bg-white px-5">
       {/* header */}
-      <div className="relative bg-blue-500 h-96 w-full flex justify-end items-center max-w-screen-2xl mx-auto p-7">
+      <div className="relative h-96 w-full flex justify-end items-center max-w-screen-2xl mx-auto p-7">
         <img
           src="http://localhost:3000/results.jpg"
           alt=""
-          className="absolute top-0 left-0 w-full h-full  object-cover brightness-50"
+          className="absolute top-0 left-0 w-full h-full  object-cover brightness-50 rounded-3xl"
         />
         <h1 className="z-10 text-white sm:text-5xl text-3xl font-bold  max-w-3xl sm:text-start text-center">
           Find your dream car easily with advanced search filters.
         </h1>
       </div>
-      <div className="max-w-screen-2xl mx-auto sm:p-7 flex flex-row lg:space-x-4 h-full">
+      <div className="max-w-screen-2xl mx-auto sm:py-12 flex flex-row lg:space-x-4 h-full mt-4">
         {/* aside */}
         <aside className="w-[380px] hidden lg:block sticky top-0 self-start h-fit">
           <FilterSidebar />
@@ -44,7 +44,7 @@ const page = () => {
         {/* main */}
         <main className="h-full w-full px-4">
           {/* header cards */}
-          <div className="sticky top-0 z-10 bg-white/40 backdrop-blur-sm flex justify-between items-center py-4 px-2">
+          <div className="sticky top-0 z-10 bg-white/40 backdrop-blur-sm flex justify-between items-center py-2 pb-4 px-2">
             <button
               onClick={() => setShowMobileFilter(true)}
               className="text-base bg-blue-600 text-white font-medium px-7 py-2 rounded lg:hidden block"
