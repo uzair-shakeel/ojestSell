@@ -24,13 +24,13 @@ const page = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
   return (
-    <div className="w-full min-h-screen h-auto bg-white px-5">
+    <div className="w-full min-h-screen h-auto bg-white p-2 sm:p-5">
       {/* header */}
       <div className="relative h-96 w-full flex justify-end items-center max-w-screen-2xl mx-auto p-7">
         <img
           src="http://localhost:3000/results.jpg"
           alt=""
-          className="absolute top-0 left-0 w-full h-full  object-cover brightness-50 rounded-3xl"
+          className="absolute top-0 left-0 w-full h-full object-cover brightness-50 rounded-lg sm:rounded-2xl object-[20%_40%]"
         />
         <h1 className="z-10 text-white sm:text-5xl text-3xl font-bold  max-w-3xl sm:text-start text-center">
           Find your dream car easily with advanced search filters.
@@ -42,7 +42,7 @@ const page = () => {
           <FilterSidebar />
         </aside>
         {/* main */}
-        <main className="h-full w-full px-4">
+        <main className="h-full w-full sm:px-4">
           {/* header cards */}
           <div className="sticky top-0 z-10 bg-white/40 backdrop-blur-sm flex justify-between items-center py-2 pb-4 px-2">
             <button
@@ -74,6 +74,17 @@ const page = () => {
             <CarCard view={view} />
             <CarCard view={view} />
             <CarCard view={view} />
+          </div>
+          {/* Pagination */}
+          <div className="w-full flex justify-center items-center py-8">
+            <div className="join">
+              <button className="join-item btn">«</button>
+              <button className="join-item btn btn-active">1</button>
+              <button className="join-item btn">2</button>
+              <button className="join-item btn">3</button>
+              <button className="join-item btn">4</button>
+              <button className="join-item btn">»</button>
+            </div>
           </div>
           {showMobileFilter && (
             <div className="fixed inset-0 z-50 bg-white overflow-y-auto p-4">

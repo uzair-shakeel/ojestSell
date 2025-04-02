@@ -12,7 +12,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
-      <html lang="en" suppressHydrationWarning
+      <html lang="en"
+      data-theme="light"
+       suppressHydrationWarning
       
       >
         <body>{children}</body>
