@@ -67,7 +67,7 @@ export function FilterSearch() {
     });
 
     router.push(
-      `/results?make=${make}&model=${model}&type=${type}&startYear=${startYear}&endYear=${endYear}`
+      `/website/cars?make=${make}&model=${model}&type=${type}&startYear=${startYear}&endYear=${endYear}`
     );
     // TODO: Implement actual search functionality
   };
