@@ -1,9 +1,23 @@
 'use client'
 import { motion } from "framer-motion";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useUser } from '@clerk/nextjs';
 
-
-const page = () => {
+export default function DashboardCarsPage() {
+  const { user, isLoaded } = useUser();
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    if (isLoaded) {
+      setIsLoading(false);
+    }
+  }, [isLoaded]);
+  
+  // Handle the case when there's no user or still loading
+  if (isLoading || !user) {
+    return <div>Loading...</div>;
+  }
+  
   const vehicles = [
     {
       id: 14,
@@ -57,12 +71,11 @@ const page = () => {
   ];
 
   return (
-    <div >
+    <div>
       <div className="min-h-screen grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {vehicles.map((car) => (
           <div
             key={car.id}
-            
             className="min-w-[250px] shadow-md md:min-w-[300px] rounded bg-white border box-border overflow-hidden group transition-all hover:shadow-md duration-300 border-gray-300 "
           >
             <motion.div
@@ -71,9 +84,7 @@ const page = () => {
              transition={{ duration: 0.4 }}
             className="overflow-hidden relative h-56">
               {" "}
-              {/* Container for the image */}
               <img
-              
                 src={car.image}
                 alt={car.name}
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
@@ -100,6 +111,4 @@ const page = () => {
       </div>
     </div>
   );
-};
-
-export default page;
+}

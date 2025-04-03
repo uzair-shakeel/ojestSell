@@ -21,6 +21,16 @@ const nextConfig = {
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
   },
+  
+  // Use standalone instead of export to avoid the generateStaticParams error
+  output: 'standalone',
+  
+  // Remove headers configuration since it's not compatible with export
+  skipTrailingSlashRedirect: true,
+  skipMiddlewareUrlNormalize: true,
+  
+  // Exclude Clerk auth pages from static generation
+  unstable_excludeFiles: ['**/dashboard/**/*', '**/sign-in/**/*', '**/sign-up/**/*'],
 };
 
 mergeConfig(nextConfig, userConfig);
