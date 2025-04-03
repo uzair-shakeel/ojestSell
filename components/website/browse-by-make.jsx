@@ -75,8 +75,8 @@ const MAKES = [
 ];
 
 export function BrowseByMake() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef(null);
+  const containerRef = useRef(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isPinned, setIsPinned] = useState(false);
 

@@ -72,7 +72,7 @@ export function FilterSearch() {
     // TODO: Implement actual search functionality
   };
 
-  const validateEndDate = (endDate: string) => {
+  const validateEndDate = (endDate) => {
     if (startYear && endDate < startYear) {
       setEndYear("");
     }

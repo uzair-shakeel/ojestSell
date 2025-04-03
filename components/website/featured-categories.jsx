@@ -44,8 +44,8 @@ const LOGOS = [
 ];
 
 export function FeaturedCategories() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef(null);
+  const textRef = useRef(null);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);

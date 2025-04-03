@@ -1,23 +1,23 @@
-'use client'
+"use client";
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
-import { useUser } from '@clerk/nextjs';
+import { useUser } from "@clerk/nextjs";
 
 export default function DashboardCarsPage() {
   const { user, isLoaded } = useUser();
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
     if (isLoaded) {
       setIsLoading(false);
     }
   }, [isLoaded]);
-  
+
   // Handle the case when there's no user or still loading
   if (isLoading || !user) {
     return <div>Loading...</div>;
   }
-  
+
   const vehicles = [
     {
       id: 14,
@@ -79,10 +79,11 @@ export default function DashboardCarsPage() {
             className="min-w-[250px] shadow-md md:min-w-[300px] rounded bg-white border box-border overflow-hidden group transition-all hover:shadow-md duration-300 border-gray-300 "
           >
             <motion.div
-             initial={{ y:-30, opacity:0}}
-             animate={{ y:0,  opacity:1}}
-             transition={{ duration: 0.4 }}
-            className="overflow-hidden relative h-56">
+              initial={{ y: -30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.4 }}
+              className="overflow-hidden relative h-56"
+            >
               {" "}
               <img
                 src={car.image}
@@ -90,21 +91,22 @@ export default function DashboardCarsPage() {
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
               />
             </motion.div>
-            <motion.div 
-            initial={{ x:-30, opacity:0}}
-            animate={{ x:0,  opacity:1}}
-            transition={{ duration: 0.4 }}
-             className="mt-2 p-5">
+            <motion.div
+              initial={{ x: -30, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.4 }}
+              className="mt-2 p-5"
+            >
               <h3 className="font-semibold">{car.name}</h3>
               <p className="text-gray-500">{car.price}</p>
-             <div className="flex gap-2 mt-3">
-             <button className="bg-white text-gray-900 font-medium px-4 py-1 rounded-sm  border border-gray-800">
-                Edit
-              </button>
-              <button className="bg-red-600 text-white font-medium px-4 py-1 rounded-sm border border-red-600">
-                Delete
-              </button>
-             </div>
+              <div className="flex gap-2 mt-3">
+                <button className="bg-white text-gray-900 font-medium px-4 py-1 rounded-sm  border border-gray-800">
+                  Edit
+                </button>
+                <button className="bg-red-600 text-white font-medium px-4 py-1 rounded-sm border border-red-600">
+                  Delete
+                </button>
+              </div>
             </motion.div>
           </div>
         ))}

@@ -72,7 +72,7 @@ const CAR_BRANDS = [
 ];
 
 export function BrowseCategories() {
-  const [carType, setCarType] = useState<"new" | "used">("new");
+  const [carType, setCarType] = useState("new");
   const [showAll, setShowAll] = useState(false);
 
   const displayedBrands = showAll ? CAR_BRANDS : CAR_BRANDS.slice(0, 12);

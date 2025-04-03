@@ -87,9 +87,9 @@ const CAR_TYPES = [
 ];
 
 export function BrowseLocations() {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef(null);
 
-  const scroll = (direction: "left" | "right") => {
+  const scroll = (direction) => {
     if (scrollContainerRef.current) {
       const scrollAmount = 400;
       const newScrollLeft =

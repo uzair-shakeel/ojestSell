@@ -5,14 +5,14 @@ import { BrowseLocations } from "../components/website/browse-locations";
 import { BrowseByMake } from "../components/website/browse-by-make";
 import { BlogSection } from "../components/website/blog-section";
 import { Footer } from "../components/website/footer";
-import { Header } from "../components/website/header";
+import Navbar from "../components/website/Navbar.jsx";
 import { FeaturedCategories } from "../components/website/featured-categories";
 import { FilterSearch } from "../components/website/filter-search";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
+    <div className="flex flex-col min-h-screen bg-white">
+      <Navbar />
 
       {/* Hero Section */}
       <section className="relative h-[600px] w-[98%] mx-auto my-[10px] rounded-2xl overflow-hidden">

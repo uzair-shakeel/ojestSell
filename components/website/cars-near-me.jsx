@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import CarImageSwiper from "./car-image-swiper";
+import CarCard from "./CarCard";
+import { Car } from "./types";
 
 const CARS = [
   {
@@ -83,66 +84,47 @@ const CARS = [
 ];
 
 export function CarsNearMe() {
-  const [isMounted, setIsMounted] = useState(false);
+  const [cars, setCars] = useState(CARS);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  // This useEffect will be used when connecting to the API
+  // useEffect(() => {
+  //   async function fetchCars() {
+  //     setLoading(true);
+  //     try {
+  //       const response = await fetch('/api/cars');
+  //       const data = await response.json();
+  //       setCars(data.cars);
+  //     } catch (error) {
+  //       console.error('Error fetching cars:', error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+  //
+  //   fetchCars();
+  // }, []);
 
   return (
     <section className="py-12 bg-gray-50">
-      <div className=" mx-auto px-4">
+      <div className="mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-2xl font-bold">Cars For Sale Near Me</h2>
           <button className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-100">
             View All
           </button>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {CARS.map((car) => (
-            <div
-              key={car.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden"
-            >
-              {isMounted && (
-                <CarImageSwiper images={car.images} carId={car.id} />
-              )}
-              <div className="p-4">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-semibold">{car.name}</h3>
-                  <div className="text-right">
-                    <span className="font-bold text-lg">
-                      ${car.price.toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-2 my-4">
-                  <div className="flex items-center gap-1 text-sm text-gray-600">
-                    <span className="font-medium">Year:</span>{" "}
-                    <span>{car.year}</span>
-                  </div>
-                  <div className="flex items-center gap-1 text-sm text-gray-600">
-                    <span className="font-medium">Fuel:</span>{" "}
-                    <span>{car.fuel}</span>
-                  </div>
-                  <div className="flex items-center gap-1 text-sm text-gray-600">
-                    <span className="font-medium">Engine:</span>{" "}
-                    <span>{car.engineSize}</span>
-                  </div>
-                  <div className="flex items-center gap-1 text-sm text-gray-600">
-                    <span className="font-medium">Transmission:</span>{" "}
-                    <span>{car.transmission}</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-end">
-                  <button className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium hover:bg-blue-600 hover:text-white hover:border-blue-600">
-                    See More
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex justify-center items-center h-40">
+            <p>Loading cars...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {cars.map((car) => (
+              <CarCard key={car.id} car={car} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

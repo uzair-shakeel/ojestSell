@@ -1,8 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import React from 'react'
-import { ClerkProvider } from '@clerk/nextjs'
-
+import React from "react";
+import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata = {
   title: "Create Next App",
@@ -11,8 +10,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   // Check if we're in a static build environment
-  const isStaticBuild = process.env.NEXT_PHASE === 'phase-production-build';
-  
+  const isStaticBuild = process.env.NEXT_PHASE === "phase-production-build";
+
   // If we're in a static build, don't use ClerkProvider
   if (isStaticBuild) {
     return (
@@ -21,14 +20,10 @@ export default function RootLayout({ children }) {
       </html>
     );
   }
-  
+
   return (
     <ClerkProvider>
-      <html lang="en"
-      data-theme="light"
-       suppressHydrationWarning
-      
-      >
+      <html lang="en" data-theme="" suppressHydrationWarning>
         <body>{children}</body>
       </html>
     </ClerkProvider>

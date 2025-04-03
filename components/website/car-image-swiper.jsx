@@ -5,7 +5,6 @@ import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
-import type { Swiper as SwiperType } from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -15,7 +14,7 @@ function CarImageSwiper({ images, carId }) {
   const [isHovered, setIsHovered] = useState(false);
   const isSeeMoreSlide = activeIndex === 3;
 
-  const handleSlideChange = (swiper: SwiperType) => {
+  const handleSlideChange = (swiper) => {
     setActiveIndex(swiper.activeIndex);
   };
 
