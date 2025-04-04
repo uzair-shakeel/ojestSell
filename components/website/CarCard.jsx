@@ -1,6 +1,6 @@
 "use client";
 
-import { FaLocationArrow, FaTags } from "react-icons/fa";
+import { FaTags } from "react-icons/fa";
 import { ImLocation } from "react-icons/im";
 import CarImageSwiper from "./car-image-swiper";
 import { useState, useEffect } from "react";
