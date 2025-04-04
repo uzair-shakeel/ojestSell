@@ -1,6 +1,5 @@
 "use client";
 
-import { FaTags } from "react-icons/fa";
 import { FaLocationArrow, FaTags } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react"; // ✅ Correct
 import { Navigation } from "swiper/modules"; // ✅ Correct
