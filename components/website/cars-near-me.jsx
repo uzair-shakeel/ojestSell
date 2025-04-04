@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import CarCard from "./CarCard";
-import { Car } from "./types";
 
 const CARS = [
   {
