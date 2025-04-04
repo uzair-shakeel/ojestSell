@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
 
   return (
     <ClerkProvider>
-      <html lang="en" data-theme="" suppressHydrationWarning>
+      <html lang="en" data-theme="light" suppressHydrationWarning>
         <body>{children}</body>
       </html>
     </ClerkProvider>
