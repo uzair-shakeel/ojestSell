@@ -9,10 +9,19 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-function CarImageSwiper({ images, carId }) {
+function CarImageSwiper({ images = [], carId = "default" }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const isSeeMoreSlide = activeIndex === 3;
+
+  // Early return if no images are provided
+  if (!images || images.length === 0) {
+    return (
+      <div className="h-[230px] md:h-[250px] bg-gray-200 flex items-center justify-center">
+        <span className="text-gray-500">No images available</span>
+      </div>
+    );
+  }
 
   const handleSlideChange = (swiper) => {
     setActiveIndex(swiper.activeIndex);

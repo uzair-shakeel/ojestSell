@@ -6,10 +6,15 @@ import CarImageSwiper from "./car-image-swiper";
 import { useState, useEffect } from "react";
 import { Car } from "./types";
 
+interface CarCardProps {
+  car: Car;
+  view?: "grid" | "list";
+}
+
 export default function CarCard({
   car,
   view = "grid", // Default view is grid if not specified
-}) {
+}: CarCardProps) {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {

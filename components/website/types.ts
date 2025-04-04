@@ -1,7 +1,7 @@
 export interface Car {
   id: number;
   name: string;
-  images: string[];
+  images?: string[];
   price: number;
   rating?: number;
   reviews?: number;
@@ -17,6 +17,8 @@ export interface Car {
     name?: string;
     logo?: string;
   };
+  // Additional fields that might come from an API
+  [key: string]: any;
 }
 
 export interface ApiResponse {
@@ -24,4 +26,6 @@ export interface ApiResponse {
   totalCount: number;
   page: number;
   pageSize: number;
+  // Allow for additional fields from the API response
+  [key: string]: any;
 }
