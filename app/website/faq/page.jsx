@@ -119,7 +119,7 @@ const FAQPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mt-12 bg-white rounded-xl overflow-hidden border border-gray-100"
+          className="mt-12  rounded-xl overflow-hidden "
         >
           <dl className="divide-y divide-gray-200">
             {faqs.map((faq, index) => (
