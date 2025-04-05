@@ -148,7 +148,7 @@ const FAQPage = () => {
             {" "}
             <div className="flex flex-col items-center  w-full  md:w-1/3 justify-end">
               {/* Optional: adds a subtle overlay */}
-              <h3 className="text-xl hidden md:block md:text-2xl font-bold text-white">
+              <h3 className="text-xl hidden md:block  font-extrabold text-gray-900 sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
                 More questions?
               </h3>
               <p className="mt-4 text-lg text-white hidden md:block">
