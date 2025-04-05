@@ -144,20 +144,20 @@ const FAQPage = () => {
             backgroundImage: "url('/IMG_4467.jpg')", // Replace with your image path
           }}
         >
-          <div className="bg-black/40 flex justify-start  md:justify-end py-4 px-4">
+          <div className="bg-black/40 flex justify-start  md:justify-end py-4 md:py-24 px-4">
             {" "}
             <div className="flex flex-col items-center  w-full  md:w-1/3 justify-end">
               {/* Optional: adds a subtle overlay */}
-              <h3 className="text-xl hidden md:text-2xl font-bold text-white">
+              <h3 className="text-xl hidden md:block md:text-2xl font-bold text-white">
                 More questions?
               </h3>
-              <p className="mt-4 text-lg text-white hidden ">
+              <p className="mt-4 text-lg text-white hidden md:block">
                 If you cannot find the answer to your question, feel free to
                 contact our support team.
               </p>
               <a
                 href="/website/contact"
-                className="md:mt-6 mt-40 w-full inline-flex justify-center  text-sm  items-center px-6 py-3 border  border-transparent  md:text-base font-medium rounded-lg shadow-md text-white bg-blue-600/90 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105"
+                className="md:mt-6 mt-40 w-full md:w-fit inline-flex justify-center  text-sm  items-center px-6 py-3 border  border-transparent  md:text-base font-medium rounded-lg shadow-md text-white bg-blue-600/90 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105"
               >
                 Contact Support
               </a>
