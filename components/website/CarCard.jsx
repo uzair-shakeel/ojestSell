@@ -6,8 +6,11 @@ import { Navigation } from "swiper/modules"; // ✅ Correct
 import "swiper/css";
 import "swiper/css/navigation";
 import { ImLocation } from "react-icons/im";
+import { useRouter } from "next/navigation";
+
 
 export default function CarCard({ view }) {
+  const router = useRouter();
   return (
     <div
       className={` rounded-xl overflow-hidden border border-gray-200 shadow-sm  group flex ${
@@ -110,7 +113,7 @@ export default function CarCard({ view }) {
               className="w-32"
             />
           </div>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
+          <button onClick={() => router.push(`/website/cars/5`)} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
             View details
           </button>
         </div>

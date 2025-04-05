@@ -44,7 +44,7 @@ export default function Home() {
         </div>
       </section>
 
-      <main className="flex-grow">
+      <main className="flex-grow text-gray-900">
         <CarsNearMe />
         <FeaturedCategories />
         <BrowseCategories />
