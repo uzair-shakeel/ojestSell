@@ -139,21 +139,30 @@ const FAQPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
-          className="mt-16 text-center"
+          className="mt-16 text-center rounded-3xl overflow-hidden bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: "url('/IMG_4467.jpg')", // Replace with your image path
+          }}
         >
-          <h3 className="text-2xl font-bold text-gray-900">
-            Still have questions?
-          </h3>
-          <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-            If you cannot find the answer to your question, feel free to contact
-            our support team.
-          </p>
-          <a
-            href="/website/contact"
-            className="mt-6 inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105"
-          >
-            Contact Support
-          </a>
+          <div className="bg-black/40 flex justify-start  md:justify-end py-4 px-4">
+            {" "}
+            <div className="flex flex-col items-center  w-full  md:w-1/3 justify-end">
+              {/* Optional: adds a subtle overlay */}
+              <h3 className="text-xl hidden md:text-2xl font-bold text-white">
+                More questions?
+              </h3>
+              <p className="mt-4 text-lg text-white hidden ">
+                If you cannot find the answer to your question, feel free to
+                contact our support team.
+              </p>
+              <a
+                href="/website/contact"
+                className="md:mt-6 mt-40 w-full inline-flex justify-center  text-sm  items-center px-6 py-3 border  border-transparent  md:text-base font-medium rounded-lg shadow-md text-white bg-blue-600/90 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105"
+              >
+                Contact Support
+              </a>
+            </div>
+          </div>
         </motion.div>
       </div>
     </div>
