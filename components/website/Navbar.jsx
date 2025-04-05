@@ -5,6 +5,7 @@ import Link from "next/link";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
 
   const navLinks = [
     { name: "Home", href: "/website" },
