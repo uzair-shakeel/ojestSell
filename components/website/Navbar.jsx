@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
