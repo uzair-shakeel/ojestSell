@@ -63,6 +63,10 @@ const CookieConsent = () => {
     "No milk required for these cookies!",
   ];
 
+  // Get a random message
+  const randomMessage =
+    funCookieMessages[Math.floor(Math.random() * funCookieMessages.length)];
+
   return (
     <AnimatePresence>
       {showConsent && (
@@ -78,7 +82,7 @@ const CookieConsent = () => {
               <div className="p-6 text-center">
                 <motion.div
                   initial={{ scale: 0 }}
-                  animate={{ scale: 1, rotate: [0, 10, -10, 0] }}
+                  animate={{ scale: 1 }}
                   transition={{ duration: 0.5 }}
                   className="mb-4 flex justify-center"
                 >
@@ -94,29 +98,15 @@ const CookieConsent = () => {
                   </div>
 
                   <div className="flex items-center mb-4">
-                    <motion.div
-                      animate={{ rotate: [0, 15, -15, 0] }}
-                      transition={{
-                        repeat: Infinity,
-                        duration: 3,
-                        repeatType: "loop",
-                      }}
-                      className="mr-3 text-3xl text-amber-500"
-                    >
+                    <div className="mr-3 text-3xl text-amber-500">
                       <IoIosCookie />
-                    </motion.div>
+                    </div>
                     <h3 className="text-xl font-bold text-gray-900">
                       Cookie Time!
                     </h3>
                   </div>
 
-                  <p className="text-gray-700 mb-2">
-                    {
-                      funCookieMessages[
-                        Math.floor(Math.random() * funCookieMessages.length)
-                      ]
-                    }
-                  </p>
+                  <p className="text-gray-700 mb-2">{randomMessage}</p>
 
                   <p className="text-gray-600 text-sm mb-4">
                     We use cookies to enhance your browsing experience, analyze
@@ -126,23 +116,19 @@ const CookieConsent = () => {
                 </div>
 
                 <div className="flex flex-col sm:flex-row p-4 gap-2 bg-gray-50">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                  <button
                     onClick={acceptCookies}
                     className="flex-1 py-2 px-4 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
                   >
                     <BsEmojiLaughing /> Accept All
-                  </motion.button>
+                  </button>
 
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                  <button
                     onClick={declineCookies}
                     className="flex-1 py-2 px-4 bg-white border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-100 transition-colors flex items-center justify-center gap-2"
                   >
                     Decline <BsEmojiFrown />
-                  </motion.button>
+                  </button>
                 </div>
 
                 <div className="px-4 pb-4">

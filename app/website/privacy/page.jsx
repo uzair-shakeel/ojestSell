@@ -1,44 +1,35 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import Image from "next/image";
 
 const PrivacyPolicyPage = () => {
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Hero Banner Section with Image */}
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.5 }}
-        className="mt-4 mx-4 text-center rounded-3xl overflow-hidden bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: "url('/IMG_4467.jpg')", // Replace with your image path
-        }}
-      >
-        <div className="bg-black/40 flex justify-start   md:justify-end py-4 md:py-24 px-4">
-          {" "}
-          <div className="relative z-10 md:w-1/3 px-6 flex flex-col justify-center">
-            <h1 className="text-xl   font-extrabold text-gray-900 sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
-              Privacy
-              <br /> Policy
-            </h1>
-            {/* <p className="text-lg text-white mb-6">
-              How we collect, use, and protect your information
-            </p> */}
+      <div className="mt-4 mx-4 text-center rounded-3xl overflow-hidden bg-cover bg-center bg-no-repeat relative">
+        <div
+          className="w-full h-[300px] relative"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/IMG_4467.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <div className="bg-black/20 flex justify-start md:justify-end py-4 md:py-24 px-4 h-full">
+            <div className="relative z-10 md:w-1/3 px-6 flex flex-col justify-center">
+              <h1 className="text-xl font-extrabold text-white sm:text-4xl">
+                Privacy Policy
+              </h1>
+            </div>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Privacy Policy Content */}
       <div className="max-w-5xl mx-auto px-4 py-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-white p-6 md:p-8 rounded-xl shadow-md"
-        >
+        <div className="bg-white p-6 md:p-8 rounded-xl shadow-md">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
             1. Introduction
           </h2>
@@ -225,15 +216,10 @@ const PrivacyPolicyPage = () => {
 
           <div className="border-t border-gray-200 pt-6">
             <p className="text-gray-600 text-sm">
-              Last Updated:{" "}
-              {new Date().toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
+              Last Updated: {new Date().toLocaleDateString()}
             </p>
           </div>
-        </motion.div>
+        </div>
 
         <div className="mt-8 text-center">
           <Link
