@@ -1,5 +1,6 @@
 import Navbar from "../../components/website/Navbar";
-import { Footer } from "../../components/website/footer";
+import { Footer } from "../../components/website/Footer";
+import CookieConsent from "../../components/website/CookieConsent";
 
 export default function WebsiteLayout({ children }) {
   return (
@@ -10,6 +11,7 @@ export default function WebsiteLayout({ children }) {
         <div className="w-full">{children}</div>
       </main>
       <Footer />
+      <CookieConsent />
     </div>
   );
 }

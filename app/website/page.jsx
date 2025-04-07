@@ -1,7 +1,17 @@
-import React from "react";
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-const page = () => {
-  return <div>Landing page of the website</div>;
+const Page = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    // Redirect to /website when the component mounts
+    router.push("/");
+  }, [router]);
+
+  // Optional: Render something while redirecting
+  return <div>Redirecting to website...</div>;
 };
 
-export default page;
+export default Page;

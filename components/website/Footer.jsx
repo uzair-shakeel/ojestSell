@@ -104,7 +104,7 @@ export const Footer = () => {
               </li>
               <li className="flex items-center">
                 <FiPhone className="h-6 w-6 text-gray-400 mr-3" />
-                <span className="text-gray-400">+1 (555) 123-4567</span>
+                <span className="text-gray-400">+48 (669) 993 336</span>
               </li>
               <li className="flex items-center">
                 <FiMail className="h-6 w-6 text-gray-400 mr-3" />
@@ -141,24 +141,24 @@ export const Footer = () => {
               &copy; {new Date().getFullYear()} OjestSell. All rights reserved.
             </p>
             <div className="mt-4 md:mt-0 flex space-x-6">
-              <a
-                href="#"
+              <Link
+                href="/website/privacy"
                 className="text-gray-400 hover:text-white transition-colors"
               >
                 Privacy Policy
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                href="/website/terms"
                 className="text-gray-400 hover:text-white transition-colors"
               >
                 Terms of Service
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                href="/website/contact"
                 className="text-gray-400 hover:text-white transition-colors"
               >
-                Cookie Policy
-              </a>
+                Contact Us
+              </Link>
             </div>
           </div>
         </div>
@@ -166,5 +166,3 @@ export const Footer = () => {
     </footer>
   );
 };
-
-export default Footer;
