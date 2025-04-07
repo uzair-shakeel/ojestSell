@@ -10,6 +10,7 @@ const Navbar = () => {
 
   const navLinks = [
     { name: "Home", href: "/website" },
+    { name: "Blog", href: "/website/blog" },
     { name: "FAQ", href: "/website/faq" },
     { name: "Contact", href: "/website/contact" },
   ];
@@ -24,7 +25,7 @@ const Navbar = () => {
       </div>
 
       {/* Navigation Links - visible on medium screens and larger */}
-      <div className="hidden md:flex items-center space-x-6">
+      {/* <div className="hidden md:flex items-center space-x-6">
         {navLinks.map((link) => (
           <Link
             key={link.name}
@@ -34,7 +35,7 @@ const Navbar = () => {
             {link.name}
           </Link>
         ))}
-      </div>
+      </div> */}
 
       <div className="flex items-center space-x-5 sm:mx-4">
         {/* Add Listing Button */}
