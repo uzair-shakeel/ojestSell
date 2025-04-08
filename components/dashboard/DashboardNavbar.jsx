@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import { UserButton, SignOutButton } from "@clerk/nextjs";
-import { FiMenu , FiX} from "react-icons/fi";
+import { FiMenu, FiX } from "react-icons/fi";
 
 export default function DashboardNavbar({ isOpen, toggleSidebar }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -26,9 +26,15 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
         </div>
 
         {/* Mobile Menu Button */}
-        <button onClick={toggleSidebar} className=" text-gray-700 block md:hidden">
-        {isOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
-
+        <button
+          onClick={toggleSidebar}
+          className=" text-gray-700 block md:hidden"
+        >
+          {isOpen ? (
+            <FiX className="w-6 h-6" />
+          ) : (
+            <FiMenu className="w-6 h-6" />
+          )}
         </button>
       </div>
 

@@ -6,12 +6,25 @@ export default function middleware(request) {
     return NextResponse.next();
   }
 
-  // In development, you could add Clerk functionality here
+  // Check if the user is trying to access the sign-up page
+  if (request.nextUrl.pathname === "/sign-up") {
+    // Check if seller type is selected
+    const sellerType = request.cookies.get("sellerType")?.value;
+
+    if (!sellerType) {
+      // Redirect to seller type selection page if no type is selected
+      return NextResponse.redirect(
+        new URL("/website/seller-type", request.url)
+      );
+    }
+  }
+
+  // For dashboard routes, you could add Clerk functionality here
   // But for now, just pass through all requests
   return NextResponse.next();
 }
 
 export const config = {
-  // Only match routes that should be protected
-  matcher: ["/dashboard/:path*"],
+  // Match routes that should be protected
+  matcher: ["/dashboard/:path*", "/sign-up"],
 };
