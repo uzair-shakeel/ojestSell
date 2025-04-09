@@ -1,7 +1,15 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Building2, User, MapPin, Phone, Mail, Upload } from "lucide-react";
+import {
+  Building2,
+  User,
+  MapPin,
+  Phone,
+  Mail,
+  Upload,
+  KeyRound,
+} from "lucide-react";
 
 const SellerDetailsPage = () => {
   const router = useRouter();
@@ -14,6 +22,7 @@ const SellerDetailsPage = () => {
     companyName: "",
     companyAddress: "",
     businessPhone: "",
+    nip: "",
     profileImage: null,
   });
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -95,7 +104,13 @@ const SellerDetailsPage = () => {
                 {sellerType === "company" ? "Company Logo" : "Profile Picture"}
               </h2>
               <div className="flex items-center justify-center">
-                <div className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-full flex flex-col items-center justify-center overflow-hidden relative">
+                <div
+                  className={` ${
+                    sellerType === "seller"
+                      ? "w-32 h-32"
+                      : "w-auto min-w-64 h-32"
+                  } border-2 border-dashed border-gray-300 rounded-full flex flex-col items-center justify-center overflow-hidden relative`}
+                >
                   {previewUrl ? (
                     <img
                       src={previewUrl}
@@ -289,6 +304,28 @@ const SellerDetailsPage = () => {
                         id="businessPhone"
                         required
                         value={formData.businessPhone}
+                        onChange={handleChange}
+                        className="block w-full pl-10 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="nip"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      NIP
+                    </label>
+                    <div className="mt-1 relative rounded-md shadow-sm">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <KeyRound className="h-5 w-5 text-gray-400" />
+                      </div>
+                      <input
+                        type="text"
+                        name="nip"
+                        id="nip"
+                        required
+                        value={formData.nip}
                         onChange={handleChange}
                         className="block w-full pl-10 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                       />

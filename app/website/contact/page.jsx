@@ -39,8 +39,28 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="bg-gray-50 py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="bg-gray-50 ">
+      {/* Hero Banner Section with Image */}
+      <div className="mt-4 mx-4 text-center rounded-3xl overflow-hidden bg-cover bg-center bg-no-repeat relative">
+        <div
+          className="w-full h-[300px] relative"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/IMG_4467.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <div className="bg-black/20 flex justify-start md:justify-end py-4 md:py-24 px-4 h-full">
+            <div className="relative z-10 w-full md:w-1/3 px-6 flex flex-col justify-center">
+              <h1 className="text-xl font-extrabold text-white sm:text-4xl">
+                Contact Us
+              </h1>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
             Contact Us

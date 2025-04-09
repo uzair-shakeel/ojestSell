@@ -18,7 +18,7 @@ const PrivacyPolicyPage = () => {
           }}
         >
           <div className="bg-black/20 flex justify-start md:justify-end py-4 md:py-24 px-4 h-full">
-            <div className="relative z-10 md:w-1/3 px-6 flex flex-col justify-center">
+            <div className="relative z-10 w-full md:w-1/3 px-6 flex flex-col justify-center">
               <h1 className="text-xl font-extrabold text-white sm:text-4xl">
                 Privacy Policy
               </h1>
