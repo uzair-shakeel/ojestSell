@@ -28,13 +28,6 @@ const nextConfig = {
   // Remove headers configuration since it's not compatible with export
   skipTrailingSlashRedirect: true,
   skipMiddlewareUrlNormalize: true,
-
-  // Exclude Clerk auth pages from static generation
-  unstable_excludeFiles: [
-    "**/dashboard/**/*",
-    "**/sign-in/**/*",
-    "**/sign-up/**/*",
-  ],
 };
 
 mergeConfig(nextConfig, userConfig);

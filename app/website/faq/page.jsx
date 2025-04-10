@@ -111,7 +111,7 @@ const FAQPage = () => {
           className="w-full h-[300px] relative"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/IMG_4467.jpg')",
+              "linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/IMG_4469.jpg')",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}

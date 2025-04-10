@@ -4,7 +4,7 @@ import { BrowseCategories } from "../components/website/browse-categories";
 import { BrowseLocations } from "../components/website/browse-locations";
 import { BrowseByMake } from "../components/website/browse-by-make";
 import { BlogSection } from "../components/website/blog-section";
-import { Footer } from "../components/website/footer";
+import { Footer } from "../components/website/Footer";
 import Navbar from "../components/website/Navbar.jsx";
 import { FeaturedCategories } from "../components/website/featured-categories";
 import { FilterSearch } from "../components/website/filter-search";
@@ -50,7 +50,7 @@ export default function Home() {
         <BrowseCategories />
         <BrowseLocations />
         <BrowseByMake />
-        <BlogSection />
+        {/* <BlogSection /> */}
       </main>
 
       <Footer />
