@@ -1,5 +1,5 @@
 "use client";
-
+import Image from "next/image";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
@@ -103,28 +103,36 @@ const FAQPage = () => {
     },
   ];
 
+  // Extract the first FAQ for the hero section
+  const firstFaq = faqs[0];
+  // Get the remaining FAQs for the regular list
+  const remainingFaqs = faqs.slice(1);
+
   return (
     <div className="bg-gradient-to-b from-gray-50 to-white ">
-      {/* Hero Banner Section with Image */}
-      <div className="mt-4 mx-4 text-center rounded-3xl overflow-hidden bg-cover bg-center bg-no-repeat relative">
-        <div
-          className="w-full h-[300px] relative"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/IMG_4469.jpg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
-          <div className="bg-black/20 flex justify-start md:justify-end py-4 md:py-24 px-4 h-full">
-            <div className="relative z-10 md:w-1/3 px-6 flex flex-col justify-center">
-              <h1 className="text-xl font-extrabold text-white sm:text-4xl">
-                Frequently Asked Questions
-              </h1>
-            </div>
+      {/* Hero Section */}
+      <section className="relative h-[600px] w-[98%] mx-auto my-[10px] rounded-2xl overflow-hidden">
+        <div className="absolute inset-0">
+          <Image
+            src="/IMG_4469.jpg"
+            alt="Car sales hero image"
+            fill
+            className="object-cover block brightness-75"
+            priority
+          />
+        </div>
+
+        <div className="relative z-10 container h-full flex flex-col justify-between py-[50px] md:py-[20px] items-center text-center text-white">
+          <div>
+            <h1 className="text-xl md:text-5xl font-bold mb-4">
+              Frequently Asked Questions
+            </h1>
+          </div>
+          <div className="absolute md:bottom-20 bottom-10 left-5 right-5 bg-white/70 backdrop-blur-sm p-2 rounded-xl shadow-lg max-w-3xl mx-auto">
+            <FAQItem question={firstFaq.question} answer={firstFaq.answer} />
           </div>
         </div>
-      </div>
+      </section>
       <div className="max-w-7xl mx-auto py-20 px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
@@ -139,10 +147,10 @@ const FAQPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mt-12  rounded-xl overflow-hidden "
+          className="mt-12 rounded-xl overflow-hidden"
         >
           <dl className="divide-y divide-gray-200">
-            {faqs.map((faq, index) => (
+            {remainingFaqs.map((faq, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
