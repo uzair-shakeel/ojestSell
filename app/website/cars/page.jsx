@@ -106,35 +106,24 @@ const page = () => {
   return (
     <div className="w-full min-h-screen h-auto bg-white p-2 sm:p-5">
       {/* Hero Banner Section with Image */}
-      <div className="mt-4 mx-4 text-center rounded-3xl overflow-hidden bg-cover bg-center bg-no-repeat relative">
-        <div
-          className="w-full h-[300px] relative"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/IMG_4467.jpg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
-          <div className="bg-black/20 flex justify-start md:justify-end py-4 md:py-24 px-4 h-full">
-            <div className="relative z-10 w-full md:w-1/3 px-6 flex flex-col justify-center">
-              <h1 className="text-xl font-extrabold  text-white sm:text-4xl">
-                Car Search
-              </h1>
-            </div>
-          </div>
+      <section className="relative max-w-screen-2xl mx-auto h-[300px]  md:h-[400px] w-[98%]  my-[10px] rounded-2xl overflow-hidden">
+        <div className="absolute inset-0">
+          <Image
+            src="/images/result.jpg"
+            alt="Car sales hero image"
+            fill
+            className="object-cover brightness-75 "
+            priority
+          />
         </div>
-      </div>
-      {/* <div className="relative h-96 w-full flex justify-end items-center max-w-screen-2xl mx-auto p-7">
-        <img
-          src="http://localhost:3000/results.jpg"
-          alt=""
-          className="absolute top-0 left-0 w-full h-full object-cover brightness-50 rounded-lg sm:rounded-2xl object-[20%_40%]"
-        />
-        <h1 className="z-10 text-white sm:text-5xl text-3xl font-bold  max-w-3xl sm:text-start text-center">
-          Find your dream car easily with advanced search filters.
-        </h1>
-      </div> */}
+
+        <div className="relative z-10 container h-full flex flex-col justify-center items-end py-[90px] md:py-[120px] text-center text-white">
+          <h1 className="z-10 text-white sm:text-4xl pt-24 md:pt-0 md:text-5xl text-3xl font-bold  max-w-2xl xl:text-start text-center ">
+            Find your dream car easily with advanced search filters.
+          </h1>
+        </div>
+      </section>
+
       <div className="max-w-screen-2xl mx-auto sm:py-12 flex flex-row lg:space-x-4 h-full mt-4">
         {/* aside */}
         <aside className="w-[380px] hidden lg:block sticky top-0 self-start h-fit">
