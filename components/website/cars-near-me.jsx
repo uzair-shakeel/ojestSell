@@ -1,108 +1,72 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import CarCard from "./CarCard";
-
-const CARS = [
-  {
-    id: 1,
-    name: "Toyota RAV4",
-    images: [
-      "https://images.unsplash.com/photo-1581540222194-0def2dda95b8?q=80&w=2067&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1568844293986-8d0400bd4745?q=80&w=2070&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=2070&auto=format&fit=crop",
-    ],
-    price: 28500,
-    rating: 4.8,
-    reviews: 124,
-    seats: 5,
-    transmission: "Auto",
-    fuel: "Hybrid",
-    year: 2023,
-    mileage: 12500,
-    engineSize: "2.5L",
-  },
-  {
-    id: 2,
-    name: "Ford Mustang",
-    images: [
-      "https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?q=80&w=2070&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1494905998402-395d579af36f?q=80&w=2070&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1547245324-d777c6f05e80?q=80&w=2070&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=2070&auto=format&fit=crop",
-    ],
-    price: 42800,
-    rating: 4.9,
-    reviews: 87,
-    seats: 4,
-    transmission: "Auto",
-    fuel: "Petrol",
-    year: 2022,
-    mileage: 8700,
-    engineSize: "5.0L",
-  },
-  {
-    id: 3,
-    name: "Lamborghini Huracan",
-    images: [
-      "https://images.unsplash.com/photo-1580414057403-c5f451f30e1c?q=80&w=2073&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1517994112540-009c47ea476b?q=80&w=2070&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1518987048-93e29699e79a?q=80&w=2070&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?q=80&w=2037&auto=format&fit=crop",
-    ],
-    price: 215000,
-    rating: 5.0,
-    reviews: 32,
-    seats: 2,
-    transmission: "Auto",
-    fuel: "Petrol",
-    year: 2023,
-    mileage: 3200,
-    engineSize: "5.2L",
-  },
-  {
-    id: 4,
-    name: "Toyota Supra",
-    images: [
-      "https://images.unsplash.com/photo-1580414057403-c5f451f30e1c?q=80&w=2073&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?q=80&w=2072&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?q=80&w=2064&auto=format&fit=crop",
-    ],
-    price: 58900,
-    rating: 4.7,
-    reviews: 56,
-    seats: 2,
-    transmission: "Manual",
-    fuel: "Petrol",
-    year: 2022,
-    mileage: 15600,
-    engineSize: "3.0L",
-  },
-];
+import { getAllCars } from "../../services/carService";
 
 export function CarsNearMe() {
-  const [cars, setCars] = useState(CARS);
+  const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const scrollRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [view, setView] = useState("grid");
 
-  // This useEffect will be used when connecting to the API
-  // useEffect(() => {
-  //   async function fetchCars() {
-  //     setLoading(true);
-  //     try {
-  //       const response = await fetch('/api/cars');
-  //       const data = await response.json();
-  //       setCars(data.cars);
-  //     } catch (error) {
-  //       console.error('Error fetching cars:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   }
-  //
-  //   fetchCars();
-  // }, []);
+  useEffect(() => {
+    const fetchCars = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await getAllCars();
+        console.log("Fetched cars:", data);
+        // Ensure data is an array
+        if (Array.isArray(data)) {
+          setCars(data);
+        } else if (data?.cars && Array.isArray(data.cars)) {
+          setCars(data.cars); // Handle case where backend returns { cars: [...] }
+        } else {
+          throw new Error("Fetched data is not an array");
+        }
+      } catch (error) {
+        console.error("Error fetching cars:", error);
+        setError(error.message || "Failed to fetch cars");
+        setCars([]); // Reset to empty array on error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCars();
+  }, []); // No dependencies since we don't need getToken
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeft(scrollRef.current.scrollLeft);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * 2; // Adjust scroll speed
+    scrollRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const scrollLeftFunc = () => {
+    scrollRef.current.scrollBy({ left: -300, behavior: "smooth" });
+  };
+
+  const scrollRightFunc = () => {
+    scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
+  };
 
   return (
     <section className="py-12 bg-gray-50">
@@ -113,15 +77,38 @@ export function CarsNearMe() {
             View All
           </button>
         </div>
-        {loading ? (
-          <div className="flex justify-center items-center h-40">
-            <p>Loading cars...</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {cars.map((car) => (
-              <CarCard key={car.id} car={car} />
-            ))}
+        {loading && <p>Loading cars...</p>}
+        {error && <p className="text-red-500">{error}</p>}
+        {!loading && !error && cars.length === 0 && <p>No cars found.</p>}
+        {/* Scrollable container */}
+        {cars.length > 0 && (
+          <div className="relative">
+            <button
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-2"
+              onClick={scrollLeftFunc}
+            >
+              <FaChevronLeft size={20} />
+            </button>
+
+            <div
+              ref={scrollRef}
+              className="flex overflow-x-auto gap-4 scroll-smooth scrollbar-hide py-4"
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+            >
+              {cars.map((car) => (
+                <CarCard key={car._id} view={view} car={car} />
+              ))}
+            </div>
+
+            <button
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-2"
+              onClick={scrollRightFunc}
+            >
+              <FaChevronRight size={20} />
+            </button>
           </div>
         )}
       </div>

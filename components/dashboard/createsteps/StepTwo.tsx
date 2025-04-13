@@ -1,32 +1,29 @@
 "use client";
 import { useState, useEffect } from "react";
 
-export default function StepTwo({ nextStep, prevStep, updateFormData }) {
+export default function StepTwo({ nextStep, prevStep, updateFormData, formData }) {
   const [localData, setLocalData] = useState({
-    make: "",
-    model: "",
-    trim: "",
-    type: "",
-    year: "",
-    color: "",
-    mileage: "",
-    drivetrain: "",
-    transmission: "",
-    fuel: "",
-    engine: "",
-    horsepower: "",
-    accidentHistory: "",
-    serviceHistory: "",
-    vin: "",
-    country: "",
+    make: formData.make,
+    model: formData.model,
+    trim: formData.trim,
+    type: formData.type,
+    year: formData.year,
+    color: formData.color,
+    mileage: formData.mileage,
+    drivetrain: formData.drivetrain,
+    transmission: formData.transmission,
+    fuel: formData.fuel,
+    engine: formData.engine,
+    horsepower: formData.horsepower,
+    accidentHistory: formData.accidentHistory,
+    serviceHistory: formData.serviceHistory,
+    vin: formData.vin,
+    country: formData.country,
   });
 
-  const [makes, setMakes] = useState([]); // State for car makes
-  const [models, setModels] = useState([]); // State for car models
-  const years = Array.from(
-    new Array(50),
-    (_, i) => new Date().getFullYear() - i
-  );
+  const [makes, setMakes] = useState<string[]>([]); // State for car makes
+  const [models, setModels] = useState<string[]>([]); // State for car models
+  const years = Array.from(new Array(50), (_, i) => new Date().getFullYear() - i);
   const engines = ["0.5", "1.0", "1.5", "2.0", "3.0", "4.0", "5.0", "7.3"];
 
   // Fetch car makes and models from the JSON file
@@ -60,6 +57,18 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
   }, [localData.make]);
 
   const handleNext = () => {
+    if (!localData.make) {
+      alert("Make is required.");
+      return;
+    }
+    if (!localData.model) {
+      alert("Model is required.");
+      return;
+    }
+    if (!localData.type) {
+      alert("Type is required.");
+      return;
+    }
     updateFormData(localData);
     nextStep();
   };
@@ -67,14 +76,12 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
   return (
     <div className="bg-white rounded-lg">
       <h2 className="text-xl font-bold mb-4">Step 2: Car Details</h2>
-
-      {/* Grid Layout */}
       <div className="grid grid-cols-2 gap-4">
         {/* Make */}
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Make</label>
           <select
-            className="border p-3 w-full rounded h-12 "
+            className="border p-3 w-full rounded h-12"
             value={localData.make}
             onChange={(e) =>
               setLocalData({ ...localData, make: e.target.value, model: "" })
@@ -93,12 +100,10 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Model</label>
           <select
-            className="border p-3 w-full rounded h-12 "
+            className="border p-3 w-full rounded h-12"
             value={localData.model}
-            onChange={(e) =>
-              setLocalData({ ...localData, model: e.target.value })
-            }
-            disabled={!localData.make} // Disable if no make is selected
+            onChange={(e) => setLocalData({ ...localData, model: e.target.value })}
+            disabled={!localData.make}
           >
             <option value="">Select Model</option>
             {models.map((model, index) => (
@@ -115,11 +120,9 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
           <input
             type="text"
             placeholder="Trim (Daraja Kroz, Normal, etc.)"
-            className="border p-3 w-full rounded h-12 "
+            className="border p-3 w-full rounded h-12"
             value={localData.trim}
-            onChange={(e) =>
-              setLocalData({ ...localData, trim: e.target.value })
-            }
+            onChange={(e) => setLocalData({ ...localData, trim: e.target.value })}
           />
         </div>
 
@@ -127,11 +130,9 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Type</label>
           <select
-            className="border p-3 w-full rounded h-12 "
+            className="border p-3 w-full rounded h-12"
             value={localData.type}
-            onChange={(e) =>
-              setLocalData({ ...localData, type: e.target.value })
-            }
+            onChange={(e) => setLocalData({ ...localData, type: e.target.value })}
           >
             <option value="">Select Type</option>
             <option value="Sedan">Sedan</option>
@@ -145,11 +146,9 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Year</label>
           <select
-            className="border p-3 w-full rounded h-12 "
+            className="border p-3 w-full rounded h-12"
             value={localData.year}
-            onChange={(e) =>
-              setLocalData({ ...localData, year: e.target.value })
-            }
+            onChange={(e) => setLocalData({ ...localData, year: e.target.value })}
           >
             <option value="">Select Year</option>
             {years.map((year, index) => (
@@ -160,17 +159,15 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
           </select>
         </div>
 
-        {/* color */}
+        {/* Color */}
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Color</label>
           <input
             type="text"
             placeholder="Color"
-            className="border p-3 w-full rounded h-12 "
+            className="border p-3 w-full rounded h-12"
             value={localData.color}
-            onChange={(e) =>
-              setLocalData({ ...localData, color: e.target.value })
-            }
+            onChange={(e) => setLocalData({ ...localData, color: e.target.value })}
           />
         </div>
 
@@ -180,11 +177,9 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
           <input
             type="number"
             placeholder="Mileage"
-            className="border p-3 w-full rounded h-12 "
+            className="border p-3 w-full rounded h-12"
             value={localData.mileage}
-            onChange={(e) =>
-              setLocalData({ ...localData, mileage: e.target.value })
-            }
+            onChange={(e) => setLocalData({ ...localData, mileage: e.target.value })}
           />
         </div>
 
@@ -192,16 +187,16 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Drivetrain</label>
           <select
-            className="border p-3 w-full rounded h-12 "
+            className="border p-3 w-full rounded h-12"
             value={localData.drivetrain}
-            onChange={(e) =>
-              setLocalData({ ...localData, drivetrain: e.target.value })
-            }
+            onChange={(e) => setLocalData({ ...localData, drivetrain: e.target.value })}
           >
             <option value="">Select Drivetrain</option>
             <option value="FWD">FWD</option>
             <option value="RWD">RWD</option>
-            <option value="4X4">4X4</option>
+            <option value="AWD">AWD</option>
+            <option value="4WD">4WD</option>
+            <option value="2WD">2WD</option>
           </select>
         </div>
 
@@ -209,15 +204,14 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Transmission</label>
           <select
-            className="border p-3 w-full rounded h-12 "
+            className="border p-3 w-full rounded h-12"
             value={localData.transmission}
-            onChange={(e) =>
-              setLocalData({ ...localData, transmission: e.target.value })
-            }
+            onChange={(e) => setLocalData({ ...localData, transmission: e.target.value })}
           >
             <option value="">Select Transmission</option>
             <option value="Manual">Manual</option>
             <option value="Automatic">Automatic</option>
+            <option value="Semi-Automatic">Semi-Automatic</option>
           </select>
         </div>
 
@@ -225,18 +219,15 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Fuel Type</label>
           <select
-            className="border p-3 w-full rounded h-12 "
+            className="border p-3 w-full rounded h-12"
             value={localData.fuel}
-            onChange={(e) =>
-              setLocalData({ ...localData, fuel: e.target.value })
-            }
+            onChange={(e) => setLocalData({ ...localData, fuel: e.target.value })}
           >
             <option value="">Select Fuel Type</option>
             <option value="Petrol">Petrol</option>
             <option value="Diesel">Diesel</option>
             <option value="Hybrid">Hybrid</option>
             <option value="Electric">Electric</option>
-            <option value="LPG">LPG</option>
           </select>
         </div>
 
@@ -246,28 +237,22 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
           <input
             type="number"
             placeholder="Horsepower"
-            className="border p-3 w-full rounded h-12 "
+            className="border p-3 w-full rounded h-12"
             value={localData.horsepower}
-            onChange={(e) =>
-              setLocalData({ ...localData, horsepower: e.target.value })
-            }
+            onChange={(e) => setLocalData({ ...localData, horsepower: e.target.value })}
           />
         </div>
 
         {/* Engine Displacement */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">
-            Engine Displacement
-          </label>
+          <label className="block text-gray-700 mb-1">Engine Displacement</label>
           <input
             list="engines"
-            type="number"
+            type="text"
             placeholder="Engine Displacement"
-            className="border p-3 w-full rounded h-12 "
+            className="border p-3 w-full rounded h-12"
             value={localData.engine}
-            onChange={(e) =>
-              setLocalData({ ...localData, engine: e.target.value })
-            }
+            onChange={(e) => setLocalData({ ...localData, engine: e.target.value })}
           />
           <datalist id="engines">
             {engines.map((engine, index) => (
@@ -275,15 +260,14 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
             ))}
           </datalist>
         </div>
+
         {/* Service History */}
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Service History</label>
           <select
-            className="border p-3 w-full rounded h-12 "
+            className="border p-3 w-full rounded h-12"
             value={localData.serviceHistory}
-            onChange={(e) =>
-              setLocalData({ ...localData, serviceHistory: e.target.value })
-            }
+            onChange={(e) => setLocalData({ ...localData, serviceHistory: e.target.value })}
           >
             <option value="">Select Service History</option>
             <option value="Yes">Yes</option>
@@ -291,46 +275,41 @@ export default function StepTwo({ nextStep, prevStep, updateFormData }) {
           </select>
         </div>
 
-        {/* accidentHistory */}
+        {/* Accident History */}
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Accident History</label>
           <select
-            className="border p-3 w-full rounded h-12 "
+            className="border p-3 w-full rounded h-12"
             value={localData.accidentHistory}
-            onChange={(e) =>
-              setLocalData({ ...localData, accidentHistory: e.target.value })
-            }
+            onChange={(e) => setLocalData({ ...localData, accidentHistory: e.target.value })}
           >
-            <option value="">Select accidentHistory</option>
+            <option value="">Select Accident History</option>
             <option value="Yes">Yes</option>
             <option value="No">No</option>
           </select>
         </div>
+
         {/* VIN */}
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">VIN</label>
           <input
             type="text"
             placeholder="VIN"
-            className="border p-3 w-full rounded h-12 "
+            className="border p-3 w-full rounded h-12"
             value={localData.vin}
-            onChange={(e) =>
-              setLocalData({ ...localData, vin: e.target.value })
-            }
+            onChange={(e) => setLocalData({ ...localData, vin: e.target.value })}
           />
         </div>
 
         {/* Country of Origin */}
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Country of Origin</label>
-           <input
+          <input
             type="text"
             placeholder="Poland"
-            className="border p-3 w-full rounded h-12 "
+            className="border p-3 w-full rounded h-12"
             value={localData.country}
-            onChange={(e) =>
-              setLocalData({ ...localData, country: e.target.value })
-            }
+            onChange={(e) => setLocalData({ ...localData, country: e.target.value })}
           />
         </div>
       </div>

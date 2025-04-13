@@ -7,46 +7,93 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { ImLocation } from "react-icons/im";
 import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-
-export default function CarCard({ view }) {
+export default function CarCard({ view, car }) {
   const router = useRouter();
+  const [locationDetails, setLocationDetails] = useState({ city: "", state: "" });
+
+  useEffect(() => {
+    // Fetch the address using reverse geocoding when the car location is available
+    const fetchLocationDetails = async () => {
+      const [longitude, latitude] = car.location.coordinates;
+      const apiKey = "AIzaSyCvL9AJCbxcJ70RN62qZjtWys9uLpIXSWY"; // Replace with your Google Maps API key
+      try {
+        const response = await axios.get(
+          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
+        );
+        if (response.data.status === "OK") {
+          // Extract city and state from the address components
+          const addressComponents = response.data.results[0].address_components;
+          let city = "";
+          let state = "";
+
+          // Loop through the address components to find the city and state (administrative_area_level_1)
+          addressComponents.forEach((component) => {
+            if (component.types.includes("locality")) {
+              city = component.long_name; // City
+            }
+            if (component.types.includes("administrative_area_level_1")) {
+              state = component.long_name; // State (Province)
+            }
+          });
+
+          setLocationDetails({ city, state });
+        }
+      } catch (error) {
+        console.error("Error fetching address:", error);
+      }
+    };
+
+    if (car.location.coordinates) {
+      fetchLocationDetails();
+    }
+  }, [car]);
+
   return (
     <div
-      className={` rounded-xl overflow-hidden border border-gray-200 shadow-sm  group flex ${
+      className={`rounded-xl overflow-hidden border border-gray-200 shadow-sm group flex min-w-[380px] ${
         view === "list" ? "flex-row" : "flex-col max-w-full"
       }`}
     >
       <Swiper
         modules={[Navigation]}
         navigation={{ prevEl: ".custom-prev", nextEl: ".custom-next" }}
-        className={` ${
+        className={`${
           view === "list"
-            ? "max-w-96 md:max-w-80 xl:max-w-96 h-auto"
+            ? "w-[700px] h-auto"
             : "w-full h-64"
         }`}
       >
-        <SwiperSlide>
-          <img
-            src="https://images.unsplash.com/photo-1580414057403-c5f451f30e1c?q=80&w=2073&auto=format&fit=crop"
-            className="w-full h-64 object-cover"
-            alt="Car"
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <img
-            src="https://images.unsplash.com/photo-1580414057403-c5f451f30e1c?q=80&w=2073&auto=format&fit=crop"
-            className="w-full h-64 object-cover"
-            alt="Car"
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <img
-            src="https://images.unsplash.com/photo-1580414057403-c5f451f30e1c?q=80&w=2073&auto=format&fit=crop"
-            className="w-full h-64 object-cover"
-            alt="Car"
-          />
-        </SwiperSlide>
+        {/* Dynamically render images from the car.images array */}
+        {car.images && car.images.length > 0 ? (
+          car.images.map((image, index) => {
+            // Assuming the backend sends image paths like 'uploads/1743981275051-yousriphoto.jpg'
+            const imageUrl = `http://localhost:5000/${image.replace("\\", "/")}`; // Update URL format for static files
+
+            return (
+              <SwiperSlide key={index}>
+               <div className="">
+               <img
+                  src={imageUrl}
+                  className="w-full h-64 object-cover"
+                  alt={`Car Image ${index + 1}`}
+                />
+               </div>
+              </SwiperSlide>
+            );
+          })
+        ) : (
+          <SwiperSlide>
+            <img
+              src="https://via.placeholder.com/500" // Placeholder image
+              className="w-full h-64 object-cover"
+              alt="Placeholder Image"
+            />
+          </SwiperSlide>
+        )}
+
         <button className="custom-prev group-hover:opacity-100 opacity-0 transition-all duration-300 absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/30 text-black w-8 h-8 rounded-full shadow-md z-10">
           ❮
         </button>
@@ -55,65 +102,64 @@ export default function CarCard({ view }) {
         </button>
       </Swiper>
 
-      <div className="px-4 py-3  w-full">
+      <div className="px-4 py-3 w-full">
         <div className="flex flex-col justify-start mb-2">
           <div className="flex justify-between items-center">
             <h2
-              className={` font-semibold uppercase text-black mb-2 ${
+              className={`font-semibold uppercase text-black mb-2 ${
                 view === "list" ? "text-2xl" : "text-lg"
               }`}
             >
-              2023 Toyota RAV4{" "}
+              {car.year} {car.make} {car.model}
             </h2>
           </div>
-          <div className="flex space-x-5">
-            <div className="flex items-center  space-x-2 bg-blue-100 rounded-lg pe-2 w-fit my-2">
+          <div className="flex flex-col md:flex-row md:space-x-5">
+            <div className="flex items-center space-x-2 bg-blue-100 rounded-lg pe-2 w-fit my-2">
               <div className="bg-blue-400 text-sm p-1 rounded-l text-white">
                 <FaTags />
               </div>
-              <span className="text-base  text-black">100,500 zł</span>
+              <span className="text-base text-black">{car.financialInfo.priceNetto} zł</span>
             </div>
+
+            {/* Display the city and state (province) */}
             <div
-              className={`text-black flex items-center gap-1 ${
-                view === "list" ? "block" : "hidden"
-              }`}
+              className={`text-black flex items-center gap-1 `}
             >
-              <ImLocation /> Tunisia - Monastir
+              <ImLocation />
+              {locationDetails.city && locationDetails.state
+                ? `${locationDetails.city}, ${locationDetails.state}`
+                : "Loading location..."}
             </div>
           </div>
         </div>
+
         <div className="grid grid-cols-2 gap-2 font-medium mb-3 text-base text-black">
           <div>
-            <span className="font-light">Fuel:</span> Hybrid
+            <span className="font-light">Fuel:</span> {car.fuel}
           </div>
           <div>
-            <span className="font-light">Transmission:</span> Auto
+            <span className="font-light">Transmission:</span> {car.transmission}
           </div>
           <div>
-            <span className="font-light">Engine:</span> 2.5L
+            <span className="font-light">Engine:</span> {car.engine}
           </div>
           <div>
-            <span className="font-light">Mileage:</span> 166,000
+            <span className="font-light">Mileage:</span> {car.mileage}
           </div>
         </div>
-        <p className="text-sm text-gray-500 mb-4">
-          Lorem ipsum dolor sit amet cons
-        </p>
+        <p className="text-sm text-gray-500 mb-4">{car.title}</p>
         <div className="relative flex justify-between items-center">
-          <div
-            className={` ${
-              view === "list"
-                ? "flex items-center gap-2"
-                : "flex items-center gap-2"
-            }`}
-          >
+          <div className={`flex items-center gap-2`}>
             <img
               src="https://static.autotempest.com/prod/build/main/img/at-logos/at-logo-500.a9d7fdcf.png"
               alt=""
               className="w-32"
             />
           </div>
-          <button onClick={() => router.push(`/website/cars/5`)} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
+          <button
+            onClick={() => router.push(`/website/cars/${car._id}`)}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
+          >
             View details
           </button>
         </div>
