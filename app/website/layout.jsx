@@ -4,7 +4,7 @@ import CookieConsent from "../../components/website/CookieConsent";
 
 export default function WebsiteLayout({ children }) {
   return (
-    <div className="flex flex-col min-h-screen h-auto w-full">
+    <div className="flex flex-col bg-white min-h-screen h-auto w-full">
       <Navbar />
       {/* Main content adjusts dynamically */}
       <main className={`flex-1 flex h-auto w-full`}>

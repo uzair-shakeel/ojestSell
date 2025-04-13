@@ -10,18 +10,18 @@ const TermsPage = () => {
       {/* Hero Banner Section with Image */}
       <div className="mt-4 mx-4 text-center rounded-3xl overflow-hidden bg-cover bg-center bg-no-repeat relative">
         <div
-          className="w-full h-[300px] relative"
+          className="w-full h-[300px] md:h-[500px] relative"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/IMG_4467.jpg')",
+              "linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1)), url('/IMG_4466.jpg')",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         >
           <div className="bg-black/20 flex justify-start md:justify-end py-4 md:py-24 px-4 h-full">
             <div className="relative z-10 md:w-1/3 px-6 flex flex-col justify-center">
-              <h1 className="text-xl font-extrabold text-white sm:text-4xl">
-                Terms & Conditions
+              <h1 className="text-xl font-extrabold pt-24 md:pt-0 text-white sm:text-4xl">
+                Clear Terms. Smooth Rides. Drive with Confidence.
               </h1>
             </div>
           </div>
