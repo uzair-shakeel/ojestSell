@@ -42,7 +42,8 @@ const SellerTypePage = () => {
                 ? "shadow-xl"
                 : ""
             }`}
-            onClick={() => handleSelect("company")}
+            onClick={handleContinue}
+            // onClick={() => handleSelect("company")}
             onMouseEnter={() => setHoveredType("company")}
             onMouseLeave={() => setHoveredType(null)}
           >
@@ -84,7 +85,8 @@ const SellerTypePage = () => {
                 ? "shadow-xl"
                 : ""
             }`}
-            onClick={() => handleSelect("private")}
+            onClick={handleContinue}
+            // onClick={() => handleSelect("private")}
             onMouseEnter={() => setHoveredType("private")}
             onMouseLeave={() => setHoveredType(null)}
           >
@@ -115,21 +117,6 @@ const SellerTypePage = () => {
               </li>
             </ul>
           </div>
-        </div>
-
-        {/* Continue Button */}
-        <div className="mt-8 flex justify-center">
-          <button
-            onClick={handleContinue}
-            disabled={!selectedType}
-            className={`px-8 py-3 rounded-lg text-white font-medium transition-all duration-300 ${
-              selectedType
-                ? "bg-blue-600 hover:bg-blue-700"
-                : "bg-gray-400 cursor-not-allowed"
-            }`}
-          >
-            Continue
-          </button>
         </div>
       </div>
     </div>
