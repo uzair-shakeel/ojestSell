@@ -15,6 +15,15 @@ const loaderStyles = `
     position: fixed;
     inset: 0;
     z-index: 9999;
+    pointer-events: none;
+  }
+  
+  .loader-container > * {
+    pointer-events: auto;
+  }
+  
+  html:not(.loading-active) .loader-container {
+    display: none;
   }
 `;
 
@@ -53,6 +62,12 @@ export default function RootLayout({ children }) {
               document.documentElement.classList.add('loading-active');
               window.addEventListener('loaderComplete', function() {
                 document.documentElement.classList.remove('loading-active');
+                // Clean up any loader elements
+                const loaderContainer = document.querySelector('.loader-container');
+                if (loaderContainer) {
+                  loaderContainer.style.display = 'none';
+                  loaderContainer.style.pointerEvents = 'none';
+                }
               });
             `,
             }}

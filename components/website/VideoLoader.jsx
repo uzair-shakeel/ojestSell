@@ -43,6 +43,9 @@ const VideoLoader = () => {
           setLoading(false);
           // Dispatch event to notify that loading is complete
           window.dispatchEvent(new Event("loaderComplete"));
+
+          // Make sure the loading-active class is removed
+          document.documentElement.classList.remove("loading-active");
         }, remainingTime + 500); // Extra 500ms for smooth transition
       }
 
@@ -66,6 +69,9 @@ const VideoLoader = () => {
               setLoading(false);
               // Dispatch event to notify that loading is complete
               window.dispatchEvent(new Event("loaderComplete"));
+
+              // Make sure the loading-active class is removed
+              document.documentElement.classList.remove("loading-active");
             }, remainingTime + 500); // Extra 500ms for smooth transition
             return 100;
           }
@@ -126,13 +132,20 @@ const VideoLoader = () => {
   }, []);
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {loading && (
         <motion.div
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.7 }}
-          className="fixed inset-0 z-[9999] bg-white"
+          className="fixed inset-0 z-[9999] bg-white pointer-events-auto"
+          style={{ pointerEvents: loading ? "auto" : "none" }}
+          onAnimationComplete={() => {
+            if (!loading) {
+              // Extra safety to ensure the loading-active class is removed
+              document.documentElement.classList.remove("loading-active");
+            }
+          }}
         >
           <div className="relative w-full h-full">
             {/* Top progress bar */}

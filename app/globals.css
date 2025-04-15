@@ -48,3 +48,20 @@
     background-position: 0% 50%;
   }
 }
+
+/* Make sure no loader components block interaction after loading */
+html:not(.loading-active) .loader-container,
+html:not(.loading-active) [class*="VideoLoader"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  z-index: -1 !important;
+}
+
+/* Make sure content is interactive after loading */
+html:not(.loading-active) body > *:not(.loader-container) {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
