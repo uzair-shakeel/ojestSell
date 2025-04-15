@@ -1,40 +1,110 @@
 "use client";
 import { useState } from "react";
 
-export default function FilterSidebar() {
+export default function FilterSidebar({ onApplyFilters }) {
   const [openIndex, setOpenIndex] = useState(null);
+  const [filters, setFilters] = useState({
+    location: "",
+    maxDistance: "",
+    make: "",
+    model: "",
+    type: "",
+    yearFrom: "",
+    yearTo: "",
+    condition: "",
+    mileage: "",
+    drivetrain: "",
+    transmission: "",
+    fuel: "",
+    engine: "",
+    serviceHistory: "",
+    accidentHistory: "",
+  });
 
   const toggle = (index) => {
     setOpenIndex(index === openIndex ? null : index);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleApplyFilters = () => {
+    // Prepare query params for the backend
+    const queryParams = {
+      longitude: filters.location ? "19.945" : undefined, // Placeholder; use geocoding in production
+      latitude: filters.location ? "50.0647" : undefined, // Placeholder
+      maxDistance: filters.maxDistance || undefined,
+      make: filters.make || undefined,
+      model: filters.model || undefined,
+      type: filters.type || undefined,
+      yearFrom: filters.yearFrom || undefined,
+      yearTo: filters.yearTo || undefined,
+      condition: filters.condition || undefined, // Simplification: takes first condition
+      mileage: filters.mileage || undefined,
+      drivetrain: filters.drivetrain || undefined,
+      transmission: filters.transmission || undefined,
+      fuel: filters.fuel || undefined,
+      engine: filters.engine || undefined,
+      serviceHistory: filters.serviceHistory || undefined,
+      accidentHistory: filters.accidentHistory || undefined,
+    };
+    onApplyFilters(queryParams); // Pass filters to parent
+  };
+
+  const handleReset = () => {
+    setFilters({
+      location: "",
+      maxDistance: "",
+      make: "",
+      model: "",
+      type: "",
+      yearFrom: "",
+      yearTo: "",
+      condition: "",
+      mileage: "",
+      drivetrain: "",
+      transmission: "",
+      fuel: "",
+      engine: "",
+      serviceHistory: "",
+      accidentHistory: "",
+    });
+    onApplyFilters({}); // Reset filters by sending empty params
   };
 
   return (
     <div className="w-full border rounded-md bg-white lg:max-w-xs text-gray-900">
       <div className="flex justify-between items-center px-4 py-4 border-b">
         <h2 className="text-2xl font-semibold">Filters</h2>
-        <button className="text-base text-blue-600 font-medium">Reset</button>
+        <button onClick={handleReset} className="text-base text-blue-600 font-medium">
+          Reset
+        </button>
       </div>
 
       <div className="divide-y overflow-auto max-h-[calc(100vh-150px)] scrollbar-hide">
         {/* 0 - Location */}
-        <div
-          className={`collapse collapse-arrow px-2 rounded-none ${
-            openIndex === 0 ? "collapse-open" : ""
-          }`}
-        >
-          <div
-            className="collapse-title text-lg font-medium cursor-pointer"
-            onClick={() => toggle(0)}
-          >
+        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 0 ? "collapse-open" : ""}`}>
+          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(0)}>
             Location
           </div>
           <div className="collapse-content space-y-2">
             <input
               type="text"
+              name="location"
+              value={filters.location}
+              onChange={handleInputChange}
               placeholder="Enter location"
               className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
             />
-            <select className="w-full p-3 rounded-md bg-white border border-gray-300 text-base">
+            <select
+              name="maxDistance"
+              value={filters.maxDistance}
+              onChange={handleInputChange}
+              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+            >
+              <option value="">Select distance</option>
               <option value="5">5 km</option>
               <option value="10">10 km</option>
               <option value="15">15 km</option>
@@ -44,63 +114,59 @@ export default function FilterSidebar() {
         </div>
 
         {/* 1 - Make */}
-        <div
-          className={`collapse collapse-arrow px-2 rounded-none ${
-            openIndex === 1 ? "collapse-open" : ""
-          }`}
-        >
-          <div
-            className="collapse-title text-lg font-medium cursor-pointer"
-            onClick={() => toggle(1)}
-          >
+        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 1 ? "collapse-open" : ""}`}>
+          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(1)}>
             Make
           </div>
           <div className="collapse-content space-y-2">
-            <select className="w-full p-3 rounded-md bg-white border border-gray-300 text-base">
+            <select
+              name="make"
+              value={filters.make}
+              onChange={handleInputChange}
+              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+            >
               <option value="">All</option>
               <option value="Toyota">Toyota</option>
               <option value="Honda">Honda</option>
               <option value="Nissan">Nissan</option>
+              <option value="BMW">BMW</option>
             </select>
           </div>
         </div>
 
         {/* 2 - Model */}
-        <div
-          className={`collapse collapse-arrow px-2 rounded-none ${
-            openIndex === 2 ? "collapse-open" : ""
-          }`}
-        >
-          <div
-            className="collapse-title text-lg font-medium cursor-pointer"
-            onClick={() => toggle(2)}
-          >
+        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 2 ? "collapse-open" : ""}`}>
+          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(2)}>
             Model
           </div>
           <div className="collapse-content space-y-2">
-            <select className="w-full p-3 rounded-md bg-white border border-gray-300 text-base">
+            <select
+              name="model"
+              value={filters.model}
+              onChange={handleInputChange}
+              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+            >
               <option value="">All</option>
               <option value="MX3">MX3</option>
               <option value="MX2">MX2</option>
               <option value="MX1">MX1</option>
+              <option value="320i">320i</option>
             </select>
           </div>
         </div>
 
         {/* 3 - Type */}
-        <div
-          className={`collapse collapse-arrow px-2 rounded-none ${
-            openIndex === 3 ? "collapse-open" : ""
-          }`}
-        >
-          <div
-            className="collapse-title text-lg font-medium cursor-pointer"
-            onClick={() => toggle(3)}
-          >
+        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 3 ? "collapse-open" : ""}`}>
+          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(3)}>
             Type
           </div>
           <div className="collapse-content space-y-2">
-            <select className="w-full p-3 rounded-md bg-white border border-gray-300 text-base">
+            <select
+              name="type"
+              value={filters.type}
+              onChange={handleInputChange}
+              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+            >
               <option value="">All</option>
               <option value="SUV">SUV</option>
               <option value="Sedan">Sedan</option>
@@ -110,27 +176,40 @@ export default function FilterSidebar() {
         </div>
 
         {/* 4 - Year */}
-        <div
-          className={`collapse collapse-arrow px-2 rounded-none ${
-            openIndex === 4 ? "collapse-open" : ""
-          }`}
-        >
-          <div
-            className="collapse-title text-lg font-medium cursor-pointer"
-            onClick={() => toggle(4)}
-          >
+        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 4 ? "collapse-open" : ""}`}>
+          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(4)}>
             Year
           </div>
           <div className="collapse-content space-y-2">
             <div className="flex gap-2">
-              <select className="w-full p-3 rounded-md bg-white border border-gray-300 text-base">
+              <select
+                name="yearFrom"
+                value={filters.yearFrom}
+                onChange={handleInputChange}
+                className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+              >
                 <option value="">From</option>
+                <option value="2015">2015</option>
+                <option value="2016">2016</option>
+                <option value="2017">2017</option>
+                <option value="2018">2018</option>
+                <option value="2019">2019</option>
                 <option value="2020">2020</option>
                 <option value="2021">2021</option>
                 <option value="2022">2022</option>
               </select>
-              <select className="w-full p-3 rounded-md bg-white border border-gray-300 text-base">
+              <select
+                name="yearTo"
+                value={filters.yearTo}
+                onChange={handleInputChange}
+                className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+              >
                 <option value="">To</option>
+                <option value="2015">2015</option>
+                <option value="2016">2016</option>
+                <option value="2017">2017</option>
+                <option value="2018">2018</option>
+                <option value="2019">2019</option>
                 <option value="2020">2020</option>
                 <option value="2021">2021</option>
                 <option value="2022">2022</option>
@@ -140,56 +219,37 @@ export default function FilterSidebar() {
         </div>
 
         {/* 5 - Condition */}
-        <div
-          className={`collapse collapse-arrow px-2 rounded-none ${
-            openIndex === 5 ? "collapse-open" : ""
-          }`}
-        >
-          <div
-            className="collapse-title text-lg font-medium cursor-pointer"
-            onClick={() => toggle(5)}
-          >
+        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 5 ? "collapse-open" : ""}`}>
+          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(5)}>
             Condition
           </div>
           <div className="collapse-content space-y-2">
-            <div className="flex flex-col items-start gap-2">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  className="w-5 h-5 bg-white border border-gray-300"
-                  value="new"
-                />
-                <span className="text-lg">New</span>
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  className="w-5 h-5 bg-white border border-gray-300"
-                  value="used"
-                />
-                <span className="text-lg">Used</span>
-              </label>
-            </div>
+            <select
+              name="condition"
+              value={filters.condition}
+              onChange={handleInputChange}
+              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+            >
+              <option value="">All</option>
+              <option value="New">New</option>
+              <option value="Used">Used</option>
+            </select>
           </div>
         </div>
 
         {/* 6 - Mileage */}
-        <div
-          className={`collapse collapse-arrow px-2 rounded-none ${
-            openIndex === 6 ? "collapse-open" : ""
-          }`}
-        >
-          <div
-            className="collapse-title text-lg font-medium cursor-pointer"
-            onClick={() => toggle(6)}
-          >
+        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 6 ? "collapse-open" : ""}`}>
+          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(6)}>
             Mileage
           </div>
           <div className="collapse-content space-y-2">
             <select
               name="mileage"
+              value={filters.mileage}
+              onChange={handleInputChange}
               className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
             >
+              <option value="">Select mileage</option>
               <option value="50000">50,000 km</option>
               <option value="100000">100,000 km</option>
               <option value="150000">150,000 km</option>
@@ -199,22 +259,18 @@ export default function FilterSidebar() {
         </div>
 
         {/* 7 - Drivetrain */}
-        <div
-          className={`collapse collapse-arrow px-2 rounded-none ${
-            openIndex === 7 ? "collapse-open" : ""
-          }`}
-        >
-          <div
-            className="collapse-title text-lg font-medium cursor-pointer"
-            onClick={() => toggle(7)}
-          >
+        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 7 ? "collapse-open" : ""}`}>
+          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(7)}>
             Drivetrain
           </div>
           <div className="collapse-content space-y-2">
             <select
               name="drivetrain"
+              value={filters.drivetrain}
+              onChange={handleInputChange}
               className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
             >
+              <option value="">All</option>
               <option value="FWD">FWD</option>
               <option value="RWD">RWD</option>
               <option value="AWD">AWD</option>
@@ -223,45 +279,37 @@ export default function FilterSidebar() {
         </div>
 
         {/* 8 - Transmission */}
-        <div
-          className={`collapse collapse-arrow px-2 rounded-none ${
-            openIndex === 8 ? "collapse-open" : ""
-          }`}
-        >
-          <div
-            className="collapse-title text-lg font-medium cursor-pointer"
-            onClick={() => toggle(8)}
-          >
+        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 8 ? "collapse-open" : ""}`}>
+          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(8)}>
             Transmission
           </div>
           <div className="collapse-content space-y-2">
             <select
               name="transmission"
+              value={filters.transmission}
+              onChange={handleInputChange}
               className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
             >
+              <option value="">All</option>
               <option value="Automatic">Automatic</option>
               <option value="Manual">Manual</option>
             </select>
           </div>
         </div>
 
-        {/* 9 - Fuel type */}
-        <div
-          className={`collapse collapse-arrow px-2 rounded-none ${
-            openIndex === 9 ? "collapse-open" : ""
-          }`}
-        >
-          <div
-            className="collapse-title text-lg font-medium cursor-pointer"
-            onClick={() => toggle(9)}
-          >
-            Fuel type
+        {/* 9 - Fuel Type */}
+        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 9 ? "collapse-open" : ""}`}>
+          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(9)}>
+            Fuel Type
           </div>
           <div className="collapse-content space-y-2">
             <select
-              name="fuel_type"
+              name="fuel"
+              value={filters.fuel}
+              onChange={handleInputChange}
               className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
             >
+              <option value="">All</option>
               <option value="Petrol">Petrol</option>
               <option value="Diesel">Diesel</option>
               <option value="Electric">Electric</option>
@@ -271,22 +319,18 @@ export default function FilterSidebar() {
         </div>
 
         {/* 10 - Engine */}
-        <div
-          className={`collapse collapse-arrow px-2 rounded-none ${
-            openIndex === 10 ? "collapse-open" : ""
-          }`}
-        >
-          <div
-            className="collapse-title text-lg font-medium cursor-pointer"
-            onClick={() => toggle(10)}
-          >
+        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 10 ? "collapse-open" : ""}`}>
+          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(10)}>
             Engine
           </div>
           <div className="collapse-content space-y-2">
             <select
               name="engine"
+              value={filters.engine}
+              onChange={handleInputChange}
               className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
             >
+              <option value="">All</option>
               <option value="1.6L">1.6L</option>
               <option value="2.0L">2.0L</option>
               <option value="2.5L">2.5L</option>
@@ -300,23 +344,18 @@ export default function FilterSidebar() {
         </div>
 
         {/* 11 - Service History */}
-        <div
-          className={`collapse collapse-arrow px-2 rounded-none ${
-            openIndex === 11 ? "collapse-open" : ""
-          }`}
-        >
-          <div
-            className="collapse-title text-lg font-medium cursor-pointer"
-            onClick={() => toggle(11)}
-          >
+        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 11 ? "collapse-open" : ""}`}>
+          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(11)}>
             Service History
           </div>
           <div className="collapse-content space-y-2">
             <select
-              name="service_history"
+              name="serviceHistory"
+              value={filters.serviceHistory}
+              onChange={handleInputChange}
               className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
             >
-              <option value="not specified">not specified</option>
+              <option value="">All</option>
               <option value="Full">Full</option>
               <option value="Partial">Partial</option>
               <option value="None">None</option>
@@ -325,23 +364,18 @@ export default function FilterSidebar() {
         </div>
 
         {/* 12 - Accident History */}
-        <div
-          className={`collapse collapse-arrow px-2 rounded-none ${
-            openIndex === 12 ? "collapse-open" : ""
-          }`}
-        >
-          <div
-            className="collapse-title text-lg font-medium cursor-pointer"
-            onClick={() => toggle(12)}
-          >
+        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 12 ? "collapse-open" : ""}`}>
+          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(12)}>
             Accident History
           </div>
           <div className="collapse-content space-y-2">
             <select
-              name="accident_history"
+              name="accidentHistory"
+              value={filters.accidentHistory}
+              onChange={handleInputChange}
               className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
             >
-              <option value="not specified">not specified</option>
+              <option value="">All</option>
               <option value="Yes">Yes</option>
               <option value="No">No</option>
             </select>
@@ -350,7 +384,7 @@ export default function FilterSidebar() {
       </div>
 
       <div className="px-4 py-4 border-t">
-        <button className="btn bg-blue-600 w-full border-none text-white">
+        <button onClick={handleApplyFilters} className="btn bg-blue-600 w-full border-none text-white">
           Apply Filters
         </button>
       </div>

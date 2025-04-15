@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { CarsNearMe } from "../components/website/cars-near-me";
+import { CarsNearMe } from "../components/website/cars-near-me.jsx";
 import { BrowseCategories } from "../components/website/browse-categories";
 import { BrowseLocations } from "../components/website/browse-locations";
 import { BrowseByMake } from "../components/website/browse-by-make";

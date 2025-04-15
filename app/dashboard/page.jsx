@@ -1,7 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import DashboardStats from "../../components/dashboard/DashboardStats";
-
 export default function DashboardPage() {
   const { userId } = auth();
 

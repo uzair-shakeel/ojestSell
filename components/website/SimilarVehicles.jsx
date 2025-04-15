@@ -1,56 +1,24 @@
-import { useRef, useState } from "react";
+import { useRef, useState , useEffect } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { getAllCars } from "../../services/carService";
+import CarCard from "./CarCard";
 
-const vehicles = [
-  {
-    id: 14,
-    name: "BMW 3 Series",
-    price: "$47,125",
-    image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Replace with actual image path
-  },
-  {
-    id: 1,
-    name: "BMW 2 Series",
-    price: "$40,775",
-    image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    id: 2,
-    name: "Mercedes-Benz EQE Sedan",
-    price: "$76,050",
-    image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    id: 3,
-    name: "Audi A3",
-    price: "$39,495",
-    image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    id: 4,
-    name: "BMW 2 Series",
-    price: "$40,775",
-    image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    id: 5,
-    name: "Mercedes-Benz EQE Sedan",
-    price: "$76,050",
-    image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    id:6,
-    name: "Audi A3",
-    price: "$39,495",
-    image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-];
+
 
 const SimilarVehicles = () => {
+  const [cars, setCars] = useState([]);
   const scrollRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+  const [view, setView] = useState("grid");
+
+ // Load all cars on initial render
+  useEffect(() => {
+    getAllCars()
+      .then((data) => setCars(data))
+      .catch((error) => console.error("Error fetching cars:", error));
+  }, []);
 
   const handleMouseDown = (e) => {
     setIsDragging(true);
@@ -100,21 +68,8 @@ const SimilarVehicles = () => {
   onMouseUp={handleMouseUp}
   onMouseLeave={handleMouseUp}
 >
-  {vehicles.map((car) => (
-    <div key={car.id} className="min-w-[250px] md:min-w-[300px] bg-white border box-border overflow-hidden group transition-all hover:shadow-md duration-300 hover:border-gray-300 ">
-      <div className="overflow-hidden relative h-56"> {/* Container for the image */}
-        <img
-          src={car.image}
-          alt={car.name}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-        />
-      </div>
-      <div className="mt-2 p-5">
-        <h3 className="font-semibold">{car.name}</h3>
-        <p className="text-gray-500">Starting at {car.price}</p>
-        <button className="bg-white text-gray-900 font-medium px-4 py-2 mt-2  border border-gray-800">See more</button>
-      </div>
-    </div>
+  {cars.map((car) => (
+    <CarCard key={car._id} view={view} car={car} />
   ))}
 </div>
 

@@ -67,10 +67,10 @@ const Navbar = () => {
             </Link>
           ))}
           <div className="border-t border-gray-200 my-1"></div>
-          <button className="w-full text-left hover:bg-gray-100 p-2 duration-300">
+          <button onClick={() => router.push("/dashboard/home")} className="w-full text-left hover:bg-gray-100 p-2 duration-300">
             Dashboard
           </button>
-          <button className="w-full text-left hover:bg-gray-100 p-2 duration-300">
+          <button onClick={() => router.push("/dashboard/profile")} className="w-full text-left hover:bg-gray-100 p-2 duration-300">
             Profile
           </button>
           <button className="w-full text-left hover:bg-gray-100 p-2 duration-300">

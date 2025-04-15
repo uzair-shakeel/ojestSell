@@ -1,6 +1,6 @@
 import React from "react";
 
-const ConditionTab = () => {
+const ConditionTab = ({ carCondition }) => {
   return (
     <div>
       {/* Condition Sections */}
@@ -8,35 +8,32 @@ const ConditionTab = () => {
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full ">
           <p className="text-xs uppercase">Condition (Paint & Body)</p>{" "}
           <p className=" text-base font-meduim text-black ">
-            Excellent no missing, broken, or damaged parts that require
-            replacement
+            {carCondition?.paintandBody}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Condition (Interior)</p>{" "}
           <p className=" font-meduim text-black ">
-            Excellent no missing, broken, or damaged parts that require
-            replacement
+            {carCondition?.interior}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Condition (Frame & Underbody)</p>{" "}
           <p className=" font-meduim text-black ">
-            Excellent frame/structure is in perfect condition, no rust or
-            damages
+            {carCondition?.frameandUnderbody}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Condition (Mechanical)</p>{" "}
           <p className=" font-meduim text-black ">
-            Excellent mechanically sound, no work to be done, no leaks, no
-            service needed
+            {carCondition?.mechanical}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Condition (Overall)</p>{" "}
           <p className=" font-meduim text-black ">
-            Excellent condition : excellent and original condition
+          {carCondition?.overall}
+
           </p>
         </div>
       </div>

@@ -1,6 +1,5 @@
 "use client";
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
@@ -9,18 +8,57 @@ import DetailTab from "../../../../components/website/DetailTab";
 import LocationTab from "../../../../components/website/LocationTab";
 import FinancialTab from "../../../../components/website/FinancialTab";
 import SimilarVehicles from "../../../../components/website/SimilarVehicles";
-import { FaInstagram, FaTelegram , FaFacebook , FaTwitter } from "react-icons/fa";
+import { FaInstagram, FaTelegram, FaFacebook, FaTwitter } from "react-icons/fa";
+import { useParams } from "next/navigation";
+import { getCarById } from "../../../../services/carService";
+import { getUserById } from "../../../../services/userService";
 
-
-const page = () => {
+const Page = () => {
   const [activeTab, setActiveTab] = useState("description");
+  const { carId } = useParams();
+  const [car, setCar] = useState(null);
+  const [userId, setUserId] = useState("");
+  const [user, setUser] = useState(null);
+  const [mainImage, setMainImage] = useState(""); // Initialize empty, updated later
 
+  // Base URL for images
+  const BASE_URL = "http://localhost:5000/";
+
+  // Function to format image URL
+  const formatImageUrl = (imagePath) => {
+    if (!imagePath) return "/images/hamer1.png"; // Fallback if no image
+    return `${BASE_URL}${imagePath.replace("\\", "/")}`; // Replace backslashes with forward slashes
+  };
+
+  // Fetch car data when carId changes
+  useEffect(() => {
+    const fetchCar = async () => {
+      try {
+        const carData = await getCarById(carId);
+        setCar(carData);
+        setUserId(carData.createdBy);
+        // Fetch user data
+        const userData = await getUserById(carData.createdBy);
+        setUser(userData);
+        // Set the main image with formatted URL
+        const firstImage = carData?.images?.[0] || "/images/hamer1.png";
+        setMainImage(formatImageUrl(firstImage));
+      } catch (error) {
+        console.error("Error fetching car:", error);
+      }
+    };
+    if (carId) fetchCar();
+  }, [carId]);
+
+  // Render tab content dynamically based on fetched car data
   const renderContent = () => {
     const animationVariants = {
       initial: { opacity: 0, y: 20 },
       animate: { opacity: 1, y: 0, transition: { duration: 0.3 } },
       exit: { opacity: 0, y: -20, transition: { duration: 0.2 } },
     };
+
+    if (!car) return <p>Loading...</p>; // Show loading state if car data isn't fetched yet
 
     switch (activeTab) {
       case "description":
@@ -32,7 +70,7 @@ const page = () => {
             exit="exit"
             variants={animationVariants}
           >
-            <DetailTab description="The car has been kept in pristine condition with no modifications or restorations." />
+            <DetailTab cardetails={car} />
           </motion.div>
         );
       case "conditions":
@@ -44,7 +82,7 @@ const page = () => {
             exit="exit"
             variants={animationVariants}
           >
-            <ConditionTab />
+            <ConditionTab carCondition={car.carCondition} />
           </motion.div>
         );
       case "location":
@@ -56,7 +94,7 @@ const page = () => {
             exit="exit"
             variants={animationVariants}
           >
-            <LocationTab />
+            <LocationTab location={car.location} />
           </motion.div>
         );
       case "financial":
@@ -68,40 +106,37 @@ const page = () => {
             exit="exit"
             variants={animationVariants}
           >
-            <FinancialTab />
+            <FinancialTab financialInfo={car.financialInfo} />
           </motion.div>
         );
       default:
         return null;
     }
   };
-  const [mainImage, setMainImage] = useState("/images/hamer1.png");
-  // const [showMore, setShowMore] = useState(false);
 
-  const images = ["/images/hamer1.png"];
-  const description =
-    "Fiat Croma turbo second series 155 hp, all completely original, preserved, never restored. Double original keys.Fiat Croma turbo second series 155 hp, all completely original, preserved, never restored. Double original keys.Fiat Croma turbo second series 155 hp, all completely original, preserved, never restored. Double original keys";
+  // If car data isn't loaded yet, show a loading state
+  if (!car) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-xl">Loading car details...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="lg:mx-20 p-2">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* left side */}
+        {/* Left Side */}
         <div className="col-span-1 md:col-span-2">
           {/* Car Title */}
-          <h1 className="text-3xl font-bold mt-6">FORD BRONKO 2024</h1>
-          <p className="text-gray-500 text-lg">
-            The Polish złoty alternative spelling: zloty
-          </p>
-
+          <h1 className="text-3xl font-bold mt-6">{`${car.make} ${car.model} ${car.year}`}</h1>
           {/* Image Gallery */}
           <div className="grid grid-cols-2 mt-6">
             {/* Main Image */}
             <div className="col-span-2 overflow-hidden relative group">
               <img
-                src="https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                alt="Fiat Croma Turbo"
-                width={900}
-                height={500}
+                src={mainImage}
+                alt={`${car.make} ${car.model}`}
                 className="w-full h-[450px] object-cover rounded group-hover:scale-110 transition-transform duration-300"
               />
             </div>
@@ -110,11 +145,9 @@ const page = () => {
             <div className="col-span-2 relative mt-4">
               {/* Scroll Left Button */}
               <button
-                className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 text-white p-2 rounded-full  z-10"
+                className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 text-white p-2 rounded-full z-10"
                 onClick={() => {
-                  document
-                    .getElementById("thumbnailScroll")
-                    .scrollBy({ left: -100, behavior: "smooth" });
+                  document.getElementById("thumbnailScroll").scrollBy({ left: -100, behavior: "smooth" });
                 }}
               >
                 <IoIosArrowBack className="w-6 h-6" />
@@ -126,21 +159,17 @@ const page = () => {
                 className="flex overflow-x-auto space-x-2 p-1 scrollbar-custom"
                 style={{ scrollBehavior: "smooth" }}
               >
-                {images.map((img, index) => (
+                {(car.images || ["/images/hamer1.png"]).map((img, index) => (
                   <button
                     key={index}
-                    onClick={() => setMainImage(img)}
+                    onClick={() => setMainImage(formatImageUrl(img))}
                     className="flex-shrink-0 focus:outline-none"
                   >
-                    <Image
-                      src={img}
+                    <img
+                      src={formatImageUrl(img)} // Format thumbnail URLs
                       alt={`Thumbnail ${index + 1}`}
-                      width={120}
-                      height={80}
                       className={`w-[120px] h-[80px] object-cover rounded-md border ${
-                        mainImage === img
-                          ? "border-blue-500"
-                          : "border-gray-300"
+                        mainImage === formatImageUrl(img) ? "border-blue-500" : "border-gray-300"
                       }`}
                     />
                   </button>
@@ -151,23 +180,21 @@ const page = () => {
               <button
                 className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 text-white p-2 rounded-full shadow-md z-10"
                 onClick={() => {
-                  document
-                    .getElementById("thumbnailScroll")
-                    .scrollBy({ left: 100, behavior: "smooth" });
+                  document.getElementById("thumbnailScroll").scrollBy({ left: 100, behavior: "smooth" });
                 }}
               >
                 <IoIosArrowForward className="w-6 h-6" />
               </button>
             </div>
           </div>
+
+          {/* Tabs */}
           <div className="col-span-2 bg-white rounded-md mt-5">
             {/* Tab Buttons */}
             <div className="gap-2 mb-4 grid grid-cols-2 md:grid-cols-4">
               <button
                 className={`px-4 py-2 border border-gray-200 ${
-                  activeTab === "description"
-                    ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-700"
+                  activeTab === "description" ? "bg-blue-500 text-white" : "bg-white text-gray-700"
                 } rounded-md`}
                 onClick={() => setActiveTab("description")}
               >
@@ -175,9 +202,7 @@ const page = () => {
               </button>
               <button
                 className={`px-4 py-2 border border-gray-200 ${
-                  activeTab === "conditions"
-                    ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-700"
+                  activeTab === "conditions" ? "bg-blue-500 text-white" : "bg-white text-gray-700"
                 } rounded-md`}
                 onClick={() => setActiveTab("conditions")}
               >
@@ -185,9 +210,7 @@ const page = () => {
               </button>
               <button
                 className={`px-4 py-2 border border-gray-200 ${
-                  activeTab === "location"
-                    ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-700"
+                  activeTab === "location" ? "bg-blue-500 text-white" : "bg-white text-gray-700"
                 } rounded-md`}
                 onClick={() => setActiveTab("location")}
               >
@@ -195,9 +218,7 @@ const page = () => {
               </button>
               <button
                 className={`px-4 py-2 border border-gray-200 ${
-                  activeTab === "financial"
-                    ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-700"
+                  activeTab === "financial" ? "bg-blue-500 text-white" : "bg-white text-gray-700"
                 } rounded-md`}
                 onClick={() => setActiveTab("financial")}
               >
@@ -205,109 +226,126 @@ const page = () => {
               </button>
             </div>
 
-            {/* Content based on active tab */}
+            {/* Tab Content */}
             {renderContent()}
           </div>
         </div>
-        {/* right side */}
+
+        {/* Right Side */}
         <div className="col-span-1 sm:mt-28">
-          <div className="w-full  p-4 bg-white rounded-sm border sticky top-4 shadow">
-            {/* Expert Estimatee */}
-            
+          <div className="w-full p-4 bg-white rounded-sm border sticky top-4 shadow">
+            {/* Price */}
             <div className="py-3 flex flex-row">
-              <div className="flex flex-col items-start ">
-              <h3 className="text-base font-medium mb-2">PRICE</h3>
-              <p className="text-4xl font-bold text-gray-900 mb-2">13,000 zł</p>
-              <p className="text-xl font-medium text-gray-600 underline">13,000 zł (NETTO)</p>
+              <div className="flex flex-col items-start">
+                <h3 className="text-base font-medium mb-2">PRICE</h3>
+                <p className="text-4xl font-bold text-gray-900 mb-2">
+                  {car.financialInfo.priceWithVat ? `${car.financialInfo.priceWithVat} zł` : "N/A"}
+                </p>
+                <p className="text-xl font-medium text-gray-600 underline">
+                  {car.financialInfo.priceNetto ? `${car.financialInfo.priceNetto} zł (NETTO)` : "N/A"}
+                </p>
               </div>
-         
             </div>
-                {/* Divider */}
-                <div className="flex items-center my-4">
+
+            {/* Divider */}
+            <div className="flex items-center my-4">
               <div className="flex-grow border-b"></div>
               <p className="px-2 text-gray-500 text-sm">OR</p>
               <div className="flex-grow border-b"></div>
             </div>
-               {/* Buttons */}
-               <div className="gap-2 flex flex-col">
-              <button className="w-full border border-gray-500 py-3 rounded-md  font-semibold">
+
+            {/* Buttons */}
+            <div className="gap-2 flex flex-col">
+              <button className="w-full border border-gray-500 py-3 rounded-md font-semibold">
                 See more Financial Details
               </button>
             </div>
 
-            {/* <hr className="my-4" /> */}
-            {/* Place Bid & Set Max Bid Buttons */}
-       
-
-        
-            {/* Current Bid Section */}
+            {/* Seller Info */}
             <div className="flex items-center space-x-3 my-5">
-              <div className="w-24 h-20  overflow-hidden rounded-full">
+              <div className="w-24 h-20 overflow-hidden rounded-full">
                 <Image
-                  src="/website/seller.jpg"
-                  alt="Expert"
-                  width={70}
-                  height={70}
-                  className=" w-full object-center"
+                  src={formatImageUrl(car.seller?.image) || "/images/default-seller.png"} // Format seller image URL
+                  alt="Seller"
+                  width={80}
+                  height={80}
+                  className="object-center w-20 h-20"
                 />
               </div>
               <div className="w-full">
                 <div className="flex justify-between items-center">
                   <p className="text-black text-lg lg:text-xl">
-                    <strong>Yousri Ben Ali</strong>
+                    <strong>{user?.username || "Seller Name"}</strong>
                   </p>
                 </div>
-                <p className="text-base text-gray-500">Private Saller</p>
+                <p className="text-base text-gray-500">{car.financialInfo?.sellerType || "Private Seller"}</p>
                 <div className="flex justify-start items-center space-x-2">
-                  <img src="/website/map.svg" alt="" className="w-5 h-5" />
-                  <p className="text-base text-gray-500">Kaskantyú, Hungary</p>
+                  <img src="/website/map.svg" alt="Map Icon" className="w-5 h-5" />
+                  <p className="text-base text-gray-500">
+                    {car.location?.city || "Unknown Location"}
+                  </p>
                 </div>
               </div>
             </div>
+
             <hr className="my-4" />
+
+            {/* Contact Seller */}
             <div className="grid grid-cols-2 gap-2 mt-4">
-              <h2 className="text-base font-medium mb-2 col-span-2">
-                Contact Seller
-              </h2>
+              <h2 className="text-base font-medium mb-2 col-span-2">Contact Seller</h2>
               <button className="w-full bg-white-500 text-blue-600 py-3 border border-blue-600 rounded-md font-semibold flex items-center justify-center space-x-2">
-                <img src="/website/whats.svg" alt="" className="w-5 h-5" />
-                <span className=""> Message</span>
+                <img src="/website/whats.svg" alt="WhatsApp" className="w-5 h-5" />
+                <span>Message</span>
               </button>
               <button className="w-full border py-3 rounded-md font-semibold bg-blue-500 flex items-center justify-center space-x-2">
-                <img src="/website/call.svg" alt="" className="w-5 h-5" />
-                <span className="text-white"> Call</span>
+                <img src="/website/call.svg" alt="Call" className="w-5 h-5" />
+                <span className="text-white">Call</span>
               </button>
             </div>
+
+            {/* Social Media Links */}
             <div className="flex items-center justify-center space-x-4 my-7">
-            <a
-              href="https://www.instagram.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-3xl transition-all duration-300 hover:opacity-75 text-blue-600 "><FaInstagram /></a>   
               <a
-              href="https://www.instagram.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-3xl transition-all duration-300 hover:opacity-75 text-blue-600 "><FaFacebook /></a> 
+                href="https://www.instagram.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-3xl transition-all duration-300 hover:opacity-75 text-blue-600"
+              >
+                <FaInstagram />
+              </a>
               <a
-              href="https://www.instagram.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-3xl transition-all duration-300 hover:opacity-75 text-blue-600 "><FaTwitter /></a> 
+                href="https://www.facebook.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-3xl transition-all duration-300 hover:opacity-75 text-blue-600"
+              >
+                <FaFacebook />
+              </a>
               <a
-              href="https://www.instagram.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-3xl transition-all duration-300 hover:opacity-75 text-blue-600 "><FaTelegram /></a> 
+                href="https://www.twitter.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-3xl transition-all duration-300 hover:opacity-75 text-blue-600"
+              >
+                <FaTwitter />
+              </a>
+              <a
+                href="https://www.telegram.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-3xl transition-all duration-300 hover:opacity-75 text-blue-600"
+              >
+                <FaTelegram />
+              </a>
             </div>
-         
-          
           </div>
         </div>
       </div>
+
+      {/* Similar Vehicles */}
       <SimilarVehicles />
     </div>
   );
 };
 
-export default page;
+export default Page;

@@ -1,14 +1,20 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth, useClerk } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css"; // Import the styles
+import "react-phone-input-2/lib/style.css";
 import CustomMap from "../../../components/dashboard/GoogleMapComponent";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { fetchUser , updateUser , deleteUserAccount, getUserById } from "../../../services/userService";
 
 const ProfileComponent = () => {
-  // State for user profile data
-  const [user, setUser] = useState({
+  const { getToken, userId, isSignedIn } = useAuth();
+  const { signOut } = useClerk();
+  const router = useRouter();
+
+  const [user, setUser] = useState(null);
+  const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     description: "",
@@ -17,123 +23,212 @@ const ProfileComponent = () => {
     socialMedia: {
       instagram: "",
       facebook: "",
-      tiktok: "",
+      twitter: "",
+      website: "",
+      linkedin: "",
     },
     image: "",
+    sellerType: "private",
+    phoneNumbers: [{ phone: "", countryCode: "pl" }],
+    location: { searchText: "", coordinates: { lat: null, lng: null } },
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // State for phone numbers
-  const [phoneNumbers, setPhoneNumbers] = useState([
-    { phone: "", countryCode: "pl" }, // Default phone number
-  ]);
+  useEffect(() => {
+    if (!isSignedIn) {
+      router.push("/sign-in");
+      return;
+    }
 
-  // State for location
-  const [location, setLocation] = useState({
-    searchText: "",
-    coordinates: { lat: null, lng: null },
-  });
+    const loadUser = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const userData = await getUserById(userId, getToken);
+        setUser(userData);
+        setFormData({
+          firstName: userData.firstName || "",
+          lastName: userData.lastName || "",
+          description: userData.description || "",
+          companyName: userData.companyName || "",
+          email: userData.email || "",
+          socialMedia: {
+            instagram: userData.socialMedia?.instagram || "",
+            facebook: userData.socialMedia?.facebook || "",
+            twitter: userData.socialMedia?.twitter || "",
+            website: userData.socialMedia?.website || "",
+            linkedin: userData.socialMedia?.linkedin || "",
+          },
+          image: userData.image || "",
+          sellerType: userData.sellerType || "private",
+          phoneNumbers: userData.phoneNumbers?.length
+            ? userData.phoneNumbers.map((phone) => ({
+                phone,
+                countryCode: phone.startsWith("+48") ? "pl" : "us",
+              }))
+            : [{ phone: "", countryCode: "pl" }],
+          location: {
+            searchText: "",
+            coordinates: {
+              lat: userData.location?.[1] || null,
+              lng: userData.location?.[0] || null,
+            },
+          },
+        });
+      } catch (err) {
+        setError("Failed to load profile. Please try again.");
+        console.error("Error fetching user:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // State for rental agreement files
-  const [rentalAgreementFiles, setRentalAgreementFiles] = useState([]);
+    if (userId) loadUser();
+  }, [userId, isSignedIn, getToken, router]);
 
-  // Handle input changes for user profile
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (name in user.socialMedia) {
-      setUser({
-        ...user,
+    if (name in formData.socialMedia) {
+      setFormData({
+        ...formData,
         socialMedia: {
-          ...user.socialMedia,
+          ...formData.socialMedia,
           [name]: value,
         },
       });
     } else {
-      setUser({
-        ...user,
+      setFormData({
+        ...formData,
         [name]: value,
       });
     }
   };
 
-  // Handle image upload
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setUser({ ...user, image: reader.result });
+        setFormData({ ...formData, image: reader.result });
       };
       reader.readAsDataURL(file);
     }
   };
 
-  // Handle phone number changes
   const handlePhoneNumberChange = (index, value, country) => {
-    const newPhoneNumbers = [...phoneNumbers];
+    const newPhoneNumbers = [...formData.phoneNumbers];
     newPhoneNumbers[index] = { phone: value, countryCode: country.countryCode };
-    setPhoneNumbers(newPhoneNumbers);
+    setFormData({ ...formData, phoneNumbers: newPhoneNumbers });
   };
 
-  // Add a new phone number
   const addPhoneNumber = () => {
-    if (phoneNumbers.length < 4) {
-      setPhoneNumbers([...phoneNumbers, { phone: "", countryCode: "pl" }]);
+    if (formData.phoneNumbers.length < 4) {
+      setFormData({
+        ...formData,
+        phoneNumbers: [...formData.phoneNumbers, { phone: "", countryCode: "pl" }],
+      });
     }
   };
 
-  // Remove a phone number
   const removePhoneNumber = (index) => {
-    if (phoneNumbers.length > 1) {
-      const newPhoneNumbers = phoneNumbers.filter((_, i) => i !== index);
-      setPhoneNumbers(newPhoneNumbers);
+    if (formData.phoneNumbers.length > 1) {
+      const newPhoneNumbers = formData.phoneNumbers.filter((_, i) => i !== index);
+      setFormData({ ...formData, phoneNumbers: newPhoneNumbers });
     }
   };
 
-  // Handle location search
   const handleLocationSearch = (e) => {
-    setLocation({ ...location, searchText: e.target.value });
+    setFormData({
+      ...formData,
+      location: { ...formData.location, searchText: e.target.value },
+    });
   };
 
-  // Handle rental agreement file upload
-  const handleRentalAgreementUpload = (e) => {
-    const files = Array.from(e.target.files);
-    setRentalAgreementFiles([...rentalAgreementFiles, ...files]);
-  };
-
-  // Remove a rental agreement file
-  const removeRentalAgreementFile = (index) => {
-    const newFiles = rentalAgreementFiles.filter((_, i) => i !== index);
-    setRentalAgreementFiles(newFiles);
-  };
-
-  // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("User Profile:", user);
-    console.log("Phone Numbers:", phoneNumbers);
-    console.log("Location:", location);
-    console.log("Rental Agreement Files:", rentalAgreementFiles);
-    alert("Profile updated successfully!");
+    setLoading(true);
+    setError(null);
+    try {
+      const updateData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        description: formData.description,
+        companyName: formData.companyName,
+        sellerType: formData.sellerType,
+        socialMedia: formData.socialMedia,
+        phoneNumbers: formData.phoneNumbers.map((p) => p.phone),
+        location: [
+          formData.location.coordinates.lng,
+          formData.location.coordinates.lat,
+        ],
+        image: imageFile,
+      };
+      const updatedUser = await updateUser(updateData, getToken);
+      setUser(updatedUser);
+      setImageFile(null);
+      alert("Profile updated successfully!");
+    } catch (err) {
+      setError("Failed to update profile. Please try again.");
+      console.error("Error updating profile:", err);
+    } finally {
+      setLoading(false);
+    }
   };
- 
+
+  const handleDeleteAccount = async () => {
+    if (!confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    try {
+      await deleteUserAccount(getToken);
+      await signOut(); // Sign out the user after deletion
+      alert("Account deleted successfully.");
+      router.push("/"); // Redirect to homepage
+    } catch (err) {
+      setError("Failed to delete account. Please try again.");
+      console.error("Error deleting account:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div className="text-red-500">{error}</div>;
+  if (!user) return <div>Loading...</div>;
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
+    >
       <h1 className="text-3xl font-bold mb-4">Profile</h1>
-      <form onSubmit={handleSubmit} className=" grid grid-cols-2 gap-4 ">
-        {/* left part */}
-        <motion.div initial={{ x: -50, }} animate={{ x: 0, }} transition={{ duration: 0.4 }} className="col-span-2 xl:col-span-1">
+      {error && <div className="text-red-500 mb-4">{error}</div>}
+      <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+        {/* Left part */}
+        <motion.div
+          initial={{ x: -50 }}
+          animate={{ x: 0 }}
+          transition={{ duration: 0.4 }}
+          className="col-span-2 xl:col-span-1"
+        >
           {/* Profile Picture */}
           <div className="mb-6">
             <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
               Profile Picture
             </label>
             <div className="flex flex-col md:flex-row gap-4 items-center space-x-4">
-             <motion.img
-              src={user.image || "https://via.placeholder.com/300"}
-              alt="Profile"
-              className="w-20 h-20 rounded-full object-cover border border-gray-300"            
-            />
+              <motion.img
+                src={formData.image || "https://via.placeholder.com/300"}
+                alt="Profile"
+                className="w-20 h-20 rounded-full object-cover border border-gray-300"
+              />
               <input
                 type="file"
                 accept="image/*"
@@ -152,7 +247,7 @@ const ProfileComponent = () => {
               <input
                 type="text"
                 name="firstName"
-                value={user.firstName}
+                value={formData.firstName}
                 onChange={handleInputChange}
                 className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
                 required
@@ -165,7 +260,7 @@ const ProfileComponent = () => {
               <input
                 type="text"
                 name="lastName"
-                value={user.lastName}
+                value={formData.lastName}
                 onChange={handleInputChange}
                 className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
                 required
@@ -180,63 +275,21 @@ const ProfileComponent = () => {
             </label>
             <textarea
               name="description"
-              value={user.description}
+              value={formData.description}
               onChange={handleInputChange}
               className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
               rows="4"
             />
           </div>
-          {/* Rental Agreement */}
-          <div className="mb-6">
-            <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-              Rental Agreement
-            </label>
-            <input
-              type="file"
-              accept=".pdf,.doc,.docx"
-              onChange={handleRentalAgreementUpload}
-              className="block text-base text-gray-500 file:mr-4 file:py-2 file:px-7 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gray-700 file:text-white hover:file:bg-gray-600 file:duration-300 border border-gray-300 p-1 w-auto rounded-md"
-              multiple
-            />
-            <div className="mt-4">
-              {rentalAgreementFiles.map((file, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-2 border border-gray-300 rounded-lg mb-2"
-                >
-                  <div className="flex items-center space-x-2">
-                    {file.type === "application/pdf" ? (
-                      <img src="/pdf-icon.png" alt="PDF" className="w-6 h-6" />
-                    ) : file.type === "application/msword" ||
-                      file.type ===
-                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ? (
-                      <img
-                        src="/word-icon.png"
-                        alt="Word"
-                        className="w-6 h-6"
-                      />
-                    ) : (
-                      <img
-                        src="/file-icon.png"
-                        alt="File"
-                        className="w-6 h-6"
-                      />
-                    )}
-                    <span>{file.name}</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => removeRentalAgreementFile(index)}
-                    className="p-1 bg-gray-900 text-white rounded-lg "
-                  >
-                    Remove
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
         </motion.div>
-        <motion.div initial={{ y: -50 }} animate={{ y: 0 }} transition={{ duration:0.4 }} className="col-span-2 xl:col-span-1 bg-gray-100 p-5 sm:p-5">
+
+        {/* Right part */}
+        <motion.div
+          initial={{ y: -50 }}
+          animate={{ y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="col-span-2 xl:col-span-1 bg-gray-100 p-5 sm:p-5"
+        >
           {/* Company Name and Email */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
@@ -246,7 +299,7 @@ const ProfileComponent = () => {
               <input
                 type="text"
                 name="companyName"
-                value={user.companyName}
+                value={formData.companyName}
                 onChange={handleInputChange}
                 className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
               />
@@ -258,13 +311,31 @@ const ProfileComponent = () => {
               <input
                 type="email"
                 name="email"
-                value={user.email}
+                value={formData.email}
                 onChange={handleInputChange}
                 className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
                 required
+                disabled
               />
             </div>
           </div>
+
+          {/* Seller Type */}
+          <div className="mb-6">
+            <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
+              Seller Type
+            </label>
+            <select
+              name="sellerType"
+              value={formData.sellerType}
+              onChange={handleInputChange}
+              className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
+            >
+              <option value="private">Private</option>
+              <option value="company">Company</option>
+            </select>
+          </div>
+
           {/* Social Media Links */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
@@ -274,7 +345,7 @@ const ProfileComponent = () => {
               <input
                 type="url"
                 name="instagram"
-                value={user.socialMedia.instagram}
+                value={formData.socialMedia.instagram}
                 onChange={handleInputChange}
                 className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
               />
@@ -286,30 +357,55 @@ const ProfileComponent = () => {
               <input
                 type="url"
                 name="facebook"
-                value={user.socialMedia.facebook}
+                value={formData.socialMedia.facebook}
                 onChange={handleInputChange}
                 className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
               />
             </div>
             <div>
               <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-                TikTok Link
+                Twitter Link
               </label>
               <input
                 type="url"
-                name="tiktok"
-                value={user.socialMedia.tiktok}
+                name="twitter"
+                value={formData.socialMedia.twitter}
+                onChange={handleInputChange}
+                className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
+              />
+            </div>
+            <div>
+              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
+                Website Link
+              </label>
+              <input
+                type="url"
+                name="website"
+                value={formData.socialMedia.website}
+                onChange={handleInputChange}
+                className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
+              />
+            </div>
+            <div>
+              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
+                LinkedIn Link
+              </label>
+              <input
+                type="url"
+                name="linkedin"
+                value={formData.socialMedia.linkedin}
                 onChange={handleInputChange}
                 className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
               />
             </div>
           </div>
+
           {/* Phone Numbers */}
           <div className="mb-6">
             <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
               Phone Numbers
             </label>
-            {phoneNumbers.map((phone, index) => (
+            {formData.phoneNumbers.map((phone, index) => (
               <div key={index} className="flex items-center space-x-2 mb-2">
                 <PhoneInput
                   country={phone.countryCode.toLowerCase()}
@@ -320,7 +416,7 @@ const ProfileComponent = () => {
                   inputClass="w-full py-5 border border-gray-300 rounded-md focus:outline-none focus:ring-0"
                   dropdownClass="z-50"
                 />
-                {phoneNumbers.length > 1 && (
+                {formData.phoneNumbers.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removePhoneNumber(index)}
@@ -331,7 +427,7 @@ const ProfileComponent = () => {
                 )}
               </div>
             ))}
-            {phoneNumbers.length < 4 && (
+            {formData.phoneNumbers.length < 4 && (
               <button
                 type="button"
                 onClick={addPhoneNumber}
@@ -344,20 +440,41 @@ const ProfileComponent = () => {
         </motion.div>
 
         {/* Location */}
-        <motion.div initial={{ x: -50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration:0.4 }} className="mb-6 col-span-2">
+        <motion.div
+          initial={{ x: -50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.4 }}
+          className="mb-6 col-span-2"
+        >
           <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
             Location
           </label>
-          <CustomMap location={location} setLocation={setLocation} />
+          <CustomMap
+            location={formData.location}
+            setLocation={(newLocation) =>
+              setFormData({ ...formData, location: newLocation })
+            }
+          />
         </motion.div>
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="w-32 p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-        >
-          Save Profile
-        </button>
+        {/* Submit and Delete Buttons */}
+        <div className="flex space-x-4">
+          <button
+            type="submit"
+            className="w-32 p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+            disabled={loading}
+          >
+            {loading ? "Saving..." : "Save Profile"}
+          </button>
+          <button
+            type="button"
+            onClick={handleDeleteAccount}
+            className="w-32 p-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+            disabled={loading}
+          >
+            {loading ? "Deleting..." : "Delete Account"}
+          </button>
+        </div>
       </form>
     </motion.div>
   );
