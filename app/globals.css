@@ -1,35 +1,67 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import 'swiper/css';
-@import 'swiper/css/navigation';
-@import 'swiper/css/pagination';
+@import "swiper/css";
+@import "swiper/css/navigation";
+@import "swiper/css/pagination";
 
+/* * {
+  background-color: white;
+} */
 
 /* Custom Scrollbar */
 .scrollbar-custom::-webkit-scrollbar {
-    height: 8px; /* Scrollbar height */
+  height: 8px; /* Scrollbar height */
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Light gray track */
+  border-radius: 10px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background: #888; /* Dark gray scrollbar */
+  border-radius: 10px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Darker on hover */
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Loader animation */
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
   }
-  
-  .scrollbar-custom::-webkit-scrollbar-track {
-    background: #f1f1f1; /* Light gray track */
-    border-radius: 10px;
+  50% {
+    background-position: 100% 50%;
   }
-  
-  .scrollbar-custom::-webkit-scrollbar-thumb {
-    background: #888; /* Dark gray scrollbar */
-    border-radius: 10px;
+  100% {
+    background-position: 0% 50%;
   }
-  
-  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
-    background: #555; /* Darker on hover */
-  }
-  
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-  
+}
+
+/* Make sure no loader components block interaction after loading */
+html:not(.loading-active) .loader-container,
+html:not(.loading-active) [class*="VideoLoader"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  z-index: -1 !important;
+}
+
+/* Make sure content is interactive after loading */
+html:not(.loading-active) body > *:not(.loader-container) {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}

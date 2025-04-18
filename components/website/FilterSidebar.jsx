@@ -12,7 +12,8 @@ export default function FilterSidebar({ onApplyFilters }) {
     yearFrom: "",
     yearTo: "",
     condition: "",
-    mileage: "",
+    minMileage: "",
+    maxMileage: "",
     drivetrain: "",
     transmission: "",
     fuel: "",
@@ -42,7 +43,8 @@ export default function FilterSidebar({ onApplyFilters }) {
       yearFrom: filters.yearFrom || undefined,
       yearTo: filters.yearTo || undefined,
       condition: filters.condition || undefined, // Simplification: takes first condition
-      mileage: filters.mileage || undefined,
+      minMileage: filters.minMileage || undefined,
+      maxMileage: filters.maxMileage || undefined,
       drivetrain: filters.drivetrain || undefined,
       transmission: filters.transmission || undefined,
       fuel: filters.fuel || undefined,
@@ -63,7 +65,8 @@ export default function FilterSidebar({ onApplyFilters }) {
       yearFrom: "",
       yearTo: "",
       condition: "",
-      mileage: "",
+      minMileage: "",
+      maxMileage: "",
       drivetrain: "",
       transmission: "",
       fuel: "",
@@ -78,15 +81,25 @@ export default function FilterSidebar({ onApplyFilters }) {
     <div className="w-full border rounded-md bg-white lg:max-w-xs text-gray-900">
       <div className="flex justify-between items-center px-4 py-4 border-b">
         <h2 className="text-2xl font-semibold">Filters</h2>
-        <button onClick={handleReset} className="text-base text-blue-600 font-medium">
+        <button
+          onClick={handleReset}
+          className="text-base text-blue-600 font-medium"
+        >
           Reset
         </button>
       </div>
 
       <div className="divide-y overflow-auto max-h-[calc(100vh-150px)] scrollbar-hide">
         {/* 0 - Location */}
-        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 0 ? "collapse-open" : ""}`}>
-          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(0)}>
+        <div
+          className={`collapse collapse-arrow px-2 rounded-none ${
+            openIndex === 0 ? "collapse-open" : ""
+          }`}
+        >
+          <div
+            className="collapse-title text-lg font-medium cursor-pointer"
+            onClick={() => toggle(0)}
+          >
             Location
           </div>
           <div className="collapse-content space-y-2">
@@ -114,8 +127,15 @@ export default function FilterSidebar({ onApplyFilters }) {
         </div>
 
         {/* 1 - Make */}
-        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 1 ? "collapse-open" : ""}`}>
-          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(1)}>
+        <div
+          className={`collapse collapse-arrow px-2 rounded-none ${
+            openIndex === 1 ? "collapse-open" : ""
+          }`}
+        >
+          <div
+            className="collapse-title text-lg font-medium cursor-pointer"
+            onClick={() => toggle(1)}
+          >
             Make
           </div>
           <div className="collapse-content space-y-2">
@@ -135,8 +155,15 @@ export default function FilterSidebar({ onApplyFilters }) {
         </div>
 
         {/* 2 - Model */}
-        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 2 ? "collapse-open" : ""}`}>
-          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(2)}>
+        <div
+          className={`collapse collapse-arrow px-2 rounded-none ${
+            openIndex === 2 ? "collapse-open" : ""
+          }`}
+        >
+          <div
+            className="collapse-title text-lg font-medium cursor-pointer"
+            onClick={() => toggle(2)}
+          >
             Model
           </div>
           <div className="collapse-content space-y-2">
@@ -156,8 +183,15 @@ export default function FilterSidebar({ onApplyFilters }) {
         </div>
 
         {/* 3 - Type */}
-        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 3 ? "collapse-open" : ""}`}>
-          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(3)}>
+        <div
+          className={`collapse collapse-arrow px-2 rounded-none ${
+            openIndex === 3 ? "collapse-open" : ""
+          }`}
+        >
+          <div
+            className="collapse-title text-lg font-medium cursor-pointer"
+            onClick={() => toggle(3)}
+          >
             Type
           </div>
           <div className="collapse-content space-y-2">
@@ -176,8 +210,15 @@ export default function FilterSidebar({ onApplyFilters }) {
         </div>
 
         {/* 4 - Year */}
-        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 4 ? "collapse-open" : ""}`}>
-          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(4)}>
+        <div
+          className={`collapse collapse-arrow px-2 rounded-none ${
+            openIndex === 4 ? "collapse-open" : ""
+          }`}
+        >
+          <div
+            className="collapse-title text-lg font-medium cursor-pointer"
+            onClick={() => toggle(4)}
+          >
             Year
           </div>
           <div className="collapse-content space-y-2">
@@ -219,8 +260,15 @@ export default function FilterSidebar({ onApplyFilters }) {
         </div>
 
         {/* 5 - Condition */}
-        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 5 ? "collapse-open" : ""}`}>
-          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(5)}>
+        <div
+          className={`collapse collapse-arrow px-2 rounded-none ${
+            openIndex === 5 ? "collapse-open" : ""
+          }`}
+        >
+          <div
+            className="collapse-title text-lg font-medium cursor-pointer"
+            onClick={() => toggle(5)}
+          >
             Condition
           </div>
           <div className="collapse-content space-y-2">
@@ -238,29 +286,57 @@ export default function FilterSidebar({ onApplyFilters }) {
         </div>
 
         {/* 6 - Mileage */}
-        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 6 ? "collapse-open" : ""}`}>
-          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(6)}>
+        <div
+          className={`collapse collapse-arrow px-2 rounded-none ${
+            openIndex === 6 ? "collapse-open" : ""
+          }`}
+        >
+          <div
+            className="collapse-title text-lg font-medium cursor-pointer"
+            onClick={() => toggle(6)}
+          >
             Mileage
           </div>
           <div className="collapse-content space-y-2">
-            <select
-              name="mileage"
-              value={filters.mileage}
-              onChange={handleInputChange}
-              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
-            >
-              <option value="">Select mileage</option>
-              <option value="50000">50,000 km</option>
-              <option value="100000">100,000 km</option>
-              <option value="150000">150,000 km</option>
-              <option value="200000">200,000 km</option>
-            </select>
+            <div className="flex gap-2">
+              <select
+                name="minMileage"
+                value={filters.minMileage}
+                onChange={handleInputChange}
+                className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+              >
+                <option value="">From</option>
+                <option value="50000">50,000 km</option>
+                <option value="100000">100,000 km</option>
+                <option value="150000">150,000 km</option>
+                <option value="200000">200,000 km</option>
+              </select>
+              <select
+                name="maxMileage"
+                value={filters.maxMileage}
+                onChange={handleInputChange}
+                className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+              >
+                <option value="">To</option>
+                <option value="50000">50,000 km</option>
+                <option value="100000">100,000 km</option>
+                <option value="150000">150,000 km</option>
+                <option value="200000">200,000 km</option>
+              </select>
+            </div>
           </div>
         </div>
 
         {/* 7 - Drivetrain */}
-        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 7 ? "collapse-open" : ""}`}>
-          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(7)}>
+        <div
+          className={`collapse collapse-arrow px-2 rounded-none ${
+            openIndex === 7 ? "collapse-open" : ""
+          }`}
+        >
+          <div
+            className="collapse-title text-lg font-medium cursor-pointer"
+            onClick={() => toggle(7)}
+          >
             Drivetrain
           </div>
           <div className="collapse-content space-y-2">
@@ -279,8 +355,15 @@ export default function FilterSidebar({ onApplyFilters }) {
         </div>
 
         {/* 8 - Transmission */}
-        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 8 ? "collapse-open" : ""}`}>
-          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(8)}>
+        <div
+          className={`collapse collapse-arrow px-2 rounded-none ${
+            openIndex === 8 ? "collapse-open" : ""
+          }`}
+        >
+          <div
+            className="collapse-title text-lg font-medium cursor-pointer"
+            onClick={() => toggle(8)}
+          >
             Transmission
           </div>
           <div className="collapse-content space-y-2">
@@ -298,8 +381,15 @@ export default function FilterSidebar({ onApplyFilters }) {
         </div>
 
         {/* 9 - Fuel Type */}
-        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 9 ? "collapse-open" : ""}`}>
-          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(9)}>
+        <div
+          className={`collapse collapse-arrow px-2 rounded-none ${
+            openIndex === 9 ? "collapse-open" : ""
+          }`}
+        >
+          <div
+            className="collapse-title text-lg font-medium cursor-pointer"
+            onClick={() => toggle(9)}
+          >
             Fuel Type
           </div>
           <div className="collapse-content space-y-2">
@@ -319,8 +409,15 @@ export default function FilterSidebar({ onApplyFilters }) {
         </div>
 
         {/* 10 - Engine */}
-        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 10 ? "collapse-open" : ""}`}>
-          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(10)}>
+        <div
+          className={`collapse collapse-arrow px-2 rounded-none ${
+            openIndex === 10 ? "collapse-open" : ""
+          }`}
+        >
+          <div
+            className="collapse-title text-lg font-medium cursor-pointer"
+            onClick={() => toggle(10)}
+          >
             Engine
           </div>
           <div className="collapse-content space-y-2">
@@ -344,8 +441,15 @@ export default function FilterSidebar({ onApplyFilters }) {
         </div>
 
         {/* 11 - Service History */}
-        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 11 ? "collapse-open" : ""}`}>
-          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(11)}>
+        <div
+          className={`collapse collapse-arrow px-2 rounded-none ${
+            openIndex === 11 ? "collapse-open" : ""
+          }`}
+        >
+          <div
+            className="collapse-title text-lg font-medium cursor-pointer"
+            onClick={() => toggle(11)}
+          >
             Service History
           </div>
           <div className="collapse-content space-y-2">
@@ -364,8 +468,15 @@ export default function FilterSidebar({ onApplyFilters }) {
         </div>
 
         {/* 12 - Accident History */}
-        <div className={`collapse collapse-arrow px-2 rounded-none ${openIndex === 12 ? "collapse-open" : ""}`}>
-          <div className="collapse-title text-lg font-medium cursor-pointer" onClick={() => toggle(12)}>
+        <div
+          className={`collapse collapse-arrow px-2 rounded-none ${
+            openIndex === 12 ? "collapse-open" : ""
+          }`}
+        >
+          <div
+            className="collapse-title text-lg font-medium cursor-pointer"
+            onClick={() => toggle(12)}
+          >
             Accident History
           </div>
           <div className="collapse-content space-y-2">
@@ -381,12 +492,6 @@ export default function FilterSidebar({ onApplyFilters }) {
             </select>
           </div>
         </div>
-      </div>
-
-      <div className="px-4 py-4 border-t">
-        <button onClick={handleApplyFilters} className="btn bg-blue-600 w-full border-none text-white">
-          Apply Filters
-        </button>
       </div>
     </div>
   );
