@@ -85,23 +85,22 @@ interface AddCarData {
     invoiceOptions: ("Invoice" | "Selling Agreement" | "Invoice VAT")[];
     sellerType: "private" | "company";
     priceNetto: number;
-    priceWithVat?: number;
   };
-  location: [number, number]; // [lng, lat]
+
 }
 
 // Add a new car
 export const addCar = async (
   carData: FormData,
   getToken: () => Promise<string | null>
-): Promise<CarData> => {
+): Promise<AddCarData> => {
   try {
     const token = await getToken();
     if (!token) {
       throw new Error("No authentication token found");
     }
 
-    const response = await axios.post(`${API_BASE_URL}/api/cars`, carData, {
+    const response = await axios.post(`${API_BASE_URL}/api/cars/`, carData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
@@ -232,14 +231,14 @@ export const searchCars = async (queryParams: {
 export const getCarsByUserId = async (
   userId: string,
   getToken: () => Promise<string | null>
-): Promise<CarData[]> => {
+  ): Promise<CarData[]> => {
   try {
     const token = await getToken();
     if (!token) {
       throw new Error("No authentication token found");
     }
 
-    const response = await axios.get(`${API_BASE_URL}/api/cars/user/${userId}`, {
+    const response = await axios.get(`${API_BASE_URL}/api/cars/my-cars/${userId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;

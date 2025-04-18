@@ -10,13 +10,6 @@ export default function middleware(request) {
   if (request.nextUrl.pathname === "/sign-up") {
     // Check if seller type is selected
     const sellerType = request.cookies.get("sellerType")?.value;
-
-    if (!sellerType) {
-      // Redirect to seller type selection page if no type is selected
-      return NextResponse.redirect(
-        new URL("/website/seller-type", request.url)
-      );
-    }
   }
 
   // For dashboard routes, you could add Clerk functionality here

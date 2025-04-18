@@ -3,7 +3,7 @@ import { GoogleMap, Marker, useLoadScript, Autocomplete } from '@react-google-ma
 
 const CustomMap = ({ location, setLocation }) => {
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: 'AIzaSyCvL9AJCbxcJ70RN62qZjtWys9uLpIXSWY', 
+    googleMapsApiKey: 'AIzaSyCvL9AJCbxcJ70RN62qZjtWys9uLpIXSWY',
     libraries: ['places'], // Required for Autocomplete
   });
 
@@ -17,16 +17,14 @@ const CustomMap = ({ location, setLocation }) => {
       if (place.geometry) {
         setLocation({
           ...location,
-          searchText: place.formatted_address,
-          coordinates: {
-            lat: place.geometry.location.lat(),
-            lng: place.geometry.location.lng(),
-          },
+          type: 'Point',
+          coordinates: [place.geometry.location.lng(),place.geometry.location.lat()],
         });
       }
     }
   };
 
+  // Map is not loaded yet
   if (!isLoaded) return <div>Loading...</div>;
 
   return (
@@ -49,17 +47,20 @@ const CustomMap = ({ location, setLocation }) => {
       {/* Google Map */}
       <GoogleMap
         zoom={10}
-        center={{ lat: location.coordinates.lat || 52.2298, lng: location.coordinates.lng || 21.0122 }}
+        center={{
+          lat: location.coordinates[1],
+          lng: location.coordinates[0],
+        }}
         mapContainerClassName="w-full min-h-96 h-auto rounded-lg"
         onClick={(e) => {
           setLocation({
             ...location,
-            coordinates: { lat: e.latLng.lat(), lng: e.latLng.lng() },
+            coordinates: [e.latLng.lng(), e.latLng.lat()],
           });
         }}
       >
-        {location.coordinates.lat && location.coordinates.lng && (
-          <Marker position={{ lat: location.coordinates.lat, lng: location.coordinates.lng }} />
+        {location.coordinates[0] && location.coordinates[1] && (
+          <Marker position={{ lng: location.coordinates[0], lat: location.coordinates[1] }} />
         )}
       </GoogleMap>
     </div>

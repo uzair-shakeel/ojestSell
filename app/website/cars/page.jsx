@@ -45,13 +45,8 @@ const Page = () => {
 
   return (
     <div className="w-full min-h-screen h-auto bg-white p-2 sm:p-5">
-<<<<<<< HEAD
       {/* Header */}
       <section className="relative max-w-screen-2xl mx-auto h-[300px] md:h-[400px] w-[98%] my-[10px] rounded-2xl overflow-hidden">
-=======
-      {/* Hero Banner Section with Image */}
-      <section className="relative max-w-screen-2xl mx-auto h-[300px]  md:h-[400px] w-[98%]  my-[10px] rounded-2xl overflow-hidden">
->>>>>>> 05e9c2dc2045ce14c5569ed7c3dd4cf28650e379
         <div className="absolute inset-0">
           <Image
             src="/images/result.jpg"
@@ -62,17 +57,9 @@ const Page = () => {
           />
         </div>
         <div className="relative z-10 container h-full flex flex-col justify-center items-end py-[90px] md:py-[120px] text-center text-white">
-<<<<<<< HEAD
           <h1 className="z-10 text-white sm:text-4xl md:text-5xl text-3xl font-bold max-w-3xl xl:text-start text-center">
             Find your dream car easily with advanced search filters.
           </h1>
-=======
-          <div className="relative z-10 md:w-1/3 px-6 flex flex-col justify-center">
-            <h1 className="text-xl font-extrabold pt-24 md:pt-0 text-white sm:text-4xl">
-              Find Your Perfect Ride — Fast, Easy, Reliable.
-            </h1>
-          </div>
->>>>>>> 05e9c2dc2045ce14c5569ed7c3dd4cf28650e379
         </div>
       </section>
 
