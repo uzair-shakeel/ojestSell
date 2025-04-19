@@ -92,7 +92,7 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
         </div>
         <button
           onClick={() => setShowMobileFilter(false)}
-          className="text-base md:hidden  "
+          className="text-md md:hidden  "
         >
           <X size={30} />
         </button>
@@ -118,13 +118,13 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
               value={filters.location}
               onChange={handleInputChange}
               placeholder="Enter location"
-              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+              className="w-full p-4 rounded-md bg-white border border-gray-300 text-md"
             />
             <select
               name="maxDistance"
               value={filters.maxDistance}
               onChange={handleInputChange}
-              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+              className="w-full p-4 rounded-md bg-white border border-gray-300 text-md"
             >
               <option value="">Select distance</option>
               <option value="5">5 km</option>
@@ -152,7 +152,7 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
               name="make"
               value={filters.make}
               onChange={handleInputChange}
-              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+              className="w-full p-4 rounded-md bg-white border border-gray-300 text-md"
             >
               <option value="">All</option>
               <option value="Toyota">Toyota</option>
@@ -180,7 +180,7 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
               name="model"
               value={filters.model}
               onChange={handleInputChange}
-              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+              className="w-full p-4 rounded-md bg-white border border-gray-300 text-md"
             >
               <option value="">All</option>
               <option value="MX3">MX3</option>
@@ -208,7 +208,7 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
               name="type"
               value={filters.type}
               onChange={handleInputChange}
-              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+              className="w-full p-4 rounded-md bg-white border border-gray-300 text-md"
             >
               <option value="">All</option>
               <option value="SUV">SUV</option>
@@ -236,7 +236,7 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
                 name="yearFrom"
                 value={filters.yearFrom}
                 onChange={handleInputChange}
-                className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+                className="w-full p-4 rounded-md bg-white border border-gray-300 text-md"
               >
                 <option value="">From</option>
                 <option value="2015">2015</option>
@@ -252,7 +252,7 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
                 name="yearTo"
                 value={filters.yearTo}
                 onChange={handleInputChange}
-                className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+                className="w-full p-4 rounded-md bg-white border border-gray-300 text-md"
               >
                 <option value="">To</option>
                 <option value="2015">2015</option>
@@ -285,7 +285,7 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
               name="condition"
               value={filters.condition}
               onChange={handleInputChange}
-              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+              className="w-full p-4 rounded-md bg-white border border-gray-300 text-md"
             >
               <option value="">All</option>
               <option value="New">New</option>
@@ -312,7 +312,7 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
                 name="minMileage"
                 value={filters.minMileage}
                 onChange={handleInputChange}
-                className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+                className="w-full p-4 rounded-md bg-white border border-gray-300 text-md"
               >
                 <option value="">From</option>
                 <option value="50000">50,000 km</option>
@@ -324,7 +324,7 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
                 name="maxMileage"
                 value={filters.maxMileage}
                 onChange={handleInputChange}
-                className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+                className="w-full p-4 rounded-md bg-white border border-gray-300 text-md"
               >
                 <option value="">To</option>
                 <option value="50000">50,000 km</option>
@@ -353,7 +353,7 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
               name="drivetrain"
               value={filters.drivetrain}
               onChange={handleInputChange}
-              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+              className="w-full p-4 rounded-md bg-white border border-gray-300 text-md"
             >
               <option value="">All</option>
               <option value="FWD">FWD</option>
@@ -380,7 +380,7 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
               name="transmission"
               value={filters.transmission}
               onChange={handleInputChange}
-              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+              className="w-full p-4 rounded-md bg-white border border-gray-300 text-md"
             >
               <option value="">All</option>
               <option value="Automatic">Automatic</option>
@@ -406,7 +406,7 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
               name="fuel"
               value={filters.fuel}
               onChange={handleInputChange}
-              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+              className="w-full p-4 rounded-md bg-white border border-gray-300 text-md"
             >
               <option value="">All</option>
               <option value="Petrol">Petrol</option>
@@ -434,7 +434,7 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
               name="engine"
               value={filters.engine}
               onChange={handleInputChange}
-              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+              className="w-full p-4 rounded-md bg-white border border-gray-300 text-md"
             >
               <option value="">All</option>
               <option value="1.6L">1.6L</option>
@@ -466,7 +466,7 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
               name="serviceHistory"
               value={filters.serviceHistory}
               onChange={handleInputChange}
-              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+              className="w-full p-4 rounded-md bg-white border border-gray-300 text-md"
             >
               <option value="">All</option>
               <option value="Full">Full</option>
@@ -493,7 +493,7 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
               name="accidentHistory"
               value={filters.accidentHistory}
               onChange={handleInputChange}
-              className="w-full p-3 rounded-md bg-white border border-gray-300 text-base"
+              className="w-full p-4 rounded-md bg-white border border-gray-300 text-md"
             >
               <option value="">All</option>
               <option value="Yes">Yes</option>
@@ -505,7 +505,7 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
       <div className="flex justify-between items-center px-4 py-4 border-b">
         <button
           onClick={() => setShowMobileFilter(false)}
-          className="text-base md:hidden bg-blue-600 text-white px-4 py-3 rounded-md w-3/4 mx-auto font-medium"
+          className="text-md md:hidden bg-blue-600 text-white px-4 py-3 rounded-md w-3/4 mx-auto font-medium"
         >
           Apply Filters
         </button>
