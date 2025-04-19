@@ -1,10 +1,8 @@
-import { auth , useUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
+"use client";
+import {  useUser } from "@clerk/nextjs";
 import DashboardStats from "../../components/dashboard/DashboardStats";
 export default function DashboardPage() {
-  const { userId } = auth();
   const { user } = useUser();
-
 
   return (
     <div>
