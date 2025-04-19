@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
@@ -9,14 +9,18 @@ import StepFour from "../../../../components/dashboard/createsteps/StepFour";
 import StepThree from "../../../../components/dashboard/createsteps/StepThree";
 import StepTwo from "../../../../components/dashboard/createsteps/StepTwo";
 import StepOne from "../../../../components/dashboard/createsteps/StepOne";
+import { getUserById } from "../../../../services/userService";
 
 export default function MultiStepForm() {
-  const { getToken, isSignedIn } = useAuth();
+  
+  const { getToken, userId } = useAuth();
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1); // 1 for forward, -1 for backward
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState(null);
+
 
   const [formData, setFormData] = useState({
     // Step 1: Basic Information
@@ -47,22 +51,45 @@ export default function MultiStepForm() {
     condition: {
       interior: "",
       mechanical: "",
-      paintandBody: "", // Renamed from paint to match backend
-      frameandUnderbody: "", // Renamed from frame to match backend
+      paintandBody: "",
+      frameandUnderbody: "",
       overall: "",
     },
 
     // Step 4: Financial Information
-    sellOptions: [] as string[], // ["Long term rental", "Lease", "Financing", "Cash"]
-    invoiceOptions: [] as string[], // ["Invoice", "Invoice VAT", "Selling Agreement"]
-    sellerType: "private" as "private" | "company", // "private" or "company"
-    priceNetto: "",
-    priceWithVat: "",
-
+    financialInfo: {
+      sellOptions: [] ,
+      invoiceOptions: [] ,
+      sellerType: "private" as "private" | "company",
+      priceNetto: "",
+      priceWithVat: "",
+    },
     // Step 5: Location
-    location: { searchText: "", coordinates: { lat: 0, lng: 0 } },
+    location: {
+      type: "Point",
+      coordinates: [51.5074, -0.1278], // Default to London
+    },
+    createdBy: "",
   });
 
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const userData = await getUserById(userId);
+        setUser(userData);
+        console.log(userData);
+        setFormData({
+          ...formData,
+          location: userData.location,
+          createdBy: userData.clerkUserId,
+        });
+      } catch (err) {
+        console.error("Error fetching user:", err);
+      }
+    };
+  
+    if (userId) loadUser();
+  }, [userId]);
   const nextStep = () => {
     setDirection(1); // Move from right to left
     setStep((prev) => prev + 1);
@@ -86,20 +113,17 @@ export default function MultiStepForm() {
     if (!formData.make) return "Make is required.";
     if (!formData.model) return "Model is required.";
     if (!formData.type) return "Type is required.";
-    if (!formData.sellOptions.length) return "At least one sell option is required.";
-    if (!formData.invoiceOptions.length) return "At least one invoice option is required.";
-    if (!formData.sellerType) return "Seller type is required.";
-    if (!formData.priceNetto) return "Price Netto is required.";
-    if (formData.location.coordinates.lat === 0 && formData.location.coordinates.lng === 0) {
-      return "Please select a valid location.";
-    }
+    if (!formData.financialInfo.sellOptions.length) return "At least one sell option is required.";
+    if (!formData.financialInfo.invoiceOptions.length) return "At least one invoice option is required.";
+    if (!formData.financialInfo.sellerType) return "Seller type is required.";
+    if (!formData.financialInfo.priceNetto) return "Price Netto is required.";
     return null;
   };
 
   const handleSubmit = async () => {
     setError(null);
     setLoading(true);
-
+  
     // Validate form
     const validationError = validateForm();
     if (validationError) {
@@ -107,48 +131,70 @@ export default function MultiStepForm() {
       setLoading(false);
       return;
     }
-
+  
     try {
-      const carFormData = new FormData();
-      carFormData.append("title", formData.title);
-      carFormData.append("description", formData.description);
-      carFormData.append("make", formData.make);
-      carFormData.append("model", formData.model);
-      carFormData.append("trim", formData.trim);
-      carFormData.append("type", formData.type);
-      carFormData.append("year", formData.year);
-      carFormData.append("color", formData.color);
-      carFormData.append("condition", formData.condition.interior ? "Used" : "New"); // Default condition based on interior
-      carFormData.append("mileage", formData.mileage);
-      carFormData.append("drivetrain", formData.drivetrain);
-      carFormData.append("transmission", formData.transmission);
-      carFormData.append("fuel", formData.fuel);
-      carFormData.append("engine", formData.engine);
-      carFormData.append("horsepower", formData.horsepower);
-      carFormData.append("accidentHistory", formData.accidentHistory);
-      carFormData.append("serviceHistory", formData.serviceHistory);
-      carFormData.append("vin", formData.vin);
-      carFormData.append("country", formData.country);
-      carFormData.append("carCondition", JSON.stringify(formData.condition));
-      carFormData.append(
-        "financialInfo",
-        JSON.stringify({
-          sellOptions: formData.sellOptions,
-          invoiceOptions: formData.invoiceOptions,
-          sellerType: formData.sellerType,
-          priceNetto: parseFloat(formData.priceNetto),
-          priceWithVat: formData.priceWithVat ? parseFloat(formData.priceWithVat) : undefined,
-        })
-      );
-      carFormData.append(
-        "location",
-        JSON.stringify([formData.location.coordinates.lng, formData.location.coordinates.lat])
-      );
-      formData.images.forEach((image) => carFormData.append("images", image));
-
-      await addCar(carFormData, getToken);
+      const carData = {
+        title: formData.title,
+        description: formData.description,
+        make: formData.make,
+        model: formData.model,
+        trim: formData.trim,
+        type: formData.type,
+        year: formData.year,
+        color: formData.color,
+        condition: formData.condition.interior ? "Used" : "New",
+        mileage: formData.mileage,
+        drivetrain: formData.drivetrain,
+        transmission: formData.transmission,
+        fuel: formData.fuel,
+        engine: formData.engine,
+        horsepower: formData.horsepower,
+        accidentHistory: formData.accidentHistory,
+        serviceHistory: formData.serviceHistory,
+        vin: formData.vin,
+        country: formData.country,
+        carCondition: formData.condition,
+        financialInfo: {
+          sellOptions: Array.isArray(formData.financialInfo.sellOptions) ? formData.financialInfo.sellOptions : [],
+          invoiceOptions: Array.isArray(formData.financialInfo.invoiceOptions) ? formData.financialInfo.invoiceOptions : [],
+          sellerType: formData.financialInfo.sellerType,
+          priceNetto: parseFloat(formData.financialInfo.priceNetto),
+        },
+        images: formData.images,
+      };
+  
+      const formDataToSend = new FormData();
+      for (const key in carData) {
+        if (key === 'images') {
+          carData[key].forEach((image: File) => {
+            formDataToSend.append('images', image);
+          });
+        } else if (key === 'location') {
+          formDataToSend.append('location', JSON.stringify(carData[key]));
+        } else if (key === 'financialInfo') {
+          for (const financialKey in carData[key]) {
+            if (financialKey === 'sellOptions' || financialKey === 'invoiceOptions') {
+              // Append arrays as comma-separated strings or empty string if empty
+              formDataToSend.append(
+                `financialInfo[${financialKey}]`,
+                Array.isArray(carData[key][financialKey]) ? carData[key][financialKey].join(',') : ''
+              );
+            } else {
+              formDataToSend.append(`financialInfo[${financialKey}]`, carData[key][financialKey] || '');
+            }
+          }
+        } else if (key === 'carCondition') {
+          for (const conditionKey in carData[key]) {
+            formDataToSend.append(`carCondition[${conditionKey}]`, carData[key][conditionKey]);
+          }
+        } else {
+          formDataToSend.append(key, carData[key]);
+        }
+      }
+  
+      await addCar(formDataToSend, getToken);
       alert("Car created successfully!");
-      router.push("/cars"); // Redirect to cars page
+      router.push("/dashboard/cars");
     } catch (err) {
       setError(err.message || "Failed to create car. Please try again.");
       console.error("Error creating car:", err);
@@ -156,6 +202,8 @@ export default function MultiStepForm() {
       setLoading(false);
     }
   };
+  
+  
 
   return (
     <div className="max-w-5xl mx-auto p-5 overflow-hidden h-auto border border-gray-200 shadow-md rounded-lg">

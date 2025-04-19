@@ -3,11 +3,10 @@ import { useState } from "react";
 
 export default function StepFour({ nextStep, prevStep, updateFormData, formData }) {
   const [localData, setLocalData] = useState({
-    sellOptions: formData.sellOptions,
-    invoiceOptions: formData.invoiceOptions,
-    sellerType: formData.sellerType,
-    priceNetto: formData.priceNetto,
-    priceWithVat: formData.priceWithVat,
+    sellOptions: Array.isArray(formData.financialInfo.sellOptions) ? formData.financialInfo.sellOptions : [],
+    invoiceOptions: Array.isArray(formData.financialInfo.invoiceOptions) ? formData.financialInfo.invoiceOptions : [],
+    sellerType: formData.financialInfo.sellerType || "private",
+    priceNetto: formData.financialInfo.priceNetto || "",
   });
 
   const sellOptionsList = ["Long term rental", "Lease", "Financing", "Cash"];
@@ -16,8 +15,8 @@ export default function StepFour({ nextStep, prevStep, updateFormData, formData 
   const handleCheckboxChange = (category: "sellOptions" | "invoiceOptions", value: string) => {
     setLocalData((prev) => {
       const updatedList = prev[category].includes(value)
-        ? prev[category].filter((item) => item !== value) // Remove if already selected
-        : [...prev[category], value]; // Add if not selected
+        ? prev[category].filter((item) => item !== value)
+        : [...prev[category], value];
       return { ...prev, [category]: updatedList };
     });
   };
@@ -35,7 +34,8 @@ export default function StepFour({ nextStep, prevStep, updateFormData, formData 
       alert("Please enter the price.");
       return;
     }
-    updateFormData(localData);
+    console.log("Updating formData with:", localData);
+    updateFormData({ financialInfo: { ...formData.financialInfo, ...localData } });
     nextStep();
   };
 
@@ -93,21 +93,6 @@ export default function StepFour({ nextStep, prevStep, updateFormData, formData 
                 onChange={(e) =>
                   setLocalData({ ...localData, priceNetto: e.target.value })
                 }
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700 font-semibold mb-1">
-                Price (With VAT)
-              </label>
-              <input
-                type="number"
-                placeholder="Enter Price with VAT"
-                className="border p-3 w-full rounded h-12"
-                value={localData.priceWithVat}
-                onChange={(e) =>
-                  setLocalData({ ...localData, priceWithVat: e.target.value })
-                }
-                disabled // Auto-calculated by backend
               />
             </div>
           </div>

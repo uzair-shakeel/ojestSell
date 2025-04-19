@@ -5,15 +5,16 @@ import { useRouter } from "next/navigation";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import CustomMap from "../../../components/dashboard/GoogleMapComponent";
-import { motion, AnimatePresence } from "framer-motion";
-import { fetchUser , updateUser , deleteUserAccount, getUserById } from "../../../services/userService";
+import { motion } from "framer-motion";
+import {  getUserById, updateUser } from "../../../services/userService";
+import Image from "next/image";
+
 
 const ProfileComponent = () => {
-  const { getToken, userId, isSignedIn } = useAuth();
-  const { signOut } = useClerk();
-  const router = useRouter();
-
+  const { getToken, userId } = useAuth();
   const [user, setUser] = useState(null);
+  const BASE_URL = "http://localhost:5000/";
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -27,28 +28,22 @@ const ProfileComponent = () => {
       website: "",
       linkedin: "",
     },
-    image: "",
     sellerType: "private",
     phoneNumbers: [{ phone: "", countryCode: "pl" }],
-    location: { searchText: "", coordinates: { lat: null, lng: null } },
+    location: {
+      type: "Point",
+      coordinates: [51.5074, -0.1278], // Default to London
+    },
   });
   const [imageFile, setImageFile] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!isSignedIn) {
-      router.push("/sign-in");
-      return;
-    }
-
     const loadUser = async () => {
-      setLoading(true);
-      setError(null);
       try {
-        const userData = await getUserById(userId, getToken);
+        const userData = await getUserById(userId);
         setUser(userData);
-        setFormData({
+        
+        const newFormData = {
           firstName: userData.firstName || "",
           lastName: userData.lastName || "",
           description: userData.description || "",
@@ -70,24 +65,24 @@ const ProfileComponent = () => {
               }))
             : [{ phone: "", countryCode: "pl" }],
           location: {
-            searchText: "",
-            coordinates: {
-              lat: userData.location?.[1] || null,
-              lng: userData.location?.[0] || null,
-            },
+            type: "Point",
+            coordinates: userData.location?.coordinates || [51.5074, -0.1278], // default to London if no location
           },
-        });
+        };
+        
+        // Log the userData and the new formData
+        console.log("User Data:", userData);
+        console.log("Form Data:", newFormData);
+        
+        setFormData(newFormData);
       } catch (err) {
-        setError("Failed to load profile. Please try again.");
         console.error("Error fetching user:", err);
-      } finally {
-        setLoading(false);
       }
     };
-
+  
     if (userId) loadUser();
-  }, [userId, isSignedIn, getToken, router]);
-
+  }, [userId]);
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name in formData.socialMedia) {
@@ -110,11 +105,6 @@ const ProfileComponent = () => {
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, image: reader.result });
-      };
-      reader.readAsDataURL(file);
     }
   };
 
@@ -139,67 +129,29 @@ const ProfileComponent = () => {
       setFormData({ ...formData, phoneNumbers: newPhoneNumbers });
     }
   };
-
-  const handleLocationSearch = (e) => {
-    setFormData({
-      ...formData,
-      location: { ...formData.location, searchText: e.target.value },
-    });
+  const formatImageUrl = (imagePath) => {
+    if (!imagePath) return "/images/default-seller.png";
+    return `${BASE_URL}${imagePath.replace("\\", "/")}`;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
     try {
-      const updateData = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        description: formData.description,
-        companyName: formData.companyName,
-        sellerType: formData.sellerType,
-        socialMedia: formData.socialMedia,
-        phoneNumbers: formData.phoneNumbers.map((p) => p.phone),
-        location: [
-          formData.location.coordinates.lng,
-          formData.location.coordinates.lat,
-        ],
-        image: imageFile,
+      const data = {
+        ...formData,
       };
-      const updatedUser = await updateUser(updateData, getToken);
-      setUser(updatedUser);
-      setImageFile(null);
-      alert("Profile updated successfully!");
-    } catch (err) {
-      setError("Failed to update profile. Please try again.");
-      console.error("Error updating profile:", err);
-    } finally {
-      setLoading(false);
+      if (imageFile) {
+        data.image = imageFile;
+      }
+      // Call the updateUser function from userServices
+      const updatedUser = await updateUser(data, getToken);
+      setUser(updatedUser); // Set the updated user data to the state
+    } catch (error) {
+      console.error("Error updating user:", error);
     }
   };
+  
 
-  const handleDeleteAccount = async () => {
-    if (!confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-    try {
-      await deleteUserAccount(getToken);
-      await signOut(); // Sign out the user after deletion
-      alert("Account deleted successfully.");
-      router.push("/"); // Redirect to homepage
-    } catch (err) {
-      setError("Failed to delete account. Please try again.");
-      console.error("Error deleting account:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div className="text-red-500">{error}</div>;
   if (!user) return <div>Loading...</div>;
 
   return (
@@ -209,7 +161,6 @@ const ProfileComponent = () => {
       transition={{ duration: 0.2 }}
     >
       <h1 className="text-3xl font-bold mb-4">Profile</h1>
-      {error && <div className="text-red-500 mb-4">{error}</div>}
       <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
         {/* Left part */}
         <motion.div
@@ -224,10 +175,12 @@ const ProfileComponent = () => {
               Profile Picture
             </label>
             <div className="flex flex-col md:flex-row gap-4 items-center space-x-4">
-              <motion.img
-                src={formData.image || "https://via.placeholder.com/300"}
-                alt="Profile"
-                className="w-20 h-20 rounded-full object-cover border border-gray-300"
+              <Image
+                 src={formatImageUrl(user?.image)}
+                 alt="Profile"
+                 width={80}
+                 height={80}
+                className="w-20 h-20 rounded-full object-center border border-gray-300"
               />
               <input
                 type="file"
@@ -438,41 +391,22 @@ const ProfileComponent = () => {
             )}
           </div>
         </motion.div>
-
-        {/* Location */}
-        <motion.div
-          initial={{ x: -50, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.4 }}
-          className="mb-6 col-span-2"
-        >
-          <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-            Location
-          </label>
-          <CustomMap
-            location={formData.location}
-            setLocation={(newLocation) =>
-              setFormData({ ...formData, location: newLocation })
-            }
-          />
-        </motion.div>
+       <motion.div className="mb-6 col-span-2">
+        <CustomMap
+          location={formData.location}
+          setLocation={(newLocation) => {
+            setFormData({ ...formData, location: newLocation });
+          }}
+        />
+      </motion.div>
 
         {/* Submit and Delete Buttons */}
-        <div className="flex space-x-4">
+        <div className="flex gap-4">
           <button
             type="submit"
-            className="w-32 p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-            disabled={loading}
+            className="bg-blue-500 text-white rounded-md px-5 py-2 hover:bg-blue-600"
           >
-            {loading ? "Saving..." : "Save Profile"}
-          </button>
-          <button
-            type="button"
-            onClick={handleDeleteAccount}
-            className="w-32 p-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-            disabled={loading}
-          >
-            {loading ? "Deleting..." : "Delete Account"}
+            Save Changes
           </button>
         </div>
       </form>

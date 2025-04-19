@@ -1,19 +1,9 @@
 "use client";
-import CustomMap from "../GoogleMapComponent"; // Adjust path as needed
 
 export default function StepFive({ prevStep, handleSubmit, formData, updateFormData, loading }) {
   return (
     <div className="bg-white rounded-lg">
       <h2 className="text-xl font-bold mb-6">Step 5: Review & Submit</h2>
-
-      {/* Location */}
-      <div className="mb-4">
-        <label className="block text-gray-700 font-semibold mb-1">Location</label>
-        <CustomMap
-          location={formData.location}
-          setLocation={(newLocation) => updateFormData({ location: newLocation })}
-        />
-      </div>
 
       {/* Grid Layout */}
       <div className="sm:grid sm:grid-cols-2 space-y-5 gap-y-5 text-gray-700">
@@ -102,33 +92,22 @@ export default function StepFive({ prevStep, handleSubmit, formData, updateFormD
         <div className="col-span-2 text-lg font-bold mt-4">Financial Information</div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Sell Options</p>
-          <p className="font-medium text-black">{formData.sellOptions.join(", ") || "N/A"}</p>
+          <p className="font-medium text-black">{formData.financialInfo.sellOptions.join(", ") || "N/A"}</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Invoice Options</p>
-          <p className="font-medium text-black">{formData.invoiceOptions.join(", ") || "N/A"}</p>
+          <p className="font-medium text-black">{formData.financialInfo.invoiceOptions.join(", ") || "N/A"}</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Seller Type</p>
-          <p className="font-medium text-black">{formData.sellerType}</p>
+          <p className="font-medium text-black">{formData.financialInfo.sellerType}</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Price</p>
           <p className="font-medium text-black">
-            {formData.invoiceOptions.includes("Invoice VAT")
-              ? `Netto: ${formData.priceNetto} €, With VAT: ${formData.priceWithVat || "Auto-calculated"} €`
-              : `${formData.priceNetto} €`}
-          </p>
-        </div>
-
-        {/* Location */}
-        <div className="col-span-2 text-lg font-bold mt-4">Location</div>
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Coordinates</p>
-          <p className="font-medium text-black">
-            {formData.location.coordinates.lat && formData.location.coordinates.lng
-              ? `Lat: ${formData.location.coordinates.lat}, Lng: ${formData.location.coordinates.lng}`
-              : "Not selected"}
+            {formData.financialInfo.invoiceOptions.includes("Invoice VAT")
+              ? `Netto: ${formData.financialInfo.priceNetto} €, With VAT: ${formData.financialInfo.priceWithVat || "Auto-calculated"} €`
+              : `${formData.financialInfo.priceNetto} €`}
           </p>
         </div>
       </div>

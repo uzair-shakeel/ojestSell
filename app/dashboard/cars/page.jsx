@@ -1,116 +1,50 @@
 "use client";
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
+import { useAuth, } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
+import { getCarsByUserId } from "../../../services/carService";
+import CarCard from "../../../components/website/CarCard";
 
 export default function DashboardCarsPage() {
   const { user, isLoaded } = useUser();
   const [isLoading, setIsLoading] = useState(true);
+  const { getToken, userId } = useAuth();
+  const [cars, setCars] = useState([]);
+
+  const loadCars = async () => {
+    try {
+      const response = await getCarsByUserId(userId, getToken);
+      setCars(response);
+    } catch (error) {
+      console.error("Error loading cars:", error);
+    }
+  };
 
   useEffect(() => {
     if (isLoaded) {
       setIsLoading(false);
     }
-  }, [isLoaded]);
+    if (userId) {
+      loadCars();
+    }
+  }, [isLoaded, userId, loadCars]);
 
   // Handle the case when there's no user or still loading
   if (isLoading || !user) {
     return <div>Loading...</div>;
   }
 
-  const vehicles = [
-    {
-      id: 14,
-      name: "BMW 3 Series",
-      price: "$47,125",
-      image:
-        "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Replace with actual image path
-    },
-    {
-      id: 1,
-      name: "BMW 2 Series",
-      price: "$40,775",
-      image:
-        "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      id: 2,
-      name: "Mercedes-Benz EQE Sedan",
-      price: "$76,050",
-      image:
-        "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      id: 3,
-      name: "Audi A3",
-      price: "$39,495",
-      image:
-        "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      id: 4,
-      name: "BMW 2 Series",
-      price: "$40,775",
-      image:
-        "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      id: 5,
-      name: "Mercedes-Benz EQE Sedan",
-      price: "$76,050",
-      image:
-        "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      id: 6,
-      name: "Audi A3",
-      price: "$39,495",
-      image:
-        "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-  ];
 
   return (
     <div>
-      <div className="min-h-screen grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-        {vehicles.map((car) => (
-          <div
-            key={car.id}
-            className="min-w-[250px] shadow-md md:min-w-[300px] rounded bg-white border box-border overflow-hidden group transition-all hover:shadow-md duration-300 border-gray-300 "
-          >
-            <motion.div
-              initial={{ y: -30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.4 }}
-              className="overflow-hidden relative h-56"
-            >
-              {" "}
-              <img
-                src={car.image}
-                alt={car.name}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-              />
-            </motion.div>
-            <motion.div
-              initial={{ x: -30, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.4 }}
-              className="mt-2 p-5"
-            >
-              <h3 className="font-semibold">{car.name}</h3>
-              <p className="text-gray-500">{car.price}</p>
-              <div className="flex gap-2 mt-3">
-                <button className="bg-white text-gray-900 font-medium px-4 py-1 rounded-sm  border border-gray-800">
-                  Edit
-                </button>
-                <button className="bg-red-600 text-white font-medium px-4 py-1 rounded-sm border border-red-600">
-                  Delete
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        ))}
-      </div>
+      <h1 className="text-3xl font-bold mb-4">My Cars</h1>
+     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+     {cars.map((car) => (
+        <CarCard key={car._id} car={car} />
+      ))}
+     </div>
     </div>
   );
+
 }

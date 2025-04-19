@@ -1,17 +1,15 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth , useUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import DashboardStats from "../../components/dashboard/DashboardStats";
 export default function DashboardPage() {
   const { userId } = auth();
+  const { user } = useUser();
 
-  if (!userId) {
-    return redirect("/sign-in");
-  }
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Dashboard Overview</h1>
-      <DashboardStats />
+      <p>Your account has been created successfully.</p>
+      <DashboardStats user={user} />
     </div>
   );
 }
