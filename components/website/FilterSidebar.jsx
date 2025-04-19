@@ -1,7 +1,8 @@
 "use client";
+import { X } from "lucide-react";
 import { useState } from "react";
 
-export default function FilterSidebar({ onApplyFilters }) {
+export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
   const [openIndex, setOpenIndex] = useState(null);
   const [filters, setFilters] = useState({
     location: "",
@@ -78,14 +79,22 @@ export default function FilterSidebar({ onApplyFilters }) {
   };
 
   return (
-    <div className="w-full border rounded-md bg-white lg:max-w-xs text-gray-900">
+    <div className="w-full md:border rounded-md bg-white lg:max-w-xs text-gray-900">
       <div className="flex justify-between items-center px-4 py-4 border-b">
-        <h2 className="text-2xl font-semibold">Filters</h2>
+        <div className="flex gap-6 items-center ">
+          <h2 className="text-2xl font-semibold">Filters</h2>
+          <button
+            onClick={handleReset}
+            className=" text-lg text-blue-600 font-medium"
+          >
+            Reset
+          </button>
+        </div>
         <button
-          onClick={handleReset}
-          className="text-base text-blue-600 font-medium"
+          onClick={() => setShowMobileFilter(false)}
+          className="text-base md:hidden  "
         >
-          Reset
+          <X size={30} />
         </button>
       </div>
 
@@ -97,7 +106,7 @@ export default function FilterSidebar({ onApplyFilters }) {
           }`}
         >
           <div
-            className="collapse-title text-lg font-medium cursor-pointer"
+            className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
             onClick={() => toggle(0)}
           >
             Location
@@ -133,7 +142,7 @@ export default function FilterSidebar({ onApplyFilters }) {
           }`}
         >
           <div
-            className="collapse-title text-lg font-medium cursor-pointer"
+            className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
             onClick={() => toggle(1)}
           >
             Make
@@ -161,7 +170,7 @@ export default function FilterSidebar({ onApplyFilters }) {
           }`}
         >
           <div
-            className="collapse-title text-lg font-medium cursor-pointer"
+            className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
             onClick={() => toggle(2)}
           >
             Model
@@ -189,7 +198,7 @@ export default function FilterSidebar({ onApplyFilters }) {
           }`}
         >
           <div
-            className="collapse-title text-lg font-medium cursor-pointer"
+            className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
             onClick={() => toggle(3)}
           >
             Type
@@ -216,7 +225,7 @@ export default function FilterSidebar({ onApplyFilters }) {
           }`}
         >
           <div
-            className="collapse-title text-lg font-medium cursor-pointer"
+            className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
             onClick={() => toggle(4)}
           >
             Year
@@ -266,7 +275,7 @@ export default function FilterSidebar({ onApplyFilters }) {
           }`}
         >
           <div
-            className="collapse-title text-lg font-medium cursor-pointer"
+            className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
             onClick={() => toggle(5)}
           >
             Condition
@@ -292,7 +301,7 @@ export default function FilterSidebar({ onApplyFilters }) {
           }`}
         >
           <div
-            className="collapse-title text-lg font-medium cursor-pointer"
+            className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
             onClick={() => toggle(6)}
           >
             Mileage
@@ -334,7 +343,7 @@ export default function FilterSidebar({ onApplyFilters }) {
           }`}
         >
           <div
-            className="collapse-title text-lg font-medium cursor-pointer"
+            className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
             onClick={() => toggle(7)}
           >
             Drivetrain
@@ -361,7 +370,7 @@ export default function FilterSidebar({ onApplyFilters }) {
           }`}
         >
           <div
-            className="collapse-title text-lg font-medium cursor-pointer"
+            className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
             onClick={() => toggle(8)}
           >
             Transmission
@@ -387,7 +396,7 @@ export default function FilterSidebar({ onApplyFilters }) {
           }`}
         >
           <div
-            className="collapse-title text-lg font-medium cursor-pointer"
+            className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
             onClick={() => toggle(9)}
           >
             Fuel Type
@@ -415,7 +424,7 @@ export default function FilterSidebar({ onApplyFilters }) {
           }`}
         >
           <div
-            className="collapse-title text-lg font-medium cursor-pointer"
+            className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
             onClick={() => toggle(10)}
           >
             Engine
@@ -447,7 +456,7 @@ export default function FilterSidebar({ onApplyFilters }) {
           }`}
         >
           <div
-            className="collapse-title text-lg font-medium cursor-pointer"
+            className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
             onClick={() => toggle(11)}
           >
             Service History
@@ -474,7 +483,7 @@ export default function FilterSidebar({ onApplyFilters }) {
           }`}
         >
           <div
-            className="collapse-title text-lg font-medium cursor-pointer"
+            className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
             onClick={() => toggle(12)}
           >
             Accident History
@@ -492,6 +501,14 @@ export default function FilterSidebar({ onApplyFilters }) {
             </select>
           </div>
         </div>
+      </div>
+      <div className="flex justify-between items-center px-4 py-4 border-b">
+        <button
+          onClick={() => setShowMobileFilter(false)}
+          className="text-base md:hidden bg-blue-600 text-white px-4 py-3 rounded-md w-3/4 mx-auto font-medium"
+        >
+          Apply Filters
+        </button>
       </div>
     </div>
   );

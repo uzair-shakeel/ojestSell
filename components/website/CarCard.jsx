@@ -67,8 +67,8 @@ export default function CarCard({ view, car }) {
         }`}
       >
         {/* Dynamically render images from the car.images array */}
-        {car.images && car.images.length > 0 ? (
-          car.images.map((image, index) => {
+        {car?.images && car?.images?.length > 0 ? (
+          car?.images?.map((image, index) => {
             // Assuming the backend sends image paths like 'uploads/1743981275051-yousriphoto.jpg'
             const imageUrl = `http://localhost:5000/${image.replace("\\", "/")}`; // Update URL format for static files
 

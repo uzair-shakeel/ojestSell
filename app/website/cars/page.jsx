@@ -97,7 +97,7 @@ const Page = () => {
           </div>
 
           {/* Pagination */}
-          <div className="w-full flex justify-center items-center py-8">
+          <div className="w-full flex bg-white justify-center items-center py-8">
             <div className="join">
               <button className="join-item btn">«</button>
               <button className="join-item btn btn-active">1</button>
@@ -110,17 +110,11 @@ const Page = () => {
 
           {/* Mobile Filter Sidebar */}
           {showMobileFilter && (
-            <div className="fixed inset-0 z-50 bg-white overflow-y-auto p-4">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold text-black">Filters</h2>
-                <button
-                  onClick={() => setShowMobileFilter(false)}
-                  className="text-sm bg-blue-600 text-white px-4 py-2 rounded"
-                >
-                  Close
-                </button>
-              </div>
-              <FilterSidebar onApplyFilters={handleApplyFilters} />
+            <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+              <FilterSidebar
+                onApplyFilters={handleApplyFilters}
+                setShowMobileFilter={setShowMobileFilter}
+              />
             </div>
           )}
         </main>

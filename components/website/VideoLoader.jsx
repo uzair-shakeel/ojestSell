@@ -163,7 +163,7 @@ const VideoLoader = () => {
               <video
                 ref={videoRef}
                 className="absolute inset-0 w-full h-full object-contain md:object-cover"
-                src="/Horse bodybuilder-00.mp4"
+                src="/Horse bodybuilder-02.mp4"
                 muted
                 playsInline
               ></video>
