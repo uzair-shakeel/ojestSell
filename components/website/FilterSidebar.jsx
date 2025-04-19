@@ -80,10 +80,10 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
   };
 
   return (
-    <div className="w-full lg:sticky lg:top-4 lg:max-w-xs">
-      <div className="border rounded-md bg-white text-gray-900">
-        <div className="flex justify-between items-center px-4 py-4 border-b">
-          <div className="flex gap-6 items-center ">
+    <div className="w-full lg:sticky lg:top-4 lg:max-w-xs h-full">
+      <div className="border rounded-md bg-white text-gray-900 flex flex-col h-[100vh] md:h-auto">
+        <div className="flex justify-between items-center px-4 py-4 border-b sticky top-0 bg-white z-10">
+          <div className="flex gap-6 items-center">
             <h2 className="text-2xl font-semibold">Filters</h2>
             <button
               onClick={handleReset}
@@ -100,7 +100,10 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
           </button>
         </div>
 
-        <div className="divide-y overflow-auto max-h-[calc(100vh-150px)] scrollbar-hide">
+        <div
+          className="divide-y overflow-auto flex-1"
+          style={{ height: "calc(100vh - 132px)" }}
+        >
           {/* 0 - Location */}
           <div
             className={`collapse collapse-arrow px-2 rounded-none ${
@@ -504,7 +507,7 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
             </div>
           </div>
         </div>
-        <div className="px-4 py-4 border-t">
+        <div className="px-4 py-4 border-t sticky bottom-0 bg-white z-10">
           <button
             onClick={handleApplyFilters}
             className="text-md bg-blue-600 text-white px-4 py-3 rounded-md w-full font-medium"
