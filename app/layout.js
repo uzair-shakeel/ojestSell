@@ -37,14 +37,7 @@ export default function RootLayout({ children }) {
   // Check if we're in a static build environment
   const isStaticBuild = process.env.NEXT_PHASE === "phase-production-build";
 
-  // If we're in a static build, don't use ClerkProvider
-  if (isStaticBuild) {
-    return (
-      <html lang="en">
-        <body>{children}</body>
-      </html>
-    );
-  }
+
 
   return (
     <ClerkProvider>
