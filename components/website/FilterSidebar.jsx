@@ -100,7 +100,7 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
           </button>
         </div>
 
-        <div className="divide-y overflow-auto max-h-[calc(100vh-200px)] scrollbar-hide">
+        <div className="divide-y overflow-auto max-h-[calc(100vh-150px)] scrollbar-hide">
           {/* 0 - Location */}
           <div
             className={`collapse collapse-arrow px-2 rounded-none ${
