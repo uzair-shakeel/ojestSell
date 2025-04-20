@@ -25,6 +25,22 @@ const Page = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Control body scrolling based on filter visibility
+  useEffect(() => {
+    if (showMobileFilter) {
+      // Disable scrolling when filter is open
+      document.body.style.overflow = "hidden";
+    } else {
+      // Re-enable scrolling when filter is closed
+      document.body.style.overflow = "auto";
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [showMobileFilter]);
+
   // Load all cars on initial render
   useEffect(() => {
     getAllCars()
@@ -114,6 +130,7 @@ const Page = () => {
               <FilterSidebar
                 onApplyFilters={handleApplyFilters}
                 setShowMobileFilter={setShowMobileFilter}
+                isVisible={showMobileFilter}
               />
             </div>
           )}

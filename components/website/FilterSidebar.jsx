@@ -2,7 +2,11 @@
 import { X } from "lucide-react";
 import { useState } from "react";
 
-export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
+export default function FilterSidebar({
+  onApplyFilters,
+  setShowMobileFilter,
+  isVisible = true,
+}) {
   const [openIndex, setOpenIndex] = useState(null);
   const [filters, setFilters] = useState({
     location: "",
@@ -22,6 +26,10 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
     serviceHistory: "",
     accidentHistory: "",
   });
+
+  const closeMobileFilter = () => {
+    setShowMobileFilter(false);
+  };
 
   const toggle = (index) => {
     setOpenIndex(index === openIndex ? null : index);
@@ -54,7 +62,7 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
       accidentHistory: filters.accidentHistory || undefined,
     };
     onApplyFilters(queryParams); // Pass filters to parent
-    setShowMobileFilter(false); // Hide the filter on mobile after applying
+    closeMobileFilter(); // Hide the filter
   };
 
   const handleReset = () => {
@@ -92,17 +100,16 @@ export default function FilterSidebar({ onApplyFilters, setShowMobileFilter }) {
               Reset
             </button>
           </div>
-          <button
-            onClick={() => setShowMobileFilter(false)}
-            className="text-md md:hidden"
-          >
+          <button onClick={closeMobileFilter} className="text-md md:hidden">
             <X size={30} />
           </button>
         </div>
 
         <div
-          className="divide-y overflow-auto flex-1"
+          className="divide-y overflow-auto flex-1 touch-pan-y -webkit-overflow-scrolling-touch overscroll-contain"
           style={{ height: "calc(100vh - 132px)" }}
+          onClick={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
         >
           {/* 0 - Location */}
           <div
