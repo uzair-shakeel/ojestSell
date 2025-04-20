@@ -32,7 +32,37 @@ export default function FilterSidebar({
   };
 
   const toggle = (index) => {
-    setOpenIndex(index === openIndex ? null : index);
+    const wasOpen = openIndex === index;
+    setOpenIndex(wasOpen ? null : index);
+
+    // Auto-scroll to make the accordion content visible when opened
+    // But only on mobile devices and only if this is a mobile filter panel
+    if (!wasOpen && setShowMobileFilter) {
+      // setShowMobileFilter prop indicates it's a mobile filter
+      setTimeout(() => {
+        // Only perform special scrolling on mobile devices
+        if (window.innerWidth < 768) {
+          // Use the index to find the related accordion
+          const accordionTitle = document.querySelector(
+            `.collapse-title[data-index="${index}"]`
+          );
+          if (accordionTitle) {
+            // For the last accordion, scroll it more into view
+            if (index === 12) {
+              accordionTitle.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
+            } else {
+              accordionTitle.scrollIntoView({
+                behavior: "smooth",
+                block: "nearest",
+              });
+            }
+          }
+        }
+      }, 50);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -107,7 +137,11 @@ export default function FilterSidebar({
 
         <div
           className="divide-y overflow-auto flex-1 touch-pan-y -webkit-overflow-scrolling-touch overscroll-contain"
-          style={{ height: "calc(100vh - 132px)" }}
+          style={{
+            height: setShowMobileFilter
+              ? "calc(100vh - 140px)"
+              : "calc(100vh - 132px)",
+          }}
           onClick={(e) => e.stopPropagation()}
           onTouchMove={(e) => e.stopPropagation()}
         >
@@ -120,10 +154,11 @@ export default function FilterSidebar({
             <div
               className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
               onClick={() => toggle(0)}
+              data-index="0"
             >
               Location
             </div>
-            <div className="collapse-content space-y-2">
+            <div className="collapse-content space-y-2" data-index="0">
               <input
                 type="text"
                 name="location"
@@ -156,10 +191,11 @@ export default function FilterSidebar({
             <div
               className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
               onClick={() => toggle(1)}
+              data-index="1"
             >
               Make
             </div>
-            <div className="collapse-content space-y-2">
+            <div className="collapse-content space-y-2" data-index="1">
               <select
                 name="make"
                 value={filters.make}
@@ -184,10 +220,11 @@ export default function FilterSidebar({
             <div
               className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
               onClick={() => toggle(2)}
+              data-index="2"
             >
               Model
             </div>
-            <div className="collapse-content space-y-2">
+            <div className="collapse-content space-y-2" data-index="2">
               <select
                 name="model"
                 value={filters.model}
@@ -212,10 +249,11 @@ export default function FilterSidebar({
             <div
               className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
               onClick={() => toggle(3)}
+              data-index="3"
             >
               Type
             </div>
-            <div className="collapse-content space-y-2">
+            <div className="collapse-content space-y-2" data-index="3">
               <select
                 name="type"
                 value={filters.type}
@@ -239,10 +277,11 @@ export default function FilterSidebar({
             <div
               className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
               onClick={() => toggle(4)}
+              data-index="4"
             >
               Year
             </div>
-            <div className="collapse-content space-y-2">
+            <div className="collapse-content space-y-2" data-index="4">
               <div className="flex gap-2">
                 <select
                   name="yearFrom"
@@ -289,10 +328,11 @@ export default function FilterSidebar({
             <div
               className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
               onClick={() => toggle(5)}
+              data-index="5"
             >
               Condition
             </div>
-            <div className="collapse-content space-y-2">
+            <div className="collapse-content space-y-2" data-index="5">
               <select
                 name="condition"
                 value={filters.condition}
@@ -315,10 +355,11 @@ export default function FilterSidebar({
             <div
               className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
               onClick={() => toggle(6)}
+              data-index="6"
             >
               Mileage
             </div>
-            <div className="collapse-content space-y-2">
+            <div className="collapse-content space-y-2" data-index="6">
               <div className="flex gap-2">
                 <select
                   name="minMileage"
@@ -357,10 +398,11 @@ export default function FilterSidebar({
             <div
               className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
               onClick={() => toggle(7)}
+              data-index="7"
             >
               Drivetrain
             </div>
-            <div className="collapse-content space-y-2">
+            <div className="collapse-content space-y-2" data-index="7">
               <select
                 name="drivetrain"
                 value={filters.drivetrain}
@@ -384,10 +426,11 @@ export default function FilterSidebar({
             <div
               className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
               onClick={() => toggle(8)}
+              data-index="8"
             >
               Transmission
             </div>
-            <div className="collapse-content space-y-2">
+            <div className="collapse-content space-y-2" data-index="8">
               <select
                 name="transmission"
                 value={filters.transmission}
@@ -410,10 +453,11 @@ export default function FilterSidebar({
             <div
               className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
               onClick={() => toggle(9)}
+              data-index="9"
             >
               Fuel Type
             </div>
-            <div className="collapse-content space-y-2">
+            <div className="collapse-content space-y-2" data-index="9">
               <select
                 name="fuel"
                 value={filters.fuel}
@@ -438,10 +482,11 @@ export default function FilterSidebar({
             <div
               className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
               onClick={() => toggle(10)}
+              data-index="10"
             >
               Engine
             </div>
-            <div className="collapse-content space-y-2">
+            <div className="collapse-content space-y-2" data-index="10">
               <select
                 name="engine"
                 value={filters.engine}
@@ -470,10 +515,11 @@ export default function FilterSidebar({
             <div
               className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
               onClick={() => toggle(11)}
+              data-index="11"
             >
               Service History
             </div>
-            <div className="collapse-content space-y-2">
+            <div className="collapse-content space-y-2" data-index="11">
               <select
                 name="serviceHistory"
                 value={filters.serviceHistory}
@@ -492,15 +538,16 @@ export default function FilterSidebar({
           <div
             className={`collapse collapse-arrow px-2 rounded-none ${
               openIndex === 12 ? "collapse-open" : ""
-            }`}
+            } ${setShowMobileFilter ? "mb-16" : ""}`}
           >
             <div
               className="collapse-title text-xl py-5 md:text-lg font-medium cursor-pointer"
               onClick={() => toggle(12)}
+              data-index="12"
             >
               Accident History
             </div>
-            <div className="collapse-content space-y-2">
+            <div className="collapse-content space-y-2" data-index="12">
               <select
                 name="accidentHistory"
                 value={filters.accidentHistory}
@@ -514,7 +561,7 @@ export default function FilterSidebar({
             </div>
           </div>
         </div>
-        <div className="px-4 py-4 border-t sticky bottom-0 bg-white z-10">
+        <div className="px-4 py-4 border-t sticky md:hidden bottom-0 bg-white z-10">
           <button
             onClick={handleApplyFilters}
             className="text-md bg-blue-600 text-white px-4 py-3 rounded-md w-full font-medium"
