@@ -3,11 +3,12 @@ import { CarsNearMe } from "../components/website/cars-near-me.jsx";
 import { BrowseCategories } from "../components/website/browse-categories";
 import { BrowseLocations } from "../components/website/browse-locations";
 import { BrowseByMake } from "../components/website/browse-by-make";
-import { BlogSection } from "../components/website/blog-section";
-import { Footer } from "../components/website/Footer";
 import Navbar from "../components/website/Navbar.jsx";
 import { FeaturedCategories } from "../components/website/featured-categories";
 import { FilterSearch } from "../components/website/filter-search";
+import { BlogSection } from "../components/website/blog-section.jsx";
+import { Import } from "lucide-react";
+import { Footer } from "../components/website/Footer.jsx";
 
 export default function Home() {
   return (
@@ -50,10 +51,10 @@ export default function Home() {
         <BrowseCategories />
         <BrowseLocations />
         <BrowseByMake />
-        {/* <BlogSection /> */}
+        <BlogSection />
       </main>
+      <Footer/>
 
-      <Footer />
     </div>
   );
 }
