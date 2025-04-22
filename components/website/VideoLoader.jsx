@@ -10,7 +10,7 @@ const VideoLoader = () => {
 
   useEffect(() => {
     // Make sure the loader shows for at least 5 seconds for better user experience
-    const minimumLoadingTime = 5000; // 5 seconds
+    const minimumLoadingTime = 2500; // 5 seconds
     const startTime = Date.now();
 
     // Create more realistic loading simulation
