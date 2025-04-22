@@ -1,6 +1,6 @@
 import Navbar from "../../components/website/Navbar";
-import { Footer } from "../../components/website/footer";
 import CookieConsent from "../../components/website/CookieConsent";
+import { Footer } from "../../components/website/footer";
 
 export default function WebsiteLayout({ children }) {
   return (
@@ -10,7 +10,7 @@ export default function WebsiteLayout({ children }) {
       <main className={`flex-1 flex h-auto w-full`}>
         <div className="w-full">{children}</div>
       </main>
-      <Footer />
+      <Footer/>
       <CookieConsent />
     </div>
   );
