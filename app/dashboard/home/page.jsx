@@ -19,7 +19,6 @@ const page = () => {
   };
 
   useEffect(() => {
-    console.log(user)
     if (user) {
       axios
         .post(
@@ -33,6 +32,7 @@ const page = () => {
           }
         )
         .then((response) => {
+          console.log(response)
           const data = response.data;
           if (data.error) {
             console.error('Sync error:', data.error);

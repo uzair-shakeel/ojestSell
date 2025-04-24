@@ -552,7 +552,7 @@ export default function FilterSidebar({
                 name="accidentHistory"
                 value={filters.accidentHistory}
                 onChange={handleInputChange}
-                className="w-full p-4 min-h-[50px] rounded-md bg-white border border-gray-300 text-md appearance-none"
+                className="w-full p-4  rounded-md bg-white border border-gray-300 text-md appearance-none"
               >
                 <option value="">All</option>
                 <option value="Yes">Yes</option>

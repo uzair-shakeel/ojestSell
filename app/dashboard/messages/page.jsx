@@ -21,7 +21,8 @@ const MessagesPage = () => {
   const { user } = useUser();
 
   // Generate temporary ID for optimistic updates
-  const generateTempId = () => `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const generateTempId = () =>
+    `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
   // Scroll to latest message
   useEffect(() => {
@@ -37,11 +38,14 @@ const MessagesPage = () => {
 
     const fetchChats = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/chat/my-chats", {
-          headers: {
-            "x-clerk-user-id": user.id,
-          },
-        });
+        const response = await fetch(
+          "http://localhost:5000/api/chat/my-chats",
+          {
+            headers: {
+              "x-clerk-user-id": user.id,
+            },
+          }
+        );
         if (!response.ok) throw new Error("Failed to fetch chats");
         const data = await response.json();
         console.log("all chats ", data);
@@ -56,8 +60,13 @@ const MessagesPage = () => {
     fetchChats();
 
     // Listen for errors
-    socket.on("error", ({ message }) => {
-      setError(message);
+    socket.on("error", (message) => {
+      console.error("Socket error:", message);
+      setError(
+        typeof message === "string"
+          ? message
+          : message.message || "An error occurred"
+      );
     });
 
     return () => {
@@ -82,7 +91,14 @@ const MessagesPage = () => {
         );
         if (!response.ok) throw new Error("Failed to fetch messages");
         const data = await response.json();
-        setMessages(data);
+
+        // Ensure messages have text field for display consistency
+        const processedData = data.map((msg) => ({
+          ...msg,
+          text: msg.text || msg.content, // Use text if available, otherwise use content
+        }));
+
+        setMessages(processedData);
         socket.emit("joinChat", { chatId: selectedChat._id });
         socket.emit("markMessagesSeen", {
           chatId: selectedChat._id,
@@ -97,27 +113,49 @@ const MessagesPage = () => {
     fetchMessages();
 
     socket.on("chatHistory", (chatMessages) => {
-      setMessages(chatMessages);
+      // Ensure all messages have text field
+      const processedMessages = chatMessages.map((msg) => ({
+        ...msg,
+        text: msg.text || msg.content,
+      }));
+      setMessages(processedMessages);
     });
 
     socket.on("newMessage", (message) => {
+      console.log("Received new message:", message);
+      // Ensure message has text field
+      const processedMessage = {
+        ...message,
+        text: message.text || message.content,
+      };
+
       setMessages((prev) => {
-        const tempIndex = prev.findIndex((m) => m.tempId === message.tempId);
+        const tempIndex = prev.findIndex(
+          (m) => m.tempId === processedMessage.tempId
+        );
         if (tempIndex !== -1) {
           const newMessages = [...prev];
-          newMessages[tempIndex] = message;
+          newMessages[tempIndex] = processedMessage;
           return newMessages;
         }
-        return [...prev, message];
+        return [...prev, processedMessage];
       });
+
       setChats((prev) =>
         prev.map((chat) =>
-          chat._id === message.chatId
-            ? { ...chat, lastMessage: { text: message.text, createdAt: message.createdAt } }
+          chat._id === processedMessage.chatId
+            ? {
+                ...chat,
+                lastMessage: {
+                  text: processedMessage.text,
+                  createdAt: processedMessage.createdAt,
+                },
+              }
             : chat
         )
       );
-      if (selectedChat._id === message.chatId) {
+
+      if (selectedChat._id === processedMessage.chatId) {
         socket.emit("markMessagesSeen", {
           chatId: selectedChat._id,
           userId: user.id,
@@ -126,10 +164,19 @@ const MessagesPage = () => {
     });
 
     socket.on("messagesSeen", (updatedMessages) => {
+      // Ensure all messages have text field
+      const processedMessages = updatedMessages.map((msg) => ({
+        ...msg,
+        text: msg.text || msg.content,
+      }));
+
       setMessages((prev) =>
-        prev.map((msg) =>
-          updatedMessages.find((m) => m._id === msg._id) || msg
-        )
+        prev.map((msg) => {
+          const updatedMsg = processedMessages.find((m) => m._id === msg._id);
+          return updatedMsg
+            ? { ...updatedMsg, text: updatedMsg.text || updatedMsg.content }
+            : msg;
+        })
       );
     });
 
@@ -168,6 +215,7 @@ const MessagesPage = () => {
       {
         ...message,
         _id: tempId,
+        sender: user.id, // Match the field name from backend
         createdAt: new Date(),
         seenBy: [user.id],
       },
@@ -184,7 +232,9 @@ const MessagesPage = () => {
 
   // Get other participant's name
   const getParticipantName = (chat) => {
-    const otherParticipant = chat.participants.find((p) => p.userId !== user?.id);
+    const otherParticipant = chat.participants.find(
+      (p) => p.userId !== user?.id
+    );
     return otherParticipant?.name || "Unknown";
   };
 
@@ -224,7 +274,9 @@ const MessagesPage = () => {
               >
                 <div className="w-10 h-10 bg-green-400 rounded-full"></div>
                 <div>
-                  <div className="font-medium text-sm">{getParticipantName(chat)}</div>
+                  <div className="font-medium text-sm">
+                    {getParticipantName(chat)}
+                  </div>
                   <div className="text-xs text-gray-500 truncate w-40">
                     {chat.lastMessage?.text || "No messages yet"}
                   </div>
@@ -232,7 +284,9 @@ const MessagesPage = () => {
               </div>
             ))
           ) : (
-            <p className="text-center text-gray-500 text-sm mt-4">No chats yet</p>
+            <p className="text-center text-gray-500 text-sm mt-4">
+              No chats yet
+            </p>
           )}
         </div>
       </div>
@@ -241,7 +295,9 @@ const MessagesPage = () => {
         <div className="border-b border-gray-300 p-4 flex items-center justify-between">
           <div>
             <div className="font-medium text-lg">
-              {selectedChat ? getParticipantName(selectedChat) : "Select a chat"}
+              {selectedChat
+                ? getParticipantName(selectedChat)
+                : "Select a chat"}
             </div>
           </div>
           <button
@@ -260,25 +316,31 @@ const MessagesPage = () => {
                   <div
                     key={message._id}
                     className={`flex ${
-                      message.senderId === user.id ? "justify-end" : "justify-start"
+                      message.sender === user.id || message.senderId === user.id
+                        ? "justify-end"
+                        : "justify-start"
                     }`}
                   >
                     <div
                       className={`max-w-[60%] px-4 py-2 rounded-lg text-sm whitespace-pre-line ${
+                        message.sender === user.id ||
                         message.senderId === user.id
                           ? "bg-blue-100 text-gray-800"
                           : "bg-white border border-gray-300"
                       }`}
                     >
-                      {message.text}
+                      {message.text || message.content}
                       <div className="text-right text-[10px] text-gray-500 mt-1">
                         {new Date(message.createdAt).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
                         })}
-                        {message.senderId === user.id && (
+                        {(message.sender === user.id ||
+                          message.senderId === user.id) && (
                           <span className="ml-2">
-                            {message.seenBy.length > 1 ? "Seen" : "Sent"}
+                            {message.seenBy && message.seenBy.length > 1
+                              ? "Seen"
+                              : "Sent"}
                           </span>
                         )}
                       </div>
@@ -296,7 +358,9 @@ const MessagesPage = () => {
               <p className="text-center text-gray-500">No messages yet</p>
             )
           ) : (
-            <p className="text-center text-gray-500">Select a chat to start messaging</p>
+            <p className="text-center text-gray-500">
+              Select a chat to start messaging
+            </p>
           )}
         </div>
         {selectedChat && (
@@ -307,6 +371,11 @@ const MessagesPage = () => {
               onChange={handleTyping}
               className="flex-1 p-2 border border-gray-300 rounded-full px-4 text-sm"
               placeholder="Enter message..."
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSendMessage();
+                }
+              }}
             />
             <button
               onClick={handleSendMessage}
