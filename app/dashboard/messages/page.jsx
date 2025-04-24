@@ -44,6 +44,7 @@ const MessagesPage = () => {
         });
         if (!response.ok) throw new Error("Failed to fetch chats");
         const data = await response.json();
+        console.log("all chats ", data);
         setChats(data);
         if (data.length > 0) setSelectedChat(data[0]);
       } catch (err) {
@@ -160,6 +161,7 @@ const MessagesPage = () => {
     };
 
     socket.emit("sendMessage", message);
+    console.log("message sent", message);
     setNewMessage("");
     setMessages((prev) => [
       ...prev,
