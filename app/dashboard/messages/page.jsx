@@ -17,6 +17,7 @@ const MessagesPage = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const [typing, setTyping] = useState(false);
   const [error, setError] = useState(null);
+  const [totalUnread, setTotalUnread] = useState(0);
   const messagesEndRef = useRef(null);
   const { user } = useUser();
 
@@ -48,8 +49,10 @@ const MessagesPage = () => {
         );
         if (!response.ok) throw new Error("Failed to fetch chats");
         const data = await response.json();
-        setChats(data);
-        if (data.length > 0) setSelectedChat(data[0]);
+        console.log("Initial chats data:", data);
+        setChats(data.chats || []);
+        setTotalUnread(data.totalUnread || 0);
+        if (data.chats && data.chats.length > 0) setSelectedChat(data.chats[0]);
       } catch (err) {
         console.error("Error fetching chats:", err);
         setError("Failed to load chats.");
@@ -68,9 +71,49 @@ const MessagesPage = () => {
       );
     });
 
+    // Listen for chat updates (new messages, read status changes)
+    socket.on("updatedChats", (updatedChats) => {
+      console.log("Received updated chats:", updatedChats);
+      setChats(updatedChats || []);
+
+      // Calculate total unread manually from chat data
+      const newTotalUnread = (updatedChats || []).reduce((sum, chat) => {
+        const unreadCount = chat.unreadCount || 0;
+        return sum + unreadCount;
+      }, 0);
+      console.log("Calculated new total unread:", newTotalUnread);
+      setTotalUnread(newTotalUnread);
+
+      // If we have a selected chat, update it with the latest data
+      if (selectedChat) {
+        const updatedSelectedChat = updatedChats.find(
+          (chat) => chat._id === selectedChat._id
+        );
+        if (updatedSelectedChat) {
+          setSelectedChat(updatedSelectedChat);
+        }
+      }
+    });
+
+    // Listen for total unread count updates
+    socket.on("totalUnreadCount", (count) => {
+      console.log("Received total unread count:", count);
+      setTotalUnread(count || 0);
+    });
+
+    // Request total unread count periodically
+    const unreadInterval = setInterval(() => {
+      if (socket.connected) {
+        socket.emit("getTotalUnreadCount");
+      }
+    }, 30000); // Check every 30 seconds
+
     return () => {
       socket.disconnect();
       socket.off("error");
+      socket.off("updatedChats");
+      socket.off("totalUnreadCount");
+      clearInterval(unreadInterval);
     };
   }, [user]);
 
@@ -140,20 +183,7 @@ const MessagesPage = () => {
         return [...prev, processedMessage];
       });
 
-      setChats((prev) =>
-        prev.map((chat) =>
-          chat._id === processedMessage.chatId
-            ? {
-                ...chat,
-                lastMessage: {
-                  text: processedMessage.text,
-                  createdAt: processedMessage.createdAt,
-                },
-              }
-            : chat
-        )
-      );
-
+      // If this is the current chat, mark as seen
       if (selectedChat._id === processedMessage.chatId) {
         socket.emit("markMessagesSeen", {
           chatId: selectedChat._id,
@@ -216,6 +246,7 @@ const MessagesPage = () => {
         sender: user.id, // Match the field name from backend
         createdAt: new Date(),
         seenBy: [user.id],
+        senderName: `${user.firstName} ${user.lastName}` || "You",
       },
     ]);
   };
@@ -230,10 +261,42 @@ const MessagesPage = () => {
 
   // Get other participant's name
   const getParticipantName = (chat) => {
-    const otherParticipant = chat.participants.find(
-      (p) => p.userId !== user?.id
-    );
+    if (!chat || !chat.participantData) return "Unknown";
+
+    const otherParticipant = chat.participantData.find((p) => !p.isCurrentUser);
+
     return otherParticipant?.name || "Unknown";
+  };
+
+  // Select a chat and mark as read
+  const handleSelectChat = (chat) => {
+    setSelectedChat(chat);
+    setShowSidebar(false);
+
+    // Mark messages as seen when selecting a chat
+    if (chat && chat._id) {
+      socket.emit("markMessagesSeen", {
+        chatId: chat._id,
+        userId: user.id,
+      });
+
+      // Update local unread count immediately for better UX
+      const updatedChats = chats.map((c) => {
+        if (c._id === chat._id) {
+          return { ...c, unreadCount: 0 };
+        }
+        return c;
+      });
+
+      setChats(updatedChats);
+
+      // Recalculate total unread count
+      const newTotalUnread = updatedChats.reduce(
+        (sum, c) => sum + (c.unreadCount || 0),
+        0
+      );
+      setTotalUnread(newTotalUnread);
+    }
   };
 
   if (error) {
@@ -252,32 +315,74 @@ const MessagesPage = () => {
     );
   }
 
+  // Calculate the chat count
+  const chatCount = chats.length;
+
   return (
-    <div className="flex min-h-[570px] h-auto bg-white font-sans relative">
+    <div className="flex h-[calc(100vh-80px)] bg-white font-sans relative">
+      {/* Sidebar */}
       <div
-        className={`fixed md:static top-0 z-20 bg-white h-full md:h-auto w-full sm:w-[320px] border-r border-gray-300 flex flex-col transition-transform duration-300 ${
+        className={`fixed md:relative top-0 z-20 bg-white h-full md:h-full w-full sm:w-[320px] border-r border-gray-300 flex flex-col transition-transform duration-300 ${
           showSidebar ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0`}
       >
-        <div className="flex-1 overflow-auto px-4 space-y-2 py-20">
+        {/* Sidebar Header */}
+        <div className="p-4 border-b border-gray-300 flex justify-between items-center shrink-0">
+          <h2 className="font-semibold text-lg">Messages</h2>
+          {chatCount > 0 && (
+            <div className="bg-red-500 text-white rounded-full h-6 w-6 flex items-center justify-center text-xs">
+              {chatCount}
+            </div>
+          )}
+        </div>
+
+        {/* Chat List - Scrollable */}
+        <div className="flex-1 overflow-y-auto px-4 space-y-2 py-4">
           {chats.length > 0 ? (
             chats.map((chat) => (
               <div
                 key={chat._id}
-                className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg cursor-pointer"
-                onClick={() => {
-                  setSelectedChat(chat);
-                  setShowSidebar(false);
-                }}
+                className={`flex items-center gap-2 p-3 hover:bg-gray-100 rounded-lg cursor-pointer ${
+                  selectedChat && selectedChat._id === chat._id
+                    ? "bg-blue-50"
+                    : ""
+                }`}
+                onClick={() => handleSelectChat(chat)}
               >
-                <div className="w-10 h-10 bg-green-400 rounded-full"></div>
-                <div>
-                  <div className="font-medium text-sm">
-                    {getParticipantName(chat)}
+                <div className="w-12 h-12 bg-green-400 rounded-full flex-shrink-0"></div>
+                <div className="flex-grow min-w-0">
+                  <div className="flex justify-between items-center">
+                    <div className="font-medium text-sm truncate">
+                      {getParticipantName(chat)}
+                    </div>
+                    {chat.unreadCount > 0 && (
+                      <div className="bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs ml-2">
+                        {chat.unreadCount}
+                      </div>
+                    )}
                   </div>
-                  <div className="text-xs text-gray-500 truncate w-40">
-                    {chat.lastMessage?.text || "No messages yet"}
+                  <div className="text-xs text-gray-500 truncate w-full">
+                    {chat.lastMessage ? (
+                      <>
+                        <span className="font-medium">
+                          {chat.lastMessage.sender === user.id ? "You: " : ""}
+                        </span>
+                        {chat.lastMessage.content || "No message content"}
+                      </>
+                    ) : (
+                      "No messages yet"
+                    )}
                   </div>
+                  {chat.lastMessage && (
+                    <div className="text-xs text-gray-400">
+                      {new Date(chat.lastMessage.timestamp).toLocaleString([], {
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </div>
+                  )}
                 </div>
               </div>
             ))
@@ -289,24 +394,40 @@ const MessagesPage = () => {
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col">
-        <div className="border-b border-gray-300 p-4 flex items-center justify-between">
+      {/* Main Chat Area */}
+      <div className="flex-1 flex flex-col h-full">
+        {/* Chat Header - Fixed */}
+        <div className="border-b border-gray-300 p-4 flex items-center justify-between shrink-0">
           <div>
             <div className="font-medium text-lg">
               {selectedChat
                 ? getParticipantName(selectedChat)
                 : "Select a chat"}
             </div>
+            {selectedChat && selectedChat.carId && (
+              <div className="text-xs text-gray-500">
+                Car: {selectedChat.carId.title || "Unknown Car"}
+              </div>
+            )}
           </div>
           <button
             className="md:hidden fixed top-24 right-4 z-10 p-2 px-5 bg-white border rounded-md shadow flex items-center gap-2"
             onClick={() => setShowSidebar(!showSidebar)}
           >
-            <FaEnvelope className="text-blue-500" size={20} />
+            <div className="relative">
+              <FaEnvelope className="text-blue-500" size={20} />
+              {chatCount > 0 && (
+                <div className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs">
+                  {chatCount}
+                </div>
+              )}
+            </div>
             <span className="font-medium">Inbox</span>
           </button>
         </div>
-        <div className="flex-1 overflow-auto p-6 space-y-4 bg-gray-50">
+
+        {/* Messages Container - Scrollable */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50">
           {selectedChat ? (
             messages.length > 0 ? (
               <>
@@ -327,6 +448,12 @@ const MessagesPage = () => {
                           : "bg-white border border-gray-300"
                       }`}
                     >
+                      {!message.sender === user.id &&
+                        !message.senderId === user.id && (
+                          <div className="font-medium text-xs text-gray-600 mb-1">
+                            {message.senderName || "Unknown"}
+                          </div>
+                        )}
                       {message.text || message.content}
                       <div className="text-right text-[10px] text-gray-500 mt-1">
                         {new Date(message.createdAt).toLocaleTimeString([], {
@@ -361,8 +488,10 @@ const MessagesPage = () => {
             </p>
           )}
         </div>
+
+        {/* Message Input - Fixed at bottom */}
         {selectedChat && (
-          <div className="p-4 border-t border-gray-300 flex items-center gap-2">
+          <div className="p-4 border-t border-gray-300 flex items-center gap-2 shrink-0 bg-white">
             <input
               type="text"
               value={newMessage}
