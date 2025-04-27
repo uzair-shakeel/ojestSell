@@ -237,6 +237,7 @@ const MessagesPage = () => {
     };
 
     socket.emit("sendMessage", message);
+    console.log("message sent", message);
     setNewMessage("");
     setMessages((prev) => [
       ...prev,

@@ -1,6 +1,6 @@
 import Navbar from "../../components/website/Navbar";
 import CookieConsent from "../../components/website/CookieConsent";
-import { Footer } from "../../components/website/footer";
+import { Footer } from "../../components/website/Footer";
 
 export default function WebsiteLayout({ children }) {
   return (
