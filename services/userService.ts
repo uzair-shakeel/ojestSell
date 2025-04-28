@@ -126,6 +126,68 @@ export const updateUser = async (formData: any, getToken: () => Promise<string |
   }
 };
 
+// Update user profile (for SellerDetailsPage)
+export const updateUserCustom = async (formData, getToken) => {
+  try {
+    const token = await getToken();
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    };
+
+    const formDataToSend = new FormData();
+    for (const key in formData) {
+      if (key === "image" && formData[key]) {
+        formDataToSend.append("image", formData[key]);
+      } else if (typeof formData[key] === "object" && formData[key] !== null) {
+        formDataToSend.append(key, JSON.stringify(formData[key]));
+      } else if (formData[key] !== null) {
+        formDataToSend.append(key, formData[key]);
+      }
+    }
+
+    const response = await axios.put(`${API_BASE_URL}/api/users/profile/custom`, formDataToSend, config);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating user:", error);
+    throw error;
+  }
+};
+
+// Update seller type for a user
+export const updateUserSellerType = async (
+  userId: string,
+  sellerType: "private" | "company",
+  getToken: () => Promise<string | null>
+) => {
+  try {
+    const token = await getToken();
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+
+    const response = await axios.patch(
+      `${API_BASE_URL}/api/users/type/${userId}`,
+      { sellerType }, // Payload
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json", // Explicitly set Content-Type
+        },
+      } // Config
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("Update Seller Type Error:", {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+    });
+    throw new Error(error?.response?.data?.message || "Failed to update seller type");
+  }
+};
 
 // Delete user account
 export const deleteUserAccount = async (
