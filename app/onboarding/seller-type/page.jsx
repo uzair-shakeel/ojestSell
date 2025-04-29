@@ -1,23 +1,61 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Building2, User } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
+import { getUserById, updateUserSellerType } from "../../../services/userService";
 
 const SellerTypePage = () => {
   const router = useRouter();
+  const { userId, getToken } = useAuth(); // Added getToken
   const [selectedType, setSelectedType] = useState(null);
   const [hoveredType, setHoveredType] = useState(null);
+  const [sellerType, setSellerType] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSelect = (type) => {
-    setSelectedType(type);
-    // Store the selected type in localStorage
-    localStorage.setItem("sellerType", type);
+  // Fetch user data on page load
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const userData = await getUserById(userId);
+        console.log("Fetched user data:", userData);
+        setSellerType(userData.sellerType || null);
+        setSelectedType(userData.sellerType || null);
+      } catch (err) {
+        console.error("Error fetching user:", err);
+      }
+    };
+
+    if (userId) loadUser();
+  }, [userId]);
+
+  // Handle seller type selection and update
+  const handleSellerTypeSelection = async (type) => {
+    setLoading(true);
+    try {
+      // Update local state
+      setSellerType(type);
+      setSelectedType(type);
+
+      // Update sellerType in the backend
+      await updateUserSellerType(userId, type, getToken); // Pass getToken
+      console.log(`Seller type updated to: ${type}`);
+
+      // Redirect to the next page
+      router.push("/onboarding/seller-details");
+    } catch (err) {
+      console.error("Error updating seller type:", err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleContinue = () => {
-    if (selectedType) {
-      router.push("/onboarding/seller-details");
-    }
+  const privateSeller = () => {
+    handleSellerTypeSelection("private");
+  };
+
+  const companySeller = () => {
+    handleSellerTypeSelection("company");
   };
 
   return (
@@ -42,8 +80,7 @@ const SellerTypePage = () => {
                 ? "shadow-xl"
                 : ""
             }`}
-            onClick={handleContinue}
-            // onClick={() => handleSelect("company")}
+            onClick={companySeller}
             onMouseEnter={() => setHoveredType("company")}
             onMouseLeave={() => setHoveredType(null)}
           >
@@ -85,8 +122,7 @@ const SellerTypePage = () => {
                 ? "shadow-xl"
                 : ""
             }`}
-            onClick={handleContinue}
-            // onClick={() => handleSelect("private")}
+            onClick={privateSeller}
             onMouseEnter={() => setHoveredType("private")}
             onMouseLeave={() => setHoveredType(null)}
           >
@@ -118,6 +154,12 @@ const SellerTypePage = () => {
             </ul>
           </div>
         </div>
+
+        {loading && (
+          <div className="text-center mt-6">
+            <p className="text-gray-600">Updating seller type...</p>
+          </div>
+        )}
       </div>
     </div>
   );
