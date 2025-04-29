@@ -3,9 +3,11 @@ import { useState } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import { UserButton, SignOutButton } from "@clerk/nextjs";
 import { FiMenu, FiX } from "react-icons/fi";
+import { useRouter } from "next/navigation";
 
 export default function DashboardNavbar({ isOpen, toggleSidebar }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <header className="w-full p-4 bg-white shadow-md flex justify-between items-center z-30 sticky top-0">
@@ -16,7 +18,10 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
 
       <div className="flex items-center space-x-5 sm:mx-4">
         {/* Add Listing Button */}
-        <button className="hidden md:block bg-white border border-gray-300 px-4 py-2 rounded-full shadow hover:bg-gray-100">
+        <button
+          onClick={() => router.push("/dashboard/cars/add")}
+          className="hidden md:block bg-white border border-gray-300 px-4 py-2 rounded-full shadow hover:bg-gray-100"
+        >
           Add Listing
         </button>
 

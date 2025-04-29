@@ -8,7 +8,7 @@ import { useAuth } from "@clerk/nextjs"; // Import Clerk hooks
 import { SignOutButton } from "@clerk/nextjs";
 import { SignInButton } from "@clerk/nextjs";
 
-const Navbar = () => {
+const NavbarUpdated = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [chatCount, setChatCount] = useState(0);
   const router = useRouter();
@@ -50,6 +50,15 @@ const Navbar = () => {
     { name: "Contact", href: "/website/contact" },
   ];
 
+  // Handler for add listing button
+  const handleAddListing = () => {
+    if (isSignedIn) {
+      router.push("/dashboard/cars/add");
+    } else {
+      router.push("/sign-in");
+    }
+  };
+
   return (
     <header className="w-full p-4 bg-white shadow-md flex justify-between items-center text-black">
       {/* Logo */}
@@ -61,8 +70,11 @@ const Navbar = () => {
 
       <div className="flex items-center space-x-5 sm:mx-4">
         {/* Add Listing Button */}
-        <button className="hidden md:block bg-white border border-gray-300 px-4 py-2 rounded-full hover:bg-gray-100">
-          Become a seller
+        <button
+          onClick={handleAddListing}
+          className="hidden md:block bg-white border border-gray-300 px-4 py-2 rounded-full hover:bg-gray-100"
+        >
+          {isSignedIn ? "Add Listing" : "Become a seller"}
         </button>
 
         {/* Messages Button - Only show when signed in */}
@@ -105,6 +117,16 @@ const Navbar = () => {
             </Link>
           ))}
           <div className="border-t border-gray-200 my-1"></div>
+          {/* Add Listing option in dropdown */}
+          <button
+            onClick={() => {
+              handleAddListing();
+              setIsMenuOpen(false);
+            }}
+            className="w-full text-left hover:bg-gray-100 p-2 duration-300"
+          >
+            {isSignedIn ? "Add Listing" : "Become a seller"}
+          </button>
           {isSignedIn && (
             <>
               <button
@@ -148,4 +170,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default NavbarUpdated;

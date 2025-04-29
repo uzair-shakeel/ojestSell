@@ -12,7 +12,10 @@ import { useUser } from "@clerk/nextjs";
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
   const [chatCount, setChatCount] = useState(0);
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
+  const [profileImage, setProfileImage] = useState(
+    "/images/default-seller.png"
+  );
 
   // Fetch chat count when component mounts
   useEffect(() => {
@@ -41,6 +44,11 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
     };
 
     fetchChats();
+
+    // Set profile image from user data
+    if (user.imageUrl) {
+      setProfileImage(user.imageUrl);
+    }
   }, [user]);
 
   const menuItems = [
@@ -102,10 +110,11 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
         <AnimatePresence>
           <div className="flex items-center justify-center py-4 px-3 border-y border-gray-700">
             <motion.img
+              src={profileImage}
               alt="User Avatar"
               className="w-12 h-12 rounded-full object-cover border-2 border-blue-500 shadow-lg"
             />
-            {isOpen && (
+            {isOpen && isLoaded && user && (
               <motion.div
                 className="ml-3"
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -113,8 +122,12 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.3 }}
               >
-                <h2 className="text-sm font-semibold text-white">John Doe</h2>
-                <p className="text-xs text-gray-400">johndoe@example.com</p>
+                <h2 className="text-sm font-semibold text-white">
+                  {user.firstName} {user.lastName}
+                </h2>
+                <p className="text-xs text-gray-400">
+                  {user.primaryEmailAddress?.emailAddress}
+                </p>
               </motion.div>
             )}
           </div>
