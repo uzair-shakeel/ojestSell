@@ -2,7 +2,7 @@
 import axios from "axios";
 
 // Define the API base URL directly in this file
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 // Interface for the Car data as returned by the backend
 interface CarData {
@@ -86,7 +86,6 @@ interface AddCarData {
     sellerType: "private" | "company";
     priceNetto: number;
   };
-
 }
 
 // Add a new car
@@ -144,12 +143,16 @@ export const updateCar = async (
       throw new Error("No authentication token found");
     }
 
-    const response = await axios.put(`${API_BASE_URL}/api/cars/${carId}`, carData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await axios.put(
+      `${API_BASE_URL}/api/cars/${carId}`,
+      carData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
     return response.data;
   } catch (error: any) {
     throw new Error(error?.response?.data?.message || "Failed to update car");
@@ -197,7 +200,9 @@ export const updateCarStatus = async (
     );
     return response.data;
   } catch (error: any) {
-    throw new Error(error?.response?.data?.message || "Failed to update car status");
+    throw new Error(
+      error?.response?.data?.message || "Failed to update car status"
+    );
   }
 };
 
@@ -231,28 +236,37 @@ export const searchCars = async (queryParams: {
 export const getCarsByUserId = async (
   userId: string,
   getToken: () => Promise<string | null>
-  ): Promise<CarData[]> => {
+): Promise<CarData[]> => {
   try {
     const token = await getToken();
     if (!token) {
       throw new Error("No authentication token found");
     }
 
-    const response = await axios.get(`${API_BASE_URL}/api/cars/my-cars/${userId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await axios.get(
+      `${API_BASE_URL}/api/cars/my-cars/${userId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
     return response.data;
   } catch (error: any) {
-    throw new Error(error?.response?.data?.message || "Failed to fetch cars by user");
+    throw new Error(
+      error?.response?.data?.message || "Failed to fetch cars by user"
+    );
   }
 };
 
 // Get recommended cars
 export const getRecommendedCars = async (carId: string): Promise<CarData[]> => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/api/cars/recommended/${carId}`);
+    const response = await axios.get(
+      `${API_BASE_URL}/api/cars/recommended/${carId}`
+    );
     return response.data;
   } catch (error: any) {
-    throw new Error(error?.response?.data?.message || "Failed to fetch recommended cars");
+    throw new Error(
+      error?.response?.data?.message || "Failed to fetch recommended cars"
+    );
   }
 };

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Define the API base URL directly in this file
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 interface UserData {
   clerkUserId: string;
@@ -79,7 +79,10 @@ export const getAllUsers = async (
 };
 
 // Update user profile
-export const updateUser = async (formData: any, getToken: () => Promise<string | null>) => {
+export const updateUser = async (
+  formData: any,
+  getToken: () => Promise<string | null>
+) => {
   try {
     const token = await getToken();
     if (!token) {
@@ -88,14 +91,20 @@ export const updateUser = async (formData: any, getToken: () => Promise<string |
 
     const updatedLocation = {
       type: "Point",
-      coordinates: [formData.location.coordinates[0], formData.location.coordinates[1]], // [lng, lat]
+      coordinates: [
+        formData.location.coordinates[0],
+        formData.location.coordinates[1],
+      ], // [lng, lat]
     };
 
     const data = new FormData();
     for (const key in formData) {
       if (key === "socialMedia") {
         for (const socialKey in formData.socialMedia) {
-          data.append(`socialMedia[${socialKey}]`, formData.socialMedia[socialKey] || "");
+          data.append(
+            `socialMedia[${socialKey}]`,
+            formData.socialMedia[socialKey] || ""
+          );
         }
       } else if (key === "phoneNumbers") {
         formData.phoneNumbers.forEach((phoneNumber, index) => {
@@ -112,12 +121,16 @@ export const updateUser = async (formData: any, getToken: () => Promise<string |
       }
     }
 
-    const response = await axios.put(`${API_BASE_URL}/api/users/profile/`, data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await axios.put(
+      `${API_BASE_URL}/api/users/profile/`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
 
     return response.data; // Return the updated user data
   } catch (error) {
@@ -148,7 +161,11 @@ export const updateUserCustom = async (formData, getToken) => {
       }
     }
 
-    const response = await axios.put(`${API_BASE_URL}/api/users/profile/custom`, formDataToSend, config);
+    const response = await axios.put(
+      `${API_BASE_URL}/api/users/profile/custom`,
+      formDataToSend,
+      config
+    );
     return response.data;
   } catch (error) {
     console.error("Error updating user:", error);
@@ -185,7 +202,9 @@ export const updateUserSellerType = async (
       response: error.response?.data,
       status: error.response?.status,
     });
-    throw new Error(error?.response?.data?.message || "Failed to update seller type");
+    throw new Error(
+      error?.response?.data?.message || "Failed to update seller type"
+    );
   }
 };
 
@@ -204,7 +223,9 @@ export const deleteUserAccount = async (
     });
     return response.data;
   } catch (error: any) {
-    throw new Error(error?.response?.data?.message || "Account deletion failed");
+    throw new Error(
+      error?.response?.data?.message || "Account deletion failed"
+    );
   }
 };
 
