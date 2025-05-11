@@ -32,10 +32,7 @@ const Page = () => {
 
   const formatImageUrl = (imagePath) => {
     if (!imagePath) return "/images/default-seller.png";
-    return `${process.env.NEXT_PUBLIC_API_BASE_URL}/${imagePath.replace(
-      "\\",
-      "/"
-    )}`;
+    return `http://164.90.219.243:8000/${imagePath.replace("\\", "/")}`;
   };
 
   const getCityFromCoordinates = async (lat, lon) => {

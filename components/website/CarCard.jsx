@@ -69,9 +69,10 @@ export default function CarCard({ view, car }) {
         {car?.images && car?.images?.length > 0 ? (
           car?.images?.map((image, index) => {
             // Assuming the backend sends image paths like 'uploads/1743981275051-yousriphoto.jpg'
-            const imageUrl = `${
-              process.env.NEXT_PUBLIC_API_BASE_URL
-            }/${image.replace("\\", "/")}`; // Update URL format for static files
+            const imageUrl = `http://164.90.219.243:8000/${image.replace(
+              "\\",
+              "/"
+            )}`; // Update URL format for static files
 
             return (
               <SwiperSlide key={index}>
