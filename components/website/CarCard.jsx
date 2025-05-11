@@ -12,7 +12,10 @@ import axios from "axios";
 
 export default function CarCard({ view, car }) {
   const router = useRouter();
-  const [locationDetails, setLocationDetails] = useState({ city: "", state: "" });
+  const [locationDetails, setLocationDetails] = useState({
+    city: "",
+    state: "",
+  });
 
   useEffect(() => {
     // Fetch the address using reverse geocoding when the car location is available
@@ -60,27 +63,26 @@ export default function CarCard({ view, car }) {
       <Swiper
         modules={[Navigation]}
         navigation={{ prevEl: ".custom-prev", nextEl: ".custom-next" }}
-        className={`${
-          view === "list"
-            ? "w-[700px] h-auto"
-            : "w-full h-64"
-        }`}
+        className={`${view === "list" ? "w-[700px] h-auto" : "w-full h-64"}`}
       >
         {/* Dynamically render images from the car.images array */}
         {car?.images && car?.images?.length > 0 ? (
           car?.images?.map((image, index) => {
             // Assuming the backend sends image paths like 'uploads/1743981275051-yousriphoto.jpg'
-            const imageUrl = `http://localhost:5000/${image.replace("\\", "/")}`; // Update URL format for static files
+            const imageUrl = `http://164.90.219.243:8000/${image.replace(
+              "\\",
+              "/"
+            )}`; // Update URL format for static files
 
             return (
               <SwiperSlide key={index}>
-               <div className="">
-               <img
-                  src={imageUrl}
-                  className="w-full h-64 object-cover"
-                  alt={`Car Image ${index + 1}`}
-                />
-               </div>
+                <div className="">
+                  <img
+                    src={imageUrl}
+                    className="w-full h-64 object-cover"
+                    alt={`Car Image ${index + 1}`}
+                  />
+                </div>
               </SwiperSlide>
             );
           })
@@ -118,13 +120,13 @@ export default function CarCard({ view, car }) {
               <div className="bg-blue-400 text-sm p-1 rounded-l text-white">
                 <FaTags />
               </div>
-              <span className="text-base text-black">{car.financialInfo.priceNetto} zł</span>
+              <span className="text-base text-black">
+                {car.financialInfo.priceNetto} zł
+              </span>
             </div>
 
             {/* Display the city and state (province) */}
-            <div
-              className={`text-black flex items-center gap-1 `}
-            >
+            <div className={`text-black flex items-center gap-1 `}>
               <ImLocation />
               {locationDetails.city && locationDetails.state
                 ? `${locationDetails.city}, ${locationDetails.state}`
