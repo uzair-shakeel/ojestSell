@@ -30,11 +30,9 @@ const Page = () => {
   const [error, setError] = useState(null);
   const [city, setCity] = useState("");
 
-  const BASE_URL = "http://localhost:5000/";
-
   const formatImageUrl = (imagePath) => {
     if (!imagePath) return "/images/default-seller.png";
-    return `${BASE_URL}${imagePath.replace("\\", "/")}`;
+    return `${process.env.NEXT_PUBLIC_API_URL}/${imagePath.replace("\\", "/")}`;
   };
 
   const getCityFromCoordinates = async (lat, lon) => {
@@ -140,25 +138,49 @@ const Page = () => {
     switch (activeTab) {
       case "description":
         return (
-          <motion.div key="description" initial="initial" animate="animate" exit="exit" variants={animationVariants}>
+          <motion.div
+            key="description"
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            variants={animationVariants}
+          >
             <DetailTab cardetails={car} />
           </motion.div>
         );
       case "conditions":
         return (
-          <motion.div key="conditions" initial="initial" animate="animate" exit="exit" variants={animationVariants}>
+          <motion.div
+            key="conditions"
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            variants={animationVariants}
+          >
             <ConditionTab carCondition={car.carCondition} />
           </motion.div>
         );
       case "location":
         return (
-          <motion.div key="location" initial="initial" animate="animate" exit="exit" variants={animationVariants}>
+          <motion.div
+            key="location"
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            variants={animationVariants}
+          >
             <LocationTab location={car.location} />
           </motion.div>
         );
       case "financial":
         return (
-          <motion.div key="financial" initial="initial" animate="animate" exit="exit" variants={animationVariants}>
+          <motion.div
+            key="financial"
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            variants={animationVariants}
+          >
             <FinancialTab financialInfo={car.financialInfo} />
           </motion.div>
         );
@@ -184,15 +206,29 @@ const Page = () => {
   }
 
   const sellerName = seller
-    ? `${seller.firstName || ""} ${seller.lastName || ""}`.trim() || seller.companyName || "Seller"
+    ? `${seller.firstName || ""} ${seller.lastName || ""}`.trim() ||
+      seller.companyName ||
+      "Seller"
     : "Seller";
 
   const locationDisplay = city || "Unknown Location";
 
   const socialMediaLinks = [
-    { platform: "instagram", icon: <FaInstagram />, url: seller?.socialMedia?.instagram },
-    { platform: "facebook", icon: <FaFacebook />, url: seller?.socialMedia?.facebook },
-    { platform: "twitter", icon: <FaTwitter />, url: seller?.socialMedia?.twitter },
+    {
+      platform: "instagram",
+      icon: <FaInstagram />,
+      url: seller?.socialMedia?.instagram,
+    },
+    {
+      platform: "facebook",
+      icon: <FaFacebook />,
+      url: seller?.socialMedia?.facebook,
+    },
+    {
+      platform: "twitter",
+      icon: <FaTwitter />,
+      url: seller?.socialMedia?.twitter,
+    },
   ].filter((link) => link.url && link.url.trim() !== "");
 
   return (
@@ -211,7 +247,11 @@ const Page = () => {
             <div className="col-span-2 relative mt-4">
               <button
                 className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 text-white p-2 rounded-full z-10"
-                onClick={() => document.getElementById("thumbnailScroll").scrollBy({ left: -100, behavior: "smooth" })}
+                onClick={() =>
+                  document
+                    .getElementById("thumbnailScroll")
+                    .scrollBy({ left: -100, behavior: "smooth" })
+                }
               >
                 <IoIosArrowBack className="w-6 h-6" />
               </button>
@@ -230,7 +270,9 @@ const Page = () => {
                       src={formatImageUrl(img)}
                       alt={`Thumbnail ${index + 1}`}
                       className={`w-[120px] h-[80px] object-cover rounded-md border ${
-                        mainImage === formatImageUrl(img) ? "border-blue-500" : "border-gray-300"
+                        mainImage === formatImageUrl(img)
+                          ? "border-blue-500"
+                          : "border-gray-300"
                       }`}
                     />
                   </button>
@@ -238,7 +280,11 @@ const Page = () => {
               </div>
               <button
                 className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 text-white p-2 rounded-full shadow-md z-10"
-                onClick={() => document.getElementById("thumbnailScroll").scrollBy({ left: 100, behavior: "smooth" })}
+                onClick={() =>
+                  document
+                    .getElementById("thumbnailScroll")
+                    .scrollBy({ left: 100, behavior: "smooth" })
+                }
               >
                 <IoIosArrowForward className="w-6 h-6" />
               </button>
@@ -246,17 +292,21 @@ const Page = () => {
           </div>
           <div className="col-span-2 bg-white rounded-md mt-5">
             <div className="gap-2 mb-4 grid grid-cols-2 md:grid-cols-4">
-              {["description", "conditions", "location", "financial"].map((tab) => (
-                <button
-                  key={tab}
-                  className={`px-4 py-2 border border-gray-200 ${
-                    activeTab === tab ? "bg-blue-500 text-white" : "bg-white text-gray-700"
-                  } rounded-md`}
-                  onClick={() => setActiveTab(tab)}
-                >
-                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                </button>
-              ))}
+              {["description", "conditions", "location", "financial"].map(
+                (tab) => (
+                  <button
+                    key={tab}
+                    className={`px-4 py-2 border border-gray-200 ${
+                      activeTab === tab
+                        ? "bg-blue-500 text-white"
+                        : "bg-white text-gray-700"
+                    } rounded-md`}
+                    onClick={() => setActiveTab(tab)}
+                  >
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  </button>
+                )
+              )}
             </div>
             {renderContent()}
           </div>
@@ -267,10 +317,15 @@ const Page = () => {
               <div className="flex flex-col items-start">
                 <h3 className="text-base font-medium mb-2">PRICE</h3>
                 <p className="text-4xl font-bold text-gray-900 mb-2">
-                {car.financialInfo?.priceNetto ? `${car.financialInfo.priceNetto} zł ` : "N/A"} <span className="text-xl text-gray-600">(NETTO)</span>
+                  {car.financialInfo?.priceNetto
+                    ? `${car.financialInfo.priceNetto} zł `
+                    : "N/A"}{" "}
+                  <span className="text-xl text-gray-600">(NETTO)</span>
                 </p>
                 <p className="text-xl font-medium text-gray-600 underline">
-                {car.financialInfo?.priceWithVat ? `${car.financialInfo.priceWithVat} zł` : ""}
+                  {car.financialInfo?.priceWithVat
+                    ? `${car.financialInfo.priceWithVat} zł`
+                    : ""}
                 </p>
               </div>
             </div>
@@ -303,30 +358,47 @@ const Page = () => {
                     <strong>{sellerName}</strong>
                   </p>
                 </div>
-                <p className="text-base text-gray-500">{seller?.sellerType || "Unknown Seller Type"}</p>
+                <p className="text-base text-gray-500">
+                  {seller?.sellerType || "Unknown Seller Type"}
+                </p>
                 <div className="flex justify-start items-center space-x-2">
-                  <img src="/website/map.svg" alt="Map Icon" className="w-5 h-5" />
+                  <img
+                    src="/website/map.svg"
+                    alt="Map Icon"
+                    className="w-5 h-5"
+                  />
                   <p className="text-base text-gray-500">{locationDisplay}</p>
                 </div>
               </div>
             </div>
             <hr className="my-4" />
             <div className="grid grid-cols-2 gap-2 mt-4">
-              <h2 className="text-base font-medium mb-2 col-span-2">Contact Seller</h2>
+              <h2 className="text-base font-medium mb-2 col-span-2">
+                Contact Seller
+              </h2>
               <button
                 onClick={startChat}
                 className="w-full bg-white-500 text-blue-600 py-3 border border-blue-600 rounded-md font-semibold flex items-center justify-center space-x-2"
               >
-                <img src="/website/whats.svg" alt="Message" className="w-5 h-5" />
+                <img
+                  src="/website/whats.svg"
+                  alt="Message"
+                  className="w-5 h-5"
+                />
                 <span>Message</span>
               </button>
               <button
                 className="w-full border py-3 rounded-md font-semibold bg-blue-500 flex items-center justify-center space-x-2"
                 disabled={!seller?.phoneNumbers?.[0]}
-                onClick={() => seller?.phoneNumbers?.[0] && window.open(`tel:${seller.phoneNumbers[0]}`)}
+                onClick={() =>
+                  seller?.phoneNumbers?.[0] &&
+                  window.open(`tel:${seller.phoneNumbers[0]}`)
+                }
               >
                 <img src="/website/call.svg" alt="Call" className="w-5 h-5" />
-                <span className="text-white">{seller?.phoneNumbers?.[0] ? "Call" : "No Phone"}</span>
+                <span className="text-white">
+                  {seller?.phoneNumbers?.[0] ? "Call" : "No Phone"}
+                </span>
               </button>
             </div>
             {socialMediaLinks.length > 0 && (
