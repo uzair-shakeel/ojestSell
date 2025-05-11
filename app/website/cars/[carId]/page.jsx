@@ -32,7 +32,10 @@ const Page = () => {
 
   const formatImageUrl = (imagePath) => {
     if (!imagePath) return "/images/default-seller.png";
-    return `${process.env.NEXT_PUBLIC_API_URL}/${imagePath.replace("\\", "/")}`;
+    return `${process.env.NEXT_PUBLIC_API_BASE_URL}/${imagePath.replace(
+      "\\",
+      "/"
+    )}`;
   };
 
   const getCityFromCoordinates = async (lat, lon) => {
