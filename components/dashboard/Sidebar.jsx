@@ -5,6 +5,7 @@ import { BiAddToQueue } from "react-icons/bi";
 import { BsChatLeftDots, BsPersonGear } from "react-icons/bs";
 import { RiDashboardHorizontalLine } from "react-icons/ri";
 import { FiMenu, FiX } from "react-icons/fi";
+import { MdPhotoFilter } from "react-icons/md";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -66,6 +67,11 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
       label: "My Cars",
       href: "/dashboard/cars",
       icon: <FaCar className="w-6 h-6" />,
+    },
+    {
+      label: "Photo Enhancer",
+      href: "/dashboard/photo-enhancer",
+      icon: <MdPhotoFilter className="w-6 h-6" />,
     },
     {
       label: "Messages",
