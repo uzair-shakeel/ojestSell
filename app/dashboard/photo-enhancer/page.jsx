@@ -18,6 +18,8 @@ import {
   MdFilterBAndW,
   MdCrop,
   MdAutoFixHigh,
+  MdCheck,
+  MdClose,
 } from "react-icons/md";
 import { BsArrowsFullscreen, BsFillImageFill } from "react-icons/bs";
 import { TbFlipHorizontal, TbFlipVertical } from "react-icons/tb";
@@ -30,9 +32,22 @@ export default function PhotoEnhancer() {
   const fileInputRef = useRef(null);
   const imageRef = useRef(null);
   const containerRef = useRef(null);
+  const cropperRef = useRef(null);
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
   const [activeFilter, setActiveFilter] = useState("none");
   const [showPresetsModal, setShowPresetsModal] = useState(false);
+  const [showCropModal, setShowCropModal] = useState(false);
+  const [cropCoordinates, setCropCoordinates] = useState({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  });
+  const [dragStartPosition, setDragStartPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+
+  // Aspect ratio for crop (3:2)
+  const cropAspectRatio = 3 / 2;
 
   // Image adjustments state
   const [adjustments, setAdjustments] = useState({
@@ -327,6 +342,50 @@ export default function PhotoEnhancer() {
     }
   }, [selectedImage, imageRef.current]);
 
+  // Initialize crop area when opening crop modal
+  useEffect(() => {
+    if (showCropModal && imageRef.current) {
+      const img = imageRef.current;
+      const imgRect = img.getBoundingClientRect();
+
+      // Use the actual displayed dimensions from bounding client rect
+      const imgWidth = imgRect.width;
+      const imgHeight = imgRect.height;
+
+      // Calculate the initial crop area based on the 3:2 aspect ratio
+      let cropWidth, cropHeight;
+
+      if (imgWidth / imgHeight > cropAspectRatio) {
+        // If image is wider than crop aspect ratio
+        cropHeight = Math.min(imgHeight, 300);
+        cropWidth = cropHeight * cropAspectRatio;
+      } else {
+        // If image is taller than crop aspect ratio
+        cropWidth = Math.min(imgWidth, 450);
+        cropHeight = cropWidth / cropAspectRatio;
+      }
+
+      // Center the crop area
+      const x = Math.max(0, (imgWidth - cropWidth) / 2);
+      const y = Math.max(0, (imgHeight - cropHeight) / 2);
+
+      // Make sure the crop area is completely within the image bounds
+      const constrainedWidth = Math.min(cropWidth, imgWidth);
+      const constrainedHeight = Math.min(cropHeight, imgHeight);
+
+      // Final position check to ensure the crop doesn't exceed image bounds
+      const finalX = Math.min(x, imgWidth - constrainedWidth);
+      const finalY = Math.min(y, imgHeight - constrainedHeight);
+
+      setCropCoordinates({
+        x: finalX,
+        y: finalY,
+        width: constrainedWidth,
+        height: constrainedHeight,
+      });
+    }
+  }, [showCropModal]);
+
   // Handle file selection
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -411,6 +470,119 @@ export default function PhotoEnhancer() {
       tint: 0,
     });
     setActiveFilter("showroom");
+  };
+
+  // Handle crop drag start
+  const handleCropDragStart = (e) => {
+    if (!cropperRef.current) return;
+
+    const cropperRect = cropperRef.current.getBoundingClientRect();
+    setDragStartPosition({
+      x: e.clientX,
+      y: e.clientY,
+    });
+    setIsDragging(true);
+  };
+
+  // Handle crop drag
+  const handleCropDrag = (e) => {
+    if (!isDragging || !cropperRef.current || !imageRef.current) return;
+
+    const dx = e.clientX - dragStartPosition.x;
+    const dy = e.clientY - dragStartPosition.y;
+
+    setDragStartPosition({
+      x: e.clientX,
+      y: e.clientY,
+    });
+
+    setCropCoordinates((prev) => {
+      // Calculate new position
+      let newX = prev.x + dx;
+      let newY = prev.y + dy;
+
+      // Get image dimensions from the actual displayed image
+      const imgElement = imageRef.current;
+      const imgRect = imgElement.getBoundingClientRect();
+
+      // For the displayed dimensions, we need to use the bounding client rect properties
+      const imgDisplayWidth = imgRect.width;
+      const imgDisplayHeight = imgRect.height;
+
+      // Constrain to image bounds - ensure the crop area doesn't go outside the actual image
+      newX = Math.max(0, Math.min(imgDisplayWidth - prev.width, newX));
+      newY = Math.max(0, Math.min(imgDisplayHeight - prev.height, newY));
+
+      return {
+        ...prev,
+        x: newX,
+        y: newY,
+      };
+    });
+  };
+
+  // Handle crop drag end
+  const handleCropDragEnd = () => {
+    setIsDragging(false);
+  };
+
+  // Apply crop to the image
+  const applyCrop = () => {
+    if (!selectedImage || !imageRef.current) return;
+
+    // Create a canvas to apply the crop
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const img = imageRef.current;
+
+    // Get the image display dimensions
+    const imgRect = img.getBoundingClientRect();
+
+    // Calculate the scale factors between the natural image size and the displayed size
+    const scaleX = img.naturalWidth / imgRect.width;
+    const scaleY = img.naturalHeight / imgRect.height;
+
+    // Scale crop coordinates to match the original image dimensions
+    const cropX = cropCoordinates.x * scaleX;
+    const cropY = cropCoordinates.y * scaleY;
+    const cropWidth = cropCoordinates.width * scaleX;
+    const cropHeight = cropCoordinates.height * scaleY;
+
+    // Set canvas size to the crop dimensions
+    canvas.width = cropWidth;
+    canvas.height = cropHeight;
+
+    // Draw the cropped image to the canvas
+    ctx.drawImage(
+      img,
+      cropX,
+      cropY,
+      cropWidth,
+      cropHeight,
+      0,
+      0,
+      cropWidth,
+      cropHeight
+    );
+
+    // Convert canvas to a blob and set as new image
+    canvas.toBlob((blob) => {
+      // Release the previous URL
+      URL.revokeObjectURL(previewUrl);
+
+      // Create new URL for the cropped image
+      const croppedUrl = URL.createObjectURL(blob);
+      setPreviewUrl(croppedUrl);
+
+      // Create a file from the blob
+      const croppedFile = new File([blob], selectedImage.name, {
+        type: selectedImage.type,
+      });
+      setSelectedImage(croppedFile);
+
+      // Close the crop modal
+      setShowCropModal(false);
+    }, selectedImage.type);
   };
 
   // Download the edited image
@@ -746,6 +918,14 @@ export default function PhotoEnhancer() {
                 <MdAutoFixHigh /> Auto Enhance
               </button>
 
+              <button
+                onClick={() => setShowCropModal(true)}
+                className="btn btn-outline flex items-center gap-2"
+                disabled={!selectedImage}
+              >
+                <MdCrop /> Crop
+              </button>
+
               <input
                 type="file"
                 ref={fileInputRef}
@@ -828,6 +1008,86 @@ export default function PhotoEnhancer() {
                     </span>
                   </button>
                 ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Crop Modal */}
+        {showCropModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+              <div className="flex justify-between items-center border-b p-4">
+                <h3 className="text-lg font-semibold">
+                  Crop Image (3:2 Ratio)
+                </h3>
+                <button
+                  onClick={() => setShowCropModal(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <MdClose size={24} />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-auto p-4 bg-gray-100 relative">
+                <div className="relative w-full h-full flex items-center justify-center">
+                  <div className="relative" style={{ display: "inline-block" }}>
+                    <img
+                      src={previewUrl}
+                      alt="Crop Preview"
+                      className="max-w-full max-h-[60vh] object-contain"
+                    />
+
+                    {/* Crop overlay */}
+                    <div
+                      ref={cropperRef}
+                      className="absolute cursor-move"
+                      style={{
+                        left: `${cropCoordinates.x}px`,
+                        top: `${cropCoordinates.y}px`,
+                        width: `${cropCoordinates.width}px`,
+                        height: `${cropCoordinates.height}px`,
+                        border: "2px solid #007BFF",
+                        boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.5)",
+                      }}
+                      onMouseDown={handleCropDragStart}
+                      onMouseMove={handleCropDrag}
+                      onMouseUp={handleCropDragEnd}
+                      onMouseLeave={handleCropDragEnd}
+                    >
+                      {/* Crop grid lines */}
+                      <div className="absolute inset-0 grid grid-cols-3 grid-rows-3">
+                        <div className="border-r border-b border-white border-opacity-50"></div>
+                        <div className="border-r border-b border-white border-opacity-50"></div>
+                        <div className="border-b border-white border-opacity-50"></div>
+                        <div className="border-r border-b border-white border-opacity-50"></div>
+                        <div className="border-r border-b border-white border-opacity-50"></div>
+                        <div className="border-b border-white border-opacity-50"></div>
+                        <div className="border-r border-white border-opacity-50"></div>
+                        <div className="border-r border-white border-opacity-50"></div>
+                        <div className="border-white border-opacity-50"></div>
+                      </div>
+
+                      {/* Resize handles */}
+                      {/* Note: Resize handlers would be implemented here in a full version */}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t p-4 flex justify-end gap-2">
+                <button
+                  onClick={() => setShowCropModal(false)}
+                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={applyCrop}
+                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center gap-2"
+                >
+                  <MdCheck size={18} /> Apply Crop
+                </button>
               </div>
             </div>
           </div>
@@ -1231,7 +1491,8 @@ export default function PhotoEnhancer() {
           <li>For quick enhancement, click the Auto Enhance button</li>
           <li>Fine-tune individual settings using the adjustment sliders</li>
           <li>
-            Transform the image using rotation and flip controls if needed
+            Transform the image using rotation, flip, and crop controls if
+            needed
           </li>
           <li>Download your enhanced image when satisfied</li>
         </ol>
