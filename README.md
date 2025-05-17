@@ -20,6 +20,20 @@ You can start editing the page by modifying `app/page.js`. The page auto-updates
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Features
+
+### Photo Enhancer
+
+The Photo Enhancer tool provides advanced image editing capabilities, including:
+
+- Basic adjustments (brightness, contrast, saturation, etc.)
+- Professional filter presets optimized for car photography
+- Image cropping with aspect ratio control
+- Background removal functionality using the powerful @imgly/background-removal library
+  - Works entirely client-side with no API keys required
+  - Optimized for car images and other objects
+  - High-quality results with transparent backgrounds
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

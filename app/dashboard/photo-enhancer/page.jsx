@@ -20,11 +20,27 @@ import {
   MdAutoFixHigh,
   MdCheck,
   MdClose,
+  MdWarning,
+  MdRefresh,
 } from "react-icons/md";
 import { BsArrowsFullscreen, BsFillImageFill } from "react-icons/bs";
 import { TbFlipHorizontal, TbFlipVertical } from "react-icons/tb";
-import { RiShadowLine } from "react-icons/ri";
+import { RiShadowLine, RiScissorsCutLine } from "react-icons/ri";
 import { IoColorPaletteOutline } from "react-icons/io5";
+import { removeImageBackground, removeBackgroundFallback } from "./bg-removal";
+
+// Helper to get image's displayed position and size within the container
+function getImageDisplayRect(img, container) {
+  if (!img || !container) return { left: 0, top: 0, width: 0, height: 0 };
+  const imgRect = img.getBoundingClientRect();
+  const containerRect = container.getBoundingClientRect();
+  return {
+    left: imgRect.left - containerRect.left,
+    top: imgRect.top - containerRect.top,
+    width: imgRect.width,
+    height: imgRect.height,
+  };
+}
 
 export default function PhotoEnhancer() {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -45,6 +61,40 @@ export default function PhotoEnhancer() {
   });
   const [dragStartPosition, setDragStartPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
+  const imageCropWrapperRef = useRef(null);
+  const [isProcessingBg, setIsProcessingBg] = useState(false);
+  const [showBgRemovalModal, setShowBgRemovalModal] = useState(false);
+  const [bgRemovalError, setBgRemovalError] = useState(null);
+  const [backgroundRemovalLoaded, setBackgroundRemovalLoaded] = useState(false);
+  const [networkError, setNetworkError] = useState(false);
+
+  // Load background removal module
+  useEffect(() => {
+    const loadBackgroundRemoval = async () => {
+      try {
+        console.log("Loading background removal module...");
+
+        // Simple check to see if we can access the CDN that hosts the models
+        const testFetch = await fetch(
+          "https://unpkg.com/@imgly/background-removal@1.0.0/dist/package.json",
+          {
+            method: "HEAD",
+            mode: "no-cors", // This allows us to at least attempt the connection
+          }
+        );
+
+        console.log("CDN connection test completed");
+
+        // We'll set this to true and let the actual usage determine if it works
+        setBackgroundRemovalLoaded(true);
+      } catch (error) {
+        console.error("Error checking network connectivity:", error);
+        setNetworkError(true);
+      }
+    };
+
+    loadBackgroundRemoval();
+  }, []);
 
   // Aspect ratio for crop (3:2)
   const cropAspectRatio = 3 / 2;
@@ -321,70 +371,224 @@ export default function PhotoEnhancer() {
 
   // Update image size when image loads
   useEffect(() => {
-    if (imageRef.current && selectedImage) {
+    if (imageRef.current && containerRef.current && selectedImage) {
       const updateImageSize = () => {
-        setImageSize({
-          width: imageRef.current.clientWidth,
-          height: imageRef.current.clientHeight,
-        });
+        const { width, height } = getImageDisplayRect(
+          imageRef.current,
+          containerRef.current
+        );
+        setImageSize({ width, height });
       };
-
-      // Update initially and on window resize
       updateImageSize();
       window.addEventListener("resize", updateImageSize);
-
-      // Set up listener for when image loads
       imageRef.current.onload = updateImageSize;
-
       return () => {
         window.removeEventListener("resize", updateImageSize);
       };
     }
-  }, [selectedImage, imageRef.current]);
+  }, [selectedImage, imageRef.current, containerRef.current]);
+
+  // Update crop overlay logic to use imageCropWrapperRef for sizing
+  useEffect(() => {
+    if (showCropModal && imageCropWrapperRef.current) {
+      const updateCropWrapperSize = () => {
+        const rect = imageCropWrapperRef.current.getBoundingClientRect();
+        setImageSize({ width: rect.width, height: rect.height });
+      };
+      updateCropWrapperSize();
+      window.addEventListener("resize", updateCropWrapperSize);
+      return () => {
+        window.removeEventListener("resize", updateCropWrapperSize);
+      };
+    }
+  }, [showCropModal]);
 
   // Initialize crop area when opening crop modal
   useEffect(() => {
-    if (showCropModal && imageRef.current) {
+    if (showCropModal && imageRef.current && imageCropWrapperRef.current) {
       const img = imageRef.current;
-      const imgRect = img.getBoundingClientRect();
+      const wrapper = imageCropWrapperRef.current;
+      const wrapperRect = wrapper.getBoundingClientRect();
 
-      // Use the actual displayed dimensions from bounding client rect
-      const imgWidth = imgRect.width;
-      const imgHeight = imgRect.height;
+      // Calculate the scale factor between natural and displayed size
+      const scale = wrapperRect.width / img.naturalWidth;
 
-      // Calculate the initial crop area based on the 3:2 aspect ratio
-      let cropWidth, cropHeight;
-
-      if (imgWidth / imgHeight > cropAspectRatio) {
-        // If image is wider than crop aspect ratio
-        cropHeight = Math.min(imgHeight, 300);
-        cropWidth = cropHeight * cropAspectRatio;
+      // Calculate crop dimensions based on natural image size first
+      let naturalCropWidth, naturalCropHeight;
+      if (img.naturalWidth / img.naturalHeight > cropAspectRatio) {
+        naturalCropHeight = Math.min(img.naturalHeight, 600);
+        naturalCropWidth = naturalCropHeight * cropAspectRatio;
       } else {
-        // If image is taller than crop aspect ratio
-        cropWidth = Math.min(imgWidth, 450);
-        cropHeight = cropWidth / cropAspectRatio;
+        naturalCropWidth = Math.min(img.naturalWidth, 900);
+        naturalCropHeight = naturalCropWidth / cropAspectRatio;
       }
 
-      // Center the crop area
-      const x = Math.max(0, (imgWidth - cropWidth) / 2);
-      const y = Math.max(0, (imgHeight - cropHeight) / 2);
+      // Scale the crop dimensions to match displayed size
+      const cropWidth = naturalCropWidth * scale;
+      const cropHeight = naturalCropHeight * scale;
 
-      // Make sure the crop area is completely within the image bounds
-      const constrainedWidth = Math.min(cropWidth, imgWidth);
-      const constrainedHeight = Math.min(cropHeight, imgHeight);
-
-      // Final position check to ensure the crop doesn't exceed image bounds
-      const finalX = Math.min(x, imgWidth - constrainedWidth);
-      const finalY = Math.min(y, imgHeight - constrainedHeight);
+      // Center the crop box
+      const x = (wrapperRect.width - cropWidth) / 2;
+      const y = (wrapperRect.height - cropHeight) / 2;
 
       setCropCoordinates({
-        x: finalX,
-        y: finalY,
-        width: constrainedWidth,
-        height: constrainedHeight,
+        x: Math.max(0, x),
+        y: Math.max(0, y),
+        width: Math.min(cropWidth, wrapperRect.width),
+        height: Math.min(cropHeight, wrapperRect.height),
       });
     }
   }, [showCropModal]);
+
+  // Remove background using the @imgly/background-removal package
+  const removeBackground = async () => {
+    if (!selectedImage) return;
+
+    try {
+      setIsProcessingBg(true);
+      setBgRemovalError(null);
+      setShowBgRemovalModal(true);
+
+      console.log("Starting background removal with @imgly/background-removal");
+
+      // Convert the selected image to a blob URL if it's not already
+      const imageUrl =
+        selectedImage instanceof File
+          ? URL.createObjectURL(selectedImage)
+          : previewUrl;
+
+      try {
+        // Use our utility function to remove the background
+        const blob = await removeImageBackground(imageUrl, {
+          onProgress: (progress) => {
+            console.log(
+              `Background removal progress: ${Math.round(progress * 100)}%`
+            );
+          },
+        });
+
+        // Clean up the temporary URL if we created one
+        if (imageUrl !== previewUrl) {
+          URL.revokeObjectURL(imageUrl);
+        }
+
+        // Revoke the old URL to prevent memory leaks
+        URL.revokeObjectURL(previewUrl);
+
+        // Create a new URL for the processed image
+        const processedUrl = URL.createObjectURL(blob);
+        setPreviewUrl(processedUrl);
+
+        // Create a new File object from the blob
+        const processedFile = new File(
+          [blob],
+          selectedImage.name || "image.png",
+          {
+            type: "image/png", // PNG with transparency
+          }
+        );
+        setSelectedImage(processedFile);
+
+        console.log("Background removal completed successfully");
+        setShowBgRemovalModal(false);
+      } catch (importError) {
+        console.error("Error importing or using the module:", importError);
+
+        if (
+          importError.message &&
+          importError.message.includes("Failed to fetch")
+        ) {
+          throw new Error(
+            "Network error: Unable to download required models. Please check your internet connection."
+          );
+        } else {
+          throw importError;
+        }
+      }
+    } catch (error) {
+      console.error("Background removal failed:", error);
+
+      // More detailed error information
+      let errorMessage = "Background removal failed.";
+
+      if (error.message && error.message.includes("Failed to fetch")) {
+        errorMessage =
+          "Network error: Unable to download required models. Please check your internet connection and try again.";
+        setNetworkError(true);
+      } else if (error.message) {
+        errorMessage += " Error: " + error.message;
+      }
+
+      setBgRemovalError(errorMessage);
+    } finally {
+      setIsProcessingBg(false);
+    }
+  };
+
+  // Fallback method for background removal when the module fails
+  const handleFallbackRemoval = async () => {
+    if (!selectedImage || !imageRef.current) return;
+
+    try {
+      setIsProcessingBg(true);
+      setBgRemovalError(null);
+      setShowBgRemovalModal(true);
+
+      console.log("Using fallback background removal method");
+
+      // Use our utility function for fallback background removal
+      const blob = await removeBackgroundFallback(imageRef.current);
+
+      // Revoke the old URL to prevent memory leaks
+      URL.revokeObjectURL(previewUrl);
+
+      // Create a new URL for the processed image
+      const processedUrl = URL.createObjectURL(blob);
+      setPreviewUrl(processedUrl);
+
+      // Create a new File object from the blob
+      const processedFile = new File(
+        [blob],
+        selectedImage.name || "image.png",
+        {
+          type: "image/png", // PNG with transparency
+        }
+      );
+      setSelectedImage(processedFile);
+
+      console.log("Fallback background removal completed");
+      setShowBgRemovalModal(false);
+    } catch (error) {
+      console.error("Fallback background removal failed:", error);
+      setBgRemovalError("Fallback method failed: " + error.message);
+    } finally {
+      setIsProcessingBg(false);
+    }
+  };
+
+  // Retry loading the module
+  const retryLoading = async () => {
+    setNetworkError(false);
+    setBackgroundRemovalLoaded(false);
+
+    try {
+      // Clear browser cache for this specific resource
+      const cache = await caches.open("v1");
+      await cache.delete(
+        "https://unpkg.com/@imgly/background-removal@1.0.0/dist/package.json"
+      );
+
+      // Try loading again
+      setBackgroundRemovalLoaded(true);
+
+      // Try the background removal again
+      removeBackground();
+    } catch (error) {
+      console.error("Error clearing cache:", error);
+      // Continue anyway
+      setBackgroundRemovalLoaded(true);
+    }
+  };
 
   // Handle file selection
   const handleFileChange = (e) => {
@@ -486,38 +690,31 @@ export default function PhotoEnhancer() {
 
   // Handle crop drag
   const handleCropDrag = (e) => {
-    if (!isDragging || !cropperRef.current || !imageRef.current) return;
+    if (
+      !isDragging ||
+      !cropperRef.current ||
+      !imageCropWrapperRef.current ||
+      !imageRef.current
+    )
+      return;
 
     const dx = e.clientX - dragStartPosition.x;
     const dy = e.clientY - dragStartPosition.y;
-
-    setDragStartPosition({
-      x: e.clientX,
-      y: e.clientY,
-    });
+    setDragStartPosition({ x: e.clientX, y: e.clientY });
 
     setCropCoordinates((prev) => {
+      const wrapper = imageCropWrapperRef.current;
+      const wrapperRect = wrapper.getBoundingClientRect();
+
       // Calculate new position
       let newX = prev.x + dx;
       let newY = prev.y + dy;
 
-      // Get image dimensions from the actual displayed image
-      const imgElement = imageRef.current;
-      const imgRect = imgElement.getBoundingClientRect();
+      // Constrain to image boundaries
+      newX = Math.max(0, Math.min(wrapperRect.width - prev.width, newX));
+      newY = Math.max(0, Math.min(wrapperRect.height - prev.height, newY));
 
-      // For the displayed dimensions, we need to use the bounding client rect properties
-      const imgDisplayWidth = imgRect.width;
-      const imgDisplayHeight = imgRect.height;
-
-      // Constrain to image bounds - ensure the crop area doesn't go outside the actual image
-      newX = Math.max(0, Math.min(imgDisplayWidth - prev.width, newX));
-      newY = Math.max(0, Math.min(imgDisplayHeight - prev.height, newY));
-
-      return {
-        ...prev,
-        x: newX,
-        y: newY,
-      };
+      return { ...prev, x: newX, y: newY };
     });
   };
 
@@ -528,31 +725,28 @@ export default function PhotoEnhancer() {
 
   // Apply crop to the image
   const applyCrop = () => {
-    if (!selectedImage || !imageRef.current) return;
+    if (!selectedImage || !imageRef.current || !imageCropWrapperRef.current)
+      return;
 
-    // Create a canvas to apply the crop
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
     const img = imageRef.current;
+    const wrapper = imageCropWrapperRef.current;
+    const wrapperRect = wrapper.getBoundingClientRect();
 
-    // Get the image display dimensions
-    const imgRect = img.getBoundingClientRect();
+    // Calculate scale between natural and displayed image
+    const scaleX = img.naturalWidth / wrapperRect.width;
+    const scaleY = img.naturalHeight / wrapperRect.height;
 
-    // Calculate the scale factors between the natural image size and the displayed size
-    const scaleX = img.naturalWidth / imgRect.width;
-    const scaleY = img.naturalHeight / imgRect.height;
-
-    // Scale crop coordinates to match the original image dimensions
+    // Convert crop coordinates to natural image coordinates
     const cropX = cropCoordinates.x * scaleX;
     const cropY = cropCoordinates.y * scaleY;
     const cropWidth = cropCoordinates.width * scaleX;
     const cropHeight = cropCoordinates.height * scaleY;
 
-    // Set canvas size to the crop dimensions
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
     canvas.width = cropWidth;
     canvas.height = cropHeight;
 
-    // Draw the cropped image to the canvas
     ctx.drawImage(
       img,
       cropX,
@@ -565,22 +759,14 @@ export default function PhotoEnhancer() {
       cropHeight
     );
 
-    // Convert canvas to a blob and set as new image
     canvas.toBlob((blob) => {
-      // Release the previous URL
       URL.revokeObjectURL(previewUrl);
-
-      // Create new URL for the cropped image
       const croppedUrl = URL.createObjectURL(blob);
       setPreviewUrl(croppedUrl);
-
-      // Create a file from the blob
       const croppedFile = new File([blob], selectedImage.name, {
         type: selectedImage.type,
       });
       setSelectedImage(croppedFile);
-
-      // Close the crop modal
       setShowCropModal(false);
     }, selectedImage.type);
   };
@@ -926,6 +1112,25 @@ export default function PhotoEnhancer() {
                 <MdCrop /> Crop
               </button>
 
+              <button
+                onClick={networkError ? retryLoading : removeBackground}
+                className={`btn btn-outline ${
+                  networkError ? "btn-warning" : "btn-accent"
+                } flex items-center gap-2`}
+                disabled={!selectedImage || isProcessingBg}
+              >
+                {networkError ? (
+                  <>
+                    <MdRefresh /> Retry Background Removal
+                  </>
+                ) : (
+                  <>
+                    <RiScissorsCutLine />
+                    {isProcessingBg ? "Processing..." : "Remove Background"}
+                  </>
+                )}
+              </button>
+
               <input
                 type="file"
                 ref={fileInputRef}
@@ -936,6 +1141,71 @@ export default function PhotoEnhancer() {
             </div>
           </div>
         </div>
+
+        {/* Background Removal Processing Modal */}
+        {showBgRemovalModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full text-center">
+              {isProcessingBg ? (
+                <>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    Removing Background
+                  </h3>
+                  <p className="text-gray-600">
+                    This may take a few moments...
+                  </p>
+                </>
+              ) : bgRemovalError ? (
+                <>
+                  <div className="text-red-500 text-5xl mb-4">
+                    {networkError ? (
+                      <MdWarning className="mx-auto" />
+                    ) : (
+                      <MdClose className="mx-auto" />
+                    )}
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2">Error</h3>
+                  <p className="text-gray-600 mb-4">{bgRemovalError}</p>
+                  <div className="flex flex-col gap-2">
+                    {networkError ? (
+                      <>
+                        <button
+                          onClick={() => {
+                            setShowBgRemovalModal(false);
+                            retryLoading();
+                          }}
+                          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center justify-center gap-2"
+                        >
+                          <MdRefresh /> Retry Connection
+                        </button>
+                        <button
+                          onClick={() => {
+                            setShowBgRemovalModal(false);
+                            handleFallbackRemoval();
+                          }}
+                          className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 flex items-center justify-center gap-2"
+                        >
+                          <RiScissorsCutLine /> Use Simple Fallback Method
+                        </button>
+                        <p className="text-xs text-gray-500 mt-1 mb-2">
+                          Note: The fallback method is very basic and works best
+                          with solid color backgrounds.
+                        </p>
+                      </>
+                    ) : null}
+                    <button
+                      onClick={() => setShowBgRemovalModal(false)}
+                      className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </>
+              ) : null}
+            </div>
+          </div>
+        )}
 
         {/* Presets Modal */}
         {showPresetsModal && (
@@ -1031,13 +1301,18 @@ export default function PhotoEnhancer() {
 
               <div className="flex-1 overflow-auto p-4 bg-gray-100 relative">
                 <div className="relative w-full h-full flex items-center justify-center">
-                  <div className="relative" style={{ display: "inline-block" }}>
+                  <div
+                    ref={imageCropWrapperRef}
+                    className="relative inline-block"
+                    style={{ lineHeight: 0 }}
+                  >
                     <img
+                      ref={imageRef}
                       src={previewUrl}
                       alt="Crop Preview"
                       className="max-w-full max-h-[60vh] object-contain"
+                      style={{ display: "block" }}
                     />
-
                     {/* Crop overlay */}
                     <div
                       ref={cropperRef}
@@ -1049,6 +1324,7 @@ export default function PhotoEnhancer() {
                         height: `${cropCoordinates.height}px`,
                         border: "2px solid #007BFF",
                         boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.5)",
+                        pointerEvents: "auto",
                       }}
                       onMouseDown={handleCropDragStart}
                       onMouseMove={handleCropDrag}
