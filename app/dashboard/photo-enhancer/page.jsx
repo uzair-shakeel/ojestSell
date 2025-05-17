@@ -1308,7 +1308,7 @@ export default function PhotoEnhancer() {
                 <MdCrop /> Crop
               </button>
 
-              {/* <button
+              <button
                 onClick={networkError ? retryLoading : removeBackground}
                 className={`btn btn-outline ${
                   networkError ? "btn-warning" : "btn-accent"
@@ -1325,7 +1325,7 @@ export default function PhotoEnhancer() {
                     {isProcessingBg ? "Processing..." : "Remove Background"}
                   </>
                 )}
-              </button> */}
+              </button>
 
               <input
                 type="file"
