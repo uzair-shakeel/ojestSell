@@ -410,35 +410,43 @@ export default function PhotoEnhancer() {
       const wrapper = imageCropWrapperRef.current;
       const wrapperRect = wrapper.getBoundingClientRect();
 
-      // Calculate the scale factor between natural and displayed size
-      const scale = wrapperRect.width / img.naturalWidth;
+      // Wait a moment for the image to fully render in the modal
+      setTimeout(() => {
+        // Calculate the scale factor between natural and displayed size
+        const scaleX = wrapperRect.width / img.naturalWidth;
+        const scaleY = wrapperRect.height / img.naturalHeight;
+        const scale = Math.min(scaleX, scaleY);
 
-      // Calculate crop dimensions based on natural image size first
-      let naturalCropWidth, naturalCropHeight;
-      if (img.naturalWidth / img.naturalHeight > cropAspectRatio) {
-        naturalCropHeight = Math.min(img.naturalHeight, 600);
-        naturalCropWidth = naturalCropHeight * cropAspectRatio;
-      } else {
-        naturalCropWidth = Math.min(img.naturalWidth, 900);
-        naturalCropHeight = naturalCropWidth / cropAspectRatio;
-      }
+        // Calculate crop dimensions based on available space and aspect ratio
+        let cropWidth, cropHeight;
 
-      // Scale the crop dimensions to match displayed size
-      const cropWidth = naturalCropWidth * scale;
-      const cropHeight = naturalCropHeight * scale;
+        // For mobile (smaller screens), use a larger portion of the available space
+        const isMobile = window.innerWidth < 640; // sm breakpoint in Tailwind
+        const sizeFactor = isMobile ? 0.9 : 0.8;
 
-      // Center the crop box
-      const x = (wrapperRect.width - cropWidth) / 2;
-      const y = (wrapperRect.height - cropHeight) / 2;
+        if (wrapperRect.width / wrapperRect.height > cropAspectRatio) {
+          // Available space is wider than our target aspect ratio
+          cropHeight = Math.min(wrapperRect.height * sizeFactor, img.height);
+          cropWidth = cropHeight * cropAspectRatio;
+        } else {
+          // Available space is taller than our target aspect ratio
+          cropWidth = Math.min(wrapperRect.width * sizeFactor, img.width);
+          cropHeight = cropWidth / cropAspectRatio;
+        }
 
-      setCropCoordinates({
-        x: Math.max(0, x),
-        y: Math.max(0, y),
-        width: Math.min(cropWidth, wrapperRect.width),
-        height: Math.min(cropHeight, wrapperRect.height),
-      });
+        // Center the crop box
+        const x = (wrapperRect.width - cropWidth) / 2;
+        const y = (wrapperRect.height - cropHeight) / 2;
+
+        setCropCoordinates({
+          x: Math.max(0, x),
+          y: Math.max(0, y),
+          width: Math.min(cropWidth, wrapperRect.width),
+          height: Math.min(cropHeight, wrapperRect.height),
+        });
+      }, 100); // Small delay to ensure image is rendered
     }
-  }, [showCropModal]);
+  }, [showCropModal, cropAspectRatio]);
 
   // Remove background using the @imgly/background-removal package
   const removeBackground = async () => {
@@ -682,8 +690,8 @@ export default function PhotoEnhancer() {
 
     const cropperRect = cropperRef.current.getBoundingClientRect();
     setDragStartPosition({
-      x: e.clientX,
-      y: e.clientY,
+      x: e.type.includes("touch") ? e.touches[0].clientX : e.clientX,
+      y: e.type.includes("touch") ? e.touches[0].clientY : e.clientY,
     });
     setIsDragging(true);
   };
@@ -698,9 +706,16 @@ export default function PhotoEnhancer() {
     )
       return;
 
-    const dx = e.clientX - dragStartPosition.x;
-    const dy = e.clientY - dragStartPosition.y;
-    setDragStartPosition({ x: e.clientX, y: e.clientY });
+    const clientX = e.type.includes("touch") ? e.touches[0].clientX : e.clientX;
+    const clientY = e.type.includes("touch") ? e.touches[0].clientY : e.clientY;
+
+    const dx = clientX - dragStartPosition.x;
+    const dy = clientY - dragStartPosition.y;
+
+    setDragStartPosition({
+      x: clientX,
+      y: clientY,
+    });
 
     setCropCoordinates((prev) => {
       const wrapper = imageCropWrapperRef.current;
@@ -730,8 +745,8 @@ export default function PhotoEnhancer() {
 
     if (!cropperRef.current || !imageCropWrapperRef.current) return;
 
-    const startX = e.clientX;
-    const startY = e.clientY;
+    const startX = e.type.includes("touch") ? e.touches[0].clientX : e.clientX;
+    const startY = e.type.includes("touch") ? e.touches[0].clientY : e.clientY;
     const startCoords = { ...cropCoordinates };
     const wrapper = imageCropWrapperRef.current;
     const wrapperRect = wrapper.getBoundingClientRect();
@@ -739,8 +754,15 @@ export default function PhotoEnhancer() {
     const minSize = 50; // Minimum crop size in pixels
 
     const handleMouseMove = (moveEvent) => {
-      const dx = moveEvent.clientX - startX;
-      const dy = moveEvent.clientY - startY;
+      const clientX = moveEvent.type.includes("touch")
+        ? moveEvent.touches[0].clientX
+        : moveEvent.clientX;
+      const clientY = moveEvent.type.includes("touch")
+        ? moveEvent.touches[0].clientY
+        : moveEvent.clientY;
+
+      const dx = clientX - startX;
+      const dy = clientY - startY;
 
       let newCoords = { ...startCoords };
 
@@ -851,10 +873,14 @@ export default function PhotoEnhancer() {
     const handleMouseUp = () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("touchmove", handleMouseMove);
+      document.removeEventListener("touchend", handleMouseUp);
     };
 
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener("touchmove", handleMouseMove);
+    document.addEventListener("touchend", handleMouseUp);
   };
 
   // Handle vertical position adjustment
@@ -1455,8 +1481,8 @@ export default function PhotoEnhancer() {
 
         {/* Crop Modal */}
         {showCropModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
               <div className="flex justify-between items-center border-b p-4">
                 <h3 className="text-lg font-semibold">
                   Crop Image (3:2 Ratio)
@@ -1469,18 +1495,18 @@ export default function PhotoEnhancer() {
                 </button>
               </div>
 
-              <div className="flex-1 overflow-auto p-4 bg-gray-100 relative">
+              <div className="flex-1 overflow-auto p-2 sm:p-4 bg-gray-100 relative">
                 <div className="relative w-full h-full flex items-center justify-center">
                   <div
                     ref={imageCropWrapperRef}
-                    className="relative inline-block"
+                    className="relative w-full"
                     style={{ lineHeight: 0 }}
                   >
                     <img
                       ref={imageRef}
                       src={previewUrl}
                       alt="Crop Preview"
-                      className="max-w-full max-h-[60vh] object-contain"
+                      className="w-full object-contain"
                       style={{ display: "block" }}
                     />
                     {/* Crop overlay */}
@@ -1500,6 +1526,9 @@ export default function PhotoEnhancer() {
                       onMouseMove={handleCropDrag}
                       onMouseUp={handleCropDragEnd}
                       onMouseLeave={handleCropDragEnd}
+                      onTouchStart={handleCropDragStart}
+                      onTouchMove={handleCropDrag}
+                      onTouchEnd={handleCropDragEnd}
                     >
                       {/* Crop grid lines */}
                       <div className="absolute inset-0 grid grid-cols-3 grid-rows-3">
@@ -1514,53 +1543,69 @@ export default function PhotoEnhancer() {
                         <div className="border-white border-opacity-50"></div>
                       </div>
 
-                      {/* Resize handles */}
+                      {/* Resize handles - larger for mobile */}
                       <div
-                        className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-n-resize"
+                        className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 sm:w-6 sm:h-6 bg-white rounded-full border-2 border-blue-500 cursor-n-resize touch-manipulation"
+                        style={{ width: "24px", height: "24px" }}
                         onMouseDown={(e) => handleCropResize("n", e)}
+                        onTouchStart={(e) => handleCropResize("n", e)}
                       ></div>
                       <div
-                        className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-s-resize"
+                        className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-6 h-6 sm:w-6 sm:h-6 bg-white rounded-full border-2 border-blue-500 cursor-s-resize touch-manipulation"
+                        style={{ width: "24px", height: "24px" }}
                         onMouseDown={(e) => handleCropResize("s", e)}
+                        onTouchStart={(e) => handleCropResize("s", e)}
                       ></div>
                       <div
-                        className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-w-resize"
+                        className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-6 h-6 sm:w-6 sm:h-6 bg-white rounded-full border-2 border-blue-500 cursor-w-resize touch-manipulation"
+                        style={{ width: "24px", height: "24px" }}
                         onMouseDown={(e) => handleCropResize("w", e)}
+                        onTouchStart={(e) => handleCropResize("w", e)}
                       ></div>
                       <div
-                        className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-e-resize"
+                        className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-6 h-6 sm:w-6 sm:h-6 bg-white rounded-full border-2 border-blue-500 cursor-e-resize touch-manipulation"
+                        style={{ width: "24px", height: "24px" }}
                         onMouseDown={(e) => handleCropResize("e", e)}
+                        onTouchStart={(e) => handleCropResize("e", e)}
                       ></div>
                       <div
-                        className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-nw-resize"
+                        className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-6 h-6 sm:w-6 sm:h-6 bg-white rounded-full border-2 border-blue-500 cursor-nw-resize touch-manipulation"
+                        style={{ width: "24px", height: "24px" }}
                         onMouseDown={(e) => handleCropResize("nw", e)}
+                        onTouchStart={(e) => handleCropResize("nw", e)}
                       ></div>
                       <div
-                        className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-ne-resize"
+                        className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 w-6 h-6 sm:w-6 sm:h-6 bg-white rounded-full border-2 border-blue-500 cursor-ne-resize touch-manipulation"
+                        style={{ width: "24px", height: "24px" }}
                         onMouseDown={(e) => handleCropResize("ne", e)}
+                        onTouchStart={(e) => handleCropResize("ne", e)}
                       ></div>
                       <div
-                        className="absolute bottom-0 left-0 -translate-x-1/2 translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-sw-resize"
+                        className="absolute bottom-0 left-0 -translate-x-1/2 translate-y-1/2 w-6 h-6 sm:w-6 sm:h-6 bg-white rounded-full border-2 border-blue-500 cursor-sw-resize touch-manipulation"
+                        style={{ width: "24px", height: "24px" }}
                         onMouseDown={(e) => handleCropResize("sw", e)}
+                        onTouchStart={(e) => handleCropResize("sw", e)}
                       ></div>
                       <div
-                        className="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-se-resize"
+                        className="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-6 h-6 sm:w-6 sm:h-6 bg-white rounded-full border-2 border-blue-500 cursor-se-resize touch-manipulation"
+                        style={{ width: "24px", height: "24px" }}
                         onMouseDown={(e) => handleCropResize("se", e)}
+                        onTouchStart={(e) => handleCropResize("se", e)}
                       ></div>
                     </div>
                   </div>
 
                   {/* Vertical adjustment controls */}
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-3 bg-white p-3 rounded-lg shadow-lg">
+                  <div className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2 sm:gap-3 bg-white p-2 sm:p-3 rounded-lg shadow-lg">
                     <button
                       onClick={() => handleVerticalAdjust(-10)}
-                      className="p-2 bg-blue-100 hover:bg-blue-200 rounded-md transition-colors"
+                      className="p-2 sm:p-3 bg-blue-100 hover:bg-blue-200 rounded-md transition-colors w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center"
                       title="Move up significantly"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
+                        width="24"
+                        height="24"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -1574,13 +1619,13 @@ export default function PhotoEnhancer() {
                     </button>
                     <button
                       onClick={() => handleVerticalAdjust(-2)}
-                      className="p-2 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
+                      className="p-2 sm:p-3 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center"
                       title="Fine adjust up"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
+                        width="20"
+                        height="20"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -1595,13 +1640,13 @@ export default function PhotoEnhancer() {
                     <div className="h-px w-full bg-gray-200 my-1"></div>
                     <button
                       onClick={() => handleVerticalAdjust(2)}
-                      className="p-2 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
+                      className="p-2 sm:p-3 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center"
                       title="Fine adjust down"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
+                        width="20"
+                        height="20"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -1615,13 +1660,13 @@ export default function PhotoEnhancer() {
                     </button>
                     <button
                       onClick={() => handleVerticalAdjust(10)}
-                      className="p-2 bg-blue-100 hover:bg-blue-200 rounded-md transition-colors"
+                      className="p-2 sm:p-3 bg-blue-100 hover:bg-blue-200 rounded-md transition-colors w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center"
                       title="Move down significantly"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
+                        width="24"
+                        height="24"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -1639,23 +1684,23 @@ export default function PhotoEnhancer() {
                 </div>
               </div>
 
-              <div className="border-t p-4 flex justify-between items-center">
-                <div className="text-sm text-gray-600">
+              <div className="border-t p-3 sm:p-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div className="text-sm text-gray-600 text-center sm:text-left">
                   <p>
                     Drag to position • Use handles to resize • Use vertical
                     controls for fine adjustments
                   </p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 w-full sm:w-auto">
                   <button
                     onClick={() => setShowCropModal(false)}
-                    className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+                    className="flex-1 sm:flex-none px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={applyCrop}
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center gap-2"
+                    className="flex-1 sm:flex-none px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center justify-center gap-2"
                   >
                     <MdCheck size={18} /> Apply Crop
                   </button>
