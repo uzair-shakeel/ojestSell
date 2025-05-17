@@ -723,6 +723,176 @@ export default function PhotoEnhancer() {
     setIsDragging(false);
   };
 
+  // Handle crop resize
+  const handleCropResize = (direction, e) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    if (!cropperRef.current || !imageCropWrapperRef.current) return;
+
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startCoords = { ...cropCoordinates };
+    const wrapper = imageCropWrapperRef.current;
+    const wrapperRect = wrapper.getBoundingClientRect();
+
+    const minSize = 50; // Minimum crop size in pixels
+
+    const handleMouseMove = (moveEvent) => {
+      const dx = moveEvent.clientX - startX;
+      const dy = moveEvent.clientY - startY;
+
+      let newCoords = { ...startCoords };
+
+      // Handle different resize directions
+      switch (direction) {
+        case "n": // North (top)
+          newCoords.y = Math.max(
+            0,
+            Math.min(
+              startCoords.y + dy,
+              startCoords.y + startCoords.height - minSize
+            )
+          );
+          newCoords.height = startCoords.height - (newCoords.y - startCoords.y);
+          break;
+        case "s": // South (bottom)
+          newCoords.height = Math.max(
+            minSize,
+            Math.min(
+              startCoords.height + dy,
+              wrapperRect.height - startCoords.y
+            )
+          );
+          break;
+        case "e": // East (right)
+          newCoords.width = Math.max(
+            minSize,
+            Math.min(startCoords.width + dx, wrapperRect.width - startCoords.x)
+          );
+          break;
+        case "w": // West (left)
+          newCoords.x = Math.max(
+            0,
+            Math.min(
+              startCoords.x + dx,
+              startCoords.x + startCoords.width - minSize
+            )
+          );
+          newCoords.width = startCoords.width - (newCoords.x - startCoords.x);
+          break;
+        case "ne": // North-East
+          newCoords.y = Math.max(
+            0,
+            Math.min(
+              startCoords.y + dy,
+              startCoords.y + startCoords.height - minSize
+            )
+          );
+          newCoords.height = startCoords.height - (newCoords.y - startCoords.y);
+          newCoords.width = Math.max(
+            minSize,
+            Math.min(startCoords.width + dx, wrapperRect.width - startCoords.x)
+          );
+          break;
+        case "nw": // North-West
+          newCoords.y = Math.max(
+            0,
+            Math.min(
+              startCoords.y + dy,
+              startCoords.y + startCoords.height - minSize
+            )
+          );
+          newCoords.height = startCoords.height - (newCoords.y - startCoords.y);
+          newCoords.x = Math.max(
+            0,
+            Math.min(
+              startCoords.x + dx,
+              startCoords.x + startCoords.width - minSize
+            )
+          );
+          newCoords.width = startCoords.width - (newCoords.x - startCoords.x);
+          break;
+        case "se": // South-East
+          newCoords.width = Math.max(
+            minSize,
+            Math.min(startCoords.width + dx, wrapperRect.width - startCoords.x)
+          );
+          newCoords.height = Math.max(
+            minSize,
+            Math.min(
+              startCoords.height + dy,
+              wrapperRect.height - startCoords.y
+            )
+          );
+          break;
+        case "sw": // South-West
+          newCoords.x = Math.max(
+            0,
+            Math.min(
+              startCoords.x + dx,
+              startCoords.x + startCoords.width - minSize
+            )
+          );
+          newCoords.width = startCoords.width - (newCoords.x - startCoords.x);
+          newCoords.height = Math.max(
+            minSize,
+            Math.min(
+              startCoords.height + dy,
+              wrapperRect.height - startCoords.y
+            )
+          );
+          break;
+      }
+
+      setCropCoordinates(newCoords);
+    };
+
+    const handleMouseUp = () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
+
+  // Handle vertical position adjustment
+  const handleVerticalAdjust = (amount) => {
+    if (!imageCropWrapperRef.current) return;
+
+    setCropCoordinates((prev) => {
+      const wrapper = imageCropWrapperRef.current;
+      const wrapperRect = wrapper.getBoundingClientRect();
+
+      // Calculate new position
+      let newY = prev.y + amount;
+
+      // Constrain to image boundaries
+      newY = Math.max(0, Math.min(wrapperRect.height - prev.height, newY));
+
+      return { ...prev, y: newY };
+    });
+  };
+
+  // Handle horizontal position adjustment
+  const handleHorizontalAdjust = (amount) => {
+    if (!imageCropWrapperRef.current) return;
+
+    setCropCoordinates((prev) => {
+      const wrapper = imageCropWrapperRef.current;
+      const wrapperRect = wrapper.getBoundingClientRect();
+
+      // Calculate new position
+      let newX = prev.x + amount;
+
+      // Constrain to image boundaries
+      newX = Math.max(0, Math.min(wrapperRect.width - prev.width, newX));
+
+      return { ...prev, x: newX };
+    });
+  };
+
   // Apply crop to the image
   const applyCrop = () => {
     if (!selectedImage || !imageRef.current || !imageCropWrapperRef.current)
@@ -1112,7 +1282,7 @@ export default function PhotoEnhancer() {
                 <MdCrop /> Crop
               </button>
 
-              <button
+              {/* <button
                 onClick={networkError ? retryLoading : removeBackground}
                 className={`btn btn-outline ${
                   networkError ? "btn-warning" : "btn-accent"
@@ -1129,7 +1299,7 @@ export default function PhotoEnhancer() {
                     {isProcessingBg ? "Processing..." : "Remove Background"}
                   </>
                 )}
-              </button>
+              </button> */}
 
               <input
                 type="file"
@@ -1345,25 +1515,151 @@ export default function PhotoEnhancer() {
                       </div>
 
                       {/* Resize handles */}
-                      {/* Note: Resize handlers would be implemented here in a full version */}
+                      <div
+                        className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-n-resize"
+                        onMouseDown={(e) => handleCropResize("n", e)}
+                      ></div>
+                      <div
+                        className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-s-resize"
+                        onMouseDown={(e) => handleCropResize("s", e)}
+                      ></div>
+                      <div
+                        className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-w-resize"
+                        onMouseDown={(e) => handleCropResize("w", e)}
+                      ></div>
+                      <div
+                        className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-e-resize"
+                        onMouseDown={(e) => handleCropResize("e", e)}
+                      ></div>
+                      <div
+                        className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-nw-resize"
+                        onMouseDown={(e) => handleCropResize("nw", e)}
+                      ></div>
+                      <div
+                        className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-ne-resize"
+                        onMouseDown={(e) => handleCropResize("ne", e)}
+                      ></div>
+                      <div
+                        className="absolute bottom-0 left-0 -translate-x-1/2 translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-sw-resize"
+                        onMouseDown={(e) => handleCropResize("sw", e)}
+                      ></div>
+                      <div
+                        className="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-se-resize"
+                        onMouseDown={(e) => handleCropResize("se", e)}
+                      ></div>
                     </div>
                   </div>
+
+                  {/* Vertical adjustment controls */}
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-3 bg-white p-3 rounded-lg shadow-lg">
+                    <button
+                      onClick={() => handleVerticalAdjust(-10)}
+                      className="p-2 bg-blue-100 hover:bg-blue-200 rounded-md transition-colors"
+                      title="Move up significantly"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-blue-600"
+                      >
+                        <path d="M12 19V5M5 12l7-7 7 7" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => handleVerticalAdjust(-2)}
+                      className="p-2 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
+                      title="Fine adjust up"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-blue-500"
+                      >
+                        <path d="M18 15l-6-6-6 6" />
+                      </svg>
+                    </button>
+                    <div className="h-px w-full bg-gray-200 my-1"></div>
+                    <button
+                      onClick={() => handleVerticalAdjust(2)}
+                      className="p-2 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
+                      title="Fine adjust down"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-blue-500"
+                      >
+                        <path d="M6 9l6 6 6-6" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => handleVerticalAdjust(10)}
+                      className="p-2 bg-blue-100 hover:bg-blue-200 rounded-md transition-colors"
+                      title="Move down significantly"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-blue-600"
+                      >
+                        <path d="M12 5v14M5 12l7 7 7-7" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Remove horizontal adjustment controls */}
                 </div>
               </div>
 
-              <div className="border-t p-4 flex justify-end gap-2">
-                <button
-                  onClick={() => setShowCropModal(false)}
-                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={applyCrop}
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center gap-2"
-                >
-                  <MdCheck size={18} /> Apply Crop
-                </button>
+              <div className="border-t p-4 flex justify-between items-center">
+                <div className="text-sm text-gray-600">
+                  <p>
+                    Drag to position • Use handles to resize • Use vertical
+                    controls for fine adjustments
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setShowCropModal(false)}
+                    className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={applyCrop}
+                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center gap-2"
+                  >
+                    <MdCheck size={18} /> Apply Crop
+                  </button>
+                </div>
               </div>
             </div>
           </div>
