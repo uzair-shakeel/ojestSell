@@ -43,9 +43,14 @@ export async function removeImageBackground(imageUrl, options = {}) {
       model: "medium", // Use medium quality model for better balance
       output: {
         format: "image/png",
-        quality: 0.8,
+        quality: 1.0, // Use maximum quality to preserve transparency
       },
     });
+
+    // Verify the result is a valid blob with image data
+    if (!(result instanceof Blob) || result.size === 0) {
+      throw new Error("Background removal returned an invalid result");
+    }
 
     return result;
   } catch (error) {

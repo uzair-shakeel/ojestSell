@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import Image from "next/image";
 import {
   FiUpload,
   FiDownload,
@@ -22,11 +21,14 @@ import {
   MdClose,
   MdWarning,
   MdRefresh,
+  MdFlip,
+  MdOutlineRotate90DegreesCcw,
 } from "react-icons/md";
 import { BsArrowsFullscreen, BsFillImageFill } from "react-icons/bs";
 import { TbFlipHorizontal, TbFlipVertical } from "react-icons/tb";
 import { RiShadowLine, RiScissorsCutLine } from "react-icons/ri";
 import { IoColorPaletteOutline } from "react-icons/io5";
+import { FaCar } from "react-icons/fa";
 import { removeImageBackground, removeBackgroundFallback } from "./bg-removal";
 
 // Helper to get image's displayed position and size within the container
@@ -67,6 +69,18 @@ export default function PhotoEnhancer() {
   const [bgRemovalError, setBgRemovalError] = useState(null);
   const [backgroundRemovalLoaded, setBackgroundRemovalLoaded] = useState(false);
   const [networkError, setNetworkError] = useState(false);
+  const [showBackgroundOptions, setShowBackgroundOptions] = useState(false);
+  const [selectedBackgroundColor, setSelectedBackgroundColor] =
+    useState("#ffffff");
+  const [imageHasTransparency, setImageHasTransparency] = useState(false);
+  // Add a state for the car background removal threshold
+  const [carBgThreshold, setCarBgThreshold] = useState(35);
+  const [showCarBgOptions, setShowCarBgOptions] = useState(false);
+  // Add states for preview
+  const [previewCanvas, setPreviewCanvas] = useState(null);
+  const [previewCtx, setPreviewCtx] = useState(null);
+  const [originalImageData, setOriginalImageData] = useState(null);
+  const [detectedBgColor, setDetectedBgColor] = useState(null);
 
   // Load background removal module
   useEffect(() => {
@@ -406,12 +420,12 @@ export default function PhotoEnhancer() {
   // Initialize crop area when opening crop modal
   useEffect(() => {
     if (showCropModal && imageRef.current && imageCropWrapperRef.current) {
-      const img = imageRef.current;
-      const wrapper = imageCropWrapperRef.current;
-      const wrapperRect = wrapper.getBoundingClientRect();
-
       // Wait a moment for the image to fully render in the modal
       setTimeout(() => {
+        const img = imageRef.current;
+        const wrapper = imageCropWrapperRef.current;
+        const wrapperRect = wrapper.getBoundingClientRect();
+
         // Calculate the scale factor between natural and displayed size
         const scaleX = wrapperRect.width / img.naturalWidth;
         const scaleY = wrapperRect.height / img.naturalHeight;
@@ -459,75 +473,91 @@ export default function PhotoEnhancer() {
 
       console.log("Starting background removal with @imgly/background-removal");
 
-      // Convert the selected image to a blob URL if it's not already
-      const imageUrl =
-        selectedImage instanceof File
-          ? URL.createObjectURL(selectedImage)
-          : previewUrl;
-
       try {
-        // Use our utility function to remove the background
-        const blob = await removeImageBackground(imageUrl, {
-          onProgress: (progress) => {
+        // Import the module directly here to ensure it's loaded
+        const bgRemoval = await import("@imgly/background-removal");
+
+        // Determine which function to use
+        const removeFunction = bgRemoval.removeBackground || bgRemoval.default;
+
+        if (!removeFunction) {
+          throw new Error("Could not find a valid background removal function");
+        }
+
+        // Get image as blob
+        const response = await fetch(previewUrl);
+        const imageBlob = await response.blob();
+
+        // Process the image
+        const resultBlob = await removeFunction(imageBlob, {
+          progress: (progress) => {
             console.log(
               `Background removal progress: ${Math.round(progress * 100)}%`
             );
           },
+          model: "medium",
+          output: {
+            format: "image/png",
+            quality: 1.0, // Maximum quality to preserve transparency
+          },
         });
 
-        // Clean up the temporary URL if we created one
-        if (imageUrl !== previewUrl) {
-          URL.revokeObjectURL(imageUrl);
+        // Check if we got a valid blob back
+        if (!(resultBlob instanceof Blob) || resultBlob.size === 0) {
+          throw new Error("Background removal returned an invalid result");
         }
 
         // Revoke the old URL to prevent memory leaks
         URL.revokeObjectURL(previewUrl);
 
         // Create a new URL for the processed image
-        const processedUrl = URL.createObjectURL(blob);
+        const processedUrl = URL.createObjectURL(resultBlob);
+
+        // Verify the image is valid
+        await new Promise((resolve, reject) => {
+          const verifyImg = new Image();
+          verifyImg.onload = resolve;
+          verifyImg.onerror = () =>
+            reject(new Error("Generated image is invalid"));
+          verifyImg.src = processedUrl;
+        });
+
         setPreviewUrl(processedUrl);
 
         // Create a new File object from the blob
         const processedFile = new File(
-          [blob],
-          selectedImage.name || "image.png",
+          [resultBlob],
+          selectedImage.name || "image-no-background.png",
           {
-            type: "image/png", // PNG with transparency
+            type: "image/png",
           }
         );
         setSelectedImage(processedFile);
 
+        // Always set transparency flag to true after background removal
+        setImageHasTransparency(true);
+
+        // Show background options
+        setShowBackgroundOptions(true);
+
         console.log("Background removal completed successfully");
         setShowBgRemovalModal(false);
-      } catch (importError) {
-        console.error("Error importing or using the module:", importError);
+      } catch (error) {
+        console.error("Background removal failed:", error);
 
-        if (
-          importError.message &&
-          importError.message.includes("Failed to fetch")
-        ) {
-          throw new Error(
-            "Network error: Unable to download required models. Please check your internet connection."
-          );
-        } else {
-          throw importError;
+        let errorMessage = "Background removal failed.";
+        if (error.message) {
+          errorMessage += " Error: " + error.message;
         }
+
+        if (error.message && error.message.includes("Failed to fetch")) {
+          errorMessage =
+            "Network error: Unable to download required models. Please check your internet connection and try again.";
+          setNetworkError(true);
+        }
+
+        setBgRemovalError(errorMessage);
       }
-    } catch (error) {
-      console.error("Background removal failed:", error);
-
-      // More detailed error information
-      let errorMessage = "Background removal failed.";
-
-      if (error.message && error.message.includes("Failed to fetch")) {
-        errorMessage =
-          "Network error: Unable to download required models. Please check your internet connection and try again.";
-        setNetworkError(true);
-      } else if (error.message) {
-        errorMessage += " Error: " + error.message;
-      }
-
-      setBgRemovalError(errorMessage);
     } finally {
       setIsProcessingBg(false);
     }
@@ -564,6 +594,10 @@ export default function PhotoEnhancer() {
       );
       setSelectedImage(processedFile);
 
+      // Set transparency to true and show background options
+      setImageHasTransparency(true);
+      setShowBackgroundOptions(true);
+
       console.log("Fallback background removal completed");
       setShowBgRemovalModal(false);
     } catch (error) {
@@ -599,12 +633,26 @@ export default function PhotoEnhancer() {
   };
 
   // Handle file selection
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
+      // Set loading state
       setSelectedImage(file);
+
+      // Create and set URL
       const objectUrl = URL.createObjectURL(file);
       setPreviewUrl(objectUrl);
+
+      // Check if the uploaded image has transparency
+      try {
+        console.log("Checking if uploaded image has transparency...");
+        const hasTransparency = await checkImageTransparency(objectUrl);
+        console.log("Image has transparency:", hasTransparency);
+        setImageHasTransparency(hasTransparency);
+      } catch (error) {
+        console.error("Error checking image transparency:", error);
+        setImageHasTransparency(false);
+      }
     }
   };
 
@@ -1206,9 +1254,464 @@ export default function PhotoEnhancer() {
     };
   };
 
+  // Common background color options
+  const backgroundColorOptions = [
+    { name: "White", color: "#ffffff" },
+    { name: "Black", color: "#000000" },
+    { name: "Light Gray", color: "#f0f0f0" },
+    { name: "Dark Gray", color: "#333333" },
+    { name: "Red", color: "#ff0000" },
+    { name: "Green", color: "#00ff00" },
+    { name: "Blue", color: "#0000ff" },
+    { name: "Yellow", color: "#ffff00" },
+    { name: "Orange", color: "#ff9900" },
+    { name: "Purple", color: "#9900ff" },
+    { name: "Pink", color: "#ff66cc" },
+    { name: "Teal", color: "#009999" },
+  ];
+
+  // Check if image has transparency after background removal
+  const checkImageTransparency = (imageUrl) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+
+      img.onload = () => {
+        try {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+          // Use a smaller size for performance if the image is large
+          const maxSize = 1000;
+          const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+
+          canvas.width = img.width * scale;
+          canvas.height = img.height * scale;
+
+          // Draw the image
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          // Sample pixels from the image (check every 10th pixel for performance)
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const data = imageData.data;
+
+          // Check for any transparent or semi-transparent pixels
+          for (let i = 3; i < data.length; i += 40) {
+            // Check every 10th pixel (4 channels * 10)
+            if (data[i] < 250) {
+              // Alpha channel less than 250 (slightly transparent)
+              console.log("Transparency detected in image");
+              resolve(true);
+              return;
+            }
+          }
+
+          console.log("No transparency detected in image");
+          resolve(false);
+        } catch (error) {
+          console.error("Error checking image transparency:", error);
+          resolve(false); // Default to no transparency on error
+        }
+      };
+
+      img.onerror = () => {
+        console.error("Failed to load image for transparency check");
+        resolve(false);
+      };
+
+      img.crossOrigin = "Anonymous";
+      img.src = imageUrl;
+    });
+  };
+
+  // Update the applyBackgroundColor function to work with all images
+  const applyBackgroundColor = async (color) => {
+    if (!selectedImage) return;
+
+    try {
+      console.log("Applying background color:", color);
+
+      // Create a temporary image to load the current image
+      const img = new Image();
+      img.crossOrigin = "Anonymous";
+
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = (e) =>
+          reject(new Error("Failed to load image: " + e.message));
+        img.src = previewUrl;
+      });
+
+      // Create canvas with the same dimensions as the image
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = img.naturalWidth || img.width;
+      canvas.height = img.naturalHeight || img.height;
+
+      // SIMPLE APPROACH THAT WORKS FOR ALL IMAGES:
+      // 1. Fill the entire canvas with the background color
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // 2. Draw the image on top
+      ctx.drawImage(img, 0, 0);
+
+      // Convert to blob as PNG
+      const blob = await new Promise((resolve, reject) => {
+        canvas.toBlob(
+          (result) => {
+            if (result) resolve(result);
+            else reject(new Error("Failed to create blob from canvas"));
+          },
+          "image/png",
+          1.0
+        );
+      });
+
+      // Revoke old URL to prevent memory leaks
+      URL.revokeObjectURL(previewUrl);
+
+      // Create new URL and update state
+      const newUrl = URL.createObjectURL(blob);
+      setPreviewUrl(newUrl);
+
+      // Create new File object as PNG
+      const newFile = new File(
+        [blob],
+        (selectedImage.name || "image").split(".")[0] + "-with-background.png",
+        { type: "image/png" }
+      );
+      setSelectedImage(newFile);
+
+      // Close the color options modal
+      setShowBackgroundOptions(false);
+
+      console.log("Background color applied successfully");
+    } catch (error) {
+      console.error("Error applying background color:", error);
+      alert("Failed to apply background color: " + error.message);
+    }
+  };
+
+  // Special function for car image background removal
+  const removeCarBackground = async () => {
+    if (!selectedImage) return;
+
+    try {
+      setIsProcessingBg(true);
+      setBgRemovalError(null);
+      setShowBgRemovalModal(true);
+
+      // Create a canvas to work with
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      // Load the image
+      const img = new Image();
+      img.crossOrigin = "Anonymous";
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = (e) => {
+          console.error("Error loading image:", e);
+          reject(new Error("Failed to load image"));
+        };
+        img.src = previewUrl;
+      });
+
+      // Set canvas dimensions
+      canvas.width = img.naturalWidth || img.width;
+      canvas.height = img.naturalHeight || img.height;
+
+      // Draw the image
+      ctx.drawImage(img, 0, 0);
+
+      // Get image data
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+
+      // Store original image data for preview
+      setOriginalImageData(imageData);
+
+      // Create preview canvas
+      const pCanvas = document.createElement("canvas");
+      pCanvas.width = canvas.width;
+      pCanvas.height = canvas.height;
+      const pCtx = pCanvas.getContext("2d");
+      setPreviewCanvas(pCanvas);
+      setPreviewCtx(pCtx);
+
+      // Sample the edges to find potential background color
+      const edgeSamples = [];
+
+      // Sample top and bottom edges
+      for (let x = 0; x < canvas.width; x += 5) {
+        // Top edge
+        const topIdx = (0 * canvas.width + x) * 4;
+        edgeSamples.push({
+          r: data[topIdx],
+          g: data[topIdx + 1],
+          b: data[topIdx + 2],
+        });
+
+        // Bottom edge
+        const bottomIdx = ((canvas.height - 1) * canvas.width + x) * 4;
+        edgeSamples.push({
+          r: data[bottomIdx],
+          g: data[bottomIdx + 1],
+          b: data[bottomIdx + 2],
+        });
+      }
+
+      // Sample left and right edges
+      for (let y = 0; y < canvas.height; y += 5) {
+        // Left edge
+        const leftIdx = (y * canvas.width + 0) * 4;
+        edgeSamples.push({
+          r: data[leftIdx],
+          g: data[leftIdx + 1],
+          b: data[leftIdx + 2],
+        });
+
+        // Right edge
+        const rightIdx = (y * canvas.width + (canvas.width - 1)) * 4;
+        edgeSamples.push({
+          r: data[rightIdx],
+          g: data[rightIdx + 1],
+          b: data[rightIdx + 2],
+        });
+      }
+
+      // Calculate the most common color from the samples (simplified)
+      const avgColor = {
+        r: Math.round(
+          edgeSamples.reduce((sum, c) => sum + c.r, 0) / edgeSamples.length
+        ),
+        g: Math.round(
+          edgeSamples.reduce((sum, c) => sum + c.g, 0) / edgeSamples.length
+        ),
+        b: Math.round(
+          edgeSamples.reduce((sum, c) => sum + c.b, 0) / edgeSamples.length
+        ),
+      };
+
+      console.log("Detected background color:", avgColor);
+      setDetectedBgColor(avgColor);
+
+      // Show car background options
+      setShowCarBgOptions(true);
+
+      // Generate preview with current threshold
+      await generateThresholdPreview(
+        carBgThreshold,
+        imageData,
+        canvas.width,
+        canvas.height,
+        avgColor
+      );
+
+      // Remove background by making similar colors transparent
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+
+        // Calculate color similarity to background
+        const colorDistance = Math.sqrt(
+          Math.pow(r - avgColor.r, 2) +
+            Math.pow(g - avgColor.g, 2) +
+            Math.pow(b - avgColor.b, 2)
+        );
+
+        // If pixel is similar to background, make it transparent
+        if (colorDistance < carBgThreshold) {
+          // Use the threshold state
+          data[i + 3] = 0; // Set alpha to 0
+        }
+      }
+
+      // Put the modified image data back on the canvas
+      ctx.putImageData(imageData, 0, 0);
+
+      // Convert canvas to blob
+      const blob = await new Promise((resolve) => {
+        canvas.toBlob(resolve, "image/png", 1.0);
+      });
+
+      // Revoke the old URL to prevent memory leaks
+      URL.revokeObjectURL(previewUrl);
+
+      // Create a new URL for the processed image
+      const processedUrl = URL.createObjectURL(blob);
+      setPreviewUrl(processedUrl);
+
+      // Create a new File object from the blob
+      const processedFile = new File(
+        [blob],
+        selectedImage.name || "car-no-background.png",
+        {
+          type: "image/png", // PNG with transparency
+        }
+      );
+      setSelectedImage(processedFile);
+
+      // Always set transparency flag to true since we've created transparent areas
+      setImageHasTransparency(true);
+
+      // Show background options
+      setShowBackgroundOptions(true);
+
+      console.log("Car background removal completed successfully");
+      setShowBgRemovalModal(false);
+    } catch (error) {
+      console.error("Car background removal failed:", error);
+      setBgRemovalError("Failed to remove background: " + error.message);
+    } finally {
+      setIsProcessingBg(false);
+    }
+  };
+
+  // Add a function to generate threshold preview
+  const generateThresholdPreview = async (
+    threshold,
+    originalData,
+    width,
+    height,
+    bgColor
+  ) => {
+    if (!previewCtx || !originalData || !detectedBgColor) return;
+
+    // Clone the original image data
+    const imageData = new ImageData(
+      new Uint8ClampedArray(originalData.data),
+      width,
+      height
+    );
+    const data = imageData.data;
+
+    // Apply threshold to the cloned data
+    for (let i = 0; i < data.length; i += 4) {
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
+
+      // Calculate color similarity to background
+      const colorDistance = Math.sqrt(
+        Math.pow(r - bgColor.r, 2) +
+          Math.pow(g - bgColor.g, 2) +
+          Math.pow(b - bgColor.b, 2)
+      );
+
+      // If pixel is similar to background, make it transparent
+      if (colorDistance < threshold) {
+        data[i + 3] = 0; // Set alpha to 0
+      }
+    }
+
+    // Put the modified image data on the preview canvas
+    previewCtx.putImageData(imageData, 0, 0);
+
+    // Return the preview canvas URL
+    return previewCanvas.toDataURL("image/png");
+  };
+
+  // Update the threshold change handler to generate preview
+  const handleThresholdChange = async (value) => {
+    setCarBgThreshold(Number(value));
+    if (originalImageData && detectedBgColor) {
+      await generateThresholdPreview(
+        Number(value),
+        originalImageData,
+        previewCanvas.width,
+        previewCanvas.height,
+        detectedBgColor
+      );
+    }
+  };
+
+  // Add a function to ensure transparency is detected correctly
+  const ensureTransparencyDetected = async () => {
+    if (!selectedImage) return false;
+
+    try {
+      // Create a temporary image to load the current image
+      const img = new Image();
+      img.crossOrigin = "Anonymous";
+
+      const hasTransparency = await new Promise((resolve, reject) => {
+        img.onload = () => {
+          try {
+            // Create a canvas to check for transparency
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            canvas.width = Math.min(img.naturalWidth, 400);
+            canvas.height = Math.min(img.naturalHeight, 400);
+
+            // Draw the image
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            // Check for transparency
+            const imageData = ctx.getImageData(
+              0,
+              0,
+              canvas.width,
+              canvas.height
+            );
+            const data = imageData.data;
+
+            // Check for any transparent pixels (more thorough check)
+            for (let i = 3; i < data.length; i += 4) {
+              if (data[i] < 240) {
+                // Less strict threshold
+                console.log("Transparency detected in image");
+                resolve(true);
+                return;
+              }
+            }
+
+            console.log("No transparency detected in image");
+            resolve(false);
+          } catch (error) {
+            console.error("Error checking transparency:", error);
+            resolve(false);
+          }
+        };
+
+        img.onerror = () => {
+          console.error("Failed to load image for transparency check");
+          resolve(false);
+        };
+
+        img.src = previewUrl;
+      });
+
+      // Update the state if needed
+      if (hasTransparency !== imageHasTransparency) {
+        console.log(
+          `Updating transparency flag from ${imageHasTransparency} to ${hasTransparency}`
+        );
+        setImageHasTransparency(hasTransparency);
+      }
+
+      return hasTransparency;
+    } catch (error) {
+      console.error("Error in ensureTransparencyDetected:", error);
+      return false;
+    }
+  };
+
   return (
-    <div className="container mx-auto px-4 py-6 max-w-7xl">
-      <h1 className="text-3xl font-bold mb-8 text-center">Photo Enhancer</h1>
+    <div className="container mx-auto py-8 px-4">
+      <style jsx>{`
+        .bg-checkered {
+          background-image: linear-gradient(45deg, #ccc 25%, transparent 25%),
+            linear-gradient(-45deg, #ccc 25%, transparent 25%),
+            linear-gradient(45deg, transparent 75%, #ccc 75%),
+            linear-gradient(-45deg, transparent 75%, #ccc 75%);
+          background-size: 20px 20px;
+          background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+      `}</style>
+
+      <h1 className="text-3xl font-bold mb-6">Photo Enhancer</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Image Preview Section */}
@@ -2111,9 +2614,186 @@ export default function PhotoEnhancer() {
             Transform the image using rotation, flip, and crop controls if
             needed
           </li>
+          <li>Remove the background to isolate the subject</li>
+          <li>
+            Add a solid color background of your choice after background removal
+          </li>
           <li>Download your enhanced image when satisfied</li>
         </ol>
       </div>
+
+      {/* Background Color Options Modal */}
+      {showBackgroundOptions && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Choose Background Color</h3>
+              <button
+                onClick={() => setShowBackgroundOptions(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <MdClose size={24} />
+              </button>
+            </div>
+
+            <div className="mb-4">
+              <p className="text-gray-600 mb-2">
+                Select a background color to apply to your image:
+              </p>
+            </div>
+
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-4">
+              {backgroundColorOptions.map((option) => (
+                <button
+                  key={option.color}
+                  onClick={() => {
+                    setSelectedBackgroundColor(option.color);
+                    applyBackgroundColor(option.color);
+                  }}
+                  className="p-2 rounded border hover:border-blue-500 transition-colors"
+                  title={option.name}
+                >
+                  <div
+                    className="w-full aspect-square rounded"
+                    style={{ backgroundColor: option.color }}
+                  ></div>
+                  <div className="text-xs mt-1 text-center">{option.name}</div>
+                </button>
+              ))}
+
+              {/* Custom color picker */}
+              <div className="p-2 rounded border hover:border-blue-500 transition-colors">
+                <div className="w-full aspect-square rounded flex items-center justify-center bg-gradient-to-r from-red-500 via-green-500 to-blue-500">
+                  <input
+                    type="color"
+                    value={selectedBackgroundColor}
+                    onChange={(e) => {
+                      setSelectedBackgroundColor(e.target.value);
+                      applyBackgroundColor(e.target.value);
+                    }}
+                    className="w-full h-full opacity-0 cursor-pointer"
+                  />
+                </div>
+                <div className="text-xs mt-1 text-center">Custom</div>
+              </div>
+
+              {/* Keep transparent option - only show if image has transparency */}
+              {imageHasTransparency && (
+                <button
+                  onClick={() => setShowBackgroundOptions(false)}
+                  className="p-2 rounded border hover:border-blue-500 transition-colors"
+                  title="Keep Current Transparency"
+                >
+                  <div className="w-full aspect-square rounded bg-checkered relative overflow-hidden">
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-xs text-gray-600 font-medium text-center px-1">
+                        Keep Current
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-xs mt-1 text-center">No Change</div>
+                </button>
+              )}
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                onClick={() => setShowBackgroundOptions(false)}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showCarBgOptions && (
+        <div className="mt-4 p-4 bg-base-200 rounded-lg">
+          <h3 className="font-semibold mb-2">Car Background Removal Options</h3>
+
+          {previewCanvas && (
+            <div className="mb-4">
+              <h4 className="text-sm font-medium mb-1">Preview</h4>
+              <div
+                className="bg-gray-200 bg-opacity-50 p-2 rounded border border-gray-300"
+                style={{ maxHeight: "200px", overflow: "auto" }}
+              >
+                <div
+                  className="rounded overflow-hidden"
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "180px",
+                    backgroundImage: `
+                      linear-gradient(45deg, #ccc 25%, transparent 25%),
+                      linear-gradient(-45deg, #ccc 25%, transparent 25%),
+                      linear-gradient(45deg, transparent 75%, #ccc 75%),
+                      linear-gradient(-45deg, transparent 75%, #ccc 75%)
+                    `,
+                    backgroundSize: "20px 20px",
+                    backgroundPosition: "0 0, 0 10px, 10px -10px, -10px 0px",
+                  }}
+                >
+                  <img
+                    src={previewCanvas.toDataURL("image/png")}
+                    alt="Threshold Preview"
+                    style={{
+                      maxWidth: "100%",
+                      maxHeight: "180px",
+                      objectFit: "contain",
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">
+                Background Detection Threshold: {carBgThreshold}
+              </span>
+            </label>
+            <div className="flex items-center gap-2">
+              <span className="text-xs">Lower (More Precise)</span>
+              <input
+                type="range"
+                min="10"
+                max="100"
+                value={carBgThreshold}
+                onChange={(e) => handleThresholdChange(e.target.value)}
+                className="range range-xs range-primary"
+              />
+              <span className="text-xs">Higher (More Aggressive)</span>
+            </div>
+            <div className="mt-2">
+              <button
+                onClick={applyCarBgThreshold}
+                className="btn btn-sm btn-primary"
+                disabled={isProcessingBg}
+              >
+                Apply Threshold
+              </button>
+              <button
+                onClick={() => setShowCarBgOptions(false)}
+                className="btn btn-sm btn-ghost ml-2"
+              >
+                Close
+              </button>
+            </div>
+            <div className="text-xs text-gray-500 mt-2">
+              <p>
+                Lower values preserve more details but may leave some
+                background.
+              </p>
+              <p>
+                Higher values remove more background but may affect the car
+                edges.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

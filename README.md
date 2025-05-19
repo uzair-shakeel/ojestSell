@@ -33,6 +33,14 @@ The Photo Enhancer tool provides advanced image editing capabilities, including:
   - Works entirely client-side with no API keys required
   - Optimized for car images and other objects
   - High-quality results with transparent backgrounds
+- Specialized car background removal
+  - Edge detection algorithm specifically optimized for vehicles
+  - Automatically detects and removes common car photo backgrounds
+  - Better results for automotive photography
+- Background color customization
+  - Add solid color backgrounds to images after background removal
+  - Choose from preset colors or use a custom color picker
+  - Keep transparency when desired
 
 ## Learn More
 
