@@ -1999,47 +1999,88 @@ export default function PhotoEnhancer() {
     // Draw the original image
     mainCtx.drawImage(img, 0, 0);
 
-    // Get the image data for the region to blur
-    const imageData = mainCtx.getImageData(
-      blurBoxX,
-      blurBoxY,
-      blurBoxWidth,
-      blurBoxHeight
-    );
+    // Use a more aggressive blurring approach that works across all platforms
+    try {
+      // First approach: Standard canvas blur
+      // Create a temporary canvas for the blur area
+      const tempCanvas = document.createElement("canvas");
+      const tempCtx = tempCanvas.getContext("2d");
+      tempCanvas.width = blurBoxWidth;
+      tempCanvas.height = blurBoxHeight;
 
-    // Create a canvas just for the part we want to blur
-    const blurCanvas = document.createElement("canvas");
-    const blurCtx = blurCanvas.getContext("2d");
-    blurCanvas.width = blurBoxWidth;
-    blurCanvas.height = blurBoxHeight;
+      // Draw the region to blur
+      tempCtx.drawImage(
+        img,
+        blurBoxX,
+        blurBoxY,
+        blurBoxWidth,
+        blurBoxHeight,
+        0,
+        0,
+        blurBoxWidth,
+        blurBoxHeight
+      );
 
-    // Put image data into blur canvas
-    blurCtx.putImageData(imageData, 0, 0);
+      // Apply a very strong blur effect - use multiple passes with different radii
+      // This creates a more effective blur that works better on iOS
+      const blurSteps = [5, 10, 15]; // Multiple blur passes with increasing strength
 
-    // Create another canvas for the actual blurring
-    const processCanvas = document.createElement("canvas");
-    const processCtx = processCanvas.getContext("2d");
-    processCanvas.width = blurBoxWidth;
-    processCanvas.height = blurBoxHeight;
+      for (const blurRadius of blurSteps) {
+        tempCtx.filter = `blur(${blurRadius}px)`;
+        tempCtx.drawImage(tempCanvas, 0, 0);
+      }
 
-    // Draw the section image into the process canvas
-    processCtx.drawImage(blurCanvas, 0, 0);
+      // For iOS compatibility, add a strong pixelation effect
+      // This helps when blur filter might not work as expected
+      const pixelSize = Math.max(
+        5,
+        Math.floor(Math.min(blurBoxWidth, blurBoxHeight) / 15)
+      );
 
-    // Apply a strong fixed Gaussian blur (30px effective blur = 5px * 6)
-    const fixedBlurValue = 30;
+      // Create a pixelated version
+      const pixelCanvas = document.createElement("canvas");
+      const pixelCtx = pixelCanvas.getContext("2d");
 
-    // Apply blur in multiple passes for better quality
-    for (let i = 0; i < 3; i++) {
-      processCtx.filter = `blur(${fixedBlurValue / 3}px)`;
-      processCtx.drawImage(processCanvas, 0, 0);
+      // Downscale
+      pixelCanvas.width = Math.max(1, Math.floor(blurBoxWidth / pixelSize));
+      pixelCanvas.height = Math.max(1, Math.floor(blurBoxHeight / pixelSize));
+
+      // Draw small
+      pixelCtx.drawImage(
+        tempCanvas,
+        0,
+        0,
+        pixelCanvas.width,
+        pixelCanvas.height
+      );
+
+      // Draw back to temp canvas at original size (creates pixelation)
+      tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+      tempCtx.drawImage(
+        pixelCanvas,
+        0,
+        0,
+        pixelCanvas.width,
+        pixelCanvas.height,
+        0,
+        0,
+        blurBoxWidth,
+        blurBoxHeight
+      );
+
+      // Add a semi-transparent overlay to further obscure details
+      tempCtx.fillStyle = "rgba(255, 255, 255, 0.3)";
+      tempCtx.fillRect(0, 0, blurBoxWidth, blurBoxHeight);
+
+      // Draw the blurred and pixelated region back to the main canvas
+      mainCtx.drawImage(tempCanvas, blurBoxX, blurBoxY);
+    } catch (error) {
+      console.error("Error applying blur effect:", error);
+
+      // Fallback method for iOS: Use a solid color with slight transparency
+      mainCtx.fillStyle = "rgba(150, 150, 150, 0.85)";
+      mainCtx.fillRect(blurBoxX, blurBoxY, blurBoxWidth, blurBoxHeight);
     }
-
-    // Now draw the blurred region back onto the main canvas
-    mainCtx.drawImage(processCanvas, blurBoxX, blurBoxY);
-
-    // Add a subtle darkening effect for better visibility of blurred area
-    mainCtx.fillStyle = "rgba(0, 0, 0, 0.1)";
-    mainCtx.fillRect(blurBoxX, blurBoxY, blurBoxWidth, blurBoxHeight);
 
     // Convert to blob and update the image
     mainCanvas.toBlob(
@@ -2143,14 +2184,26 @@ export default function PhotoEnhancer() {
                         onTouchMove={handleBlurBoxDrag}
                         onTouchEnd={handleBlurBoxDragEnd}
                       >
-                        {/* Blur preview */}
+                        {/* Blur preview - iOS compatible version */}
                         <div
-                          className="absolute inset-0"
+                          className="absolute inset-0 flex items-center justify-center"
                           style={{
-                            backdropFilter: `blur(5px)`, // Fixed at 5px
-                            backgroundColor: "rgba(255, 255, 255, 0.1)",
+                            background: "rgba(200, 200, 200, 0.7)",
                           }}
-                        ></div>
+                        >
+                          {/* Use a combination of CSS effects for better iOS compatibility */}
+                          <div
+                            className="w-full h-full"
+                            style={{
+                              backdropFilter: "blur(5px)",
+                              WebkitBackdropFilter:
+                                "blur(5px)" /* For Safari */,
+                              filter: "blur(5px)",
+                              mixBlendMode: "multiply",
+                            }}
+                          ></div>
+                          <div className="absolute inset-0 bg-gray-200 bg-opacity-30"></div>
+                        </div>
 
                         {/* Blur box resize handles */}
                         <div
