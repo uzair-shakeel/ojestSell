@@ -1047,20 +1047,7 @@ export default function PhotoEnhancer() {
     canvas.width = img.naturalWidth;
     canvas.height = img.naturalHeight;
 
-    // Apply filters and transformations
-    // Note: Some advanced filters like shadows, highlights, sharpen, and vignette
-    // would need custom implementations in a production app
-    ctx.filter = `
-      brightness(${adjustments.brightness}%) 
-      contrast(${adjustments.contrast}%)
-      saturate(${adjustments.saturation}%)
-      blur(${adjustments.blur}px)
-      grayscale(${adjustments.grayscale}%)
-      sepia(${adjustments.sepia}%)
-      hue-rotate(${adjustments.hueRotate}deg)
-    `;
-
-    // Apply transformations
+    // Apply transformations first
     ctx.save();
     ctx.translate(canvas.width / 2, canvas.height / 2);
     ctx.rotate((adjustments.rotate * Math.PI) / 180);
@@ -1074,6 +1061,43 @@ export default function PhotoEnhancer() {
       canvas.height
     );
     ctx.restore();
+
+    // Get the transformed image data
+    const transformedImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    
+    // Create a temporary canvas for applying filters
+    const tempCanvas = document.createElement("canvas");
+    const tempCtx = tempCanvas.getContext("2d");
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+    
+    // Put the transformed image data on the temp canvas
+    tempCtx.putImageData(transformedImageData, 0, 0);
+    
+    // Clear the main canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Apply filters using CSS filter string
+    const filterString = `
+      brightness(${adjustments.brightness}%) 
+      contrast(${adjustments.contrast}%)
+      saturate(${adjustments.saturation}%)
+      blur(${adjustments.blur}px)
+      grayscale(${adjustments.grayscale}%)
+      sepia(${adjustments.sepia}%)
+      hue-rotate(${adjustments.hueRotate}deg)
+      ${
+        adjustments.sharpen > 0
+          ? `contrast(${100 + adjustments.sharpen * 0.3}%) brightness(${
+              100 + adjustments.sharpen * 0.1
+            }%)`
+          : ""
+      }
+    `;
+    
+    // Apply filter to context
+    ctx.filter = filterString;
+    ctx.drawImage(tempCanvas, 0, 0);
 
     // Add vignette effect if needed
     if (adjustments.vignette > 0) {
@@ -1133,9 +1157,71 @@ export default function PhotoEnhancer() {
       ctx.restore();
     }
 
-    // Convert to blob and download
-    canvas.toBlob(
-      (blob) => {
+    // Apply temperature tint
+    if (adjustments.temperature !== 0) {
+      ctx.save();
+      ctx.globalCompositeOperation = "overlay";
+      ctx.fillStyle = adjustments.temperature > 0
+        ? `rgba(255,${255 - adjustments.temperature * 2},${255 - adjustments.temperature * 4},${adjustments.temperature / 100})`
+        : `rgba(${255 + adjustments.temperature * 4},${255 + adjustments.temperature * 2},255,${Math.abs(adjustments.temperature) / 100})`;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
+    }
+
+    // Apply tint (green/magenta)
+    if (adjustments.tint !== 0) {
+      ctx.save();
+      ctx.globalCompositeOperation = "overlay";
+      ctx.fillStyle = adjustments.tint > 0
+        ? `rgba(${255 - adjustments.tint * 2},255,${255 - adjustments.tint * 2},${adjustments.tint / 100})`
+        : `rgba(255,${255 + adjustments.tint * 2},255,${Math.abs(adjustments.tint) / 100})`;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
+    }
+
+    // Apply clarity (local contrast)
+    if (adjustments.clarity > 0) {
+      ctx.save();
+      ctx.globalCompositeOperation = "overlay";
+      ctx.globalAlpha = adjustments.clarity / 100;
+      ctx.drawImage(canvas, 0, 0);
+      ctx.restore();
+    }
+
+    // Convert to blob and download - use a Promise to ensure iOS compatibility
+    const downloadBlob = () => {
+      return new Promise((resolve) => {
+        canvas.toBlob((blob) => {
+          resolve(blob);
+        }, "image/jpeg", 0.95);
+      });
+    };
+
+    // Handle download for all platforms including iOS
+    downloadBlob().then((blob) => {
+      // For iOS, we need to use a different approach
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      
+      if (isIOS) {
+        // Create a link with download attribute and use window.open
+        const url = URL.createObjectURL(blob);
+        const filename = selectedImage.name.split(".")[0] + "-enhanced.jpg";
+        
+        // Create an anchor element
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = filename;
+        
+        // iOS specific: Open in new window/tab and then user can save from there
+        window.open(url, '_blank');
+        
+        // Clean up
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+        }, 100);
+      } else {
+        // Standard download for non-iOS devices
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         const filename = selectedImage.name.split(".")[0] + "-enhanced.jpg";
@@ -1146,10 +1232,8 @@ export default function PhotoEnhancer() {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-      },
-      "image/jpeg",
-      0.95
-    );
+      }
+    });
   };
 
   // Compute the CSS filter string based on adjustments
