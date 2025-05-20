@@ -23,6 +23,7 @@ import {
   MdRefresh,
   MdFlip,
   MdOutlineRotate90DegreesCcw,
+  MdBlurOn,
 } from "react-icons/md";
 import { BsArrowsFullscreen, BsFillImageFill } from "react-icons/bs";
 import { TbFlipHorizontal, TbFlipVertical } from "react-icons/tb";
@@ -81,6 +82,22 @@ export default function PhotoEnhancer() {
   const [previewCtx, setPreviewCtx] = useState(null);
   const [originalImageData, setOriginalImageData] = useState(null);
   const [detectedBgColor, setDetectedBgColor] = useState(null);
+
+  // Add blur box state variables
+  const [showBlurBox, setShowBlurBox] = useState(false);
+  const [blurBoxCoordinates, setBlurBoxCoordinates] = useState({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  });
+  const [blurIntensity, setBlurIntensity] = useState(10);
+  const [isDraggingBlurBox, setIsDraggingBlurBox] = useState(false);
+  const [blurBoxDragStartPosition, setBlurBoxDragStartPosition] = useState({
+    x: 0,
+    y: 0,
+  });
+  const blurBoxRef = useRef(null);
 
   // Load background removal module
   useEffect(() => {
@@ -1698,6 +1715,352 @@ export default function PhotoEnhancer() {
     }
   };
 
+  // Initialize blur box when toggling it on
+  useEffect(() => {
+    if (showBlurBox && imageRef.current && containerRef.current) {
+      // Wait a moment for the image to fully render
+      setTimeout(() => {
+        const img = imageRef.current;
+        const container = containerRef.current;
+        const containerRect = container.getBoundingClientRect();
+        const imgRect = img.getBoundingClientRect();
+
+        // Calculate the initial size and position for the blur box
+        // Make it about 1/4 the size of the image and centered
+        const boxWidth = imgRect.width / 4;
+        const boxHeight = imgRect.height / 4;
+
+        // Center the blur box on the image
+        const x =
+          imgRect.left - containerRect.left + (imgRect.width - boxWidth) / 2;
+        const y =
+          imgRect.top - containerRect.top + (imgRect.height - boxHeight) / 2;
+
+        setBlurBoxCoordinates({
+          x: Math.max(0, x),
+          y: Math.max(0, y),
+          width: Math.min(boxWidth, imgRect.width),
+          height: Math.min(boxHeight, imgRect.height),
+        });
+      }, 100); // Small delay to ensure image is rendered
+    }
+  }, [showBlurBox]);
+
+  // Handle blur box drag start
+  const handleBlurBoxDragStart = (e) => {
+    if (!blurBoxRef.current) return;
+
+    setBlurBoxDragStartPosition({
+      x: e.type.includes("touch") ? e.touches[0].clientX : e.clientX,
+      y: e.type.includes("touch") ? e.touches[0].clientY : e.clientY,
+    });
+    setIsDraggingBlurBox(true);
+  };
+
+  // Handle blur box drag
+  const handleBlurBoxDrag = (e) => {
+    if (
+      !isDraggingBlurBox ||
+      !blurBoxRef.current ||
+      !containerRef.current ||
+      !imageRef.current
+    )
+      return;
+
+    const clientX = e.type.includes("touch") ? e.touches[0].clientX : e.clientX;
+    const clientY = e.type.includes("touch") ? e.touches[0].clientY : e.clientY;
+
+    const dx = clientX - blurBoxDragStartPosition.x;
+    const dy = clientY - blurBoxDragStartPosition.y;
+
+    setBlurBoxDragStartPosition({
+      x: clientX,
+      y: clientY,
+    });
+
+    setBlurBoxCoordinates((prev) => {
+      const container = containerRef.current;
+      const containerRect = container.getBoundingClientRect();
+      const imgRect = imageRef.current.getBoundingClientRect();
+
+      // Calculate new position
+      let newX = prev.x + dx;
+      let newY = prev.y + dy;
+
+      // Constrain to image boundaries
+      newX = Math.max(
+        imgRect.left - containerRect.left,
+        Math.min(imgRect.right - containerRect.left - prev.width, newX)
+      );
+      newY = Math.max(
+        imgRect.top - containerRect.top,
+        Math.min(imgRect.bottom - containerRect.top - prev.height, newY)
+      );
+
+      return { ...prev, x: newX, y: newY };
+    });
+  };
+
+  // Handle blur box drag end
+  const handleBlurBoxDragEnd = () => {
+    setIsDraggingBlurBox(false);
+  };
+
+  // Handle blur box resize
+  const handleBlurBoxResize = (direction, e) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    if (!blurBoxRef.current || !containerRef.current || !imageRef.current)
+      return;
+
+    const startX = e.type.includes("touch") ? e.touches[0].clientX : e.clientX;
+    const startY = e.type.includes("touch") ? e.touches[0].clientY : e.clientY;
+    const startCoords = { ...blurBoxCoordinates };
+    const container = containerRef.current;
+    const containerRect = container.getBoundingClientRect();
+    const imgRect = imageRef.current.getBoundingClientRect();
+
+    const minSize = 20; // Minimum blur box size in pixels
+
+    const handleMouseMove = (moveEvent) => {
+      const clientX = moveEvent.type.includes("touch")
+        ? moveEvent.touches[0].clientX
+        : moveEvent.clientX;
+      const clientY = moveEvent.type.includes("touch")
+        ? moveEvent.touches[0].clientY
+        : moveEvent.clientY;
+
+      const dx = clientX - startX;
+      const dy = clientY - startY;
+
+      let newCoords = { ...startCoords };
+
+      // Handle different resize directions
+      switch (direction) {
+        case "n": // North (top)
+          newCoords.y = Math.max(
+            imgRect.top - containerRect.top,
+            Math.min(
+              startCoords.y + dy,
+              startCoords.y + startCoords.height - minSize
+            )
+          );
+          newCoords.height = startCoords.height - (newCoords.y - startCoords.y);
+          break;
+        case "s": // South (bottom)
+          newCoords.height = Math.max(
+            minSize,
+            Math.min(
+              startCoords.height + dy,
+              imgRect.bottom - containerRect.top - startCoords.y
+            )
+          );
+          break;
+        case "e": // East (right)
+          newCoords.width = Math.max(
+            minSize,
+            Math.min(
+              startCoords.width + dx,
+              imgRect.right - containerRect.left - startCoords.x
+            )
+          );
+          break;
+        case "w": // West (left)
+          newCoords.x = Math.max(
+            imgRect.left - containerRect.left,
+            Math.min(
+              startCoords.x + dx,
+              startCoords.x + startCoords.width - minSize
+            )
+          );
+          newCoords.width = startCoords.width - (newCoords.x - startCoords.x);
+          break;
+        case "ne": // North-East
+          newCoords.y = Math.max(
+            imgRect.top - containerRect.top,
+            Math.min(
+              startCoords.y + dy,
+              startCoords.y + startCoords.height - minSize
+            )
+          );
+          newCoords.height = startCoords.height - (newCoords.y - startCoords.y);
+          newCoords.width = Math.max(
+            minSize,
+            Math.min(
+              startCoords.width + dx,
+              imgRect.right - containerRect.left - startCoords.x
+            )
+          );
+          break;
+        case "nw": // North-West
+          newCoords.y = Math.max(
+            imgRect.top - containerRect.top,
+            Math.min(
+              startCoords.y + dy,
+              startCoords.y + startCoords.height - minSize
+            )
+          );
+          newCoords.height = startCoords.height - (newCoords.y - startCoords.y);
+          newCoords.x = Math.max(
+            imgRect.left - containerRect.left,
+            Math.min(
+              startCoords.x + dx,
+              startCoords.x + startCoords.width - minSize
+            )
+          );
+          newCoords.width = startCoords.width - (newCoords.x - startCoords.x);
+          break;
+        case "se": // South-East
+          newCoords.width = Math.max(
+            minSize,
+            Math.min(
+              startCoords.width + dx,
+              imgRect.right - containerRect.left - startCoords.x
+            )
+          );
+          newCoords.height = Math.max(
+            minSize,
+            Math.min(
+              startCoords.height + dy,
+              imgRect.bottom - containerRect.top - startCoords.y
+            )
+          );
+          break;
+        case "sw": // South-West
+          newCoords.x = Math.max(
+            imgRect.left - containerRect.left,
+            Math.min(
+              startCoords.x + dx,
+              startCoords.x + startCoords.width - minSize
+            )
+          );
+          newCoords.width = startCoords.width - (newCoords.x - startCoords.x);
+          newCoords.height = Math.max(
+            minSize,
+            Math.min(
+              startCoords.height + dy,
+              imgRect.bottom - containerRect.top - startCoords.y
+            )
+          );
+          break;
+      }
+
+      setBlurBoxCoordinates(newCoords);
+    };
+
+    const handleMouseUp = () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("touchmove", handleMouseMove);
+      document.removeEventListener("touchend", handleMouseUp);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener("touchmove", handleMouseMove);
+    document.addEventListener("touchend", handleMouseUp);
+  };
+
+  // Toggle blur box visibility
+  const toggleBlurBox = () => {
+    setShowBlurBox(!showBlurBox);
+  };
+
+  // Apply the blur box permanently to the image
+  const applyBlurBox = () => {
+    if (!selectedImage || !imageRef.current || !containerRef.current) return;
+
+    const img = imageRef.current;
+    const container = containerRef.current;
+    const containerRect = container.getBoundingClientRect();
+    const imgRect = img.getBoundingClientRect();
+
+    // Calculate scale between natural and displayed image
+    const scaleX = img.naturalWidth / imgRect.width;
+    const scaleY = img.naturalHeight / imgRect.height;
+
+    // Convert blur box coordinates to natural image coordinates
+    const blurBoxX = Math.floor(
+      (blurBoxCoordinates.x - (imgRect.left - containerRect.left)) * scaleX
+    );
+    const blurBoxY = Math.floor(
+      (blurBoxCoordinates.y - (imgRect.top - containerRect.top)) * scaleY
+    );
+    const blurBoxWidth = Math.floor(blurBoxCoordinates.width * scaleX);
+    const blurBoxHeight = Math.floor(blurBoxCoordinates.height * scaleY);
+
+    // Create the main canvas
+    const mainCanvas = document.createElement("canvas");
+    const mainCtx = mainCanvas.getContext("2d");
+    mainCanvas.width = img.naturalWidth;
+    mainCanvas.height = img.naturalHeight;
+
+    // Draw the original image
+    mainCtx.drawImage(img, 0, 0);
+
+    // Get the image data for the region to blur
+    const imageData = mainCtx.getImageData(
+      blurBoxX,
+      blurBoxY,
+      blurBoxWidth,
+      blurBoxHeight
+    );
+
+    // Create a canvas just for the part we want to blur
+    const blurCanvas = document.createElement("canvas");
+    const blurCtx = blurCanvas.getContext("2d");
+    blurCanvas.width = blurBoxWidth;
+    blurCanvas.height = blurBoxHeight;
+
+    // Put image data into blur canvas
+    blurCtx.putImageData(imageData, 0, 0);
+
+    // Create another canvas for the actual blurring
+    const processCanvas = document.createElement("canvas");
+    const processCtx = processCanvas.getContext("2d");
+    processCanvas.width = blurBoxWidth;
+    processCanvas.height = blurBoxHeight;
+
+    // Draw the section image into the process canvas
+    processCtx.drawImage(blurCanvas, 0, 0);
+
+    // Apply a very strong Gaussian blur - up to 5 times stronger than the UI value
+    const enhancedBlurValue = Math.min(200, blurIntensity * 6);
+
+    // Apply blur in multiple passes for better quality
+    for (let i = 0; i < 3; i++) {
+      processCtx.filter = `blur(${enhancedBlurValue / 3}px)`;
+      processCtx.drawImage(processCanvas, 0, 0);
+    }
+
+    // Now draw the blurred region back onto the main canvas
+    mainCtx.drawImage(processCanvas, blurBoxX, blurBoxY);
+
+    // Add a subtle darkening effect for better visibility of blurred area
+    mainCtx.fillStyle = "rgba(0, 0, 0, 0.1)";
+    mainCtx.fillRect(blurBoxX, blurBoxY, blurBoxWidth, blurBoxHeight);
+
+    // Convert to blob and update the image
+    mainCanvas.toBlob(
+      (blob) => {
+        if (blob) {
+          URL.revokeObjectURL(previewUrl);
+          const newUrl = URL.createObjectURL(blob);
+          setPreviewUrl(newUrl);
+
+          const blurredFile = new File([blob], selectedImage.name, {
+            type: selectedImage.type,
+          });
+          setSelectedImage(blurredFile);
+          setShowBlurBox(false);
+        }
+      },
+      selectedImage.type,
+      1.0 // Maximum quality
+    );
+  };
+
   return (
     <div className="container mx-auto py-8 px-4">
       <style jsx>{`
@@ -1760,6 +2123,78 @@ export default function PhotoEnhancer() {
                       style={getFilterStyle().noiseStyle}
                       className="absolute top-0 left-0 w-full h-full"
                     ></div>
+
+                    {/* Blur box */}
+                    {showBlurBox && (
+                      <div
+                        ref={blurBoxRef}
+                        className="absolute cursor-move border-2 border-blue-500 bg-transparent"
+                        style={{
+                          left: `${blurBoxCoordinates.x}px`,
+                          top: `${blurBoxCoordinates.y}px`,
+                          width: `${blurBoxCoordinates.width}px`,
+                          height: `${blurBoxCoordinates.height}px`,
+                        }}
+                        onMouseDown={handleBlurBoxDragStart}
+                        onMouseMove={handleBlurBoxDrag}
+                        onMouseUp={handleBlurBoxDragEnd}
+                        onMouseLeave={handleBlurBoxDragEnd}
+                        onTouchStart={handleBlurBoxDragStart}
+                        onTouchMove={handleBlurBoxDrag}
+                        onTouchEnd={handleBlurBoxDragEnd}
+                      >
+                        {/* Blur preview */}
+                        <div
+                          className="absolute inset-0"
+                          style={{
+                            backdropFilter: `blur(${blurIntensity}px)`,
+                            backgroundColor: "rgba(255, 255, 255, 0.1)",
+                          }}
+                        ></div>
+
+                        {/* Blur box resize handles */}
+                        <div
+                          className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-n-resize touch-manipulation"
+                          onMouseDown={(e) => handleBlurBoxResize("n", e)}
+                          onTouchStart={(e) => handleBlurBoxResize("n", e)}
+                        ></div>
+                        <div
+                          className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-s-resize touch-manipulation"
+                          onMouseDown={(e) => handleBlurBoxResize("s", e)}
+                          onTouchStart={(e) => handleBlurBoxResize("s", e)}
+                        ></div>
+                        <div
+                          className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-w-resize touch-manipulation"
+                          onMouseDown={(e) => handleBlurBoxResize("w", e)}
+                          onTouchStart={(e) => handleBlurBoxResize("w", e)}
+                        ></div>
+                        <div
+                          className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-e-resize touch-manipulation"
+                          onMouseDown={(e) => handleBlurBoxResize("e", e)}
+                          onTouchStart={(e) => handleBlurBoxResize("e", e)}
+                        ></div>
+                        <div
+                          className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-nw-resize touch-manipulation"
+                          onMouseDown={(e) => handleBlurBoxResize("nw", e)}
+                          onTouchStart={(e) => handleBlurBoxResize("nw", e)}
+                        ></div>
+                        <div
+                          className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-ne-resize touch-manipulation"
+                          onMouseDown={(e) => handleBlurBoxResize("ne", e)}
+                          onTouchStart={(e) => handleBlurBoxResize("ne", e)}
+                        ></div>
+                        <div
+                          className="absolute bottom-0 left-0 -translate-x-1/2 translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-sw-resize touch-manipulation"
+                          onMouseDown={(e) => handleBlurBoxResize("sw", e)}
+                          onTouchStart={(e) => handleBlurBoxResize("sw", e)}
+                        ></div>
+                        <div
+                          className="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-6 h-6 bg-white rounded-full border-2 border-blue-500 cursor-se-resize touch-manipulation"
+                          onMouseDown={(e) => handleBlurBoxResize("se", e)}
+                          onTouchStart={(e) => handleBlurBoxResize("se", e)}
+                        ></div>
+                      </div>
+                    )}
                   </div>
                 </div>
               ) : (
@@ -1812,6 +2247,16 @@ export default function PhotoEnhancer() {
               </button>
 
               <button
+                onClick={toggleBlurBox}
+                className={`btn ${
+                  showBlurBox ? "btn-secondary" : "btn-outline"
+                } flex items-center gap-2`}
+                disabled={!selectedImage}
+              >
+                <MdBlurOn /> {showBlurBox ? "Remove" : "Hide Number Plate"}
+              </button>
+
+              <button
                 onClick={networkError ? retryLoading : removeBackground}
                 className={`btn btn-outline ${
                   networkError ? "btn-warning" : "btn-accent"
@@ -1838,6 +2283,40 @@ export default function PhotoEnhancer() {
                 accept="image/*"
               />
             </div>
+
+            {/* Blur intensity slider - only show when blur box is active */}
+            {showBlurBox && (
+              <div className="mt-4 w-full max-w-md bg-white p-4 rounded-md shadow">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="flex items-center gap-2 text-sm font-medium">
+                    <MdBlurOn className="w-5 h-5" /> Blur Intensity
+                  </label>
+                  <span>{blurIntensity}px</span>
+                </div>
+                <input
+                  type="range"
+                  min="1"
+                  max="50"
+                  value={blurIntensity}
+                  onChange={(e) => setBlurIntensity(parseInt(e.target.value))}
+                  className="w-full mb-3"
+                />
+                <div className="flex justify-end gap-2">
+                  <button
+                    onClick={() => setShowBlurBox(false)}
+                    className="px-3 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={applyBlurBox}
+                    className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  >
+                    Apply Blur
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
