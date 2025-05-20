@@ -91,7 +91,7 @@ export default function PhotoEnhancer() {
     width: 0,
     height: 0,
   });
-  const [blurIntensity, setBlurIntensity] = useState(10);
+  const [blurIntensity, setBlurIntensity] = useState(5); // Fixed at 5px
   const [isDraggingBlurBox, setIsDraggingBlurBox] = useState(false);
   const [blurBoxDragStartPosition, setBlurBoxDragStartPosition] = useState({
     x: 0,
@@ -2025,12 +2025,12 @@ export default function PhotoEnhancer() {
     // Draw the section image into the process canvas
     processCtx.drawImage(blurCanvas, 0, 0);
 
-    // Apply a very strong Gaussian blur - up to 5 times stronger than the UI value
-    const enhancedBlurValue = Math.min(200, blurIntensity * 6);
+    // Apply a strong fixed Gaussian blur (30px effective blur = 5px * 6)
+    const fixedBlurValue = 30;
 
     // Apply blur in multiple passes for better quality
     for (let i = 0; i < 3; i++) {
-      processCtx.filter = `blur(${enhancedBlurValue / 3}px)`;
+      processCtx.filter = `blur(${fixedBlurValue / 3}px)`;
       processCtx.drawImage(processCanvas, 0, 0);
     }
 
@@ -2147,7 +2147,7 @@ export default function PhotoEnhancer() {
                         <div
                           className="absolute inset-0"
                           style={{
-                            backdropFilter: `blur(${blurIntensity}px)`,
+                            backdropFilter: `blur(5px)`, // Fixed at 5px
                             backgroundColor: "rgba(255, 255, 255, 0.1)",
                           }}
                         ></div>
@@ -2284,23 +2284,18 @@ export default function PhotoEnhancer() {
               />
             </div>
 
-            {/* Blur intensity slider - only show when blur box is active */}
+            {/* Remove the blur intensity slider and replace with simple controls */}
             {showBlurBox && (
               <div className="mt-4 w-full max-w-md bg-white p-4 rounded-md shadow">
                 <div className="flex items-center justify-between mb-2">
-                  <label className="flex items-center gap-2 text-sm font-medium">
-                    <MdBlurOn className="w-5 h-5" /> Blur Intensity
-                  </label>
-                  <span>{blurIntensity}px</span>
+                  <span className="text-sm font-medium flex items-center gap-2">
+                    <MdBlurOn className="w-5 h-5" /> Number Plate Blur
+                  </span>
                 </div>
-                <input
-                  type="range"
-                  min="1"
-                  max="50"
-                  value={blurIntensity}
-                  onChange={(e) => setBlurIntensity(parseInt(e.target.value))}
-                  className="w-full mb-3"
-                />
+                <p className="text-sm text-gray-600 mb-3">
+                  Position the blur box over the license plate and click "Apply
+                  Blur" when ready.
+                </p>
                 <div className="flex justify-end gap-2">
                   <button
                     onClick={() => setShowBlurBox(false)}
