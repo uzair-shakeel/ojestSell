@@ -892,7 +892,7 @@ export default function PhotoEnhancer() {
           );
           newCoords.height = startCoords.height - (newCoords.y - startCoords.y);
           newCoords.x = Math.max(
-            0,
+            imgRect.left - containerRect.left,
             Math.min(
               startCoords.x + dx,
               startCoords.x + startCoords.width - minSize
@@ -915,7 +915,7 @@ export default function PhotoEnhancer() {
           break;
         case "sw": // South-West
           newCoords.x = Math.max(
-            0,
+            imgRect.left - containerRect.left,
             Math.min(
               startCoords.x + dx,
               startCoords.x + startCoords.width - minSize
@@ -1104,6 +1104,141 @@ export default function PhotoEnhancer() {
     ctx.filter = filterString;
     ctx.drawImage(tempCanvas, 0, 0);
 
+    // Apply exposure adjustment (separate from brightness for more control)
+    if (adjustments.exposure !== 100) {
+      ctx.save();
+
+      // Create a more pronounced exposure effect
+      const exposureIntensity = Math.abs(adjustments.exposure - 100) / 100;
+      const exposureMode = adjustments.exposure > 100 ? "lighten" : "darken";
+
+      // Apply exposure using multiple passes for stronger effect
+      ctx.globalCompositeOperation = exposureMode;
+
+      // For extreme values, use multiple passes
+      const passCount = Math.ceil(exposureIntensity * 3);
+      const alphaPerPass = exposureIntensity / passCount;
+
+      for (let i = 0; i < passCount; i++) {
+        ctx.globalAlpha = alphaPerPass;
+        ctx.fillStyle = adjustments.exposure > 100 ? "white" : "black";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      ctx.restore();
+    }
+
+    // Apply shadows adjustment (affects dark areas)
+    if (adjustments.shadows !== 0) {
+      ctx.save();
+
+      // Create a more pronounced shadows effect
+      const shadowsIntensity = Math.abs(adjustments.shadows) / 50; // Divide by 50 for stronger effect
+      const shadowsMode = adjustments.shadows > 0 ? "lighten" : "darken";
+
+      // Extract shadow areas using a threshold
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+      const shadowCanvas = document.createElement("canvas");
+      const shadowCtx = shadowCanvas.getContext("2d");
+      shadowCanvas.width = canvas.width;
+      shadowCanvas.height = canvas.height;
+
+      // Create a mask that targets shadow areas
+      const shadowMask = shadowCtx.createImageData(canvas.width, canvas.height);
+      const maskData = shadowMask.data;
+
+      for (let i = 0; i < data.length; i += 4) {
+        // Calculate luminance (brightness) of the pixel
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+
+        // Target darker areas more than brighter areas
+        const shadowFactor = 1 - Math.min(1, luminance / 128);
+
+        // Create a mask that's stronger in shadow areas
+        maskData[i] = 0;
+        maskData[i + 1] = 0;
+        maskData[i + 2] = 0;
+        maskData[i + 3] = 255 * shadowFactor;
+      }
+
+      shadowCtx.putImageData(shadowMask, 0, 0);
+
+      // Apply the shadow adjustment
+      ctx.globalCompositeOperation = shadowsMode;
+      ctx.globalAlpha = shadowsIntensity;
+
+      // For extreme values, use multiple passes
+      const passCount = Math.ceil(Math.abs(adjustments.shadows) / 25);
+
+      for (let i = 0; i < passCount; i++) {
+        // Draw black/white through the shadow mask
+        ctx.drawImage(shadowCanvas, 0, 0);
+      }
+
+      ctx.restore();
+    }
+
+    // Apply highlights adjustment (affects bright areas)
+    if (adjustments.highlights !== 0) {
+      ctx.save();
+
+      // Create a more pronounced highlights effect
+      const highlightsIntensity = Math.abs(adjustments.highlights) / 50; // Divide by 50 for stronger effect
+      const highlightsMode = adjustments.highlights < 0 ? "darken" : "lighten";
+
+      // Extract highlight areas using a threshold
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+      const highlightCanvas = document.createElement("canvas");
+      const highlightCtx = highlightCanvas.getContext("2d");
+      highlightCanvas.width = canvas.width;
+      highlightCanvas.height = canvas.height;
+
+      // Create a mask that targets highlight areas
+      const highlightMask = highlightCtx.createImageData(
+        canvas.width,
+        canvas.height
+      );
+      const maskData = highlightMask.data;
+
+      for (let i = 0; i < data.length; i += 4) {
+        // Calculate luminance (brightness) of the pixel
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+
+        // Target brighter areas more than darker areas
+        const highlightFactor = Math.min(1, luminance / 128);
+
+        // Create a mask that's stronger in highlight areas
+        maskData[i] = 255;
+        maskData[i + 1] = 255;
+        maskData[i + 2] = 255;
+        maskData[i + 3] = 255 * highlightFactor;
+      }
+
+      highlightCtx.putImageData(highlightMask, 0, 0);
+
+      // Apply the highlight adjustment
+      ctx.globalCompositeOperation = highlightsMode;
+      ctx.globalAlpha = highlightsIntensity;
+
+      // For extreme values, use multiple passes
+      const passCount = Math.ceil(Math.abs(adjustments.highlights) / 25);
+
+      for (let i = 0; i < passCount; i++) {
+        // Draw black/white through the highlight mask
+        ctx.drawImage(highlightCanvas, 0, 0);
+      }
+
+      ctx.restore();
+    }
+
     // Add vignette effect if needed
     if (adjustments.vignette > 0) {
       ctx.save();
@@ -1216,15 +1351,6 @@ export default function PhotoEnhancer() {
       const scaleX = originalImg.naturalWidth / imgRect.width;
       const scaleY = originalImg.naturalHeight / imgRect.height;
 
-      // Check if the image has blur boxes by examining its data URL
-      const testCanvas = document.createElement("canvas");
-      const testCtx = testCanvas.getContext("2d");
-      testCanvas.width = 10;
-      testCanvas.height = 10;
-
-      // Draw a small portion of the image to test
-      testCtx.drawImage(originalImg, 0, 0, 10, 10);
-
       try {
         // Create a temporary canvas for the blur area
         const tempCanvas = document.createElement("canvas");
@@ -1249,7 +1375,8 @@ export default function PhotoEnhancer() {
         tempCanvas.width = blurBoxWidth;
         tempCanvas.height = blurBoxHeight;
 
-        // Extract the region to blur
+        // Extract the region to blur - make sure to get the region AFTER all other adjustments
+        // This ensures we're blurring the already-adjusted image
         tempCtx.drawImage(
           canvas,
           blurBoxX,
@@ -1276,6 +1403,73 @@ export default function PhotoEnhancer() {
 
         // Draw the blurred region back to the main canvas
         ctx.drawImage(tempCanvas, blurBoxX, blurBoxY);
+
+        // For iOS, ensure the blur is strong enough by applying an additional pass
+        if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+          // Create a final blur pass for iOS
+          const iosBlurCanvas = document.createElement("canvas");
+          const iosBlurCtx = iosBlurCanvas.getContext("2d");
+          iosBlurCanvas.width = blurBoxWidth;
+          iosBlurCanvas.height = blurBoxHeight;
+
+          // Get the blurred region again
+          iosBlurCtx.drawImage(
+            canvas,
+            blurBoxX,
+            blurBoxY,
+            blurBoxWidth,
+            blurBoxHeight,
+            0,
+            0,
+            blurBoxWidth,
+            blurBoxHeight
+          );
+
+          // Apply a strong pixelation effect (works well on iOS)
+          const pixelSize = Math.max(
+            5,
+            Math.floor(Math.min(blurBoxWidth, blurBoxHeight) / 15)
+          );
+
+          // Create a downscaled version (pixelation)
+          const pixelCanvas = document.createElement("canvas");
+          const pixelCtx = pixelCanvas.getContext("2d");
+          pixelCanvas.width = Math.max(1, Math.floor(blurBoxWidth / pixelSize));
+          pixelCanvas.height = Math.max(
+            1,
+            Math.floor(blurBoxHeight / pixelSize)
+          );
+
+          // Draw small
+          pixelCtx.drawImage(
+            iosBlurCanvas,
+            0,
+            0,
+            pixelCanvas.width,
+            pixelCanvas.height
+          );
+
+          // Draw back to iOS canvas at original size (creates pixelation)
+          iosBlurCtx.clearRect(0, 0, iosBlurCanvas.width, iosBlurCanvas.height);
+          iosBlurCtx.drawImage(
+            pixelCanvas,
+            0,
+            0,
+            pixelCanvas.width,
+            pixelCanvas.height,
+            0,
+            0,
+            blurBoxWidth,
+            blurBoxHeight
+          );
+
+          // Add a stronger darkening effect for iOS
+          iosBlurCtx.fillStyle = "rgba(100, 100, 100, 0.2)";
+          iosBlurCtx.fillRect(0, 0, blurBoxWidth, blurBoxHeight);
+
+          // Draw the iOS-optimized blur back to the main canvas
+          ctx.drawImage(iosBlurCanvas, blurBoxX, blurBoxY);
+        }
       } catch (error) {
         console.error("Error applying blur box to download:", error);
       }
@@ -1322,6 +1516,27 @@ export default function PhotoEnhancer() {
           const dataUrl = reader.result;
           const win = window.open();
           if (win) {
+            // Include information about the adjustments in the download page
+            const adjustmentInfo = `
+              <div style="background: #f5f5f5; padding: 10px; border-radius: 8px; margin-bottom: 20px; text-align: left; font-size: 12px;">
+                <h3 style="margin: 0 0 8px 0;">Applied Adjustments</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                  <div>
+                    <p style="margin: 4px 0;"><strong>Exposure:</strong> ${adjustments.exposure}%</p>
+                    <p style="margin: 4px 0;"><strong>Shadows:</strong> ${adjustments.shadows}</p>
+                    <p style="margin: 4px 0;"><strong>Highlights:</strong> ${adjustments.highlights}</p>
+                    <p style="margin: 4px 0;"><strong>Contrast:</strong> ${adjustments.contrast}%</p>
+                  </div>
+                  <div>
+                    <p style="margin: 4px 0;"><strong>Brightness:</strong> ${adjustments.brightness}%</p>
+                    <p style="margin: 4px 0;"><strong>Saturation:</strong> ${adjustments.saturation}%</p>
+                    <p style="margin: 4px 0;"><strong>Sharpness:</strong> ${adjustments.sharpen}</p>
+                    <p style="margin: 4px 0;"><strong>Temperature:</strong> ${adjustments.temperature}</p>
+                  </div>
+                </div>
+              </div>
+            `;
+
             win.document.write(`
               <html>
                 <head>
@@ -1339,16 +1554,31 @@ export default function PhotoEnhancer() {
                       font-size: 16px;
                       font-weight: bold;
                       cursor: pointer;
+                      margin-bottom: 20px;
                     }
-                    p { margin: 20px 0; color: #555; }
+                    p { margin: 10px 0; color: #555; }
+                    .instructions {
+                      background: #fffde7;
+                      border-left: 4px solid #ffd600;
+                      padding: 10px 15px;
+                      margin: 20px 0;
+                      text-align: left;
+                    }
                   </style>
                 </head>
                 <body>
                   <h2>Your Enhanced Image</h2>
+                  ${adjustmentInfo}
                   <img src="${dataUrl}" alt="Enhanced image">
-                  <p>Press and hold the image to save it to your device</p>
                   <a href="${dataUrl}" download="${filename}" class="download-btn">Download Image</a>
-                  <p>Tap the button above to download</p>
+                  <div class="instructions">
+                    <p><strong>To save on iOS:</strong></p>
+                    <ol style="padding-left: 20px; margin: 5px 0;">
+                      <li>Press and hold the image above</li>
+                      <li>Select "Save to Photos" from the menu</li>
+                      <li>Or tap the blue Download button</li>
+                    </ol>
+                  </div>
                 </body>
               </html>
             `);
@@ -1480,6 +1710,47 @@ export default function PhotoEnhancer() {
       borderRadius: "inherit",
     };
 
+    // Exposure overlay (separate from brightness)
+    const exposureOverlay = {
+      position: "absolute",
+      inset: 0,
+      pointerEvents: "none",
+      background: adjustments.exposure > 100 ? "white" : "black",
+      mixBlendMode: adjustments.exposure > 100 ? "lighten" : "darken",
+      opacity: Math.abs(adjustments.exposure - 100) / 200, // Divide by 200 for a more subtle effect in preview
+      borderRadius: "inherit",
+    };
+
+    // Shadows overlay (affects dark areas)
+    const shadowsOverlay = {
+      position: "absolute",
+      inset: 0,
+      pointerEvents: "none",
+      background: "black",
+      mixBlendMode: adjustments.shadows > 0 ? "lighten" : "darken",
+      opacity: Math.abs(adjustments.shadows) / 100,
+      borderRadius: "inherit",
+      // Use a gradient mask to target shadow areas
+      maskImage: "linear-gradient(to right, rgba(0,0,0,1) 30%, rgba(0,0,0,0))",
+      WebkitMaskImage:
+        "linear-gradient(to right, rgba(0,0,0,1) 30%, rgba(0,0,0,0))",
+    };
+
+    // Highlights overlay (affects bright areas)
+    const highlightsOverlay = {
+      position: "absolute",
+      inset: 0,
+      pointerEvents: "none",
+      background: "white",
+      mixBlendMode: adjustments.highlights < 0 ? "darken" : "lighten",
+      opacity: Math.abs(adjustments.highlights) / 100,
+      borderRadius: "inherit",
+      // Use a gradient mask to target highlight areas
+      maskImage: "linear-gradient(to left, rgba(0,0,0,1) 30%, rgba(0,0,0,0))",
+      WebkitMaskImage:
+        "linear-gradient(to left, rgba(0,0,0,1) 30%, rgba(0,0,0,0))",
+    };
+
     return {
       filter: filterString,
       transform: `
@@ -1493,6 +1764,9 @@ export default function PhotoEnhancer() {
       tintStyle: tintOverlay,
       clarityStyle: clarityOverlay,
       noiseStyle: noiseStyle,
+      exposureStyle: exposureOverlay,
+      shadowsStyle: shadowsOverlay,
+      highlightsStyle: highlightsOverlay,
     };
   };
 
@@ -2390,6 +2664,24 @@ export default function PhotoEnhancer() {
                       className="absolute top-0 left-0 w-full h-full"
                     ></div>
 
+                    {/* Exposure overlay */}
+                    <div
+                      style={getFilterStyle().exposureStyle}
+                      className="absolute top-0 left-0 w-full h-full"
+                    ></div>
+
+                    {/* Shadows overlay */}
+                    <div
+                      style={getFilterStyle().shadowsStyle}
+                      className="absolute top-0 left-0 w-full h-full"
+                    ></div>
+
+                    {/* Highlights overlay */}
+                    <div
+                      style={getFilterStyle().highlightsStyle}
+                      className="absolute top-0 left-0 w-full h-full"
+                    ></div>
+
                     {/* Blur box */}
                     {showBlurBox && (
                       <div
@@ -2492,13 +2784,14 @@ export default function PhotoEnhancer() {
                 <FiUpload /> Upload Image
               </button>
 
-              {/* <button
+              {/* Uncomment the download button */}
+              <button
                 onClick={downloadImage}
                 className="btn btn-outline flex items-center gap-2"
                 disabled={!selectedImage}
               >
                 <FiDownload /> Download
-              </button> */}
+              </button>
 
               <button
                 onClick={resetAdjustments}
@@ -2523,16 +2816,6 @@ export default function PhotoEnhancer() {
               >
                 <MdCrop /> Crop
               </button>
-
-              {/* <button
-                onClick={toggleBlurBox}
-                className={`btn ${
-                  showBlurBox ? "btn-secondary" : "btn-outline"
-                } flex items-center gap-2`}
-                disabled={!selectedImage}
-              >
-                <MdBlurOn /> {showBlurBox ? "Remove" : "Hide Number Plate"}
-              </button> */}
 
               <button
                 onClick={networkError ? retryLoading : removeBackground}
