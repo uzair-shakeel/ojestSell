@@ -48,6 +48,8 @@ function getImageDisplayRect(img, container) {
 export default function PhotoEnhancer() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("/placeholder.jpg");
+  const [originalImage, setOriginalImage] = useState(null); // Store the original image file
+  const [originalImageUrl, setOriginalImageUrl] = useState(null); // Store the original image URL
   const fileInputRef = useRef(null);
   const imageRef = useRef(null);
   const containerRef = useRef(null);
@@ -653,11 +655,15 @@ export default function PhotoEnhancer() {
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
+      // Store original image and URL
+      setOriginalImage(file);
+
       // Set loading state
       setSelectedImage(file);
 
       // Create and set URL
       const objectUrl = URL.createObjectURL(file);
+      setOriginalImageUrl(objectUrl);
       setPreviewUrl(objectUrl);
 
       // Check if the uploaded image has transparency
@@ -684,6 +690,7 @@ export default function PhotoEnhancer() {
 
   // Reset all adjustments
   const resetAdjustments = () => {
+    // Reset all adjustment values
     setAdjustments({
       brightness: 100,
       contrast: 100,
@@ -707,6 +714,49 @@ export default function PhotoEnhancer() {
       tint: 0,
     });
     setActiveFilter("none");
+
+    // Restore original image if available
+    if (originalImage && originalImageUrl) {
+      console.log("Restoring original image:", originalImageUrl);
+
+      // Only revoke the current URL if it's different from the original
+      if (previewUrl !== originalImageUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+
+      // Create a fresh copy of the original file to ensure it's properly loaded
+      const freshCopy = originalImage.slice(
+        0,
+        originalImage.size,
+        originalImage.type
+      );
+      setSelectedImage(freshCopy);
+
+      // Check if we need to create a new URL or can reuse the original
+      if (URL.createObjectURL) {
+        try {
+          const newUrl = URL.createObjectURL(freshCopy);
+          setPreviewUrl(newUrl);
+        } catch (error) {
+          console.error("Error creating object URL:", error);
+          setPreviewUrl(originalImageUrl);
+        }
+      } else {
+        setPreviewUrl(originalImageUrl);
+      }
+
+      // Reset blur box
+      setShowBlurBox(false);
+
+      // Re-check transparency rather than assuming none
+      checkImageTransparency(originalImageUrl)
+        .then((hasTransparency) => {
+          setImageHasTransparency(hasTransparency);
+        })
+        .catch((error) => {
+          console.error("Error checking transparency during reset:", error);
+        });
+    }
   };
 
   // Apply filter preset
