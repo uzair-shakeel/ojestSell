@@ -1063,20 +1063,25 @@ export default function PhotoEnhancer() {
     ctx.restore();
 
     // Get the transformed image data
-    const transformedImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    
+    const transformedImageData = ctx.getImageData(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
     // Create a temporary canvas for applying filters
     const tempCanvas = document.createElement("canvas");
     const tempCtx = tempCanvas.getContext("2d");
     tempCanvas.width = canvas.width;
     tempCanvas.height = canvas.height;
-    
+
     // Put the transformed image data on the temp canvas
     tempCtx.putImageData(transformedImageData, 0, 0);
-    
+
     // Clear the main canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+
     // Apply filters using CSS filter string
     const filterString = `
       brightness(${adjustments.brightness}%) 
@@ -1094,7 +1099,7 @@ export default function PhotoEnhancer() {
           : ""
       }
     `;
-    
+
     // Apply filter to context
     ctx.filter = filterString;
     ctx.drawImage(tempCanvas, 0, 0);
@@ -1161,9 +1166,14 @@ export default function PhotoEnhancer() {
     if (adjustments.temperature !== 0) {
       ctx.save();
       ctx.globalCompositeOperation = "overlay";
-      ctx.fillStyle = adjustments.temperature > 0
-        ? `rgba(255,${255 - adjustments.temperature * 2},${255 - adjustments.temperature * 4},${adjustments.temperature / 100})`
-        : `rgba(${255 + adjustments.temperature * 4},${255 + adjustments.temperature * 2},255,${Math.abs(adjustments.temperature) / 100})`;
+      ctx.fillStyle =
+        adjustments.temperature > 0
+          ? `rgba(255,${255 - adjustments.temperature * 2},${
+              255 - adjustments.temperature * 4
+            },${adjustments.temperature / 100})`
+          : `rgba(${255 + adjustments.temperature * 4},${
+              255 + adjustments.temperature * 2
+            },255,${Math.abs(adjustments.temperature) / 100})`;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
     }
@@ -1172,9 +1182,14 @@ export default function PhotoEnhancer() {
     if (adjustments.tint !== 0) {
       ctx.save();
       ctx.globalCompositeOperation = "overlay";
-      ctx.fillStyle = adjustments.tint > 0
-        ? `rgba(${255 - adjustments.tint * 2},255,${255 - adjustments.tint * 2},${adjustments.tint / 100})`
-        : `rgba(255,${255 + adjustments.tint * 2},255,${Math.abs(adjustments.tint) / 100})`;
+      ctx.fillStyle =
+        adjustments.tint > 0
+          ? `rgba(${255 - adjustments.tint * 2},255,${
+              255 - adjustments.tint * 2
+            },${adjustments.tint / 100})`
+          : `rgba(255,${255 + adjustments.tint * 2},255,${
+              Math.abs(adjustments.tint) / 100
+            })`;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
     }
@@ -1188,38 +1203,164 @@ export default function PhotoEnhancer() {
       ctx.restore();
     }
 
+    // Check if the image has a blur box applied and apply it to the download
+    // This ensures the blur effect is included in the downloaded image
+    const applyBlurBoxToDownload = () => {
+      // Get the original image from the DOM
+      const originalImg = imageRef.current;
+
+      if (!originalImg) return;
+
+      // Calculate scale between natural and displayed image
+      const imgRect = originalImg.getBoundingClientRect();
+      const scaleX = originalImg.naturalWidth / imgRect.width;
+      const scaleY = originalImg.naturalHeight / imgRect.height;
+
+      // Check if the image has blur boxes by examining its data URL
+      const testCanvas = document.createElement("canvas");
+      const testCtx = testCanvas.getContext("2d");
+      testCanvas.width = 10;
+      testCanvas.height = 10;
+
+      // Draw a small portion of the image to test
+      testCtx.drawImage(originalImg, 0, 0, 10, 10);
+
+      try {
+        // Create a temporary canvas for the blur area
+        const tempCanvas = document.createElement("canvas");
+        const tempCtx = tempCanvas.getContext("2d");
+
+        // Get the container rect for coordinate conversion
+        const containerRect = containerRef.current
+          ? containerRef.current.getBoundingClientRect()
+          : { left: 0, top: 0 };
+
+        // Calculate the blur box coordinates in the natural image space
+        const blurBoxX = Math.floor(
+          (blurBoxCoordinates.x - (imgRect.left - containerRect.left)) * scaleX
+        );
+        const blurBoxY = Math.floor(
+          (blurBoxCoordinates.y - (imgRect.top - containerRect.top)) * scaleY
+        );
+        const blurBoxWidth = Math.floor(blurBoxCoordinates.width * scaleX);
+        const blurBoxHeight = Math.floor(blurBoxCoordinates.height * scaleY);
+
+        // Set temp canvas size to the blur box size
+        tempCanvas.width = blurBoxWidth;
+        tempCanvas.height = blurBoxHeight;
+
+        // Extract the region to blur
+        tempCtx.drawImage(
+          canvas,
+          blurBoxX,
+          blurBoxY,
+          blurBoxWidth,
+          blurBoxHeight,
+          0,
+          0,
+          blurBoxWidth,
+          blurBoxHeight
+        );
+
+        // Apply a very strong blur effect with multiple passes
+        const blurSteps = [5, 10, 15, 20, 30]; // Multiple blur passes with increasing strength
+
+        for (const blurRadius of blurSteps) {
+          tempCtx.filter = `blur(${blurRadius}px)`;
+          tempCtx.drawImage(tempCanvas, 0, 0);
+        }
+
+        // Add a semi-transparent overlay to further obscure details
+        tempCtx.fillStyle = "rgba(150, 150, 150, 0.1)";
+        tempCtx.fillRect(0, 0, blurBoxWidth, blurBoxHeight);
+
+        // Draw the blurred region back to the main canvas
+        ctx.drawImage(tempCanvas, blurBoxX, blurBoxY);
+      } catch (error) {
+        console.error("Error applying blur box to download:", error);
+      }
+    };
+
+    // Apply any blur boxes that were added to the image
+    applyBlurBoxToDownload();
+
     // Convert to blob and download - use a Promise to ensure iOS compatibility
     const downloadBlob = () => {
       return new Promise((resolve) => {
-        canvas.toBlob((blob) => {
-          resolve(blob);
-        }, "image/jpeg", 0.95);
+        canvas.toBlob(
+          (blob) => {
+            resolve(blob);
+          },
+          "image/jpeg",
+          0.95
+        );
       });
     };
 
     // Handle download for all platforms including iOS
     downloadBlob().then((blob) => {
       // For iOS, we need to use a different approach
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-      
+      const isIOS =
+        /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
       if (isIOS) {
         // Create a link with download attribute and use window.open
         const url = URL.createObjectURL(blob);
         const filename = selectedImage.name.split(".")[0] + "-enhanced.jpg";
-        
-        // Create an anchor element
-        const a = document.createElement('a');
-        a.style.display = 'none';
+
+        // For iOS Safari, we need to use a different technique
+        // Create a temporary link that opens in a new window
+        const a = document.createElement("a");
+        a.style.display = "none";
         a.href = url;
         a.download = filename;
-        
-        // iOS specific: Open in new window/tab and then user can save from there
-        window.open(url, '_blank');
-        
-        // Clean up
+
+        // iOS specific: Open in new window/tab with download prompt
+        // This uses a data URI to force the download dialog
+        const reader = new FileReader();
+        reader.onloadend = function () {
+          const dataUrl = reader.result;
+          const win = window.open();
+          if (win) {
+            win.document.write(`
+              <html>
+                <head>
+                  <title>Download Enhanced Image</title>
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <style>
+                    body { margin: 0; padding: 20px; font-family: system-ui, -apple-system, sans-serif; text-align: center; }
+                    img { max-width: 100%; border: 1px solid #ccc; margin-bottom: 20px; }
+                    .download-btn { 
+                      background: #0066ff; 
+                      color: white; 
+                      border: none; 
+                      padding: 12px 24px; 
+                      border-radius: 8px; 
+                      font-size: 16px;
+                      font-weight: bold;
+                      cursor: pointer;
+                    }
+                    p { margin: 20px 0; color: #555; }
+                  </style>
+                </head>
+                <body>
+                  <h2>Your Enhanced Image</h2>
+                  <img src="${dataUrl}" alt="Enhanced image">
+                  <p>Press and hold the image to save it to your device</p>
+                  <a href="${dataUrl}" download="${filename}" class="download-btn">Download Image</a>
+                  <p>Tap the button above to download</p>
+                </body>
+              </html>
+            `);
+            win.document.close();
+          }
+        };
+        reader.readAsDataURL(blob);
+
+        // Clean up the original URL
         setTimeout(() => {
           URL.revokeObjectURL(url);
-        }, 100);
+        }, 1000);
       } else {
         // Standard download for non-iOS devices
         const url = URL.createObjectURL(blob);
@@ -2351,13 +2492,13 @@ export default function PhotoEnhancer() {
                 <FiUpload /> Upload Image
               </button>
 
-              <button
+              {/* <button
                 onClick={downloadImage}
                 className="btn btn-outline flex items-center gap-2"
                 disabled={!selectedImage}
               >
                 <FiDownload /> Download
-              </button>
+              </button> */}
 
               <button
                 onClick={resetAdjustments}
@@ -2383,7 +2524,7 @@ export default function PhotoEnhancer() {
                 <MdCrop /> Crop
               </button>
 
-              <button
+              {/* <button
                 onClick={toggleBlurBox}
                 className={`btn ${
                   showBlurBox ? "btn-secondary" : "btn-outline"
@@ -2391,7 +2532,7 @@ export default function PhotoEnhancer() {
                 disabled={!selectedImage}
               >
                 <MdBlurOn /> {showBlurBox ? "Remove" : "Hide Number Plate"}
-              </button>
+              </button> */}
 
               <button
                 onClick={networkError ? retryLoading : removeBackground}
