@@ -270,3 +270,51 @@ export const getRecommendedCars = async (carId: string): Promise<CarData[]> => {
     );
   }
 };
+
+// Get car details from VIN using NHTSA API
+export const getCarDetailsByVin = async (
+  vin: string,
+  getToken: () => Promise<string | null>
+): Promise<{
+  make?: string;
+  model?: string;
+  year?: string;
+  engine?: string;
+  fuel?: string;
+  transmission?: string;
+  driveType?: string;
+  vehicleType?: string;
+  bodyClass?: string;
+  vin: string;
+}> => {
+  try {
+    console.log(`Fetching car details for VIN: ${vin}`);
+    const apiUrl = `/api/vin-lookup?vin=${encodeURIComponent(vin)}`;
+    console.log(`Making request to: ${apiUrl}`);
+
+    const response = await axios.get(apiUrl);
+    console.log("VIN lookup response:", response.data);
+
+    if (!response.data) {
+      throw new Error("No vehicle data found");
+    }
+
+    return response.data;
+  } catch (error: any) {
+    console.error("VIN lookup error details:", {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+    });
+
+    if (error.response?.status === 404) {
+      throw new Error("Vehicle not found");
+    }
+
+    throw new Error(
+      error.response?.data?.error ||
+        error.message ||
+        "Failed to fetch car details by VIN"
+    );
+  }
+};

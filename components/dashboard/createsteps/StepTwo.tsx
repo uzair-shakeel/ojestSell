@@ -1,7 +1,16 @@
 "use client";
 import { useState, useEffect } from "react";
+import { getCarDetailsByVin } from "../../../services/carService";
+import { useAuth } from "@clerk/nextjs";
 
-export default function StepTwo({ nextStep, prevStep, updateFormData, formData }) {
+export default function StepTwo({
+  nextStep,
+  prevStep,
+  updateFormData,
+  formData,
+}) {
+  const { getToken } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
   const [localData, setLocalData] = useState({
     make: formData.make,
     model: formData.model,
@@ -23,7 +32,10 @@ export default function StepTwo({ nextStep, prevStep, updateFormData, formData }
 
   const [makes, setMakes] = useState<string[]>([]); // State for car makes
   const [models, setModels] = useState<string[]>([]); // State for car models
-  const years = Array.from(new Array(50), (_, i) => new Date().getFullYear() - i);
+  const years = Array.from(
+    new Array(50),
+    (_, i) => new Date().getFullYear() - i
+  );
   const engines = ["0.5", "1.0", "1.5", "2.0", "3.0", "4.0", "5.0", "7.3"];
 
   // Fetch car makes and models from the JSON file
@@ -73,6 +85,93 @@ export default function StepTwo({ nextStep, prevStep, updateFormData, formData }
     nextStep();
   };
 
+  // Add VIN lookup function
+  const handleVinLookup = async () => {
+    if (!localData.vin || localData.vin.length < 17) {
+      alert("Please enter a valid VIN (17 characters)");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      console.log(`Attempting VIN lookup for: ${localData.vin}`);
+
+      const carDetails = await getCarDetailsByVin(localData.vin, getToken);
+      console.log("VIN lookup response:", carDetails);
+
+      // Create updated data object with all the fetched details
+      const updatedData = {
+        ...localData,
+        make: carDetails.make || localData.make,
+        model: carDetails.model || localData.model,
+        year: carDetails.year || localData.year,
+        engine: carDetails.engine || localData.engine,
+        fuel: carDetails.fuel || localData.fuel,
+        transmission: carDetails.transmission || localData.transmission,
+        drivetrain: carDetails.driveType || localData.drivetrain,
+        type: carDetails.bodyClass || carDetails.vehicleType || localData.type,
+      };
+
+      // Update local state
+      setLocalData(updatedData);
+
+      // Update parent form data
+      updateFormData(updatedData);
+
+      // Show success message with details of what was found
+      const foundFields = [];
+      if (carDetails.make) foundFields.push("Make");
+      if (carDetails.model) foundFields.push("Model");
+      if (carDetails.year) foundFields.push("Year");
+      if (carDetails.engine) foundFields.push("Engine");
+      if (carDetails.fuel) foundFields.push("Fuel type");
+      if (carDetails.transmission) foundFields.push("Transmission");
+      if (carDetails.driveType) foundFields.push("Drive type");
+      if (carDetails.bodyClass || carDetails.vehicleType)
+        foundFields.push("Vehicle type");
+
+      let message = "";
+      if (foundFields.length > 0) {
+        message = `Car details fetched! Found: ${foundFields.join(", ")}`;
+        if (carDetails.warning) {
+          message += `\n\nWarning: ${carDetails.warning}`;
+        }
+      } else {
+        message =
+          "No additional details were available. Please enter details manually.";
+        if (carDetails.warning) {
+          message += `\n\nReason: ${carDetails.warning}`;
+        }
+      }
+
+      alert(message);
+    } catch (error: any) {
+      console.error("Error fetching car details:", error);
+
+      // Provide a more specific error message if possible
+      let errorMessage =
+        "Failed to fetch car details. Please enter the details manually.";
+      let details = "";
+
+      if (error.response?.data?.details) {
+        details = `\n\nDetails: ${error.response.data.details}`;
+      }
+
+      if (error.message?.includes("VIN validation failed")) {
+        errorMessage = "The VIN number appears to be invalid.";
+      } else if (error.message?.includes("404")) {
+        errorMessage = "No vehicle found with this VIN.";
+      } else if (error.message?.includes("Network Error")) {
+        errorMessage =
+          "Network error. Please check your connection and try again.";
+      }
+
+      alert(errorMessage + details);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg">
       <h2 className="text-xl font-bold mb-4">Step 2: Car Details</h2>
@@ -102,7 +201,9 @@ export default function StepTwo({ nextStep, prevStep, updateFormData, formData }
           <select
             className="border p-3 w-full rounded h-12"
             value={localData.model}
-            onChange={(e) => setLocalData({ ...localData, model: e.target.value })}
+            onChange={(e) =>
+              setLocalData({ ...localData, model: e.target.value })
+            }
             disabled={!localData.make}
           >
             <option value="">Select Model</option>
@@ -122,7 +223,9 @@ export default function StepTwo({ nextStep, prevStep, updateFormData, formData }
             placeholder="Trim (Daraja Kroz, Normal, etc.)"
             className="border p-3 w-full rounded h-12"
             value={localData.trim}
-            onChange={(e) => setLocalData({ ...localData, trim: e.target.value })}
+            onChange={(e) =>
+              setLocalData({ ...localData, trim: e.target.value })
+            }
           />
         </div>
 
@@ -132,7 +235,9 @@ export default function StepTwo({ nextStep, prevStep, updateFormData, formData }
           <select
             className="border p-3 w-full rounded h-12"
             value={localData.type}
-            onChange={(e) => setLocalData({ ...localData, type: e.target.value })}
+            onChange={(e) =>
+              setLocalData({ ...localData, type: e.target.value })
+            }
           >
             <option value="">Select Type</option>
             <option value="Sedan">Sedan</option>
@@ -148,7 +253,9 @@ export default function StepTwo({ nextStep, prevStep, updateFormData, formData }
           <select
             className="border p-3 w-full rounded h-12"
             value={localData.year}
-            onChange={(e) => setLocalData({ ...localData, year: e.target.value })}
+            onChange={(e) =>
+              setLocalData({ ...localData, year: e.target.value })
+            }
           >
             <option value="">Select Year</option>
             {years.map((year, index) => (
@@ -167,7 +274,9 @@ export default function StepTwo({ nextStep, prevStep, updateFormData, formData }
             placeholder="Color"
             className="border p-3 w-full rounded h-12"
             value={localData.color}
-            onChange={(e) => setLocalData({ ...localData, color: e.target.value })}
+            onChange={(e) =>
+              setLocalData({ ...localData, color: e.target.value })
+            }
           />
         </div>
 
@@ -179,7 +288,9 @@ export default function StepTwo({ nextStep, prevStep, updateFormData, formData }
             placeholder="Mileage"
             className="border p-3 w-full rounded h-12"
             value={localData.mileage}
-            onChange={(e) => setLocalData({ ...localData, mileage: e.target.value })}
+            onChange={(e) =>
+              setLocalData({ ...localData, mileage: e.target.value })
+            }
           />
         </div>
 
@@ -189,7 +300,9 @@ export default function StepTwo({ nextStep, prevStep, updateFormData, formData }
           <select
             className="border p-3 w-full rounded h-12"
             value={localData.drivetrain}
-            onChange={(e) => setLocalData({ ...localData, drivetrain: e.target.value })}
+            onChange={(e) =>
+              setLocalData({ ...localData, drivetrain: e.target.value })
+            }
           >
             <option value="">Select Drivetrain</option>
             <option value="FWD">FWD</option>
@@ -206,7 +319,9 @@ export default function StepTwo({ nextStep, prevStep, updateFormData, formData }
           <select
             className="border p-3 w-full rounded h-12"
             value={localData.transmission}
-            onChange={(e) => setLocalData({ ...localData, transmission: e.target.value })}
+            onChange={(e) =>
+              setLocalData({ ...localData, transmission: e.target.value })
+            }
           >
             <option value="">Select Transmission</option>
             <option value="Manual">Manual</option>
@@ -221,7 +336,9 @@ export default function StepTwo({ nextStep, prevStep, updateFormData, formData }
           <select
             className="border p-3 w-full rounded h-12"
             value={localData.fuel}
-            onChange={(e) => setLocalData({ ...localData, fuel: e.target.value })}
+            onChange={(e) =>
+              setLocalData({ ...localData, fuel: e.target.value })
+            }
           >
             <option value="">Select Fuel Type</option>
             <option value="Petrol">Petrol</option>
@@ -239,20 +356,26 @@ export default function StepTwo({ nextStep, prevStep, updateFormData, formData }
             placeholder="Horsepower"
             className="border p-3 w-full rounded h-12"
             value={localData.horsepower}
-            onChange={(e) => setLocalData({ ...localData, horsepower: e.target.value })}
+            onChange={(e) =>
+              setLocalData({ ...localData, horsepower: e.target.value })
+            }
           />
         </div>
 
         {/* Engine Displacement */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Engine Displacement</label>
+          <label className="block text-gray-700 mb-1">
+            Engine Displacement
+          </label>
           <input
             list="engines"
             type="text"
             placeholder="Engine Displacement"
             className="border p-3 w-full rounded h-12"
             value={localData.engine}
-            onChange={(e) => setLocalData({ ...localData, engine: e.target.value })}
+            onChange={(e) =>
+              setLocalData({ ...localData, engine: e.target.value })
+            }
           />
           <datalist id="engines">
             {engines.map((engine, index) => (
@@ -267,7 +390,9 @@ export default function StepTwo({ nextStep, prevStep, updateFormData, formData }
           <select
             className="border p-3 w-full rounded h-12"
             value={localData.serviceHistory}
-            onChange={(e) => setLocalData({ ...localData, serviceHistory: e.target.value })}
+            onChange={(e) =>
+              setLocalData({ ...localData, serviceHistory: e.target.value })
+            }
           >
             <option value="">Select Service History</option>
             <option value="Yes">Yes</option>
@@ -281,7 +406,9 @@ export default function StepTwo({ nextStep, prevStep, updateFormData, formData }
           <select
             className="border p-3 w-full rounded h-12"
             value={localData.accidentHistory}
-            onChange={(e) => setLocalData({ ...localData, accidentHistory: e.target.value })}
+            onChange={(e) =>
+              setLocalData({ ...localData, accidentHistory: e.target.value })
+            }
           >
             <option value="">Select Accident History</option>
             <option value="Yes">Yes</option>
@@ -289,16 +416,35 @@ export default function StepTwo({ nextStep, prevStep, updateFormData, formData }
           </select>
         </div>
 
-        {/* VIN */}
+        {/* VIN - Modified to include lookup button */}
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">VIN</label>
-          <input
-            type="text"
-            placeholder="VIN"
-            className="border p-3 w-full rounded h-12"
-            value={localData.vin}
-            onChange={(e) => setLocalData({ ...localData, vin: e.target.value })}
-          />
+          <div className="flex">
+            <input
+              type="text"
+              placeholder="VIN"
+              className="border p-3 w-full rounded-l h-12"
+              value={localData.vin}
+              onChange={(e) =>
+                setLocalData({
+                  ...localData,
+                  vin: e.target.value.toUpperCase(),
+                })
+              }
+              maxLength={17}
+            />
+            <button
+              type="button"
+              onClick={handleVinLookup}
+              disabled={isLoading}
+              className="bg-blue-500 text-white px-4 rounded-r h-12 hover:bg-blue-600 transition-colors"
+            >
+              {isLoading ? "Loading..." : "Lookup"}
+            </button>
+          </div>
+          <p className="text-xs text-gray-500 mt-1">
+            Enter VIN to auto-fill car details from CEPiK database
+          </p>
         </div>
 
         {/* Country of Origin */}
@@ -309,7 +455,9 @@ export default function StepTwo({ nextStep, prevStep, updateFormData, formData }
             placeholder="Poland"
             className="border p-3 w-full rounded h-12"
             value={localData.country}
-            onChange={(e) => setLocalData({ ...localData, country: e.target.value })}
+            onChange={(e) =>
+              setLocalData({ ...localData, country: e.target.value })
+            }
           />
         </div>
       </div>
