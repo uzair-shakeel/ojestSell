@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
 
-const NHTSA_API_BASE_URL = "https://vpic.nhtsa.dot.gov/api/vehicles/decodevin";
+const CAR_API_BASE_URL = "https://api.carapi.app/api";
+const CAR_API_SECRET =
+  process.env.CAR_API_KEY || "3c50aa09d063f9f91759059a99966ff0";
 
 export async function GET(request) {
   try {
@@ -19,99 +21,100 @@ export async function GET(request) {
 
     console.log(`Looking up VIN: ${vin}`);
 
-    // Call NHTSA API
-    const nhtsaUrl = `${NHTSA_API_BASE_URL}/${encodeURIComponent(
+    // Call CarAPI with the correct authentication
+    const apiUrl = `${CAR_API_BASE_URL}/vehicles/vin/${encodeURIComponent(
       vin
-    )}?format=json`;
-    console.log("Calling NHTSA API:", nhtsaUrl);
+    )}`;
+    console.log("Calling CarAPI:", apiUrl);
+    console.log("Using API Secret:", CAR_API_SECRET);
 
-    const response = await axios.get(nhtsaUrl);
-    console.log("NHTSA API Response:", response.data);
+    const response = await axios.get(apiUrl, {
+      headers: {
+        "x-api-key": CAR_API_SECRET,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
 
-    if (response.data && response.data.Results) {
-      // Extract relevant information from the response
-      const results = response.data.Results;
-      const getValue = (variable) => {
-        const item = results.find((r) => r.Variable === variable);
-        return item ? item.Value : null;
-      };
+    console.log("CarAPI Response Status:", response.status);
+    console.log("CarAPI Response Headers:", response.headers);
+    console.log(
+      "CarAPI Response Data:",
+      JSON.stringify(response.data, null, 2)
+    );
 
-      // Get error information
-      const errorCode = getValue("Error Code");
-      const errorText = getValue("Error Text");
+    if (response.data) {
+      const carData = response.data.data || response.data;
 
-      // Even if there are errors, try to extract whatever data we can
+      // Map the CarAPI response to our format
       const carDetails = {
-        make: getValue("Make") || "",
-        model: getValue("Model") || "",
-        year: getValue("Model Year") || "",
-        engine: getValue("Engine Model") || getValue("Displacement (L)") || "",
-        fuel: getValue("Fuel Type - Primary") || "",
-        transmission: getValue("Transmission Style") || "",
-        driveType: getValue("Drive Type") || "",
-        vehicleType: getValue("Vehicle Type") || "",
-        bodyClass: getValue("Body Class") || "",
-        manufacturer: getValue("Manufacturer Name") || "",
+        make: carData.make || carData.make_name || "",
+        model: carData.model || carData.model_name || "",
+        year: carData.year?.toString() || "",
+        engine: carData.engine_displacement || "",
+        fuel: carData.fuel_type || "",
+        transmission: carData.transmission || "",
+        driveType: carData.drive || "",
+        vehicleType: carData.vehicle_type || carData.body_type || "",
+        bodyClass: carData.body_subtype || "",
+        manufacturer: carData.manufacturer || carData.make || "",
         vin: vin,
-        errors: errorText
-          ? errorText
-              .split(";")
-              .map((e) => e.trim())
-              .filter((e) => e)
-          : [],
+        // Additional details
+        trim: carData.trim || "",
+        doors: carData.doors?.toString() || "",
+        horsepower: carData.horsepower?.toString() || "",
+        torque: carData.torque?.toString() || "",
       };
 
-      // If we got some useful data despite errors, return it with a warning
-      if (
-        carDetails.make ||
-        carDetails.manufacturer ||
-        carDetails.vehicleType
-      ) {
-        const status = errorCode ? 206 : 200; // 206 Partial Content if there were errors
-        return NextResponse.json(
-          {
-            ...carDetails,
-            results,
-            warning: errorText || null,
-          },
-          { status }
-        );
-      }
-
-      // If no useful data and there are errors, return error response
-      if (errorText) {
-        return NextResponse.json(
-          {
-            error: "VIN validation failed",
-            details: errorText,
-            partialData: carDetails,
-          },
-          { status: 400 }
-        );
-      }
-
-      // If no data at all
-      return NextResponse.json(
-        { error: "No vehicle data found" },
-        { status: 404 }
-      );
+      return NextResponse.json(carDetails);
     }
 
     return NextResponse.json(
-      { error: "Invalid response from NHTSA API" },
-      { status: 502 }
+      { error: "No vehicle data found" },
+      { status: 404 }
     );
   } catch (error) {
     console.error("Error in VIN lookup route:", {
       message: error.message,
       response: error.response?.data,
       status: error.response?.status,
+      headers: error.response?.headers,
+      config: error.config,
     });
+
+    // Handle specific CarAPI errors
+    if (error.response?.status === 401) {
+      return NextResponse.json(
+        {
+          error: "Invalid CarAPI key",
+          details: error.response?.data?.message || "Authentication failed",
+        },
+        { status: 401 }
+      );
+    }
+
+    if (error.response?.status === 404) {
+      return NextResponse.json(
+        {
+          error: "Vehicle not found in database",
+          details: "The provided VIN could not be found in the CarAPI database",
+        },
+        { status: 404 }
+      );
+    }
+
+    if (error.response?.status === 429) {
+      return NextResponse.json(
+        { error: "API rate limit exceeded. Please try again later." },
+        { status: 429 }
+      );
+    }
 
     return NextResponse.json(
       {
         error: "Failed to fetch vehicle data",
-        details: error.message,
+        details: error.response?.data?.message || error.message,
+        status: error.response?.status || 500,
       },
       { status: error.response?.status || 500 }
     );
