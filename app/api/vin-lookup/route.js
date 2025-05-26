@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
 
-const NHTSA_API_BASE_URL = "https://vpic.nhtsa.dot.gov/api/vehicles/decodevin";
+const AUTO_DEV_API_BASE_URL = "https://auto.dev/api/vin";
+const AUTO_DEV_API_KEY = process.env.AUTO_DEV_API_KEY;
 
 export async function GET(request) {
   try {
@@ -19,87 +20,45 @@ export async function GET(request) {
 
     console.log(`Looking up VIN: ${vin}`);
 
-    // Call NHTSA API
-    const nhtsaUrl = `${NHTSA_API_BASE_URL}/${encodeURIComponent(
-      vin
-    )}?format=json`;
-    console.log("Calling NHTSA API:", nhtsaUrl);
+    // Call auto.dev API
+    const apiUrl = `${AUTO_DEV_API_BASE_URL}/${encodeURIComponent(vin)}`;
+    console.log("Calling auto.dev API:", apiUrl);
 
-    const response = await axios.get(nhtsaUrl);
-    console.log("NHTSA API Response:", response.data);
+    const response = await axios.get(apiUrl, {
+      headers: {
+        "X-API-Key": AUTO_DEV_API_KEY,
+        Accept: "application/json",
+      },
+    });
 
-    if (response.data && response.data.Results) {
-      // Extract relevant information from the response
-      const results = response.data.Results;
-      const getValue = (variable) => {
-        const item = results.find((r) => r.Variable === variable);
-        return item ? item.Value : null;
-      };
+    console.log("auto.dev API Response:", response.data);
 
-      // Get error information
-      const errorCode = getValue("Error Code");
-      const errorText = getValue("Error Text");
-
-      // Even if there are errors, try to extract whatever data we can
+    if (response.data) {
+      // Map the auto.dev response to our format
       const carDetails = {
-        make: getValue("Make") || "",
-        model: getValue("Model") || "",
-        year: getValue("Model Year") || "",
-        engine: getValue("Engine Model") || getValue("Displacement (L)") || "",
-        fuel: getValue("Fuel Type - Primary") || "",
-        transmission: getValue("Transmission Style") || "",
-        driveType: getValue("Drive Type") || "",
-        vehicleType: getValue("Vehicle Type") || "",
-        bodyClass: getValue("Body Class") || "",
-        manufacturer: getValue("Manufacturer Name") || "",
+        make: response.data.make.name || "",
+        model: response.data.model.name || "",
+        year: response.data.years[0]?.year || "",
+        engine: response.data.engine || response.data.engineSize || "",
+        fuel: response.data.engine?.fuelType || "",
+        transmission: response.data.transmission.transmissionType || "",
+        driveType: response.data.driveType || "",
+        vehicleType: response.data.vehicleType || "",
+        bodyClass: response.data.categories.primaryBodyType || "",
+        manufacturer: response.data.make.name || "",
         vin: vin,
-        errors: errorText
-          ? errorText
-              .split(";")
-              .map((e) => e.trim())
-              .filter((e) => e)
-          : [],
+        // Additional details if available
+        trim: response.data.trim || "",
+        doors: response.data.numOfDoors?.toString() || "",
+        horsepower: response.data.engine?.horsepower.toString() || "",
       };
 
-      // If we got some useful data despite errors, return it with a warning
-      if (
-        carDetails.make ||
-        carDetails.manufacturer ||
-        carDetails.vehicleType
-      ) {
-        const status = errorCode ? 206 : 200; // 206 Partial Content if there were errors
-        return NextResponse.json(
-          {
-            ...carDetails,
-            results,
-            warning: errorText || null,
-          },
-          { status }
-        );
-      }
-
-      // If no useful data and there are errors, return error response
-      if (errorText) {
-        return NextResponse.json(
-          {
-            error: "VIN validation failed",
-            details: errorText,
-            partialData: carDetails,
-          },
-          { status: 400 }
-        );
-      }
-
-      // If no data at all
-      return NextResponse.json(
-        { error: "No vehicle data found" },
-        { status: 404 }
-      );
+      return NextResponse.json(carDetails);
     }
 
     return NextResponse.json(
-      { error: "Invalid response from NHTSA API" },
-      { status: 502 }
+      { error: "No vehicle data found" },
+      { status: 404 }
     );
   } catch (error) {
     console.error("Error in VIN lookup route:", {
@@ -108,10 +67,33 @@ export async function GET(request) {
       status: error.response?.status,
     });
 
+    // Handle specific error cases
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      return NextResponse.json({ error: "Invalid API key" }, { status: 401 });
+    }
+
+    if (error.response?.status === 404) {
+      return NextResponse.json(
+        { error: "Vehicle not found in database" },
+        { status: 404 }
+      );
+    }
+
+    if (error.response?.status === 400) {
+      return NextResponse.json(
+        {
+          error: "Invalid request",
+          details:
+            error.response?.data?.message || "Please check the VIN number",
+        },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
       {
         error: "Failed to fetch vehicle data",
-        details: error.message,
+        details: error.response?.data?.message || error.message,
       },
       { status: error.response?.status || 500 }
     );

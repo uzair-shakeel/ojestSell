@@ -12,22 +12,22 @@ export default function StepTwo({
   const { getToken } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [localData, setLocalData] = useState({
-    make: formData.make,
-    model: formData.model,
-    trim: formData.trim,
-    type: formData.type,
-    year: formData.year,
-    color: formData.color,
-    mileage: formData.mileage,
-    drivetrain: formData.drivetrain,
-    transmission: formData.transmission,
-    fuel: formData.fuel,
-    engine: formData.engine,
-    horsepower: formData.horsepower,
-    accidentHistory: formData.accidentHistory,
-    serviceHistory: formData.serviceHistory,
-    vin: formData.vin,
-    country: formData.country,
+    make: formData.make || "",
+    model: formData.model || "",
+    trim: formData.trim || "",
+    type: formData.type || "",
+    year: formData.year || "",
+    color: formData.color || "",
+    mileage: formData.mileage || "",
+    drivetrain: formData.driveType || "",
+    transmission: formData.transmission || "",
+    fuel: formData.fuel || "",
+    engine: formData.engine || "",
+    horsepower: formData.horsepower || "",
+    accidentHistory: formData.accidentHistory || "",
+    serviceHistory: formData.serviceHistory || "",
+    vin: formData.vin || "",
+    country: formData.country || "",
   });
 
   const [makes, setMakes] = useState<string[]>([]); // State for car makes
@@ -416,35 +416,26 @@ export default function StepTwo({
           </select>
         </div>
 
-        {/* VIN - Modified to include lookup button */}
+        {/* VIN - Read only if provided from Step One */}
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">VIN</label>
-          <div className="flex">
-            <input
-              type="text"
-              placeholder="VIN"
-              className="border p-3 w-full rounded-l h-12"
-              value={localData.vin}
-              onChange={(e) =>
-                setLocalData({
-                  ...localData,
-                  vin: e.target.value.toUpperCase(),
-                })
-              }
-              maxLength={17}
-            />
-            <button
-              type="button"
-              onClick={handleVinLookup}
-              disabled={isLoading}
-              className="bg-blue-500 text-white px-4 rounded-r h-12 hover:bg-blue-600 transition-colors"
-            >
-              {isLoading ? "Loading..." : "Lookup"}
-            </button>
-          </div>
-          <p className="text-xs text-gray-500 mt-1">
-            Enter VIN to auto-fill car details from CEPiK database
-          </p>
+          <input
+            type="text"
+            placeholder="VIN"
+            className="border p-3 w-full rounded h-12 bg-gray-100"
+            value={localData.vin}
+            onChange={(e) =>
+              setLocalData({
+                ...localData,
+                vin: e.target.value.toUpperCase(),
+              })
+            }
+            readOnly={!!formData.vin}
+            maxLength={17}
+          />
+          {formData.vin && (
+            <p className="text-xs text-gray-500 mt-1">VIN provided in Step 1</p>
+          )}
         </div>
 
         {/* Country of Origin */}
