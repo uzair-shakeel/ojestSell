@@ -271,7 +271,7 @@ export const getRecommendedCars = async (carId: string): Promise<CarData[]> => {
   }
 };
 
-// Get car details from VIN using NHTSA API
+// Get car details from VIN using vindecoder.eu API
 export const getCarDetailsByVin = async (
   vin: string,
   getToken: () => Promise<string | null>
@@ -283,9 +283,12 @@ export const getCarDetailsByVin = async (
   fuel?: string;
   transmission?: string;
   driveType?: string;
-  vehicleType?: string;
   bodyClass?: string;
   vin: string;
+  manufacturer?: string;
+  trim?: string;
+  horsepower?: string;
+  engineDetails?: string;
 }> => {
   try {
     console.log(`Fetching car details for VIN: ${vin}`);

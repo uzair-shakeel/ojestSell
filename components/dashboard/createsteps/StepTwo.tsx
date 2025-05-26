@@ -109,7 +109,8 @@ export default function StepTwo({
         fuel: carDetails.fuel || localData.fuel,
         transmission: carDetails.transmission || localData.transmission,
         drivetrain: carDetails.driveType || localData.drivetrain,
-        type: carDetails.bodyClass || carDetails.vehicleType || localData.type,
+        type: carDetails.bodyClass || localData.type,
+        horsepower: carDetails.horsepower || localData.horsepower,
       };
 
       // Update local state
@@ -119,36 +120,34 @@ export default function StepTwo({
       updateFormData(updatedData);
 
       // Show success message with details of what was found
-      const foundFields = [];
-      if (carDetails.make) foundFields.push("Make");
-      if (carDetails.model) foundFields.push("Model");
-      if (carDetails.year) foundFields.push("Year");
-      if (carDetails.engine) foundFields.push("Engine");
-      if (carDetails.fuel) foundFields.push("Fuel type");
-      if (carDetails.transmission) foundFields.push("Transmission");
-      if (carDetails.driveType) foundFields.push("Drive type");
-      if (carDetails.bodyClass || carDetails.vehicleType)
-        foundFields.push("Vehicle type");
+      const foundFields = Object.entries(carDetails)
+        .filter(([_, value]) => value && value !== "")
+        .map(([key, value]) => {
+          // Format the field name for display
+          const formattedKey =
+            key.charAt(0).toUpperCase() +
+            key
+              .slice(1)
+              .replace(/([A-Z])/g, " $1")
+              .trim();
+          return `${formattedKey}: ${value}`;
+        });
 
       let message = "";
       if (foundFields.length > 0) {
-        message = `Car details fetched! Found: ${foundFields.join(", ")}`;
-        if (carDetails.warning) {
-          message += `\n\nWarning: ${carDetails.warning}`;
+        message = `Car details found!\n\n${foundFields.join("\n")}`;
+        if (carDetails.engineDetails) {
+          message += `\n\nEngine Details: ${carDetails.engineDetails}`;
         }
       } else {
         message =
           "No additional details were available. Please enter details manually.";
-        if (carDetails.warning) {
-          message += `\n\nReason: ${carDetails.warning}`;
-        }
       }
 
       alert(message);
     } catch (error: any) {
       console.error("Error fetching car details:", error);
 
-      // Provide a more specific error message if possible
       let errorMessage =
         "Failed to fetch car details. Please enter the details manually.";
       let details = "";
