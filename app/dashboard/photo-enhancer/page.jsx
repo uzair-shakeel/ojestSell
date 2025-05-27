@@ -100,6 +100,8 @@ export default function PhotoEnhancer() {
     y: 0,
   });
   const blurBoxRef = useRef(null);
+  const [isBlurringPlate, setIsBlurringPlate] = useState(false);
+  const [plateBlurError, setPlateBlurError] = useState(null);
 
   // Load background removal module
   useEffect(() => {
@@ -2651,6 +2653,71 @@ export default function PhotoEnhancer() {
     );
   };
 
+  // Add function to blur number plate
+  const blurNumberPlate = async () => {
+    if (!selectedImage) {
+      alert("Please select an image first");
+      return;
+    }
+
+    setIsBlurringPlate(true);
+    setPlateBlurError(null);
+
+    try {
+      // Create FormData and append the image file
+      const formData = new FormData();
+      formData.append("file", selectedImage);
+
+      console.log("Sending request to blur number plate...");
+      const response = await fetch("/api/blur-plate", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Received response:", data);
+
+      if (data.processed_image) {
+        // The processed_image is already a complete data URL, no need to add prefix
+        const imageUrl = data.processed_image;
+
+        // Update the preview with the blurred image
+        setPreviewUrl(imageUrl);
+
+        // Convert base64 to File object for further processing
+        // Extract the base64 data from the data URL
+        const base64Data = imageUrl.split(",")[1];
+        const byteString = atob(base64Data);
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+          ia[i] = byteString.charCodeAt(i);
+        }
+        const blob = new Blob([ab], { type: "image/jpeg" });
+        const file = new File([blob], "blurred-plate.jpg", {
+          type: "image/jpeg",
+        });
+
+        // Update the selected image with the blurred version
+        setSelectedImage(file);
+        setOriginalImage(file);
+      } else {
+        throw new Error("No processed image received in response");
+      }
+    } catch (error) {
+      console.error("Error blurring number plate:", error);
+      setPlateBlurError(
+        error.message || "Failed to blur number plate. Please try again."
+      );
+    } finally {
+      setIsBlurringPlate(false);
+    }
+  };
+
   return (
     <div className="container mx-auto py-8 px-4">
       <style jsx>{`
@@ -2828,13 +2895,12 @@ export default function PhotoEnhancer() {
 
             <div className="mt-6 flex flex-wrap justify-center gap-4">
               <button
-                onClick={() => fileInputRef.current.click()}
+                onClick={() => fileInputRef.current?.click()}
                 className="btn btn-primary flex items-center gap-2"
               >
                 <FiUpload /> Upload Image
               </button>
 
-              {/* Uncomment the download button */}
               <button
                 onClick={downloadImage}
                 className="btn btn-outline flex items-center gap-2"
@@ -2868,9 +2934,19 @@ export default function PhotoEnhancer() {
               </button>
 
               <button
-                onClick={networkError ? retryLoading : removeBackground}
+                onClick={blurNumberPlate}
+                className="btn btn-outline btn-info flex items-center gap-2"
+                disabled={!selectedImage || isBlurringPlate}
+              >
+                <FaCar /> {isBlurringPlate ? "Blurring..." : "Blur Plate"}
+              </button>
+
+              <button
+                onClick={() => setShowBgRemovalModal(true)}
                 className={`btn btn-outline ${
-                  networkError ? "btn-warning" : "btn-accent"
+                  !selectedImage || !backgroundRemovalLoaded
+                    ? "btn-warning"
+                    : "btn-accent"
                 } flex items-center gap-2`}
                 disabled={!selectedImage || isProcessingBg}
               >
@@ -2894,6 +2970,10 @@ export default function PhotoEnhancer() {
                 accept="image/*"
               />
             </div>
+
+            {plateBlurError && (
+              <div className="mt-4 text-red-500 text-sm">{plateBlurError}</div>
+            )}
 
             {/* Remove the blur intensity slider and replace with simple controls */}
             {showBlurBox && (
