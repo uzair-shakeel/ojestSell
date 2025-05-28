@@ -12,26 +12,27 @@ export default function StepTwo({
   const { getToken } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [localData, setLocalData] = useState({
-    make: formData.make,
-    model: formData.model,
-    trim: formData.trim,
-    type: formData.type,
-    year: formData.year,
-    color: formData.color,
-    mileage: formData.mileage,
-    drivetrain: formData.drivetrain,
-    transmission: formData.transmission,
-    fuel: formData.fuel,
-    engine: formData.engine,
-    horsepower: formData.horsepower,
-    accidentHistory: formData.accidentHistory,
-    serviceHistory: formData.serviceHistory,
-    vin: formData.vin,
-    country: formData.country,
+    make: formData.make || "",
+    model: formData.model || "",
+    trim: formData.trim || "",
+    type: formData.type || "",
+    year: formData.year || "",
+    color: formData.color || "",
+    mileage: formData.mileage || "",
+    drivetrain: formData.drivetrain || "",
+    transmission: formData.transmission || "",
+    fuel: formData.fuel || "",
+    engine: formData.engine || "",
+    horsepower: formData.horsepower || "",
+    accidentHistory: formData.accidentHistory || "",
+    serviceHistory: formData.serviceHistory || "",
+    vin: formData.vin || "",
+    country: formData.country || "",
   });
 
   const [makes, setMakes] = useState<string[]>([]); // State for car makes
   const [models, setModels] = useState<string[]>([]); // State for car models
+  const [carData, setCarData] = useState<any>(null); // Store the full car data
   const years = Array.from(
     new Array(50),
     (_, i) => new Date().getFullYear() - i
@@ -43,6 +44,7 @@ export default function StepTwo({
     fetch("/data/carMakesModels.json")
       .then((response) => response.json())
       .then((data) => {
+        setCarData(data); // Store the full car data
         const makes = Object.keys(data.makesAndModels); // Extract all car makes
         setMakes(makes); // Set the makes state
       })
@@ -53,20 +55,19 @@ export default function StepTwo({
 
   // Update models when a make is selected
   useEffect(() => {
-    if (localData.make) {
-      fetch("/data/carMakesModels.json")
-        .then((response) => response.json())
-        .then((data) => {
-          const models = data.makesAndModels[localData.make]; // Get models for the selected make
-          setModels(models || []); // Set the models state
-        })
-        .catch((error) => {
-          console.error("Error fetching car data:", error);
-        });
+    if (localData.make && carData) {
+      let modelsList = carData.makesAndModels[localData.make] || [];
+
+      // If we have a model from VIN lookup that's not in the list, add it
+      if (localData.model && !modelsList.includes(localData.model)) {
+        modelsList = [...modelsList, localData.model];
+      }
+
+      setModels(modelsList);
     } else {
       setModels([]); // Reset models if no make is selected
     }
-  }, [localData.make]);
+  }, [localData.make, localData.model, carData]);
 
   const handleNext = () => {
     if (!localData.make) {

@@ -193,7 +193,7 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
               disabled={isLoading}
               className="bg-blue-500 text-white px-4 rounded-r h-12 hover:bg-blue-600 transition-colors disabled:bg-blue-300"
             >
-              {isLoading ? "Loading..." : "Fill Details"}
+              {isLoading ? "Loading..." : "Lookup"}
             </button>
           </div>
           <p className="text-xs text-gray-500 mt-1">
