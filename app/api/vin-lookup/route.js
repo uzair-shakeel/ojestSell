@@ -6,6 +6,39 @@ const API_PREFIX = "https://api.vindecoder.eu/3.2";
 const API_KEY = process.env.VIN_DECODER_API_KEY;
 const SECRET_KEY = process.env.VIN_DECODER_SECRET_KEY;
 
+// Helper function to map transmission types
+const mapTransmission = (value) => {
+  if (!value) return "";
+  const lower = value.toLowerCase();
+  if (lower.includes("manual") || lower.includes("standard")) return "Manual";
+  if (lower.includes("automatic")) return "Automatic";
+  if (lower.includes("semi")) return "Semi-Automatic";
+  return "";
+};
+
+// Helper function to map fuel types
+const mapFuelType = (value) => {
+  if (!value) return "";
+  const lower = value.toLowerCase();
+  if (lower.includes("gasoline")) return "Petrol";
+  if (lower.includes("diesel")) return "Diesel";
+  if (lower.includes("hybrid")) return "Hybrid";
+  if (lower.includes("electric")) return "Electric";
+  return "";
+};
+
+// Helper function to map drive types
+const mapDriveType = (value) => {
+  if (!value) return "";
+  const lower = value.toLowerCase();
+  if (lower.includes("front-wheel")) return "FWD";
+  if (lower.includes("rear-wheel")) return "RWD";
+  if (lower.includes("all-wheel") || lower.includes("all wheel")) return "AWD";
+  if (lower.includes("4x4") || lower === "4wd") return "4WD";
+  if (lower.includes("2wd")) return "2WD";
+  return "";
+};
+
 export async function GET(request) {
   try {
     // Get VIN from URL
@@ -58,13 +91,9 @@ export async function GET(request) {
         model: getValue("Model"),
         year: getValue("Model Year")?.toString(),
         engine: getValue("Engine Displacement (ccm)")?.toString(),
-        fuel: getValue("Fuel Type - Primary"),
-        transmission:
-          getValue("Transmission") === "Automatic transmission"
-            ? "Automatic"
-            : getValue("Transmission"),
-        driveType:
-          getValue("Drive") === "All wheel drive" ? "AWD" : getValue("Drive"),
+        fuel: mapFuelType(getValue("Fuel Type - Primary")),
+        transmission: mapTransmission(getValue("Transmission")),
+        driveType: mapDriveType(getValue("Drive")),
         bodyClass: getValue("Body"),
         vin: getValue("VIN"),
         manufacturer: getValue("Manufacturer"),

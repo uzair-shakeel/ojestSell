@@ -2664,6 +2664,10 @@ export default function PhotoEnhancer() {
     setPlateBlurError(null);
 
     try {
+      // Store the original image and URL before processing
+      const originalImageBackup = selectedImage;
+      const originalUrlBackup = previewUrl;
+
       // Create FormData and append the image file
       const formData = new FormData();
       formData.append("file", selectedImage);
@@ -2682,14 +2686,10 @@ export default function PhotoEnhancer() {
       console.log("Received response:", data);
 
       if (data.processed_image) {
-        // The processed_image is already a complete data URL, no need to add prefix
+        // The processed_image is already a complete data URL
         const imageUrl = data.processed_image;
 
-        // Update the preview with the blurred image
-        setPreviewUrl(imageUrl);
-
         // Convert base64 to File object for further processing
-        // Extract the base64 data from the data URL
         const base64Data = imageUrl.split(",")[1];
         const byteString = atob(base64Data);
         const ab = new ArrayBuffer(byteString.length);
@@ -2702,9 +2702,16 @@ export default function PhotoEnhancer() {
           type: "image/jpeg",
         });
 
-        // Update the selected image with the blurred version
+        // Update the preview with the blurred image
+        setPreviewUrl(imageUrl);
         setSelectedImage(file);
-        setOriginalImage(file);
+
+        // Keep the original image for background removal
+        setOriginalImage(originalImageBackup);
+        setOriginalImageUrl(originalUrlBackup);
+
+        // Show success message
+        alert(`Successfully blurred ${data.plates_found} license plate(s)`);
       } else {
         throw new Error("No processed image received in response");
       }
