@@ -89,7 +89,10 @@ export function BrowseCategories() {
           {displayedBrands.map((brand) => (
             <Link
               key={brand.id}
-              href={`/brand/${brand.name.toLowerCase()}`}
+              href={{
+                pathname: "/website/cars",
+                query: { make: brand.name },
+              }}
               className="relative bg-white border border-gray-400 rounded-lg shadow-sm p-6 flex flex-col md:flex-row items-center gap-4 hover:shadow-md transition-shadow"
             >
               <div className="relative w-24 h-12">

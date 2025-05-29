@@ -9,6 +9,7 @@ const Page = () => {
   const [view, setView] = useState("list");
   const [cars, setCars] = useState([]);
   const [showMobileFilter, setShowMobileFilter] = useState(false);
+  const [sortBy, setSortBy] = useState("relevance");
 
   // Handle responsive view toggle (list/grid) based on screen size
   useEffect(() => {
@@ -41,10 +42,44 @@ const Page = () => {
     };
   }, [showMobileFilter]);
 
+  // Handle sorting
+  const handleSort = (value) => {
+    setSortBy(value);
+    let sortedCars = [...cars];
+
+    switch (value) {
+      case "price":
+        sortedCars.sort(
+          (a, b) => a.financialInfo.priceNetto - b.financialInfo.priceNetto
+        );
+        break;
+      case "mileage":
+        sortedCars.sort((a, b) => Number(a.mileage) - Number(b.mileage));
+        break;
+      case "year":
+        sortedCars.sort((a, b) => Number(b.year) - Number(a.year));
+        break;
+      default:
+        // For relevance, we'll use the original order from the API
+        getAllCars()
+          .then((data) => setCars(data))
+          .catch((error) => console.error("Error fetching cars:", error));
+        return;
+    }
+
+    setCars(sortedCars);
+  };
+
   // Load all cars on initial render
   useEffect(() => {
     getAllCars()
-      .then((data) => setCars(data))
+      .then((data) => {
+        setCars(data);
+        // Apply initial sorting if needed
+        if (sortBy !== "relevance") {
+          handleSort(sortBy);
+        }
+      })
       .catch((error) => console.error("Error fetching cars:", error));
   }, []);
 
@@ -52,7 +87,11 @@ const Page = () => {
   const handleApplyFilters = async (queryParams) => {
     try {
       const filteredCars = await searchCars(queryParams);
+      // Apply current sorting to filtered results
       setCars(filteredCars);
+      if (sortBy !== "relevance") {
+        handleSort(sortBy);
+      }
       setShowMobileFilter(false); // Close mobile filter after applying
     } catch (error) {
       console.error("Error applying filters:", error);
@@ -95,7 +134,11 @@ const Page = () => {
             >
               Filter
             </button>
-            <select className="flex items-center border border-black rounded bg-transparent px-7 py-2 text-black font-medium">
+            <select
+              className="flex items-center border border-black rounded bg-transparent px-7 py-2 text-black font-medium"
+              value={sortBy}
+              onChange={(e) => handleSort(e.target.value)}
+            >
               <option value="relevance">Sort by</option>
               <option value="price">Price</option>
               <option value="mileage">Mileage</option>

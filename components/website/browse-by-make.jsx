@@ -235,7 +235,10 @@ export function BrowseByMake() {
                     <h3 className="text-4xl font-bold mb-4">{make.name}</h3>
                     <p className="text-xl mb-8">{make.description}</p>
                     <Link
-                      href={`/make/${make.name.toLowerCase()}`}
+                      href={{
+                        pathname: "/website/cars",
+                        query: { make: make.name },
+                      }}
                       className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-8 rounded-full transition-colors text-lg"
                     >
                       View {make.name} Vehicles

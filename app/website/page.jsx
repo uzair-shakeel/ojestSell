@@ -6,7 +6,6 @@ const Page = () => {
   const router = useRouter();
 
   useEffect(() => {
-    // Redirect to /website when the component mounts
     router.push("/");
   }, [router]);
 
