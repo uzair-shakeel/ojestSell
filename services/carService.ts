@@ -210,17 +210,20 @@ export const updateCarStatus = async (
 export const searchCars = async (queryParams: {
   make?: string;
   model?: string;
-  year?: string;
-  priceMin?: number;
-  priceMax?: number;
+  yearFrom?: string;
+  yearTo?: string;
+  type?: string;
+  condition?: "New" | "Used";
   mileageMin?: number;
   mileageMax?: number;
-  fuel?: "Petrol" | "Diesel" | "Electric" | "Hybrid";
+  drivetrain?: "FWD" | "RWD" | "AWD" | "4WD" | "2WD";
   transmission?: "Manual" | "Automatic" | "Semi-Automatic";
-  color?: string;
-  type?: string;
-  location?: [number, number];
-  radius?: number;
+  fuel?: "Petrol" | "Diesel" | "Electric" | "Hybrid";
+  engine?: string;
+  serviceHistory?: "Yes" | "No";
+  accidentHistory?: "Yes" | "No";
+  location?: [number, number]; // [longitude, latitude]
+  radius?: number; // in kilometers
 }): Promise<CarData[]> => {
   try {
     const response = await axios.get(`${API_BASE_URL}/api/cars/search`, {

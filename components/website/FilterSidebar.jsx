@@ -68,20 +68,68 @@ export default function FilterSidebar({
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
+
+    // If on desktop (no mobile filter prop or not visible), apply filters immediately
+    if (!setShowMobileFilter) {
+      const updatedFilters = { ...filters, [name]: value };
+
+      // Convert location to coordinates (using placeholder coordinates for now)
+      const locationParams = updatedFilters.location
+        ? {
+            latitude: "50.0647", // Placeholder latitude
+            longitude: "19.945", // Placeholder longitude
+            maxDistance: updatedFilters.maxDistance,
+          }
+        : {};
+
+      // Prepare query params for the backend
+      const queryParams = {
+        ...locationParams,
+        make: updatedFilters.make || undefined,
+        model: updatedFilters.model || undefined,
+        type: updatedFilters.type || undefined,
+        yearFrom: updatedFilters.yearFrom || undefined,
+        yearTo: updatedFilters.yearTo || undefined,
+        condition: updatedFilters.condition || undefined,
+        minMileage: updatedFilters.minMileage || undefined,
+        maxMileage: updatedFilters.maxMileage || undefined,
+        drivetrain: updatedFilters.drivetrain || undefined,
+        transmission: updatedFilters.transmission || undefined,
+        fuel: updatedFilters.fuel || undefined,
+        engine: updatedFilters.engine || undefined,
+        serviceHistory: updatedFilters.serviceHistory || undefined,
+        accidentHistory: updatedFilters.accidentHistory || undefined,
+      };
+
+      // Remove any undefined values
+      Object.keys(queryParams).forEach(
+        (key) => queryParams[key] === undefined && delete queryParams[key]
+      );
+
+      onApplyFilters(queryParams);
+    }
   };
 
   const handleApplyFilters = () => {
+    // Convert location to coordinates (using placeholder coordinates for now)
+    // In a real app, you would use a geocoding service here
+    const locationParams = filters.location
+      ? {
+          latitude: "50.0647", // Placeholder latitude
+          longitude: "19.945", // Placeholder longitude
+          maxDistance: filters.maxDistance,
+        }
+      : {};
+
     // Prepare query params for the backend
     const queryParams = {
-      longitude: filters.location ? "19.945" : undefined, // Placeholder; use geocoding in production
-      latitude: filters.location ? "50.0647" : undefined, // Placeholder
-      maxDistance: filters.maxDistance || undefined,
+      ...locationParams,
       make: filters.make || undefined,
       model: filters.model || undefined,
       type: filters.type || undefined,
       yearFrom: filters.yearFrom || undefined,
       yearTo: filters.yearTo || undefined,
-      condition: filters.condition || undefined, // Simplification: takes first condition
+      condition: filters.condition || undefined,
       minMileage: filters.minMileage || undefined,
       maxMileage: filters.maxMileage || undefined,
       drivetrain: filters.drivetrain || undefined,
@@ -91,6 +139,12 @@ export default function FilterSidebar({
       serviceHistory: filters.serviceHistory || undefined,
       accidentHistory: filters.accidentHistory || undefined,
     };
+
+    // Remove any undefined values
+    Object.keys(queryParams).forEach(
+      (key) => queryParams[key] === undefined && delete queryParams[key]
+    );
+
     onApplyFilters(queryParams); // Pass filters to parent
     closeMobileFilter(); // Hide the filter
   };
@@ -115,6 +169,9 @@ export default function FilterSidebar({
       accidentHistory: "",
     });
     onApplyFilters({}); // Reset filters by sending empty params
+    if (setShowMobileFilter) {
+      setShowMobileFilter(false); // Close mobile filter after reset on mobile
+    }
   };
 
   return (
@@ -130,9 +187,11 @@ export default function FilterSidebar({
               Reset
             </button>
           </div>
-          <button onClick={closeMobileFilter} className="text-md md:hidden">
-            <X size={30} />
-          </button>
+          {setShowMobileFilter && (
+            <button onClick={closeMobileFilter} className="text-md md:hidden">
+              <X size={30} />
+            </button>
+          )}
         </div>
 
         <div
@@ -561,14 +620,17 @@ export default function FilterSidebar({
             </div>
           </div>
         </div>
-        <div className="px-4 py-4 border-t sticky md:hidden bottom-0 bg-white z-10">
-          <button
-            onClick={handleApplyFilters}
-            className="text-md bg-blue-600 text-white px-4 py-3 rounded-md w-full font-medium"
-          >
-            Apply Filters
-          </button>
-        </div>
+        {/* Only show Apply Filters button on mobile */}
+        {setShowMobileFilter && (
+          <div className="px-4 py-4 border-t sticky md:hidden bottom-0 bg-white z-10">
+            <button
+              onClick={handleApplyFilters}
+              className="text-md bg-blue-600 text-white px-4 py-3 rounded-md w-full font-medium"
+            >
+              Apply Filters
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
