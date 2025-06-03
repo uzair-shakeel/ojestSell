@@ -4,14 +4,16 @@ import FilterSidebar from "../../../components/website/FilterSidebar";
 import CarCard from "../../../components/website/CarCard";
 import Image from "next/image";
 import { getAllCars, searchCars } from "../../../services/carService";
+import { useSearchParams } from "next/navigation";
 
 const Page = () => {
   const [view, setView] = useState("list");
   const [cars, setCars] = useState([]);
   const [showMobileFilter, setShowMobileFilter] = useState(false);
-  const [sortBy, setSortBy] = useState("relevance");
+  const [sortBy, setSortBy] = useState("best-match");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const searchParams = useSearchParams();
 
   // Handle responsive view toggle (list/grid) based on screen size
   useEffect(() => {
@@ -43,6 +45,64 @@ const Page = () => {
       document.body.style.overflow = "auto";
     };
   }, [showMobileFilter]);
+
+  // Handle URL parameters and initial load
+  useEffect(() => {
+    const fetchCarsWithFilters = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        // Get filter values from URL parameters
+        const make = searchParams.get("make");
+        const model = searchParams.get("model");
+        const type = searchParams.get("type");
+        const startYear = searchParams.get("startYear");
+        const endYear = searchParams.get("endYear");
+
+        // If we have any filter parameters, apply them
+        if (make || model || type || startYear || endYear) {
+          // Create filter object with only defined values
+          const filters = {
+            ...(make && { make }),
+            ...(model && { model }),
+            ...(type && { type }),
+            ...(startYear && { yearFrom: startYear }),
+            ...(endYear && { yearTo: endYear }),
+          };
+
+          // Apply filters
+          const allCars = await getAllCars();
+          const filteredCars = allCars.filter((car) => {
+            const makeMatch =
+              !make || car.make.toLowerCase().includes(make.toLowerCase());
+            const modelMatch =
+              !model || car.model.toLowerCase().includes(model.toLowerCase());
+            const typeMatch =
+              !type || car.type.toLowerCase().includes(type.toLowerCase());
+            const yearMatch =
+              (!startYear || Number(car.year) >= Number(startYear)) &&
+              (!endYear || Number(car.year) <= Number(endYear));
+
+            return makeMatch && modelMatch && typeMatch && yearMatch;
+          });
+
+          setCars(filteredCars);
+        } else {
+          // If no filters, get all cars
+          const data = await getAllCars();
+          setCars(data);
+        }
+      } catch (error) {
+        console.error("Error fetching cars:", error);
+        setError(error.message || "Failed to fetch cars");
+        setCars([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCarsWithFilters();
+  }, [searchParams]); // Re-run when URL parameters change
 
   // Handle sorting
   const handleSort = (value) => {
@@ -97,34 +157,6 @@ const Page = () => {
 
     setCars(sortedCars);
   };
-
-  // Load all cars on initial render
-  useEffect(() => {
-    const fetchCars = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const data = await getAllCars();
-        if (Array.isArray(data)) {
-          setCars(data);
-          // Apply initial sorting if needed
-          if (sortBy !== "relevance") {
-            handleSort(sortBy);
-          }
-        } else {
-          throw new Error("Invalid data format received");
-        }
-      } catch (error) {
-        console.error("Error fetching cars:", error);
-        setError(error.message || "Failed to fetch cars");
-        setCars([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCars();
-  }, []);
 
   // Handle filter application from FilterSidebar
   const handleApplyFilters = async (queryParams) => {
