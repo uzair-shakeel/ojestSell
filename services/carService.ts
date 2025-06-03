@@ -2,7 +2,11 @@
 import axios from "axios";
 
 // Define the API base URL directly in this file
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "https://ojest-ap-is.vercel.app";
+
+// Log the API URL being used
+console.log("Using API URL:", API_BASE_URL);
 
 // Interface for the Car data as returned by the backend
 interface CarData {
@@ -113,12 +117,81 @@ export const addCar = async (
 
 // Get all cars (public route, no token required)
 export const getAllCars = async (): Promise<CarData[]> => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/api/cars`);
-    return response.data;
-  } catch (error: any) {
-    throw new Error(error?.response?.data?.message || "Failed to fetch cars");
-  }
+  const maxRetries = 3;
+  let retryCount = 0;
+
+  const tryFetch = async (): Promise<CarData[]> => {
+    try {
+      console.log(
+        `Attempt ${retryCount + 1} to fetch cars from:`,
+        `${API_BASE_URL}/api/cars`
+      );
+
+      const response = await axios.get(`${API_BASE_URL}/api/cars`, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Origin: window.location.origin,
+        },
+        timeout: 10000, // 10 second timeout
+      });
+
+      if (!response.data) {
+        throw new Error("No data received from API");
+      }
+
+      // Handle both array and object responses
+      const cars = Array.isArray(response.data)
+        ? response.data
+        : response.data.cars || [];
+
+      if (!Array.isArray(cars)) {
+        throw new Error("Invalid data format received from API");
+      }
+
+      return cars;
+    } catch (error: any) {
+      // Enhanced error logging
+      const errorDetails = {
+        message: error.message,
+        code: error.code,
+        response: error.response?.data,
+        status: error.response?.status,
+        url: `${API_BASE_URL}/api/cars`,
+        isAxiosError: axios.isAxiosError(error),
+        isNetworkError: error.message === "Network Error",
+        attempt: retryCount + 1,
+      };
+
+      console.error("getAllCars error details:", errorDetails);
+
+      // If we haven't reached max retries, try again
+      if (
+        retryCount < maxRetries - 1 &&
+        (error.message === "Network Error" || error.code === "ECONNABORTED")
+      ) {
+        retryCount++;
+        // Add exponential backoff
+        await new Promise((resolve) =>
+          setTimeout(resolve, Math.pow(2, retryCount) * 1000)
+        );
+        return tryFetch();
+      }
+
+      if (error.message === "Network Error") {
+        throw new Error(
+          `Unable to connect to the API at ${API_BASE_URL}. Please check if the API is running and accessible.`
+        );
+      }
+
+      throw new Error(
+        error?.response?.data?.message ||
+          `Failed to fetch cars: ${error.message}`
+      );
+    }
+  };
+
+  return tryFetch();
 };
 
 // Get car by ID

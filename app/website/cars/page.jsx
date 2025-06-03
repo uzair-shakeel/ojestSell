@@ -10,6 +10,8 @@ const Page = () => {
   const [cars, setCars] = useState([]);
   const [showMobileFilter, setShowMobileFilter] = useState(false);
   const [sortBy, setSortBy] = useState("relevance");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Handle responsive view toggle (list/grid) based on screen size
   useEffect(() => {
@@ -48,19 +50,45 @@ const Page = () => {
     let sortedCars = [...cars];
 
     switch (value) {
-      case "price":
+      case "lowest-price":
         sortedCars.sort(
           (a, b) => a.financialInfo.priceNetto - b.financialInfo.priceNetto
         );
         break;
-      case "mileage":
-        sortedCars.sort((a, b) => Number(a.mileage) - Number(b.mileage));
+      case "highest-price":
+        sortedCars.sort(
+          (a, b) => b.financialInfo.priceNetto - a.financialInfo.priceNetto
+        );
         break;
-      case "year":
-        sortedCars.sort((a, b) => Number(b.year) - Number(a.year));
+      case "lowest-mileage":
+        sortedCars.sort(
+          (a, b) => Number(a.mileage || 0) - Number(b.mileage || 0)
+        );
         break;
+      case "highest-mileage":
+        sortedCars.sort(
+          (a, b) => Number(b.mileage || 0) - Number(a.mileage || 0)
+        );
+        break;
+      case "newest-year":
+        sortedCars.sort((a, b) => Number(b.year || 0) - Number(a.year || 0));
+        break;
+      case "oldest-year":
+        sortedCars.sort((a, b) => Number(a.year || 0) - Number(b.year || 0));
+        break;
+      case "newest-listed":
+        sortedCars.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+        break;
+      case "oldest-listed":
+        sortedCars.sort(
+          (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+        );
+        break;
+      case "best-match":
       default:
-        // For relevance, we'll use the original order from the API
+        // For best match, we'll use the original order from the API
         getAllCars()
           .then((data) => setCars(data))
           .catch((error) => console.error("Error fetching cars:", error));
@@ -72,15 +100,30 @@ const Page = () => {
 
   // Load all cars on initial render
   useEffect(() => {
-    getAllCars()
-      .then((data) => {
-        setCars(data);
-        // Apply initial sorting if needed
-        if (sortBy !== "relevance") {
-          handleSort(sortBy);
+    const fetchCars = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const data = await getAllCars();
+        if (Array.isArray(data)) {
+          setCars(data);
+          // Apply initial sorting if needed
+          if (sortBy !== "relevance") {
+            handleSort(sortBy);
+          }
+        } else {
+          throw new Error("Invalid data format received");
         }
-      })
-      .catch((error) => console.error("Error fetching cars:", error));
+      } catch (error) {
+        console.error("Error fetching cars:", error);
+        setError(error.message || "Failed to fetch cars");
+        setCars([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCars();
   }, []);
 
   // Handle filter application from FilterSidebar
@@ -223,17 +266,45 @@ const Page = () => {
               className="flex items-center border border-black rounded bg-transparent px-7 py-2 text-black font-medium"
               value={sortBy}
               onChange={(e) => handleSort(e.target.value)}
+              disabled={isLoading}
             >
-              <option value="relevance">Sort by</option>
-              <option value="price">Price</option>
-              <option value="mileage">Mileage</option>
-              <option value="year">Year</option>
+              <option value="best-match">Best match</option>
+              <option value="lowest-price">Lowest price</option>
+              <option value="highest-price">Highest price</option>
+              <option value="lowest-mileage">Lowest mileage</option>
+              <option value="highest-mileage">Highest mileage</option>
+              <option value="newest-year">Newest year</option>
+              <option value="oldest-year">Oldest year</option>
+              <option value="newest-listed">Newest listed</option>
+              <option value="oldest-listed">Oldest listed</option>
             </select>
           </div>
 
           {/* Car Cards */}
           <div className={`grid gap-7 grid-cols-1`}>
-            {cars.length > 0 ? (
+            {isLoading ? (
+              <div className="text-center py-8">
+                <div
+                  className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                  role="status"
+                >
+                  <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+                    Loading...
+                  </span>
+                </div>
+                <p className="mt-2 text-gray-600">Loading cars...</p>
+              </div>
+            ) : error ? (
+              <div className="text-center py-8">
+                <p className="text-red-500">{error}</p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  Try Again
+                </button>
+              </div>
+            ) : cars.length > 0 ? (
               cars.map((car) => <CarCard key={car._id} view={view} car={car} />)
             ) : (
               <p className="text-center text-gray-500">No cars found.</p>
