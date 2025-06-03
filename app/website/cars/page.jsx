@@ -86,118 +86,100 @@ const Page = () => {
   // Handle filter application from FilterSidebar
   const handleApplyFilters = async (queryParams) => {
     try {
-      // First try server-side filtering
-      const searchParams = {
-        make: queryParams.make || undefined,
-        model: queryParams.model || undefined,
-        type: queryParams.type || undefined,
-        yearFrom: queryParams.yearFrom || undefined,
-        yearTo: queryParams.yearTo || undefined,
-        mileageMin: queryParams.minMileage
-          ? Number(queryParams.minMileage)
-          : undefined,
-        mileageMax: queryParams.maxMileage
-          ? Number(queryParams.maxMileage)
-          : undefined,
-        fuel: queryParams.fuel || undefined,
-        transmission: queryParams.transmission || undefined,
-        condition: queryParams.condition || undefined,
-        drivetrain: queryParams.drivetrain || undefined,
-        engine: queryParams.engine || undefined,
-        serviceHistory: queryParams.serviceHistory || undefined,
-        accidentHistory: queryParams.accidentHistory || undefined,
-        // Add location search if coordinates are provided
-        ...(queryParams.latitude && queryParams.longitude
-          ? {
-              location: [
-                Number(queryParams.longitude),
-                Number(queryParams.latitude),
-              ],
-              radius: queryParams.maxDistance
-                ? Number(queryParams.maxDistance)
-                : undefined,
-            }
-          : {}),
-      };
+      // Get all cars first
+      const allCars = await getAllCars();
 
-      try {
-        const filteredCars = await searchCars(searchParams);
-        setCars(filteredCars);
-      } catch (error) {
-        console.warn(
-          "Server-side filtering failed, falling back to client-side filtering:",
-          error
+      // Client-side filtering
+      const filteredCars = allCars.filter((car) => {
+        // Basic matching function for string values
+        const matches = (value, filter) => {
+          if (!filter) return true;
+          if (!value) return false;
+          return String(value)
+            .toLowerCase()
+            .includes(String(filter).toLowerCase());
+        };
+
+        // Numeric range matching function
+        const inRange = (value, min, max) => {
+          if (!value) return false;
+          const numValue = Number(value);
+          if (min && max)
+            return numValue >= Number(min) && numValue <= Number(max);
+          if (min) return numValue >= Number(min);
+          if (max) return numValue <= Number(max);
+          return true;
+        };
+
+        // Check each filter condition
+        const makeMatch = matches(car.make, queryParams.make);
+        const modelMatch = matches(car.model, queryParams.model);
+        const typeMatch = matches(car.type, queryParams.type);
+
+        // Year range check
+        const yearMatch = inRange(
+          car.year,
+          queryParams.yearFrom,
+          queryParams.yearTo
         );
 
-        // Fallback to client-side filtering
-        const allCars = await getAllCars();
-        const filteredCars = allCars.filter((car) => {
-          // Basic matching function
-          const matches = (value, filter) =>
-            !filter ||
-            String(value).toLowerCase().includes(String(filter).toLowerCase());
+        // Mileage range check
+        const mileageMatch = inRange(
+          car.mileage,
+          queryParams.minMileage,
+          queryParams.maxMileage
+        );
 
-          // Check each filter condition
-          const makeMatch = matches(car.make, queryParams.make);
-          const modelMatch = matches(car.model, queryParams.model);
-          const typeMatch = matches(car.type, queryParams.type);
-          const yearMatch =
-            (!queryParams.yearFrom ||
-              Number(car.year) >= Number(queryParams.yearFrom)) &&
-            (!queryParams.yearTo ||
-              Number(car.year) <= Number(queryParams.yearTo));
-          const mileageMatch =
-            (!queryParams.minMileage ||
-              Number(car.mileage) >= Number(queryParams.minMileage)) &&
-            (!queryParams.maxMileage ||
-              Number(car.mileage) <= Number(queryParams.maxMileage));
-          const conditionMatch = matches(car.condition, queryParams.condition);
-          const drivetrainMatch = matches(
-            car.drivetrain,
-            queryParams.drivetrain
-          );
-          const transmissionMatch = matches(
-            car.transmission,
-            queryParams.transmission
-          );
-          const fuelMatch = matches(car.fuel, queryParams.fuel);
-          const engineMatch = matches(car.engine, queryParams.engine);
-          const serviceHistoryMatch = matches(
-            car.serviceHistory,
-            queryParams.serviceHistory
-          );
-          const accidentHistoryMatch = matches(
-            car.accidentHistory,
-            queryParams.accidentHistory
-          );
+        // Exact matches for specific fields
+        const conditionMatch =
+          !queryParams.condition || car.condition === queryParams.condition;
+        const drivetrainMatch =
+          !queryParams.drivetrain || car.drivetrain === queryParams.drivetrain;
+        const transmissionMatch =
+          !queryParams.transmission ||
+          car.transmission === queryParams.transmission;
+        const fuelMatch = !queryParams.fuel || car.fuel === queryParams.fuel;
+        const engineMatch = matches(car.engine, queryParams.engine);
+        const serviceHistoryMatch =
+          !queryParams.serviceHistory ||
+          car.serviceHistory === queryParams.serviceHistory;
+        const accidentHistoryMatch =
+          !queryParams.accidentHistory ||
+          car.accidentHistory === queryParams.accidentHistory;
 
-          // Return true only if all specified filters match
-          return (
-            makeMatch &&
-            modelMatch &&
-            typeMatch &&
-            yearMatch &&
-            mileageMatch &&
-            conditionMatch &&
-            drivetrainMatch &&
-            transmissionMatch &&
-            fuelMatch &&
-            engineMatch &&
-            serviceHistoryMatch &&
-            accidentHistoryMatch
-          );
-        });
+        // Return true only if all specified filters match
+        return (
+          makeMatch &&
+          modelMatch &&
+          typeMatch &&
+          yearMatch &&
+          mileageMatch &&
+          conditionMatch &&
+          drivetrainMatch &&
+          transmissionMatch &&
+          fuelMatch &&
+          engineMatch &&
+          serviceHistoryMatch &&
+          accidentHistoryMatch
+        );
+      });
 
-        setCars(filteredCars);
-      }
+      // Update the cars state with filtered results
+      setCars(filteredCars);
 
-      // Apply current sorting to filtered results if needed
+      // Apply current sorting if needed
       if (sortBy !== "relevance") {
         handleSort(sortBy);
       }
-      setShowMobileFilter(false); // Close mobile filter after applying
+
+      // Close mobile filter if it's open
+      setShowMobileFilter(false);
     } catch (error) {
       console.error("Error applying filters:", error);
+      // If there's an error, try to at least show all cars
+      getAllCars()
+        .then((data) => setCars(data))
+        .catch((err) => console.error("Error fetching all cars:", err));
     }
   };
 

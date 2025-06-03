@@ -67,24 +67,13 @@ export default function FilterSidebar({
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFilters((prev) => ({ ...prev, [name]: value }));
+    const updatedFilters = { ...filters, [name]: value };
+    setFilters(updatedFilters);
 
-    // If on desktop (no mobile filter prop or not visible), apply filters immediately
+    // If on desktop (no mobile filter prop), apply filters immediately
     if (!setShowMobileFilter) {
-      const updatedFilters = { ...filters, [name]: value };
-
-      // Convert location to coordinates (using placeholder coordinates for now)
-      const locationParams = updatedFilters.location
-        ? {
-            latitude: "50.0647", // Placeholder latitude
-            longitude: "19.945", // Placeholder longitude
-            maxDistance: updatedFilters.maxDistance,
-          }
-        : {};
-
       // Prepare query params for the backend
       const queryParams = {
-        ...locationParams,
         make: updatedFilters.make || undefined,
         model: updatedFilters.model || undefined,
         type: updatedFilters.type || undefined,
@@ -99,13 +88,24 @@ export default function FilterSidebar({
         engine: updatedFilters.engine || undefined,
         serviceHistory: updatedFilters.serviceHistory || undefined,
         accidentHistory: updatedFilters.accidentHistory || undefined,
+        // Location params
+        ...(updatedFilters.location
+          ? {
+              latitude: "50.0647",
+              longitude: "19.945",
+              maxDistance: updatedFilters.maxDistance,
+            }
+          : {}),
       };
 
-      // Remove any undefined values
-      Object.keys(queryParams).forEach(
-        (key) => queryParams[key] === undefined && delete queryParams[key]
-      );
+      // Remove any undefined or empty string values
+      Object.keys(queryParams).forEach((key) => {
+        if (queryParams[key] === undefined || queryParams[key] === "") {
+          delete queryParams[key];
+        }
+      });
 
+      // Apply filters
       onApplyFilters(queryParams);
     }
   };
