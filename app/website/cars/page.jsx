@@ -1,12 +1,12 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import FilterSidebar from "../../../components/website/FilterSidebar";
 import CarCard from "../../../components/website/CarCard";
 import Image from "next/image";
 import { getAllCars, searchCars } from "../../../services/carService";
 import { useSearchParams } from "next/navigation";
 
-const Page = () => {
+const CarsContent = () => {
   const [view, setView] = useState("list");
   const [cars, setCars] = useState([]);
   const [showMobileFilter, setShowMobileFilter] = useState(false);
@@ -368,6 +368,14 @@ const Page = () => {
         </main>
       </div>
     </div>
+  );
+};
+
+const Page = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CarsContent />
+    </Suspense>
   );
 };
 
