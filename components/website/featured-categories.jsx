@@ -10,22 +10,19 @@ const CATEGORIES = [
   {
     id: 1,
     title: "LUXURY CARS",
-    image:
-      "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop",
+    image: "/luxury.jpg",
     description: "Experience ultimate comfort and style",
   },
   {
     id: 2,
     title: "SPORTS CARS",
-    image:
-      "https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=2564&auto=format&fit=crop",
+    image: "/sports.jpg",
     description: "Feel the thrill of performance",
   },
   {
     id: 3,
     title: "CLASSIC CARS",
-    image:
-      "https://images.unsplash.com/photo-1471444928139-48c5bf5173f8?q=80&w=2942&auto=format&fit=crop",
+    image: "/classic.jpg",
     description: "Timeless elegance on wheels",
   },
 ];

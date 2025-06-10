@@ -15,20 +15,17 @@ const CAR_TYPES = [
   {
     id: 2,
     name: "SEDAN",
-    image:
-      "https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=2564&auto=format&fit=crop",
+    image: "/images/sedan.jpg",
   },
   {
     id: 3,
     name: "KOMBI",
-    image:
-      "https://images.unsplash.com/photo-1567514314761-dcc1c0d64b26?q=80&w=2070&auto=format&fit=crop",
+    image: "/images/kombi.jpg",
   },
   {
     id: 4,
     name: "COUPE",
-    image:
-      "https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?q=80&w=2071&auto=format&fit=crop",
+    image: "/images/coupe.jpg",
   },
   {
     id: 5,
@@ -39,50 +36,42 @@ const CAR_TYPES = [
   {
     id: 6,
     name: "LIMOUSINE",
-    image:
-      "https://images.unsplash.com/photo-1632245889029-e406faaa34cd?q=80&w=2070&auto=format&fit=crop",
+    image: "/images/limousine.jpg",
   },
   {
     id: 7,
     name: "SUV",
-    image:
-      "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=2070&auto=format&fit=crop",
+    image: "/images/suv.jpg",
   },
   {
     id: 8,
     name: "CONVERTIBLE",
-    image:
-      "https://images.unsplash.com/photo-1626668893632-6f3a4466d22f?q=80&w=2072&auto=format&fit=crop",
+    image: "/images/convertable.jpg",
   },
   {
     id: 9,
     name: "PICKUP",
-    image:
-      "https://images.unsplash.com/photo-1558383817-6a5d00b668b9?q=80&w=2071&auto=format&fit=crop",
+    image: "/images/pickup.jpg",
   },
   {
     id: 10,
     name: "OFF-ROAD",
-    image:
-      "https://images.unsplash.com/photo-1536698986031-36d0cd2f07e8?q=80&w=2071&auto=format&fit=crop",
+    image: "/images/offroad.jpg",
   },
   {
     id: 11,
     name: "BUS",
-    image:
-      "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2069&auto=format&fit=crop",
+    image: "/images/bus.jpg",
   },
   {
     id: 12,
     name: "CLASSIC",
-    image:
-      "https://images.unsplash.com/photo-1566008885218-90abf9200ddb?q=80&w=2069&auto=format&fit=crop",
+    image: "/images/classic.jpg",
   },
   {
     id: 13,
     name: "CAMPERS",
-    image:
-      "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?q=80&w=2070&auto=format&fit=crop",
+    image: "/images/camper.jpg",
   },
 ];
 
