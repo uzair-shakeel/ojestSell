@@ -204,7 +204,7 @@ export function FilterSearch() {
             {/* Top row: Make, Model, Type */}
             <div className="grid grid-cols-3 gap-4 h-[72px]">
               {/* Make Dropdown */}
-              <div className="border-r h-full flex">
+              <div className="  h-full flex">
                 <select
                   value={make}
                   onChange={(e) => {
@@ -225,7 +225,7 @@ export function FilterSearch() {
                 </select>
               </div>
               {/* Model Dropdown */}
-              <div className="border-r h-full flex">
+              <div className="  h-full flex">
                 <select
                   value={model}
                   onChange={(e) => {
