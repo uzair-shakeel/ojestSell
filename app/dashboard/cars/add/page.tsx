@@ -12,7 +12,6 @@ import StepOne from "../../../../components/dashboard/createsteps/StepOne";
 import { getUserById } from "../../../../services/userService";
 
 export default function MultiStepForm() {
-  
   const { getToken, userId } = useAuth();
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -20,7 +19,6 @@ export default function MultiStepForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState(null);
-
 
   const [formData, setFormData] = useState({
     // Step 1: Basic Information
@@ -58,8 +56,8 @@ export default function MultiStepForm() {
 
     // Step 4: Financial Information
     financialInfo: {
-      sellOptions: [] ,
-      invoiceOptions: [] ,
+      sellOptions: [],
+      invoiceOptions: [],
       sellerType: "private" as "private" | "company",
       priceNetto: "",
       priceWithVat: "",
@@ -87,7 +85,7 @@ export default function MultiStepForm() {
         console.error("Error fetching user:", err);
       }
     };
-  
+
     if (userId) loadUser();
   }, [userId]);
   const nextStep = () => {
@@ -109,12 +107,15 @@ export default function MultiStepForm() {
     if (!formData.title) return "Title is required.";
     if (!formData.description) return "Description is required.";
     if (formData.images.length === 0) return "At least 1 image is required.";
-    if (formData.images.length > 10) return "You can upload a maximum of 10 images.";
+    if (formData.images.length > 10)
+      return "You can upload a maximum of 10 images.";
     if (!formData.make) return "Make is required.";
     if (!formData.model) return "Model is required.";
     if (!formData.type) return "Type is required.";
-    if (!formData.financialInfo.sellOptions.length) return "At least one sell option is required.";
-    if (!formData.financialInfo.invoiceOptions.length) return "At least one invoice option is required.";
+    if (!formData.financialInfo.sellOptions.length)
+      return "At least one sell option is required.";
+    if (!formData.financialInfo.invoiceOptions.length)
+      return "At least one invoice option is required.";
     if (!formData.financialInfo.sellerType) return "Seller type is required.";
     if (!formData.financialInfo.priceNetto) return "Price Netto is required.";
     return null;
@@ -123,7 +124,7 @@ export default function MultiStepForm() {
   const handleSubmit = async () => {
     setError(null);
     setLoading(true);
-  
+
     // Validate form
     const validationError = validateForm();
     if (validationError) {
@@ -131,7 +132,7 @@ export default function MultiStepForm() {
       setLoading(false);
       return;
     }
-  
+
     try {
       const carData = {
         title: formData.title,
@@ -154,44 +155,60 @@ export default function MultiStepForm() {
         vin: formData.vin,
         country: formData.country,
         carCondition: formData.condition,
+        location: formData.location,
         financialInfo: {
-          sellOptions: Array.isArray(formData.financialInfo.sellOptions) ? formData.financialInfo.sellOptions : [],
-          invoiceOptions: Array.isArray(formData.financialInfo.invoiceOptions) ? formData.financialInfo.invoiceOptions : [],
+          sellOptions: Array.isArray(formData.financialInfo.sellOptions)
+            ? formData.financialInfo.sellOptions
+            : [],
+          invoiceOptions: Array.isArray(formData.financialInfo.invoiceOptions)
+            ? formData.financialInfo.invoiceOptions
+            : [],
           sellerType: formData.financialInfo.sellerType,
           priceNetto: parseFloat(formData.financialInfo.priceNetto),
         },
         images: formData.images,
       };
-  
+
       const formDataToSend = new FormData();
       for (const key in carData) {
-        if (key === 'images') {
+        if (key === "images") {
           carData[key].forEach((image: File) => {
-            formDataToSend.append('images', image);
+            formDataToSend.append("images", image);
           });
-        } else if (key === 'location') {
-          formDataToSend.append('location', JSON.stringify(carData[key]));
-        } else if (key === 'financialInfo') {
+        } else if (key === "location") {
+          formDataToSend.append("location", JSON.stringify(carData[key]));
+        } else if (key === "financialInfo") {
           for (const financialKey in carData[key]) {
-            if (financialKey === 'sellOptions' || financialKey === 'invoiceOptions') {
+            if (
+              financialKey === "sellOptions" ||
+              financialKey === "invoiceOptions"
+            ) {
               // Append arrays as comma-separated strings or empty string if empty
               formDataToSend.append(
                 `financialInfo[${financialKey}]`,
-                Array.isArray(carData[key][financialKey]) ? carData[key][financialKey].join(',') : ''
+                Array.isArray(carData[key][financialKey])
+                  ? carData[key][financialKey].join(",")
+                  : ""
               );
             } else {
-              formDataToSend.append(`financialInfo[${financialKey}]`, carData[key][financialKey] || '');
+              formDataToSend.append(
+                `financialInfo[${financialKey}]`,
+                carData[key][financialKey] || ""
+              );
             }
           }
-        } else if (key === 'carCondition') {
+        } else if (key === "carCondition") {
           for (const conditionKey in carData[key]) {
-            formDataToSend.append(`carCondition[${conditionKey}]`, carData[key][conditionKey]);
+            formDataToSend.append(
+              `carCondition[${conditionKey}]`,
+              carData[key][conditionKey]
+            );
           }
         } else {
           formDataToSend.append(key, carData[key]);
         }
       }
-  
+
       await addCar(formDataToSend, getToken);
       alert("Car created successfully!");
       router.push("/dashboard/cars");
@@ -202,8 +219,6 @@ export default function MultiStepForm() {
       setLoading(false);
     }
   };
-  
-  
 
   return (
     <div className="max-w-5xl mx-auto p-5 overflow-hidden h-auto border border-gray-200 shadow-md rounded-lg">

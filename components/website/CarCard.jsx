@@ -8,51 +8,30 @@ import "swiper/css/navigation";
 import { ImLocation } from "react-icons/im";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { useGoogleMaps } from "../../lib/GoogleMapsContext";
 
 export default function CarCard({ view, car }) {
   const router = useRouter();
+  const { getGeocodingData } = useGoogleMaps();
   const [locationDetails, setLocationDetails] = useState({
     city: "",
     state: "",
   });
 
   useEffect(() => {
-    // Fetch the address using reverse geocoding when the car location is available
+    // Fetch the address using cached geocoding when the car location is available
     const fetchLocationDetails = async () => {
+      if (!car.location?.coordinates) return;
+
       const [longitude, latitude] = car.location.coordinates;
-      const apiKey = "AIzaSyCvL9AJCbxcJ70RN62qZjtWys9uLpIXSWY"; // Replace with your Google Maps API key
-      try {
-        const response = await axios.get(
-          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
-        );
-        if (response.data.status === "OK") {
-          // Extract city and state from the address components
-          const addressComponents = response.data.results[0].address_components;
-          let city = "";
-          let state = "";
-
-          // Loop through the address components to find the city and state (administrative_area_level_1)
-          addressComponents.forEach((component) => {
-            if (component.types.includes("locality")) {
-              city = component.long_name; // City
-            }
-            if (component.types.includes("administrative_area_level_1")) {
-              state = component.long_name; // State (Province)
-            }
-          });
-
-          setLocationDetails({ city, state });
-        }
-      } catch (error) {
-        console.error("Error fetching address:", error);
-      }
+      const details = await getGeocodingData(latitude, longitude);
+      setLocationDetails(details);
     };
 
-    if (car.location.coordinates) {
+    if (car.location?.coordinates) {
       fetchLocationDetails();
     }
-  }, [car]);
+  }, [car, getGeocodingData]);
 
   return (
     <div

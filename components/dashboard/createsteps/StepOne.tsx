@@ -2,15 +2,22 @@
 import { useState } from "react";
 import { getCarDetailsByVin } from "../../../services/carService";
 import { useAuth } from "@clerk/nextjs";
+import CustomMap from "../GoogleMapComponent";
+import { FaMapMarkerAlt, FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 export default function StepOne({ nextStep, updateFormData, formData }) {
   const { getToken } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [showMap, setShowMap] = useState(false);
   const [localData, setLocalData] = useState({
     title: formData.title || "",
     description: formData.description || "",
     images: formData.images || [],
     vin: formData.vin || "",
+    location: formData.location || {
+      type: "Point",
+      coordinates: [51.5074, -0.1278], // Default to London
+    },
   });
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,6 +51,19 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
       ...formData,
       images: formData.images.filter((_, i) => i !== index),
       imagePreviews: formData.imagePreviews.filter((_, i) => i !== index),
+    });
+  };
+
+  // Handle location change
+  const handleLocationChange = (newLocation) => {
+    setLocalData((prev) => ({
+      ...prev,
+      location: newLocation,
+    }));
+
+    updateFormData({
+      ...formData,
+      location: newLocation,
     });
   };
 
@@ -225,6 +245,54 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
               setLocalData({ ...localData, description: e.target.value })
             }
           />
+        </div>
+
+        {/* Map Location Section - Collapsible */}
+        <div className="col-span-2">
+          <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+            {/* Dropdown Header */}
+            <div
+              className="flex items-center justify-between bg-gradient-to-r from-blue-50 to-blue-100 p-4 cursor-pointer hover:bg-blue-100 transition-colors"
+              onClick={() => setShowMap(!showMap)}
+            >
+              <div className="flex items-center">
+                <div className="bg-blue-500 p-2 rounded-full mr-3">
+                  <FaMapMarkerAlt className="text-white" size={16} />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-800">Car Location</h3>
+                  <p className="text-xs text-gray-500">
+                    Set the location where the car is available
+                  </p>
+                </div>
+              </div>
+              <div
+                className={`transition-transform duration-300 ${
+                  showMap ? "rotate-180" : ""
+                }`}
+              >
+                <FaChevronDown className="text-gray-500" />
+              </div>
+            </div>
+
+            {/* Dropdown Content */}
+            <div
+              className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                showMap ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+              }`}
+            >
+              <div className="p-4 border-t border-gray-200 bg-white">
+                <div className="text-sm text-gray-600 mb-3">
+                  Click on the map or use the search box to set the car's
+                  location
+                </div>
+                <CustomMap
+                  location={localData.location}
+                  setLocation={handleLocationChange}
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="col-span-2">

@@ -3,6 +3,7 @@ import "./globals.css";
 import React from "react";
 import { ClerkProvider } from "@clerk/nextjs";
 import VideoLoaderWrapper from "../components/website/VideoLoaderWrapper";
+import { GoogleMapsProvider } from "../lib/GoogleMapsContext";
 
 // Add specific CSS to ensure content doesn't flash before loader
 const loaderStyles = `
@@ -37,8 +38,6 @@ export default function RootLayout({ children }) {
   // Check if we're in a static build environment
   const isStaticBuild = process.env.NEXT_PHASE === "phase-production-build";
 
-
-
   return (
     <ClerkProvider>
       <html
@@ -70,7 +69,7 @@ export default function RootLayout({ children }) {
           <div className="loader-container">
             <VideoLoaderWrapper />
           </div>
-          {children}
+          <GoogleMapsProvider>{children}</GoogleMapsProvider>
         </body>
       </html>
     </ClerkProvider>
