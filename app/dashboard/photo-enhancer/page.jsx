@@ -1084,6 +1084,85 @@ export default function PhotoEnhancer() {
     }, selectedImage.type);
   };
 
+  // Function to save the edited image and return to the car form
+  const saveAndReturn = async () => {
+    if (!selectedImage || !imageRef.current) return;
+
+    try {
+      // Create a canvas to apply the filters and transformations
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      // For simplicity, we'll use the actual image dimensions
+      const img = imageRef.current;
+
+      // Set canvas size
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+
+      // Apply transformations first
+      ctx.save();
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate((adjustments.rotate * Math.PI) / 180);
+      if (adjustments.flipX) ctx.scale(-1, 1);
+      if (adjustments.flipY) ctx.scale(1, -1);
+      ctx.drawImage(
+        img,
+        -canvas.width / 2,
+        -canvas.height / 2,
+        canvas.width,
+        canvas.height
+      );
+      ctx.restore();
+
+      // Apply filters using CSS filter string
+      ctx.filter = getFilterStyle();
+
+      // Re-draw the image with filters applied
+      ctx.drawImage(canvas, 0, 0);
+
+      // Apply blur box if active
+      if (showBlurBox) {
+        applyBlurBoxToDownload(canvas, ctx);
+      }
+
+      // Convert the canvas to a blob
+      const blob = await new Promise((resolve) => {
+        canvas.toBlob((b) => resolve(b), "image/jpeg", 0.95);
+      });
+
+      // Create a FormData object to send the blob to the server
+      const formData = new FormData();
+      formData.append("image", blob);
+
+      // Send the image to the server
+      const response = await fetch("/api/save-edited-image", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.error || "Failed to save image");
+      }
+
+      // Store the file path in localStorage
+      localStorage.setItem("editedImagePath", data.filePath);
+      localStorage.setItem("editedImageTimestamp", Date.now().toString());
+      localStorage.setItem(
+        "editedImageIndex",
+        new URLSearchParams(window.location.search).get("index") || "0"
+      );
+
+      // Redirect back to the car form
+      window.history.back();
+    } catch (error) {
+      console.error("Error saving image:", error);
+      alert("Failed to save the edited image. Please try again.");
+    }
+  };
+
   // Download the edited image
   const downloadImage = () => {
     if (!selectedImage || !imageRef.current) return;
@@ -2914,6 +2993,14 @@ export default function PhotoEnhancer() {
                 disabled={!selectedImage}
               >
                 <FiDownload /> Download
+              </button>
+
+              <button
+                onClick={saveAndReturn}
+                className="btn btn-success flex items-center gap-2"
+                disabled={!selectedImage}
+              >
+                <MdCheck /> Save & Return
               </button>
 
               <button
