@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs"; // Import Clerk hooks
 import { SignOutButton } from "@clerk/nextjs";
 import { SignInButton } from "@clerk/nextjs";
+import LanguageSwitcher from "../LanguageSwitcher";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -60,6 +61,9 @@ const Navbar = () => {
       </div>
 
       <div className="flex items-center space-x-5 sm:mx-4">
+        <div className="">
+          <LanguageSwitcher />
+        </div>
         {/* Add Listing Button */}
         <button className="hidden md:block bg-white border border-gray-300 px-4 py-2 rounded-full hover:bg-gray-100">
           Become a seller

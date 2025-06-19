@@ -9,6 +9,7 @@ import StepFour from "../../../../components/dashboard/createsteps/StepFour";
 import StepThree from "../../../../components/dashboard/createsteps/StepThree";
 import StepTwo from "../../../../components/dashboard/createsteps/StepTwo";
 import StepOne from "../../../../components/dashboard/createsteps/StepOne";
+import StepPhotoEnhancer from "../../../../components/dashboard/createsteps/StepPhotoEnhancer";
 import { getUserById } from "../../../../services/userService";
 
 export default function MultiStepForm() {
@@ -239,7 +240,7 @@ export default function MultiStepForm() {
             />
           )}
           {step === 2 && (
-            <StepTwo
+            <StepPhotoEnhancer
               nextStep={nextStep}
               prevStep={prevStep}
               updateFormData={updateFormData}
@@ -247,7 +248,7 @@ export default function MultiStepForm() {
             />
           )}
           {step === 3 && (
-            <StepThree
+            <StepTwo
               nextStep={nextStep}
               prevStep={prevStep}
               updateFormData={updateFormData}
@@ -255,7 +256,7 @@ export default function MultiStepForm() {
             />
           )}
           {step === 4 && (
-            <StepFour
+            <StepThree
               nextStep={nextStep}
               prevStep={prevStep}
               updateFormData={updateFormData}
@@ -263,6 +264,14 @@ export default function MultiStepForm() {
             />
           )}
           {step === 5 && (
+            <StepFour
+              nextStep={nextStep}
+              prevStep={prevStep}
+              updateFormData={updateFormData}
+              formData={formData}
+            />
+          )}
+          {step === 6 && (
             <StepFive
               prevStep={prevStep}
               handleSubmit={handleSubmit}

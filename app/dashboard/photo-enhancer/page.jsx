@@ -8,6 +8,7 @@ import {
   FiRotateCcw,
   FiRefreshCw,
   FiChevronDown,
+  FiArrowLeft,
 } from "react-icons/fi";
 import {
   MdBrightness5,
@@ -31,6 +32,13 @@ import { RiShadowLine, RiScissorsCutLine } from "react-icons/ri";
 import { IoColorPaletteOutline } from "react-icons/io5";
 import { FaCar } from "react-icons/fa";
 import { removeImageBackground, removeBackgroundFallback } from "./bg-removal";
+import { useRouter } from "next/navigation";
+import {
+  loadCarFormData,
+  saveEditedImage,
+  isFromCarForm,
+  getImageToEdit,
+} from "./car-integration";
 
 // Helper to get image's displayed position and size within the container
 function getImageDisplayRect(img, container) {
@@ -46,6 +54,7 @@ function getImageDisplayRect(img, container) {
 }
 
 export default function PhotoEnhancer() {
+  const router = useRouter();
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("/placeholder.jpg");
   const [originalImage, setOriginalImage] = useState(null); // Store the original image file
@@ -84,6 +93,10 @@ export default function PhotoEnhancer() {
   const [previewCtx, setPreviewCtx] = useState(null);
   const [originalImageData, setOriginalImageData] = useState(null);
   const [detectedBgColor, setDetectedBgColor] = useState(null);
+  // Add state for car form integration
+  const [carFormData, setCarFormData] = useState(null);
+  const [isFromCarForm, setIsFromCarForm] = useState(false);
+  const [editingCarImage, setEditingCarImage] = useState(false);
 
   // Add blur box state variables
   const [showBlurBox, setShowBlurBox] = useState(false);
@@ -102,6 +115,28 @@ export default function PhotoEnhancer() {
   const blurBoxRef = useRef(null);
   const [isBlurringPlate, setIsBlurringPlate] = useState(false);
   const [plateBlurError, setPlateBlurError] = useState(null);
+
+  // Load car form data if available
+  useEffect(() => {
+    const loadCarImageFromForm = async () => {
+      try {
+        const imageData = await getImageToEdit();
+        if (imageData) {
+          setSelectedImage(imageData.file);
+          setPreviewUrl(imageData.url);
+          setOriginalImage(imageData.file);
+          setOriginalImageUrl(imageData.url);
+          setCarFormData(loadCarFormData());
+          setIsFromCarForm(true);
+          setEditingCarImage(true);
+        }
+      } catch (error) {
+        console.error("Error loading car image:", error);
+      }
+    };
+
+    loadCarImageFromForm();
+  }, []);
 
   // Load background removal module
   useEffect(() => {
@@ -1088,575 +1123,38 @@ export default function PhotoEnhancer() {
   const downloadImage = () => {
     if (!selectedImage || !imageRef.current) return;
 
-    // Create a canvas to apply the filters and transformations
+    // If coming from car form, handle returning to the form
+    if (isFromCarForm) {
+      returnToCarForm();
+      return;
+    }
+
+    // Original download logic for standalone use
     const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
-    // For simplicity, we'll use the actual image dimensions
-    const img = imageRef.current;
-
-    // Set canvas size
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
-
-    // Apply transformations first
-    ctx.save();
-    ctx.translate(canvas.width / 2, canvas.height / 2);
-    ctx.rotate((adjustments.rotate * Math.PI) / 180);
-    if (adjustments.flipX) ctx.scale(-1, 1);
-    if (adjustments.flipY) ctx.scale(1, -1);
-    ctx.drawImage(
-      img,
-      -canvas.width / 2,
-      -canvas.height / 2,
-      canvas.width,
-      canvas.height
-    );
-    ctx.restore();
-
-    // Get the transformed image data
-    const transformedImageData = ctx.getImageData(
-      0,
-      0,
-      canvas.width,
-      canvas.height
-    );
-
-    // Create a temporary canvas for applying filters
-    const tempCanvas = document.createElement("canvas");
-    const tempCtx = tempCanvas.getContext("2d");
-    tempCanvas.width = canvas.width;
-    tempCanvas.height = canvas.height;
-
-    // Put the transformed image data on the temp canvas
-    tempCtx.putImageData(transformedImageData, 0, 0);
-
-    // Clear the main canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Apply filters using CSS filter string
-    const filterString = `
-      brightness(${adjustments.brightness}%) 
-      contrast(${adjustments.contrast}%)
-      saturate(${adjustments.saturation}%)
-      blur(${adjustments.blur}px)
-      grayscale(${adjustments.grayscale}%)
-      sepia(${adjustments.sepia}%)
-      hue-rotate(${adjustments.hueRotate}deg)
-      ${
-        adjustments.sharpen > 0
-          ? `contrast(${100 + adjustments.sharpen * 0.3}%) brightness(${
-              100 + adjustments.sharpen * 0.1
-            }%)`
-          : ""
-      }
-    `;
-
-    // Apply filter to context
-    ctx.filter = filterString;
-    ctx.drawImage(tempCanvas, 0, 0);
-
-    // Apply exposure adjustment (separate from brightness for more control)
-    if (adjustments.exposure !== 100) {
-      ctx.save();
-
-      // Create a more pronounced exposure effect
-      const exposureIntensity = Math.abs(adjustments.exposure - 100) / 100;
-      const exposureMode = adjustments.exposure > 100 ? "lighten" : "darken";
-
-      // Apply exposure using multiple passes for stronger effect
-      ctx.globalCompositeOperation = exposureMode;
-
-      // For extreme values, use multiple passes
-      const passCount = Math.ceil(exposureIntensity * 3);
-      const alphaPerPass = exposureIntensity / passCount;
-
-      for (let i = 0; i < passCount; i++) {
-        ctx.globalAlpha = alphaPerPass;
-        ctx.fillStyle = adjustments.exposure > 100 ? "white" : "black";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-      }
-
-      ctx.restore();
-    }
-
-    // Apply shadows adjustment (affects dark areas)
-    if (adjustments.shadows !== 0) {
-      ctx.save();
-
-      // Create a more pronounced shadows effect
-      const shadowsIntensity = Math.abs(adjustments.shadows) / 50; // Divide by 50 for stronger effect
-      const shadowsMode = adjustments.shadows > 0 ? "lighten" : "darken";
-
-      // Extract shadow areas using a threshold
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = imageData.data;
-      const shadowCanvas = document.createElement("canvas");
-      const shadowCtx = shadowCanvas.getContext("2d");
-      shadowCanvas.width = canvas.width;
-      shadowCanvas.height = canvas.height;
-
-      // Create a mask that targets shadow areas
-      const shadowMask = shadowCtx.createImageData(canvas.width, canvas.height);
-      const maskData = shadowMask.data;
-
-      for (let i = 0; i < data.length; i += 4) {
-        // Calculate luminance (brightness) of the pixel
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
-
-        // Target darker areas more than brighter areas
-        const shadowFactor = 1 - Math.min(1, luminance / 128);
-
-        // Create a mask that's stronger in shadow areas
-        maskData[i] = 0;
-        maskData[i + 1] = 0;
-        maskData[i + 2] = 0;
-        maskData[i + 3] = 255 * shadowFactor;
-      }
-
-      shadowCtx.putImageData(shadowMask, 0, 0);
-
-      // Apply the shadow adjustment
-      ctx.globalCompositeOperation = shadowsMode;
-      ctx.globalAlpha = shadowsIntensity;
-
-      // For extreme values, use multiple passes
-      const passCount = Math.ceil(Math.abs(adjustments.shadows) / 25);
-
-      for (let i = 0; i < passCount; i++) {
-        // Draw black/white through the shadow mask
-        ctx.drawImage(shadowCanvas, 0, 0);
-      }
-
-      ctx.restore();
-    }
-
-    // Apply highlights adjustment (affects bright areas)
-    if (adjustments.highlights !== 0) {
-      ctx.save();
-
-      // Create a more pronounced highlights effect
-      const highlightsIntensity = Math.abs(adjustments.highlights) / 50; // Divide by 50 for stronger effect
-      const highlightsMode = adjustments.highlights < 0 ? "darken" : "lighten";
-
-      // Extract highlight areas using a threshold
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = imageData.data;
-      const highlightCanvas = document.createElement("canvas");
-      const highlightCtx = highlightCanvas.getContext("2d");
-      highlightCanvas.width = canvas.width;
-      highlightCanvas.height = canvas.height;
-
-      // Create a mask that targets highlight areas
-      const highlightMask = highlightCtx.createImageData(
-        canvas.width,
-        canvas.height
-      );
-      const maskData = highlightMask.data;
-
-      for (let i = 0; i < data.length; i += 4) {
-        // Calculate luminance (brightness) of the pixel
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
-
-        // Target brighter areas more than darker areas
-        const highlightFactor = Math.min(1, luminance / 128);
-
-        // Create a mask that's stronger in highlight areas
-        maskData[i] = 255;
-        maskData[i + 1] = 255;
-        maskData[i + 2] = 255;
-        maskData[i + 3] = 255 * highlightFactor;
-      }
-
-      highlightCtx.putImageData(highlightMask, 0, 0);
-
-      // Apply the highlight adjustment
-      ctx.globalCompositeOperation = highlightsMode;
-      ctx.globalAlpha = highlightsIntensity;
-
-      // For extreme values, use multiple passes
-      const passCount = Math.ceil(Math.abs(adjustments.highlights) / 25);
-
-      for (let i = 0; i < passCount; i++) {
-        // Draw black/white through the highlight mask
-        ctx.drawImage(highlightCanvas, 0, 0);
-      }
-
-      ctx.restore();
-    }
-
-    // Add vignette effect if needed
-    if (adjustments.vignette > 0) {
-      ctx.save();
-
-      // Create radial gradient for vignette
-      const gradient = ctx.createRadialGradient(
-        canvas.width / 2,
-        canvas.height / 2,
-        0,
-        canvas.width / 2,
-        canvas.height / 2,
-        Math.max(canvas.width, canvas.height) / 1.5
-      );
-
-      gradient.addColorStop(0, "rgba(0,0,0,0)");
-      gradient.addColorStop(1, `rgba(0,0,0,${adjustments.vignette / 100})`);
-
-      ctx.fillStyle = gradient;
-      ctx.globalCompositeOperation = "multiply";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.restore();
-    }
-
-    // Add film grain if needed
-    if (adjustments.noise > 0) {
-      ctx.save();
-      const noiseCanvas = document.createElement("canvas");
-      const noiseCtx = noiseCanvas.getContext("2d");
-      noiseCanvas.width = canvas.width;
-      noiseCanvas.height = canvas.height;
-
-      // Create noise pattern
-      const imageData = noiseCtx.createImageData(
-        noiseCanvas.width,
-        noiseCanvas.height
-      );
-      const data = imageData.data;
-
-      for (let i = 0; i < data.length; i += 4) {
-        // Random noise value
-        const value = Math.floor(Math.random() * 255);
-        data[i] = value; // red
-        data[i + 1] = value; // green
-        data[i + 2] = value; // blue
-        data[i + 3] = Math.random() * adjustments.noise * 2; // alpha (controls intensity)
-      }
-
-      noiseCtx.putImageData(imageData, 0, 0);
-
-      // Apply noise to main canvas
-      ctx.globalCompositeOperation = "overlay";
-      ctx.globalAlpha = adjustments.noise / 100;
-      ctx.drawImage(noiseCanvas, 0, 0);
-
-      ctx.restore();
-    }
-
-    // Apply temperature tint
-    if (adjustments.temperature !== 0) {
-      ctx.save();
-      ctx.globalCompositeOperation = "overlay";
-      ctx.fillStyle =
-        adjustments.temperature > 0
-          ? `rgba(255,${255 - adjustments.temperature * 2},${
-              255 - adjustments.temperature * 4
-            },${adjustments.temperature / 100})`
-          : `rgba(${255 + adjustments.temperature * 4},${
-              255 + adjustments.temperature * 2
-            },255,${Math.abs(adjustments.temperature) / 100})`;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.restore();
-    }
-
-    // Apply tint (green/magenta)
-    if (adjustments.tint !== 0) {
-      ctx.save();
-      ctx.globalCompositeOperation = "overlay";
-      ctx.fillStyle =
-        adjustments.tint > 0
-          ? `rgba(${255 - adjustments.tint * 2},255,${
-              255 - adjustments.tint * 2
-            },${adjustments.tint / 100})`
-          : `rgba(255,${255 + adjustments.tint * 2},255,${
-              Math.abs(adjustments.tint) / 100
-            })`;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.restore();
-    }
-
-    // Apply clarity (local contrast)
-    if (adjustments.clarity > 0) {
-      ctx.save();
-      ctx.globalCompositeOperation = "overlay";
-      ctx.globalAlpha = adjustments.clarity / 100;
-      ctx.drawImage(canvas, 0, 0);
-      ctx.restore();
-    }
-
-    // Check if the image has a blur box applied and apply it to the download
-    // This ensures the blur effect is included in the downloaded image
-    const applyBlurBoxToDownload = () => {
-      // Get the original image from the DOM
-      const originalImg = imageRef.current;
-
-      if (!originalImg) return;
-
-      // Calculate scale between natural and displayed image
-      const imgRect = originalImg.getBoundingClientRect();
-      const scaleX = originalImg.naturalWidth / imgRect.width;
-      const scaleY = originalImg.naturalHeight / imgRect.height;
-
-      try {
-        // Create a temporary canvas for the blur area
-        const tempCanvas = document.createElement("canvas");
-        const tempCtx = tempCanvas.getContext("2d");
-
-        // Get the container rect for coordinate conversion
-        const containerRect = containerRef.current
-          ? containerRef.current.getBoundingClientRect()
-          : { left: 0, top: 0 };
-
-        // Calculate the blur box coordinates in the natural image space
-        const blurBoxX = Math.floor(
-          (blurBoxCoordinates.x - (imgRect.left - containerRect.left)) * scaleX
-        );
-        const blurBoxY = Math.floor(
-          (blurBoxCoordinates.y - (imgRect.top - containerRect.top)) * scaleY
-        );
-        const blurBoxWidth = Math.floor(blurBoxCoordinates.width * scaleX);
-        const blurBoxHeight = Math.floor(blurBoxCoordinates.height * scaleY);
-
-        // Set temp canvas size to the blur box size
-        tempCanvas.width = blurBoxWidth;
-        tempCanvas.height = blurBoxHeight;
-
-        // Extract the region to blur - make sure to get the region AFTER all other adjustments
-        // This ensures we're blurring the already-adjusted image
-        tempCtx.drawImage(
-          canvas,
-          blurBoxX,
-          blurBoxY,
-          blurBoxWidth,
-          blurBoxHeight,
-          0,
-          0,
-          blurBoxWidth,
-          blurBoxHeight
-        );
-
-        // Apply a very strong blur effect with multiple passes
-        const blurSteps = [5, 10, 15, 20, 30]; // Multiple blur passes with increasing strength
-
-        for (const blurRadius of blurSteps) {
-          tempCtx.filter = `blur(${blurRadius}px)`;
-          tempCtx.drawImage(tempCanvas, 0, 0);
-        }
-
-        // Add a semi-transparent overlay to further obscure details
-        tempCtx.fillStyle = "rgba(150, 150, 150, 0.1)";
-        tempCtx.fillRect(0, 0, blurBoxWidth, blurBoxHeight);
-
-        // Draw the blurred region back to the main canvas
-        ctx.drawImage(tempCanvas, blurBoxX, blurBoxY);
-
-        // For iOS, ensure the blur is strong enough by applying an additional pass
-        if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
-          // Create a final blur pass for iOS
-          const iosBlurCanvas = document.createElement("canvas");
-          const iosBlurCtx = iosBlurCanvas.getContext("2d");
-          iosBlurCanvas.width = blurBoxWidth;
-          iosBlurCanvas.height = blurBoxHeight;
-
-          // Get the blurred region again
-          iosBlurCtx.drawImage(
-            canvas,
-            blurBoxX,
-            blurBoxY,
-            blurBoxWidth,
-            blurBoxHeight,
-            0,
-            0,
-            blurBoxWidth,
-            blurBoxHeight
-          );
-
-          // Apply a strong pixelation effect (works well on iOS)
-          const pixelSize = Math.max(
-            5,
-            Math.floor(Math.min(blurBoxWidth, blurBoxHeight) / 15)
-          );
-
-          // Create a downscaled version (pixelation)
-          const pixelCanvas = document.createElement("canvas");
-          const pixelCtx = pixelCanvas.getContext("2d");
-          pixelCanvas.width = Math.max(1, Math.floor(blurBoxWidth / pixelSize));
-          pixelCanvas.height = Math.max(
-            1,
-            Math.floor(blurBoxHeight / pixelSize)
-          );
-
-          // Draw small
-          pixelCtx.drawImage(
-            iosBlurCanvas,
-            0,
-            0,
-            pixelCanvas.width,
-            pixelCanvas.height
-          );
-
-          // Draw back to iOS canvas at original size (creates pixelation)
-          iosBlurCtx.clearRect(0, 0, iosBlurCanvas.width, iosBlurCanvas.height);
-          iosBlurCtx.drawImage(
-            pixelCanvas,
-            0,
-            0,
-            pixelCanvas.width,
-            pixelCanvas.height,
-            0,
-            0,
-            blurBoxWidth,
-            blurBoxHeight
-          );
-
-          // Add a stronger darkening effect for iOS
-          iosBlurCtx.fillStyle = "rgba(100, 100, 100, 0.2)";
-          iosBlurCtx.fillRect(0, 0, blurBoxWidth, blurBoxHeight);
-
-          // Draw the iOS-optimized blur back to the main canvas
-          ctx.drawImage(iosBlurCanvas, blurBoxX, blurBoxY);
-        }
-      } catch (error) {
-        console.error("Error applying blur box to download:", error);
-      }
-    };
-
-    // Apply any blur boxes that were added to the image
-    applyBlurBoxToDownload();
-
-    // Convert to blob and download - use a Promise to ensure iOS compatibility
-    const downloadBlob = () => {
-      return new Promise((resolve) => {
-        canvas.toBlob(
-          (blob) => {
-            resolve(blob);
-          },
-          "image/jpeg",
-          0.95
-        );
-      });
-    };
-
-    // Handle download for all platforms including iOS
-    downloadBlob().then((blob) => {
-      // For iOS, we need to use a different approach
-      const isIOS =
-        /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-
-      if (isIOS) {
-        // Create a link with download attribute and use window.open
-        const url = URL.createObjectURL(blob);
-        const filename = selectedImage.name.split(".")[0] + "-enhanced.jpg";
-
-        // For iOS Safari, we need to use a different technique
-        // Create a temporary link that opens in a new window
-        const a = document.createElement("a");
-        a.style.display = "none";
-        a.href = url;
-        a.download = filename;
-
-        // iOS specific: Open in new window/tab with download prompt
-        // This uses a data URI to force the download dialog
-        const reader = new FileReader();
-        reader.onloadend = function () {
-          const dataUrl = reader.result;
-          const win = window.open();
-          if (win) {
-            // Include information about the adjustments in the download page
-            const adjustmentInfo = `
-              <div style="background: #f5f5f5; padding: 10px; border-radius: 8px; margin-bottom: 20px; text-align: left; font-size: 12px;">
-                <h3 style="margin: 0 0 8px 0;">Applied Adjustments</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                  <div>
-                    <p style="margin: 4px 0;"><strong>Exposure:</strong> ${adjustments.exposure}%</p>
-                    <p style="margin: 4px 0;"><strong>Shadows:</strong> ${adjustments.shadows}</p>
-                    <p style="margin: 4px 0;"><strong>Highlights:</strong> ${adjustments.highlights}</p>
-                    <p style="margin: 4px 0;"><strong>Contrast:</strong> ${adjustments.contrast}%</p>
-                  </div>
-                  <div>
-                    <p style="margin: 4px 0;"><strong>Brightness:</strong> ${adjustments.brightness}%</p>
-                    <p style="margin: 4px 0;"><strong>Saturation:</strong> ${adjustments.saturation}%</p>
-                    <p style="margin: 4px 0;"><strong>Sharpness:</strong> ${adjustments.sharpen}</p>
-                    <p style="margin: 4px 0;"><strong>Temperature:</strong> ${adjustments.temperature}</p>
-                  </div>
-                </div>
-              </div>
-            `;
-
-            win.document.write(`
-              <html>
-                <head>
-                  <title>Download Enhanced Image</title>
-                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                  <style>
-                    body { margin: 0; padding: 20px; font-family: system-ui, -apple-system, sans-serif; text-align: center; }
-                    img { max-width: 100%; border: 1px solid #ccc; margin-bottom: 20px; }
-                    .download-btn { 
-                      background: #0066ff; 
-                      color: white; 
-                      border: none; 
-                      padding: 12px 24px; 
-                      border-radius: 8px; 
-                      font-size: 16px;
-                      font-weight: bold;
-                      cursor: pointer;
-                      margin-bottom: 20px;
-                    }
-                    p { margin: 10px 0; color: #555; }
-                    .instructions {
-                      background: #fffde7;
-                      border-left: 4px solid #ffd600;
-                      padding: 10px 15px;
-                      margin: 20px 0;
-                      text-align: left;
-                    }
-                  </style>
-                </head>
-                <body>
-                  <h2>Your Enhanced Image</h2>
-                  ${adjustmentInfo}
-                  <img src="${dataUrl}" alt="Enhanced image">
-                  <a href="${dataUrl}" download="${filename}" class="download-btn">Download Image</a>
-                  <div class="instructions">
-                    <p><strong>To save on iOS:</strong></p>
-                    <ol style="padding-left: 20px; margin: 5px 0;">
-                      <li>Press and hold the image above</li>
-                      <li>Select "Save to Photos" from the menu</li>
-                      <li>Or tap the blue Download button</li>
-                    </ol>
-                  </div>
-                </body>
-              </html>
-            `);
-            win.document.close();
-          }
-        };
-        reader.readAsDataURL(blob);
-
-        // Clean up the original URL
-        setTimeout(() => {
-          URL.revokeObjectURL(url);
-        }, 1000);
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext("2d");
+
+      // Apply the current filter settings
+      ctx.filter = getFilterStyle();
+      ctx.drawImage(img, 0, 0);
+      ctx.filter = "none";
+
+      // Apply blur box if active
+      if (
+        showBlurBox &&
+        blurBoxCoordinates.width > 0 &&
+        blurBoxCoordinates.height > 0
+      ) {
+        applyBlurBoxToDownload(canvas, ctx, img);
       } else {
-        // Standard download for non-iOS devices
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        const filename = selectedImage.name.split(".")[0] + "-enhanced.jpg";
-
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        downloadBlob(canvas);
       }
-    });
+    };
+    img.src = previewUrl;
   };
 
   // Compute the CSS filter string based on adjustments
@@ -2725,6 +2223,129 @@ export default function PhotoEnhancer() {
     }
   };
 
+  // Load car form data if available
+  useEffect(() => {
+    const loadCarFormData = () => {
+      try {
+        const storedData = localStorage.getItem("carFormData");
+        if (storedData) {
+          const parsedData = JSON.parse(storedData);
+          setCarFormData(parsedData);
+          setIsFromCarForm(true);
+
+          // Load the image that needs to be edited
+          if (
+            parsedData.imagePreviews &&
+            parsedData.currentEditingImageIndex !== undefined
+          ) {
+            const imageUrl =
+              parsedData.imagePreviews[parsedData.currentEditingImageIndex];
+            if (imageUrl) {
+              // Create an image element from the URL
+              const img = new Image();
+              img.crossOrigin = "anonymous";
+              img.onload = () => {
+                // Convert the image to a File object
+                const canvas = document.createElement("canvas");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0);
+
+                canvas.toBlob((blob) => {
+                  const file = new File(
+                    [blob],
+                    `car-image-${parsedData.currentEditingImageIndex}.png`,
+                    {
+                      type: "image/png",
+                    }
+                  );
+
+                  // Set the file as the selected image
+                  setSelectedImage(file);
+                  setPreviewUrl(imageUrl);
+                  setOriginalImage(file);
+                  setOriginalImageUrl(imageUrl);
+                }, "image/png");
+              };
+              img.src = imageUrl;
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error loading car form data:", error);
+      }
+    };
+
+    loadCarFormData();
+  }, []);
+
+  // Function to return to car form after saving the edited image
+  const returnToCarForm = async () => {
+    if (!carFormData || !selectedImage) return;
+
+    try {
+      // Get the current image as a blob
+      const canvas = document.createElement("canvas");
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+        img.src = previewUrl;
+      });
+
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext("2d");
+
+      // Apply current filters to the image
+      ctx.filter = getFilterStyle();
+      ctx.drawImage(img, 0, 0);
+      ctx.filter = "none";
+
+      // Convert to blob
+      const blob = await new Promise((resolve) =>
+        canvas.toBlob(resolve, "image/png")
+      );
+
+      // Create a file from the blob
+      const editedFile = new File(
+        [blob],
+        `edited-car-image-${carFormData.currentEditingImageIndex}.png`,
+        {
+          type: "image/png",
+        }
+      );
+
+      // Create a URL for the preview
+      const editedPreviewUrl = URL.createObjectURL(editedFile);
+
+      // Update the car form data
+      const updatedImages = [...carFormData.images];
+      const updatedPreviews = [...carFormData.imagePreviews];
+
+      updatedImages[carFormData.currentEditingImageIndex] = editedFile;
+      updatedPreviews[carFormData.currentEditingImageIndex] = editedPreviewUrl;
+
+      const updatedFormData = {
+        ...carFormData,
+        images: updatedImages,
+        imagePreviews: updatedPreviews,
+      };
+
+      // Save back to localStorage
+      localStorage.setItem("carFormData", JSON.stringify(updatedFormData));
+
+      // Navigate back to the car creation page
+      router.push("/dashboard/cars/add");
+    } catch (error) {
+      console.error("Error saving edited image:", error);
+      alert("Failed to save the edited image. Please try again.");
+    }
+  };
+
   return (
     <div className="container mx-auto py-8 px-4">
       <style jsx>{`
@@ -2738,6 +2359,33 @@ export default function PhotoEnhancer() {
         }
       `}</style>
 
+      {isFromCarForm && (
+        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-md flex items-center justify-between">
+          <div className="flex items-center">
+            <FiArrowLeft className="text-blue-500 mr-2" size={20} />
+            <div>
+              <h2 className="font-semibold text-blue-700">Car Image Editor</h2>
+              <p className="text-sm text-blue-600">
+                Enhance your car image and save to return to the car form
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={returnToCarForm}
+              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md flex items-center"
+            >
+              <FiDownload className="mr-2" /> Save & Return
+            </button>
+            <button
+              onClick={() => router.push("/dashboard/cars/add")}
+              className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
       <h1 className="text-3xl font-bold mb-6">Photo Enhancer</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -2756,7 +2404,12 @@ export default function PhotoEnhancer() {
                       src={previewUrl}
                       alt="Preview"
                       className="max-w-full max-h-full object-contain"
-                      style={getFilterStyle()}
+                      style={{
+                        filter: getFilterStyle(),
+                        transform: `rotate(${adjustments.rotate}deg) scaleX(${
+                          adjustments.flipX ? -1 : 1
+                        }) scaleY(${adjustments.flipY ? -1 : 1})`,
+                      }}
                     />
                     {/* Vignette effect overlay */}
                     <div
@@ -2913,7 +2566,7 @@ export default function PhotoEnhancer() {
                 className="btn btn-outline flex items-center gap-2"
                 disabled={!selectedImage}
               >
-                <FiDownload /> Download
+                <FiDownload /> {isFromCarForm ? "Save & Return" : "Download"}
               </button>
 
               <button

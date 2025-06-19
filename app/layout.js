@@ -4,6 +4,7 @@ import React from "react";
 import { ClerkProvider } from "@clerk/nextjs";
 import VideoLoaderWrapper from "../components/website/VideoLoaderWrapper";
 import { GoogleMapsProvider } from "../lib/GoogleMapsContext";
+import Providers from "../components/Providers";
 
 // Add specific CSS to ensure content doesn't flash before loader
 const loaderStyles = `
@@ -69,7 +70,9 @@ export default function RootLayout({ children }) {
           <div className="loader-container">
             <VideoLoaderWrapper />
           </div>
-          <GoogleMapsProvider>{children}</GoogleMapsProvider>
+          <Providers>
+            <GoogleMapsProvider>{children}</GoogleMapsProvider>
+          </Providers>
         </body>
       </html>
     </ClerkProvider>
