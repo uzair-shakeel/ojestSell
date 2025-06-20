@@ -1,21 +1,26 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Facebook, Twitter, Instagram, Linkedin, Youtube } from "lucide-react";
+import { useLanguage } from "../../lib/i18n/LanguageContext";
 
 export function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer className="bg-gray-900 text-white pt-16 pb-8">
       <div className="mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           <div>
-            <h3 className="font-bold mb-4">About Ojest</h3>
+            <h3 className="font-bold mb-4">{t("footer.about.title")}</h3>
             <ul className="space-y-2">
               <li>
                 <Link
                   href="#"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  About Us
+                  {t("footer.about.links.aboutUs")}
                 </Link>
               </li>
               <li>
@@ -23,7 +28,7 @@ export function Footer() {
                   href="#"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  Careers
+                  {t("footer.about.links.careers")}
                 </Link>
               </li>
               <li>
@@ -31,7 +36,7 @@ export function Footer() {
                   href="#"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  Mobile
+                  {t("footer.about.links.mobile")}
                 </Link>
               </li>
               <li>
@@ -39,7 +44,7 @@ export function Footer() {
                   href="#"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  Blog
+                  {t("footer.about.links.blog")}
                 </Link>
               </li>
               <li>
@@ -47,21 +52,21 @@ export function Footer() {
                   href="#"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  How we work
+                  {t("footer.about.links.howWeWork")}
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="font-bold mb-4">Popular Car Brands</h3>
+            <h3 className="font-bold mb-4">{t("footer.brands.title")}</h3>
             <ul className="space-y-2">
               <li>
                 <Link
                   href="#"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  Toyota
+                  {t("footer.brands.links.toyota")}
                 </Link>
               </li>
               <li>
@@ -69,7 +74,7 @@ export function Footer() {
                   href="#"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  Honda
+                  {t("footer.brands.links.honda")}
                 </Link>
               </li>
               <li>
@@ -77,7 +82,7 @@ export function Footer() {
                   href="#"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  BMW
+                  {t("footer.brands.links.bmw")}
                 </Link>
               </li>
               <li>
@@ -85,7 +90,7 @@ export function Footer() {
                   href="#"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  Mercedes
+                  {t("footer.brands.links.mercedes")}
                 </Link>
               </li>
               <li>
@@ -93,21 +98,21 @@ export function Footer() {
                   href="#"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  Tesla
+                  {t("footer.brands.links.tesla")}
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="font-bold mb-4">Other</h3>
+            <h3 className="font-bold mb-4">{t("footer.other.title")}</h3>
             <ul className="space-y-2">
               <li>
                 <Link
                   href="#"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  Contact Us
+                  {t("footer.other.links.contact")}
                 </Link>
               </li>
               <li>
@@ -115,7 +120,7 @@ export function Footer() {
                   href="#"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  Help/FAQ
+                  {t("footer.other.links.faq")}
                 </Link>
               </li>
               <li>
@@ -123,7 +128,7 @@ export function Footer() {
                   href="#"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  Affiliates
+                  {t("footer.other.links.affiliates")}
                 </Link>
               </li>
               <li>
@@ -131,7 +136,7 @@ export function Footer() {
                   href="#"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  Privacy Policy
+                  {t("footer.other.links.privacy")}
                 </Link>
               </li>
               <li>
@@ -139,26 +144,25 @@ export function Footer() {
                   href="#"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  Terms & Conditions
+                  {t("footer.other.links.terms")}
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="font-bold mb-4">Newsletter</h3>
+            <h3 className="font-bold mb-4">{t("footer.newsletter.title")}</h3>
             <p className="text-gray-400 mb-4">
-              Subscribe to our newsletter and get exclusive deals you won't find
-              anywhere else.
+              {t("footer.newsletter.description")}
             </p>
             <div className="flex gap-2">
               <input
                 type="email"
-                placeholder="Enter your email"
+                placeholder={t("footer.newsletter.placeholder")}
                 className="bg-gray-800 border-gray-700 rounded px-3 py-2 w-full"
               />
               <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">
-                Subscribe
+                {t("footer.newsletter.button")}
               </button>
             </div>
           </div>
@@ -177,7 +181,7 @@ export function Footer() {
               </div>
             </Link>
             <p className="text-gray-400 text-sm mt-2">
-              © 2025 Ojest. All rights reserved.
+              {t("footer.copyright")}
             </p>
           </div>
 

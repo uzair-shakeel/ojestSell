@@ -8,12 +8,14 @@ import { useAuth } from "@clerk/nextjs"; // Import Clerk hooks
 import { SignOutButton } from "@clerk/nextjs";
 import { SignInButton } from "@clerk/nextjs";
 import LanguageSwitcher from "../LanguageSwitcher";
+import { useLanguage } from "../../lib/i18n/LanguageContext";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [chatCount, setChatCount] = useState(0);
   const router = useRouter();
   const { isSignedIn, userId } = useAuth(); // Check if the user is signed in
+  const { t } = useLanguage();
 
   // Fetch chat count when user is signed in
   useEffect(() => {
@@ -45,10 +47,10 @@ const Navbar = () => {
   }, [isSignedIn, userId]);
 
   const navLinks = [
-    { name: "Home", href: "/website" },
-    { name: "Blog", href: "/website/blog" },
-    { name: "FAQ", href: "/website/faq" },
-    { name: "Contact", href: "/website/contact" },
+    { name: t("navbar.links.home"), href: "/website" },
+    { name: t("navbar.links.blog"), href: "/website/blog" },
+    { name: t("navbar.links.faq"), href: "/website/faq" },
+    { name: t("navbar.links.contact"), href: "/website/contact" },
   ];
 
   return (
@@ -66,7 +68,7 @@ const Navbar = () => {
         </div>
         {/* Add Listing Button */}
         <button className="hidden md:block bg-white border border-gray-300 px-4 py-2 rounded-full hover:bg-gray-100">
-          Become a seller
+          {t("navbar.becomeSeller")}
         </button>
 
         {/* Messages Button - Only show when signed in */}
@@ -74,7 +76,7 @@ const Navbar = () => {
           <button
             onClick={() => router.push("/dashboard/messages")}
             className="relative text-gray-700"
-            aria-label="Messages"
+            aria-label={t("navbar.messages")}
           >
             <BsChatLeftDots size={26} />
             {chatCount > 0 && (
@@ -118,7 +120,7 @@ const Navbar = () => {
                 }}
                 className="w-full text-left hover:bg-gray-100 p-2 duration-300"
               >
-                Dashboard
+                {t("navbar.dashboard")}
               </button>
               <button
                 onClick={() => {
@@ -127,7 +129,7 @@ const Navbar = () => {
                 }}
                 className="w-full text-left hover:bg-gray-100 p-2 duration-300 flex items-center"
               >
-                Messages
+                {t("navbar.messages")}
                 {chatCount > 0 && (
                   <span className="ml-2 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs">
                     {chatCount}

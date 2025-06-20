@@ -417,5 +417,55 @@
     },
     "loading": "Loading cars...",
     "error": "Error loading cars. Please try again."
+  },
+  "navbar": {
+    "links": {
+      "home": "Home",
+      "blog": "Blog",
+      "faq": "FAQ",
+      "contact": "Contact"
+    },
+    "becomeSeller": "Become a seller",
+    "messages": "Messages",
+    "dashboard": "Dashboard"
+  },
+  "footer": {
+    "about": {
+      "title": "About Ojest",
+      "links": {
+        "aboutUs": "About Us",
+        "careers": "Careers",
+        "mobile": "Mobile",
+        "blog": "Blog",
+        "howWeWork": "How we work"
+      }
+    },
+    "brands": {
+      "title": "Popular Car Brands",
+      "links": {
+        "toyota": "Toyota",
+        "honda": "Honda",
+        "bmw": "BMW",
+        "mercedes": "Mercedes",
+        "tesla": "Tesla"
+      }
+    },
+    "other": {
+      "title": "Other",
+      "links": {
+        "contact": "Contact Us",
+        "faq": "Help/FAQ",
+        "affiliates": "Affiliates",
+        "privacy": "Privacy Policy",
+        "terms": "Terms & Conditions"
+      }
+    },
+    "newsletter": {
+      "title": "Newsletter",
+      "description": "Subscribe to our newsletter and get exclusive deals you won't find anywhere else.",
+      "placeholder": "Enter your email",
+      "button": "Subscribe"
+    },
+    "copyright": "© 2025 Ojest. All rights reserved."
   }
 }

@@ -417,5 +417,55 @@
     },
     "loading": "Ładowanie samochodów...",
     "error": "Błąd podczas ładowania samochodów. Spróbuj ponownie."
+  },
+  "navbar": {
+    "links": {
+      "home": "Strona główna",
+      "blog": "Blog",
+      "faq": "FAQ",
+      "contact": "Kontakt"
+    },
+    "becomeSeller": "Zostań sprzedawcą",
+    "messages": "Wiadomości",
+    "dashboard": "Panel"
+  },
+  "footer": {
+    "about": {
+      "title": "O Ojest",
+      "links": {
+        "aboutUs": "O nas",
+        "careers": "Kariera",
+        "mobile": "Aplikacja mobilna",
+        "blog": "Blog",
+        "howWeWork": "Jak działamy"
+      }
+    },
+    "brands": {
+      "title": "Popularne marki",
+      "links": {
+        "toyota": "Toyota",
+        "honda": "Honda",
+        "bmw": "BMW",
+        "mercedes": "Mercedes",
+        "tesla": "Tesla"
+      }
+    },
+    "other": {
+      "title": "Inne",
+      "links": {
+        "contact": "Kontakt",
+        "faq": "Pomoc/FAQ",
+        "affiliates": "Partnerzy",
+        "privacy": "Polityka prywatności",
+        "terms": "Regulamin"
+      }
+    },
+    "newsletter": {
+      "title": "Newsletter",
+      "description": "Zapisz się do naszego newslettera i otrzymuj ekskluzywne oferty, których nie znajdziesz nigdzie indziej.",
+      "placeholder": "Wpisz swój email",
+      "button": "Zapisz się"
+    },
+    "copyright": "© 2025 Ojest. Wszelkie prawa zastrzeżone."
   }
 }
