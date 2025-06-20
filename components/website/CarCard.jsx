@@ -94,15 +94,6 @@ export default function CarCard({ view, car }) {
             </h2>
           </div>
           <div className="flex flex-col md:flex-row md:space-x-5">
-            <div className="flex items-center space-x-2 bg-blue-100 rounded-lg pe-2 w-fit my-2">
-              <div className="bg-blue-400 text-sm p-1 rounded-l text-white">
-                <FaTags />
-              </div>
-              <span className="text-base text-black">
-                {car.financialInfo.priceNetto} zł
-              </span>
-            </div>
-
             {/* Display the city and state (province) */}
             <div className={`text-black flex items-center gap-1 `}>
               <ImLocation />
@@ -110,6 +101,14 @@ export default function CarCard({ view, car }) {
                 ? `${locationDetails.city}, ${locationDetails.state}`
                 : "Loading location..."}
             </div>
+          </div>
+          <div className="flex items-center space-x-2 bg-blue-100 rounded-lg pe-2 w-fit my-2">
+            <div className="bg-blue-400 text-sm p-1 rounded-l text-white">
+              <FaTags />
+            </div>
+            <span className="text-base text-black">
+              {car.financialInfo.priceNetto.toLocaleString("pl-PL")} zł
+            </span>
           </div>
         </div>
 
