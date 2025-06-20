@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
+import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 // Define the cn utility function directly in this file
 const cn = (...classes) => {
@@ -60,52 +61,9 @@ const FAQItem = ({ question, answer }) => {
 };
 
 const FAQPage = () => {
-  const faqs = [
-    {
-      question: "How do I list my car for sale?",
-      answer:
-        "To list your car for sale, first create an account or log in. Then click on the 'Become a seller' button in the navbar, complete your seller profile, and follow the guided process to add your car details, photos, and set your price.",
-    },
-    {
-      question: "Is there a fee for listing a car?",
-      answer:
-        "Basic listings are free. We also offer premium listing options with additional features like highlighted placement, extended listing duration, and more photos to help your car stand out. You can view our pricing options during the listing process.",
-    },
-    {
-      question: "How long does a listing stay active?",
-      answer:
-        "Standard listings remain active for 30 days. Premium listings can remain active for up to 60 days. You can always renew or update your listing if your car hasn't sold within that timeframe.",
-    },
-    {
-      question: "How do I contact a seller?",
-      answer:
-        "When viewing a car listing, you'll see contact options such as sending a direct message through our platform, requesting a call back, or in some cases, viewing the seller's phone number if they've chosen to display it.",
-    },
-    {
-      question: "Are there any buyer protection policies?",
-      answer:
-        "Yes, we offer buyer protection through our secure messaging and transaction system. We recommend always communicating through our platform and following our safety guidelines for viewing and purchasing vehicles.",
-    },
-    {
-      question: "Can I sell cars commercially on this platform?",
-      answer:
-        "Yes, we welcome both private sellers and professional dealers. Commercial sellers can create a dealer account with additional features designed for managing multiple listings and showcasing your dealership.",
-    },
-    {
-      question: "What payment methods are supported?",
-      answer:
-        "Our platform facilitates connections between buyers and sellers. While we recommend secure payment methods, the actual payment arrangement is between buyers and sellers. We suggest using secure methods like bank transfers or escrow services for large transactions.",
-    },
-    {
-      question: "How do I edit or remove my listing?",
-      answer:
-        "You can manage all aspects of your listing from your dashboard. Simply log in, navigate to 'My Cars', select the listing you wish to modify, and use the edit or delete options available.",
-    },
-  ];
-
-  // Extract the first FAQ for the hero section
+  const { t } = useLanguage();
+  const faqs = t("faq.questions", { returnObjects: true });
   const firstFaq = faqs[0];
-  // Get the remaining FAQs for the regular list
   const remainingFaqs = faqs.slice(1);
 
   return (
@@ -125,7 +83,7 @@ const FAQPage = () => {
         <div className="relative z-10 container h-full flex flex-col justify-between py-[50px] md:py-[20px] items-center text-center text-white">
           <div>
             <h1 className="text-xl md:text-5xl font-bold mb-4">
-              Frequently Asked Questions
+              {t("faq.hero.title")}
             </h1>
           </div>
           <div className="absolute md:bottom-20 bottom-10 left-5 right-5 bg-white/70 backdrop-blur-sm p-2 rounded-xl shadow-lg max-w-3xl mx-auto">
@@ -136,10 +94,10 @@ const FAQPage = () => {
       <div className="max-w-7xl mx-auto py-20 px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
-            Frequently Asked Questions
+            {t("faq.hero.title")}
           </h2>
           <p className="mt-4 text-xl text-gray-600 max-w-3xl mx-auto">
-            Find answers to common questions about using our car marketplace.
+            {t("faq.hero.subtitle")}
           </p>
         </div>
 
@@ -169,25 +127,22 @@ const FAQPage = () => {
           transition={{ duration: 0.5, delay: 0.5 }}
           className="mt-16 text-center rounded-3xl overflow-hidden bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: "url('/IMG_4467.jpg')", // Replace with your image path
+            backgroundImage: "url('/IMG_4467.jpg')",
           }}
         >
           <div className="bg-black/40 flex justify-start  md:justify-end py-4 md:py-24 px-4">
-            {" "}
             <div className="flex flex-col items-center  w-full  md:w-1/3 justify-end">
-              {/* Optional: adds a subtle overlay */}
-              <h3 className="text-xl   font-extrabold text-gray-900 sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
-                More questions?
+              <h3 className="text-xl font-extrabold text-gray-900 sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
+                {t("faq.moreQuestions.title")}
               </h3>
               <p className="mt-4 text-lg text-white hidden md:block">
-                If you cannot find the answer to your question, feel free to
-                contact our support team.
+                {t("faq.moreQuestions.description")}
               </p>
               <a
                 href="/website/contact"
-                className="md:mt-6 mt-40 w-full md:w-fit inline-flex justify-center  text-sm  items-center px-6 py-3 border  border-transparent  md:text-base font-medium rounded-lg shadow-md text-white bg-blue-600/90 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105"
+                className="md:mt-6 mt-40 w-full md:w-fit inline-flex justify-center text-sm items-center px-6 py-3 border border-transparent md:text-base font-medium rounded-lg shadow-md text-white bg-blue-600/90 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105"
               >
-                Contact Support
+                {t("faq.moreQuestions.contactButton")}
               </a>
             </div>
           </div>

@@ -1,8 +1,10 @@
 "use client";
 import React, { useState } from "react";
 import { FiMapPin, FiPhone, FiMail, FiClock } from "react-icons/fi";
+import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 const ContactPage = () => {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -31,7 +33,7 @@ const ContactPage = () => {
       setSubmitted(true);
       setFormData({ name: "", email: "", subject: "", message: "" });
     } catch (err) {
-      setError("There was an error submitting your form. Please try again.");
+      setError(t("contact.main.form.error.default"));
       console.error("Form submission error:", err);
     } finally {
       setIsSubmitting(false);
@@ -54,8 +56,7 @@ const ContactPage = () => {
           <div className="bg-black/20 flex justify-start md:justify-end py-4 md:py-24 px-4 h-full">
             <div className="relative z-10 w-full md:w-2/5 px-6 flex flex-col justify-center">
               <h1 className="text-xl font-extrabold pt-24 md:pt-0 text-white sm:text-4xl">
-                Ready to drive your dream car? Contact us and let's hit the road
-                together!
+                {t("contact.hero.title")}
               </h1>
             </div>
           </div>
@@ -64,10 +65,10 @@ const ContactPage = () => {
       <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
-            Contact Us
+            {t("contact.main.title")}
           </h2>
           <p className="mt-4 text-xl text-gray-600">
-            Have questions or need assistance? We're here to help!
+            {t("contact.main.subtitle")}
           </p>
         </div>
 
@@ -75,7 +76,7 @@ const ContactPage = () => {
           {/* Contact Information */}
           <div className="bg-white rounded-lg shadow-lg overflow-hidden p-6">
             <h3 className="text-xl font-bold text-gray-900 mb-6">
-              Contact Information
+              {t("contact.main.info.title")}
             </h3>
 
             <div className="space-y-4">
@@ -84,23 +85,23 @@ const ContactPage = () => {
                   <FiMapPin className="h-6 w-6 text-blue-500" />
                 </div>
                 <div className="ml-3 text-base text-gray-700">
-                  <p>123 Car Boulevard</p>
-                  <p>Automotive City, AC 12345</p>
-                  <p>United States</p>
+                  <p>{t("contact.main.info.address.line1")}</p>
+                  <p>{t("contact.main.info.address.line2")}</p>
+                  <p>{t("contact.main.info.address.line3")}</p>
                 </div>
               </div>
 
               <div className="flex items-center">
                 <FiPhone className="h-6 w-6 text-blue-500" />
                 <div className="ml-3 text-base text-gray-700">
-                  <p>+1 (555) 123-4567</p>
+                  <p>{t("contact.main.info.phone")}</p>
                 </div>
               </div>
 
               <div className="flex items-center">
                 <FiMail className="h-6 w-6 text-blue-500" />
                 <div className="ml-3 text-base text-gray-700">
-                  <p>support@ojestsell.com</p>
+                  <p>{t("contact.main.info.email")}</p>
                 </div>
               </div>
 
@@ -109,9 +110,9 @@ const ContactPage = () => {
                   <FiClock className="h-6 w-6 text-blue-500" />
                 </div>
                 <div className="ml-3 text-base text-gray-700">
-                  <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
-                  <p>Saturday: 10:00 AM - 4:00 PM</p>
-                  <p>Sunday: Closed</p>
+                  <p>{t("contact.main.info.hours.weekday")}</p>
+                  <p>{t("contact.main.info.hours.saturday")}</p>
+                  <p>{t("contact.main.info.hours.sunday")}</p>
                 </div>
               </div>
             </div>
@@ -135,7 +136,7 @@ const ContactPage = () => {
           {/* Contact Form */}
           <div className="bg-white rounded-lg shadow-lg overflow-hidden p-6">
             <h3 className="text-xl font-bold text-gray-900 mb-6">
-              Send Us a Message
+              {t("contact.main.form.title")}
             </h3>
 
             {submitted ? (
@@ -158,13 +159,10 @@ const ContactPage = () => {
                   </div>
                   <div className="ml-3">
                     <h3 className="text-sm font-medium text-green-800">
-                      Message Sent!
+                      {t("contact.main.form.success.title")}
                     </h3>
                     <div className="mt-2 text-sm text-green-700">
-                      <p>
-                        Thank you for contacting us. We'll get back to you as
-                        soon as possible.
-                      </p>
+                      <p>{t("contact.main.form.success.message")}</p>
                     </div>
                     <div className="mt-4">
                       <button
@@ -172,7 +170,7 @@ const ContactPage = () => {
                         className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                         onClick={() => setSubmitted(false)}
                       >
-                        Send Another Message
+                        {t("contact.main.form.success.button")}
                       </button>
                     </div>
                   </div>
@@ -200,7 +198,7 @@ const ContactPage = () => {
                       </div>
                       <div className="ml-3">
                         <h3 className="text-sm font-medium text-red-800">
-                          Error
+                          {t("contact.main.form.error.title")}
                         </h3>
                         <div className="mt-2 text-sm text-red-700">
                           <p>{error}</p>
@@ -215,7 +213,7 @@ const ContactPage = () => {
                     htmlFor="name"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Full Name
+                    {t("contact.main.form.fields.name")}
                   </label>
                   <input
                     type="text"
@@ -233,7 +231,7 @@ const ContactPage = () => {
                     htmlFor="email"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Email Address
+                    {t("contact.main.form.fields.email")}
                   </label>
                   <input
                     type="email"
@@ -251,7 +249,7 @@ const ContactPage = () => {
                     htmlFor="subject"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Subject
+                    {t("contact.main.form.fields.subject")}
                   </label>
                   <input
                     type="text"
@@ -269,7 +267,7 @@ const ContactPage = () => {
                     htmlFor="message"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Message
+                    {t("contact.main.form.fields.message")}
                   </label>
                   <textarea
                     id="message"
@@ -286,13 +284,9 @@ const ContactPage = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-blue-600 ${
-                      isSubmitting
-                        ? "opacity-70 cursor-not-allowed"
-                        : "hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                    }`}
+                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
                   >
-                    {isSubmitting ? "Sending..." : "Send Message"}
+                    {t("contact.main.form.submit")}
                   </button>
                 </div>
               </form>

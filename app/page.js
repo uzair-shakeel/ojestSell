@@ -41,7 +41,7 @@ export default function Home() {
         <div className="relative  w-full z-10 h-full flex flex-col justify-between py-[90px] md:py-[120px] items-center text-center text-white">
           <div>
             <h1 className="text-xl md:text-5xl font-bold mb-4">
-              {t("findBuyOwn")}
+              {t("homepage.findBuyOwn")}
             </h1>
           </div>
           <div className="absolute md:bottom-10 bottom-5 left-5 right-5">
