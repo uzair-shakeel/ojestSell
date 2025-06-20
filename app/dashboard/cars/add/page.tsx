@@ -11,6 +11,7 @@ import StepTwo from "../../../../components/dashboard/createsteps/StepTwo";
 import StepOne from "../../../../components/dashboard/createsteps/StepOne";
 import StepPhotoEnhancer from "../../../../components/dashboard/createsteps/StepPhotoEnhancer";
 import { getUserById } from "../../../../services/userService";
+import ImageEditStep from "../../../../components/dashboard/createsteps/ImageEditStep";
 
 export default function MultiStepForm() {
   const { getToken, userId } = useAuth();
@@ -89,6 +90,60 @@ export default function MultiStepForm() {
 
     if (userId) loadUser();
   }, [userId]);
+
+  // Check for edited images when component mounts
+  useEffect(() => {
+    const editedImagePath = localStorage.getItem("editedImagePath");
+    const editedImageTimestamp = localStorage.getItem("editedImageTimestamp");
+    const editedImageIndex = localStorage.getItem("editedImageIndex");
+
+    if (editedImagePath && editedImageTimestamp && editedImageIndex) {
+      // Only process if the timestamp is recent (within the last minute)
+      const currentTime = Date.now();
+      const timestamp = parseInt(editedImageTimestamp);
+
+      if (currentTime - timestamp < 60000) {
+        // 60 seconds
+        handleImageUpdate(editedImagePath, parseInt(editedImageIndex));
+
+        // Clear the localStorage items after processing
+        localStorage.removeItem("editedImagePath");
+        localStorage.removeItem("editedImageTimestamp");
+        localStorage.removeItem("editedImageIndex");
+      }
+    }
+  }, []);
+
+  // Function to handle image updates from the photo enhancer
+  const handleImageUpdate = async (imagePath, index) => {
+    try {
+      // Create a new File object from the edited image URL
+      const response = await fetch(imagePath);
+      const blob = await response.blob();
+      const filename =
+        imagePath.split("/").pop() || `edited-image-${Date.now()}.jpg`;
+      const file = new File([blob], filename, { type: "image/jpeg" });
+
+      // Create a new array of images with the edited image replacing the original
+      const updatedImages = [...formData.images];
+      updatedImages[index] = file;
+
+      // Create a new array of image previews with the edited image preview replacing the original
+      const updatedPreviews = [...formData.imagePreviews];
+      updatedPreviews[index] = imagePath;
+
+      // Update form data with the new images and previews
+      setFormData({
+        ...formData,
+        images: updatedImages,
+        imagePreviews: updatedPreviews,
+      });
+    } catch (error) {
+      console.error("Error updating image:", error);
+      alert("Failed to update the edited image. Please try again.");
+    }
+  };
+
   const nextStep = () => {
     setDirection(1); // Move from right to left
     setStep((prev) => prev + 1);
@@ -240,7 +295,8 @@ export default function MultiStepForm() {
             />
           )}
           {step === 2 && (
-            <StepPhotoEnhancer
+            // <StepPhotoEnhancer
+            <ImageEditStep
               nextStep={nextStep}
               prevStep={prevStep}
               updateFormData={updateFormData}

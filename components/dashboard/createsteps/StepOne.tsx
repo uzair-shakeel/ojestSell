@@ -1,11 +1,13 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getCarDetailsByVin } from "../../../services/carService";
 import { useAuth } from "@clerk/nextjs";
 import CustomMap from "../GoogleMapComponent";
-import { FaMapMarkerAlt, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaMapMarkerAlt, FaChevronDown, FaChevronUp, FaEdit } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 export default function StepOne({ nextStep, updateFormData, formData }) {
+  const router = useRouter();
   const { getToken } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
@@ -19,6 +21,68 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
       coordinates: [51.5074, -0.1278], // Default to London
     },
   });
+
+  // Check for edited images when component mounts or when returning from photo enhancer
+  useEffect(() => {
+    const editedImagePath = localStorage.getItem("editedImagePath");
+    const editedImageTimestamp = localStorage.getItem("editedImageTimestamp");
+    const editedImageIndex = localStorage.getItem("editedImageIndex");
+    
+    if (editedImagePath && editedImageTimestamp && editedImageIndex) {
+      // Only process if the timestamp is recent (within the last minute)
+      const currentTime = Date.now();
+      const timestamp = parseInt(editedImageTimestamp);
+      
+      if (currentTime - timestamp < 60000) { // 60 seconds
+        handleImageUpdate(editedImagePath, parseInt(editedImageIndex));
+        
+        // Clear the localStorage items after processing
+        localStorage.removeItem("editedImagePath");
+        localStorage.removeItem("editedImageTimestamp");
+        localStorage.removeItem("editedImageIndex");
+      }
+    }
+  }, []);
+
+  // Function to handle image updates from the photo enhancer
+  const handleImageUpdate = async (imagePath, index) => {
+    try {
+      // Create a new File object from the edited image URL
+      const response = await fetch(imagePath);
+      const blob = await response.blob();
+      const filename = imagePath.split('/').pop() || `edited-image-${Date.now()}.jpg`;
+      const file = new File([blob], filename, { type: 'image/jpeg' });
+      
+      // Create a new array of images with the edited image replacing the original
+      const updatedImages = [...formData.images];
+      updatedImages[index] = file;
+      
+      // Create a new array of image previews with the edited image preview replacing the original
+      const updatedPreviews = [...formData.imagePreviews];
+      updatedPreviews[index] = imagePath;
+      
+      // Update form data with the new images and previews
+      updateFormData({
+        ...formData,
+        images: updatedImages,
+        imagePreviews: updatedPreviews
+      });
+      
+      // Update local state
+      setLocalData(prev => ({
+        ...prev,
+        images: updatedImages
+      }));
+    } catch (error) {
+      console.error("Error updating image:", error);
+      alert("Failed to update the edited image. Please try again.");
+    }
+  };
+
+  // Function to open the photo enhancer for a specific image
+  const openPhotoEnhancer = (index) => {
+    router.push(`/dashboard/photo-enhancer?index=${index}`);
+  };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -315,13 +379,24 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
                     alt={`Preview ${index + 1}`}
                     className="w-full h-24 object-cover rounded-md"
                   />
-                  <button
-                    type="button"
-                    onClick={() => removeImage(index)}
-                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
-                  >
-                    ×
-                  </button>
+                  <div className="absolute top-1 right-1 flex gap-1">
+                    <button
+                      type="button"
+                      onClick={() => openPhotoEnhancer(index)}
+                      className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                      title="Edit image"
+                    >
+                      <FaEdit size={12} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                      title="Remove image"
+                    >
+                      ×
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>

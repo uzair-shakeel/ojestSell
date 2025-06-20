@@ -42,6 +42,50 @@ The Photo Enhancer tool provides advanced image editing capabilities, including:
   - Choose from preset colors or use a custom color picker
   - Keep transparency when desired
 
+## Photo Enhancer Integration
+
+The application includes a photo enhancer feature that allows users to edit car images during the listing creation process. The integration works as follows:
+
+### Features
+
+- Edit images directly from the car listing form
+- Advanced image editing capabilities including:
+  - Brightness, contrast, and saturation adjustments
+  - Auto-enhance feature
+  - Background removal
+  - License plate blurring
+  - Crop and transform tools
+
+### Technical Implementation
+
+1. **Image Editing Flow**:
+
+   - Users can click the edit button on an image in the car form
+   - The photo enhancer opens with the selected image
+   - After editing, users click "Save & Return" to save changes
+   - The edited image appears back in the car form
+
+2. **Data Flow**:
+
+   - Edited images are saved to the server's filesystem in the `/public/temp` directory
+   - The file path is stored in localStorage along with a timestamp and image index
+   - When returning to the car form, the component checks localStorage for edited images
+   - If found, the edited image replaces the original in the form
+
+3. **Key Components**:
+   - `/api/save-edited-image/route.js`: API endpoint for saving edited images
+   - `/app/dashboard/photo-enhancer/page.jsx`: Photo enhancer UI with editing tools
+   - `components/dashboard/createsteps/StepOne.tsx`: Car form component with image handling
+   - `components/dashboard/createsteps/ImageEditStep.tsx`: Image editing step with advanced editor access
+
+### Usage
+
+1. Upload images in the car listing form
+2. Click the edit (pencil) icon on any image
+3. Use the photo enhancer tools to edit the image
+4. Click "Save & Return" to apply changes
+5. Continue with the car listing process
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
