@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { CarsNearMe } from "../components/website/cars-near-me.jsx";
 import { BrowseCategories } from "../components/website/browse-categories";
@@ -9,8 +11,11 @@ import { FilterSearch } from "../components/website/filter-search";
 import { BlogSection } from "../components/website/blog-section.jsx";
 import { Import } from "lucide-react";
 import { Footer } from "../components/website/Footer.jsx";
+import { useLanguage } from "../lib/i18n/LanguageContext";
 
 export default function Home() {
+  const { t } = useLanguage();
+
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <Navbar />
@@ -36,7 +41,7 @@ export default function Home() {
         <div className="relative  w-full z-10 h-full flex flex-col justify-between py-[90px] md:py-[120px] items-center text-center text-white">
           <div>
             <h1 className="text-xl md:text-5xl font-bold mb-4">
-              Find, buy, and own your dream car in Easy steps.
+              {t("homepage.findBuyOwn")}
             </h1>
           </div>
           <div className="absolute md:bottom-10 bottom-5 left-5 right-5">

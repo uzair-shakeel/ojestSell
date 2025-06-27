@@ -4,84 +4,21 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Check, ChevronDown } from "lucide-react";
-
-const CAR_BRANDS = [
-  {
-    id: 1,
-    name: "Toyota",
-    logo: "/toyota.png",
-    discount: "2K",
-  },
-  {
-    id: 2,
-    name: "BMW",
-    logo: "/BMW.png",
-  },
-  {
-    id: 3,
-    name: "Chevrolet",
-    logo: "/chevrolet.png",
-  },
-  {
-    id: 4,
-    name: "Honda",
-    logo: "/honda.png",
-  },
-  {
-    id: 5,
-    name: "Ford",
-    logo: "/ford.png",
-  },
-  {
-    id: 6,
-    name: "Audi",
-    logo: "https://www.carlogos.org/car-logos/audi-logo-2016.png",
-  },
-  {
-    id: 7,
-    name: "Acura",
-    logo: "/acura.png",
-  },
-  {
-    id: 8,
-    name: "Hyundai",
-    logo: "/hyundai.png",
-  },
-  {
-    id: 9,
-    name: "Dodge",
-    logo: "/dodge.png",
-    discount: "1K",
-  },
-  {
-    id: 10,
-    name: "Mercedes-Benz",
-    logo: "/Mercedes.png",
-    discount: "5.5K",
-  },
-  {
-    id: 11,
-    name: "Kia",
-    logo: "/kia.png",
-  },
-  {
-    id: 12,
-    name: "Lexus",
-    logo: "/lexus.png",
-  },
-];
+import { useLanguage } from "../../lib/i18n/LanguageContext";
 
 export function BrowseCategories() {
-  const [carType, setCarType] = useState("new");
+  const { t } = useLanguage();
   const [showAll, setShowAll] = useState(false);
 
-  const displayedBrands = showAll ? CAR_BRANDS : CAR_BRANDS.slice(0, 12);
+  // Get brands from translations
+  const brands = t("homepage.browseCategories.brands");
+  const displayedBrands = showAll ? brands : brands.slice(0, 12);
 
   return (
     <section className="py-12">
       <div className=" mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-8">
-          Shop your favorite brand
+          {t("homepage.browseCategories.title")}
         </h2>
 
         {/* Brand Grid */}
@@ -104,6 +41,11 @@ export function BrowseCategories() {
                 />
               </div>
               <span className="text-lg font-medium">{brand.name}</span>
+              {brand.discount && (
+                <span className="absolute top-2 right-2 text-sm text-green-600 font-semibold">
+                  -{brand.discount}
+                </span>
+              )}
             </Link>
           ))}
         </div>
@@ -114,7 +56,7 @@ export function BrowseCategories() {
             className="rounded-full px-8 py-2 border border-gray-300 inline-flex items-center hover:bg-gray-100 transition-colors"
             onClick={() => setShowAll(!showAll)}
           >
-            See more
+            {t("homepage.browseCategories.seeMore")}
             <ChevronDown className="ml-2 h-4 w-4" />
           </button>
         </div>

@@ -4,8 +4,10 @@ import { useState, useEffect, useRef } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import CarCard from "./CarCard";
 import { getAllCars } from "../../services/carService";
+import { useLanguage } from "../../lib/i18n/LanguageContext";
 
 export function CarsNearMe() {
+  const { t } = useLanguage();
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -72,14 +74,18 @@ export function CarsNearMe() {
     <section className="py-12 bg-gray-50">
       <div className="mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-2xl font-bold">Cars For Sale Near Me</h2>
+          <h2 className="text-2xl font-bold">
+            {t("homepage.carsNearMe.title")}
+          </h2>
           <button className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-100">
-            View All
+            {t("homepage.carsNearMe.viewAll")}
           </button>
         </div>
-        {loading && <p>Loading cars...</p>}
+        {loading && <p>{t("homepage.carsNearMe.loading")}</p>}
         {error && <p className="text-red-500">{error}</p>}
-        {!loading && !error && cars.length === 0 && <p>No cars found.</p>}
+        {!loading && !error && cars.length === 0 && (
+          <p>{t("homepage.carsNearMe.noCars")}</p>
+        )}
         {/* Scrollable container */}
         {cars.length > 0 && (
           <div className="relative">

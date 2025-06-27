@@ -2,8 +2,11 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 const PrivacyPolicyPage = () => {
+  const { t } = useLanguage();
+
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Hero Banner Section with Image */}
@@ -20,7 +23,7 @@ const PrivacyPolicyPage = () => {
           <div className="bg-black/20 flex justify-start md:justify-end py-4 md:py-24 px-4 h-full">
             <div className="relative z-10 md:w-1/3 px-6 flex flex-col justify-center">
               <h1 className="text-xl font-extrabold pt-24 md:pt-0 text-white sm:text-4xl">
-                Your Data, Your Drive — Always Secure, Always Private.
+                {t("privacy.hero.title")}
               </h1>
             </div>
           </div>
@@ -31,110 +34,70 @@ const PrivacyPolicyPage = () => {
       <div className="max-w-5xl mx-auto px-4 py-12">
         <div className="bg-white p-6 md:p-8 rounded-xl shadow-md">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            1. Introduction
+            {t("privacy.sections.introduction.title")}
           </h2>
           <p className="text-gray-700 mb-4">
-            At OjestSell, we are committed to protecting your privacy. This
-            Privacy Policy explains how we collect, use, disclose, and safeguard
-            your information when you visit our website or use our services.
+            {t("privacy.sections.introduction.content")}
           </p>
 
           <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
-            2. Information We Collect
+            {t("privacy.sections.informationWeCollect.title")}
           </h2>
           <p className="text-gray-700 mb-4">
-            We collect several types of information from and about users of our
-            website, including:
+            {t("privacy.sections.informationWeCollect.intro")}
           </p>
           <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
-            <li>
-              <strong>Personal Information:</strong> Name, email address,
-              telephone number, postal address, and payment information.
-            </li>
-            <li>
-              <strong>Vehicle Information:</strong> Make, model, year,
-              condition, and details of vehicles listed on our platform.
-            </li>
-            <li>
-              <strong>Usage Information:</strong> How you use our website, what
-              pages you visit, and your interactions with listings.
-            </li>
-            <li>
-              <strong>Device Information:</strong> IP address, browser type,
-              operating system, and other technical information.
-            </li>
+            <li>{t("privacy.sections.informationWeCollect.items.personal")}</li>
+            <li>{t("privacy.sections.informationWeCollect.items.vehicle")}</li>
+            <li>{t("privacy.sections.informationWeCollect.items.usage")}</li>
+            <li>{t("privacy.sections.informationWeCollect.items.device")}</li>
           </ul>
 
           <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
-            3. How We Collect Information
+            {t("privacy.sections.howWeCollect.title")}
           </h2>
-          <p className="text-gray-700 mb-4">We collect information through:</p>
+          <p className="text-gray-700 mb-4">
+            {t("privacy.sections.howWeCollect.intro")}
+          </p>
           <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
-            <li>
-              Direct interactions when you create an account or list a vehicle
-            </li>
-            <li>
-              Automated technologies such as cookies and similar tracking
-              technologies
-            </li>
-            <li>
-              Third parties, such as payment processors and identity
-              verification services
-            </li>
+            {t("privacy.sections.howWeCollect.items", {
+              returnObjects: true,
+            }).map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
           </ul>
 
           <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
-            4. How We Use Your Information
+            {t("privacy.sections.howWeUse.title")}
           </h2>
-          <p className="text-gray-700 mb-4">We use your information to:</p>
+          <p className="text-gray-700 mb-4">
+            {t("privacy.sections.howWeUse.intro")}
+          </p>
           <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
-            <li>Provide, maintain, and improve our services</li>
-            <li>
-              Process transactions and send transaction-related communications
-            </li>
-            <li>Create and maintain your account</li>
-            <li>Connect buyers and sellers</li>
-            <li>
-              Send administrative information and marketing communications
-            </li>
-            <li>Protect our platform from fraudulent or illegal activity</li>
-            <li>Comply with legal obligations</li>
+            {t("privacy.sections.howWeUse.items", { returnObjects: true }).map(
+              (item, index) => (
+                <li key={index}>{item}</li>
+              )
+            )}
           </ul>
 
           <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
-            5. Cookies and Tracking Technologies
+            {t("privacy.sections.cookies.title")}
           </h2>
           <p className="text-gray-700 mb-4">
-            We use cookies and similar tracking technologies to collect
-            information about your browsing activities. Cookies are small text
-            files stored on your device that help us provide a better user
-            experience.
+            {t("privacy.sections.cookies.content")}
           </p>
           <p className="text-gray-700 mb-4">
-            We use different types of cookies:
+            {t("privacy.sections.cookies.intro")}
           </p>
           <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
-            <li>
-              <strong>Essential Cookies:</strong> Required for our website to
-              function properly.
-            </li>
-            <li>
-              <strong>Analytical Cookies:</strong> Help us understand how
-              visitors interact with our website.
-            </li>
-            <li>
-              <strong>Functional Cookies:</strong> Allow us to remember your
-              preferences and settings.
-            </li>
-            <li>
-              <strong>Advertising Cookies:</strong> Used to deliver relevant
-              advertisements and track ad campaign performance.
-            </li>
+            <li>{t("privacy.sections.cookies.types.essential")}</li>
+            <li>{t("privacy.sections.cookies.types.analytical")}</li>
+            <li>{t("privacy.sections.cookies.types.functional")}</li>
+            <li>{t("privacy.sections.cookies.types.advertising")}</li>
           </ul>
           <p className="text-gray-700 mb-4">
-            You can control cookie settings through your browser preferences.
-            However, disabling certain cookies may limit your ability to use
-            some features of our website.
+            {t("privacy.sections.cookies.control")}
           </p>
 
           <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
@@ -216,7 +179,7 @@ const PrivacyPolicyPage = () => {
 
           <div className="border-t border-gray-200 pt-6">
             <p className="text-gray-600 text-sm">
-              Last Updated: {new Date().toLocaleDateString()}
+              {t("terms.lastUpdated")}: {new Date().toLocaleDateString()}
             </p>
           </div>
         </div>
@@ -226,13 +189,13 @@ const PrivacyPolicyPage = () => {
             href="/website/terms"
             className="text-blue-600 hover:text-blue-800 font-medium mr-6"
           >
-            View Terms & Conditions
+            {t("privacy.viewTerms")}
           </Link>
           <Link
             href="/website/contact"
             className="text-blue-600 hover:text-blue-800 font-medium"
           >
-            Contact Us
+            {t("privacy.contactUs")}
           </Link>
         </div>
       </div>

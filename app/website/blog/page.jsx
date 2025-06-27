@@ -2,9 +2,13 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { blogPosts } from "./data";
+import { useBlogPosts } from "./data";
+import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 const BlogPage = () => {
+  const { t } = useLanguage();
+  const blogPosts = useBlogPosts();
+
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Hero Banner Section with Image */}
@@ -21,11 +25,10 @@ const BlogPage = () => {
           <div className="bg-black/20 flex justify-start md:justify-end py-4 md:py-24 px-4 h-full">
             <div className="relative z-10 md:w-1/3 px-6 flex flex-col justify-center">
               <h1 className="text-xl font-extrabold pt-24 md:pt-0 text-white sm:text-4xl">
-                Our Blog
+                {t("blog.hero.title")}
               </h1>
               <p className="mt-4 text-white text-lg">
-                Discover the latest insights, tips, and trends in the automotive
-                world
+                {t("blog.hero.subtitle")}
               </p>
             </div>
           </div>
@@ -58,7 +61,9 @@ const BlogPage = () => {
                 <div className="flex items-center text-sm text-gray-500 mb-2">
                   <span>{post.date}</span>
                   <span className="mx-2">•</span>
-                  <span>{post.readTime}</span>
+                  <span>
+                    {post.readTime} {t("blog.minuteRead")}
+                  </span>
                 </div>
                 <h2 className="text-xl font-bold text-gray-900 mb-2">
                   {post.title}
@@ -66,7 +71,7 @@ const BlogPage = () => {
                 <p className="text-gray-600">{post.excerpt}</p>
                 <div className="mt-4">
                   <span className="text-blue-600 hover:text-blue-800 font-medium">
-                    Read more →
+                    {t("blog.readMore")}
                   </span>
                 </div>
               </div>

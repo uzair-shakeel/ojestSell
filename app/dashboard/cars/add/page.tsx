@@ -9,6 +9,7 @@ import StepFour from "../../../../components/dashboard/createsteps/StepFour";
 import StepThree from "../../../../components/dashboard/createsteps/StepThree";
 import StepTwo from "../../../../components/dashboard/createsteps/StepTwo";
 import StepOne from "../../../../components/dashboard/createsteps/StepOne";
+import StepPhotoEnhancer from "../../../../components/dashboard/createsteps/StepPhotoEnhancer";
 import { getUserById } from "../../../../services/userService";
 import ImageEditStep from "../../../../components/dashboard/createsteps/ImageEditStep";
 
@@ -294,6 +295,7 @@ export default function MultiStepForm() {
             />
           )}
           {step === 2 && (
+            // <StepPhotoEnhancer
             <ImageEditStep
               nextStep={nextStep}
               prevStep={prevStep}

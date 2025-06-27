@@ -5,25 +5,26 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useLanguage } from "../../lib/i18n/LanguageContext";
 
 const CATEGORIES = [
   {
     id: 1,
-    title: "LUXURY CARS",
+    titleKey: "luxuryCars",
     image: "/luxury.jpg",
-    description: "Experience ultimate comfort and style",
+    descriptionKey: "luxuryCarsDesc",
   },
   {
     id: 2,
-    title: "SPORTS CARS",
+    titleKey: "sportsCars",
     image: "/sports.jpg",
-    description: "Feel the thrill of performance",
+    descriptionKey: "sportsCarsDesc",
   },
   {
     id: 3,
-    title: "CLASSIC CARS",
+    titleKey: "classicCars",
     image: "/classic.jpg",
-    description: "Timeless elegance on wheels",
+    descriptionKey: "classicCarsDesc",
   },
 ];
 
@@ -41,6 +42,7 @@ const LOGOS = [
 ];
 
 export function FeaturedCategories() {
+  const { t } = useLanguage();
   const containerRef = useRef(null);
   const textRef = useRef(null);
 
@@ -90,16 +92,23 @@ export function FeaturedCategories() {
 
       {/* Featured Categories Grid */}
       <div className="container mx-auto px-4">
+        <h2 className="text-3xl font-bold text-center text-white mb-8">
+          {t("homepage.featuredCategories.title")}
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {CATEGORIES.map((category) => (
             <Link
               key={category.id}
-              href={`/category/${category.title.toLowerCase()}`}
+              href={`/category/${t(
+                `homepage.featuredCategories.categories.${category.titleKey}`
+              ).toLowerCase()}`}
               className="group relative aspect-[4/3] overflow-hidden"
             >
               <Image
                 src={category.image || "/placeholder.svg"}
-                alt={category.title}
+                alt={t(
+                  `homepage.featuredCategories.categories.${category.titleKey}`
+                )}
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-110"
               />
@@ -111,15 +120,21 @@ export function FeaturedCategories() {
               {/* Content */}
               <div className="absolute inset-0 p-8 flex flex-col justify-between text-white">
                 <div className="transform translate-y-8 transition-transform duration-700 group-hover:translate-y-0">
-                  <h3 className="text-2xl font-bold mb-2">{category.title}</h3>
+                  <h3 className="text-2xl font-bold mb-2">
+                    {t(
+                      `homepage.featuredCategories.categories.${category.titleKey}`
+                    )}
+                  </h3>
                   <p className="text-white/80 opacity-0 transition-opacity duration-700 group-hover:opacity-100">
-                    {category.description}
+                    {t(
+                      `homepage.featuredCategories.categories.${category.descriptionKey}`
+                    )}
                   </p>
                 </div>
 
                 <div className="transform translate-y-8 opacity-0 transition-all duration-700 group-hover:translate-y-0 group-hover:opacity-100">
                   <span className="inline-block border-b-2 border-white pb-1">
-                    Explore More
+                    {t("homepage.featuredCategories.exploreMore")}
                   </span>
                 </div>
               </div>

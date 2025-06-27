@@ -5,8 +5,10 @@ import CarCard from "../../../components/website/CarCard";
 import Image from "next/image";
 import { getAllCars, searchCars } from "../../../services/carService";
 import { useSearchParams } from "next/navigation";
+import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 const CarsContent = () => {
+  const { t } = useLanguage();
   const [view, setView] = useState("list");
   const [cars, setCars] = useState([]);
   const [showMobileFilter, setShowMobileFilter] = useState(false);
@@ -94,7 +96,7 @@ const CarsContent = () => {
         }
       } catch (error) {
         console.error("Error fetching cars:", error);
-        setError(error.message || "Failed to fetch cars");
+        setError(t("cars.error"));
         setCars([]);
       } finally {
         setIsLoading(false);
@@ -102,7 +104,7 @@ const CarsContent = () => {
     };
 
     fetchCarsWithFilters();
-  }, [searchParams]); // Re-run when URL parameters change
+  }, [searchParams, t]); // Re-run when URL parameters change
 
   // Handle sorting
   const handleSort = (value) => {
@@ -292,7 +294,7 @@ const CarsContent = () => {
               onClick={() => setShowMobileFilter(true)}
               className="text-base bg-blue-600 text-white font-medium px-7 py-2 rounded lg:hidden block"
             >
-              Filter
+              {t("cars.filters.mobileButton")}
             </button>
             <select
               className="flex items-center border border-black rounded bg-transparent px-7 py-2 text-black font-medium"
@@ -300,15 +302,33 @@ const CarsContent = () => {
               onChange={(e) => handleSort(e.target.value)}
               disabled={isLoading}
             >
-              <option value="best-match">Best match</option>
-              <option value="lowest-price">Lowest price</option>
-              <option value="highest-price">Highest price</option>
-              <option value="lowest-mileage">Lowest mileage</option>
-              <option value="highest-mileage">Highest mileage</option>
-              <option value="newest-year">Newest year</option>
-              <option value="oldest-year">Oldest year</option>
-              <option value="newest-listed">Newest listed</option>
-              <option value="oldest-listed">Oldest listed</option>
+              <option value="best-match">
+                {t("cars.filters.sort.options.bestMatch")}
+              </option>
+              <option value="lowest-price">
+                {t("cars.filters.sort.options.lowestPrice")}
+              </option>
+              <option value="highest-price">
+                {t("cars.filters.sort.options.highestPrice")}
+              </option>
+              <option value="lowest-mileage">
+                {t("cars.filters.sort.options.lowestMileage")}
+              </option>
+              <option value="highest-mileage">
+                {t("cars.filters.sort.options.highestMileage")}
+              </option>
+              <option value="newest-year">
+                {t("cars.filters.sort.options.newestYear")}
+              </option>
+              <option value="oldest-year">
+                {t("cars.filters.sort.options.oldestYear")}
+              </option>
+              <option value="newest-listed">
+                {t("cars.filters.sort.options.newestListed")}
+              </option>
+              <option value="oldest-listed">
+                {t("cars.filters.sort.options.oldestListed")}
+              </option>
             </select>
           </div>
 
@@ -324,7 +344,7 @@ const CarsContent = () => {
                     Loading...
                   </span>
                 </div>
-                <p className="mt-2 text-gray-600">Loading cars...</p>
+                <p className="mt-2 text-gray-600">{t("cars.loading")}</p>
               </div>
             ) : error ? (
               <div className="text-center py-8">
@@ -333,13 +353,20 @@ const CarsContent = () => {
                   onClick={() => window.location.reload()}
                   className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                 >
-                  Try Again
+                  {t("cars.error.tryAgain")}
                 </button>
               </div>
             ) : cars.length > 0 ? (
               cars.map((car) => <CarCard key={car._id} view={view} car={car} />)
             ) : (
-              <p className="text-center text-gray-500">No cars found.</p>
+              <div className="text-center py-12">
+                <h3 className="text-lg font-medium text-gray-900">
+                  {t("cars.noResults.title")}
+                </h3>
+                <p className="mt-2 text-sm text-gray-500">
+                  {t("cars.noResults.message")}
+                </p>
+              </div>
             )}
           </div>
 
