@@ -3,7 +3,9 @@ import axios from "axios";
 
 // Define the API base URL directly in this file
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "https://ojest-ap-is.vercel.app";
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+// const API_BASE_URL =
+//   process.env.NEXT_PUBLIC_API_BASE_URL || "https://ojest-ap-is.vercel.app";
 
 // Log the API URL being used
 console.log("Using API URL:", API_BASE_URL);
@@ -197,6 +199,10 @@ export const getAllCars = async (): Promise<CarData[]> => {
 // Get car by ID
 export const getCarById = async (carId: string): Promise<CarData> => {
   try {
+    console.log(
+      `Calling API: ${API_BASE_URL}/api/cars/${carId} with carId:`,
+      carId
+    ); // Debug log
     const response = await axios.get(`${API_BASE_URL}/api/cars/${carId}`);
     return response.data;
   } catch (error: any) {

@@ -10,13 +10,14 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useGoogleMaps } from "../../lib/GoogleMapsContext";
 
-export default function CarCard({ view, car }) {
+export default function CarCard({ view, car, onDelete }) {
   const router = useRouter();
   const { getGeocodingData } = useGoogleMaps();
   const [locationDetails, setLocationDetails] = useState({
     city: "",
     state: "",
   });
+  console.log("car", car);
 
   useEffect(() => {
     // Fetch the address using cached geocoding when the car location is available
@@ -48,15 +49,16 @@ export default function CarCard({ view, car }) {
         {car?.images && car?.images?.length > 0 ? (
           car?.images?.map((image, index) => {
             // Assuming the backend sends image paths like 'uploads/1743981275051-yousriphoto.jpg'
+
             const imageUrl = `${
               process.env.NEXT_PUBLIC_API_BASE_URL
-            }/${image.replace("\\", "/")}`; // Update URL format for static files
+            }/${image?.replace("\\", "/")}`; // Update URL format for static files
 
             return (
               <SwiperSlide key={index}>
                 <div className="">
                   <img
-                    src={imageUrl}
+                    src={image}
                     className="w-full h-64 object-cover"
                     alt={`Car Image ${index + 1}`}
                   />
@@ -136,12 +138,22 @@ export default function CarCard({ view, car }) {
               className="w-32"
             />
           </div>
-          <button
-            onClick={() => router.push(`/website/cars/${car._id}`)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
-          >
-            View details
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => router.push(`/website/cars/${car._id}`)}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
+            >
+              View details
+            </button>
+            {onDelete && (
+              <button
+                onClick={() => onDelete(car._id)}
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md"
+              >
+                Delete
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

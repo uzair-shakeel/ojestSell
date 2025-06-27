@@ -63,19 +63,19 @@ const Page = () => {
         const carData = await getCarById(carId);
         setCar(carData);
         const firstImage = carData?.images?.[0] || "/images/hamer1.png";
-        setMainImage(formatImageUrl(firstImage));
+        setMainImage(firstImage);
 
-        const sellerData = await getUserById(carData.createdBy);
+        const sellerData = await getUserById(carData?.createdBy);
         setSeller(sellerData);
 
         if (sellerData?.location?.coordinates) {
           const cityName = await getCityFromCoordinates(
-            sellerData.location.coordinates[1],
-            sellerData.location.coordinates[0]
+            sellerData?.location?.coordinates?.[1],
+            sellerData?.location?.coordinates?.[0]
           );
           setCity(cityName);
         } else {
-          setCity(carData.location?.city || "Unknown Location");
+          setCity(carData?.location?.city || "Unknown Location");
         }
       } catch (err) {
         console.error("Error fetching data:", err);
@@ -88,7 +88,7 @@ const Page = () => {
 
   useEffect(() => {
     if (user) {
-      socket.auth = { userId: user.id };
+      socket.auth = { userId: user?.id };
       socket.connect();
       return () => socket.disconnect();
     }
@@ -109,19 +109,19 @@ const Page = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-clerk-user-id": user.id,
+          "x-clerk-user-id": user?.id,
         },
         body: JSON.stringify({
           carId,
-          ownerId: car.createdBy,
+          ownerId: car?.createdBy,
         }),
       });
 
-      if (!response.ok) {
+      if (!response?.ok) {
         throw new Error("Failed to create chat");
       }
 
-      const chat = await response.json();
+      const chat = await response?.json();
       router.push(`/dashboard/messages`);
     } catch (err) {
       console.error("Error creating chat:", err);
@@ -160,7 +160,7 @@ const Page = () => {
             exit="exit"
             variants={animationVariants}
           >
-            <ConditionTab carCondition={car.carCondition} />
+            <ConditionTab carCondition={car?.carCondition} />
           </motion.div>
         );
       case "location":
@@ -172,7 +172,7 @@ const Page = () => {
             exit="exit"
             variants={animationVariants}
           >
-            <LocationTab location={car.location} />
+            <LocationTab location={car?.location} />
           </motion.div>
         );
       case "financial":
@@ -184,7 +184,7 @@ const Page = () => {
             exit="exit"
             variants={animationVariants}
           >
-            <FinancialTab financialInfo={car.financialInfo} />
+            <FinancialTab financialInfo={car?.financialInfo} />
           </motion.div>
         );
       default:
@@ -209,8 +209,8 @@ const Page = () => {
   }
 
   const sellerName = seller
-    ? `${seller.firstName || ""} ${seller.lastName || ""}`.trim() ||
-      seller.companyName ||
+    ? `${seller?.firstName || ""} ${seller?.lastName || ""}`.trim() ||
+      seller?.companyName ||
       "Seller"
     : "Seller";
 
@@ -238,12 +238,12 @@ const Page = () => {
     <div className="lg:mx-20 p-2">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="col-span-1 md:col-span-2">
-          <h1 className="text-3xl font-bold mt-6">{`${car.make} ${car.model} ${car.year}`}</h1>
+          <h1 className="text-3xl font-bold mt-6">{`${car?.make} ${car?.model} ${car?.year}`}</h1>
           <div className="grid grid-cols-2 mt-6">
             <div className="col-span-2 overflow-hidden relative group">
               <img
                 src={mainImage}
-                alt={`${car.make} ${car.model}`}
+                alt={`${car?.make} ${car?.model}`}
                 className="w-full h-[450px] object-cover rounded group-hover:scale-110 transition-transform duration-300"
               />
             </div>
@@ -252,8 +252,8 @@ const Page = () => {
                 className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 text-white p-2 rounded-full z-10"
                 onClick={() =>
                   document
-                    .getElementById("thumbnailScroll")
-                    .scrollBy({ left: -100, behavior: "smooth" })
+                    ?.getElementById("thumbnailScroll")
+                    ?.scrollBy({ left: -100, behavior: "smooth" })
                 }
               >
                 <IoIosArrowBack className="w-6 h-6" />
@@ -263,17 +263,17 @@ const Page = () => {
                 className="flex overflow-x-auto space-x-2 p-1 scrollbar-custom"
                 style={{ scrollBehavior: "smooth" }}
               >
-                {(car.images || ["/images/hamer1.png"]).map((img, index) => (
+                {(car?.images || ["/images/hamer1.png"]).map((img, index) => (
                   <button
                     key={index}
-                    onClick={() => setMainImage(formatImageUrl(img))}
+                    onClick={() => setMainImage(img)}
                     className="flex-shrink-0 focus:outline-none"
                   >
                     <img
-                      src={formatImageUrl(img)}
+                      src={img}
                       alt={`Thumbnail ${index + 1}`}
                       className={`w-[120px] h-[80px] object-cover rounded-md border ${
-                        mainImage === formatImageUrl(img)
+                        mainImage === img
                           ? "border-blue-500"
                           : "border-gray-300"
                       }`}
@@ -285,8 +285,8 @@ const Page = () => {
                 className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 text-white p-2 rounded-full shadow-md z-10"
                 onClick={() =>
                   document
-                    .getElementById("thumbnailScroll")
-                    .scrollBy({ left: 100, behavior: "smooth" })
+                    ?.getElementById("thumbnailScroll")
+                    ?.scrollBy({ left: 100, behavior: "smooth" })
                 }
               >
                 <IoIosArrowForward className="w-6 h-6" />
@@ -320,14 +320,14 @@ const Page = () => {
               <div className="flex flex-col items-start">
                 <h3 className="text-base font-medium mb-2">PRICE</h3>
                 <p className="text-4xl font-bold text-gray-900 mb-2">
-                  {car.financialInfo?.priceNetto
-                    ? `${car.financialInfo.priceNetto} zł `
+                  {car?.financialInfo?.priceNetto
+                    ? `${car?.financialInfo?.priceNetto} zł `
                     : "N/A"}{" "}
                   <span className="text-xl text-gray-600">(NETTO)</span>
                 </p>
                 <p className="text-xl font-medium text-gray-600 underline">
-                  {car.financialInfo?.priceWithVat
-                    ? `${car.financialInfo.priceWithVat} zł`
+                  {car?.financialInfo?.priceWithVat
+                    ? `${car?.financialInfo?.priceWithVat} zł`
                     : ""}
                 </p>
               </div>
@@ -395,7 +395,7 @@ const Page = () => {
                 disabled={!seller?.phoneNumbers?.[0]}
                 onClick={() =>
                   seller?.phoneNumbers?.[0] &&
-                  window.open(`tel:${seller.phoneNumbers[0]}`)
+                  window.open(`tel:${seller?.phoneNumbers?.[0]}`)
                 }
               >
                 <img src="/website/call.svg" alt="Call" className="w-5 h-5" />

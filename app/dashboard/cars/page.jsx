@@ -1,9 +1,9 @@
 "use client";
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
-import { useAuth, } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
-import { getCarsByUserId } from "../../../services/carService";
+import { getCarsByUserId, deleteCar } from "../../../services/carService";
 import CarCard from "../../../components/website/CarCard";
 
 export default function DashboardCarsPage() {
@@ -21,6 +21,16 @@ export default function DashboardCarsPage() {
     }
   };
 
+  const handleDelete = async (carId) => {
+    if (!window.confirm("Are you sure you want to delete this car?")) return;
+    try {
+      await deleteCar(carId, getToken);
+      await loadCars();
+    } catch (error) {
+      alert("Failed to delete car: " + (error?.message || error));
+    }
+  };
+
   useEffect(() => {
     if (isLoaded) {
       setIsLoading(false);
@@ -35,16 +45,14 @@ export default function DashboardCarsPage() {
     return <div>Loading...</div>;
   }
 
-
   return (
     <div>
       <h1 className="text-3xl font-bold mb-4">My Cars</h1>
-     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-     {cars.map((car) => (
-        <CarCard key={car._id} car={car} />
-      ))}
-     </div>
+      <div className="grid grid-cols-1 md:grid-cols-2  gap-4">
+        {cars.map((car) => (
+          <CarCard key={car._id} car={car} onDelete={handleDelete} />
+        ))}
+      </div>
     </div>
   );
-
 }
