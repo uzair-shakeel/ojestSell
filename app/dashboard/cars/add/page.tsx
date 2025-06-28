@@ -189,6 +189,16 @@ export default function MultiStepForm() {
       return;
     }
 
+    // Debug logging for images
+    console.log("Images before submit:", formData.images);
+    formData.images.forEach((img, idx) => {
+      console.log(
+        `Image ${idx}:`,
+        img,
+        img instanceof File ? "File" : typeof img
+      );
+    });
+
     try {
       const carData = {
         title: formData.title,

@@ -117,9 +117,9 @@ const Page = () => {
         }),
       });
 
-      if (!response?.ok) {
-        throw new Error("Failed to create chat");
-      }
+      // if (!response?.ok) {
+      //   throw new Error("Failed to create chat");
+      // }
 
       const chat = await response?.json();
       router.push(`/dashboard/messages`);

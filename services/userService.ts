@@ -89,6 +89,8 @@ export const updateUser = async (
       throw new Error("No authentication token found");
     }
 
+    console.log("FormData before processing:", formData);
+
     const updatedLocation = {
       type: "Point",
       coordinates: [
@@ -107,19 +109,31 @@ export const updateUser = async (
           );
         }
       } else if (key === "phoneNumbers") {
-        formData.phoneNumbers.forEach((phoneNumber, index) => {
-          data.append(`phoneNumbers[${index}]`, phoneNumber.phone || "");
-        });
+        // Handle phone numbers as a simple array of strings
+        if (Array.isArray(formData.phoneNumbers)) {
+          formData.phoneNumbers.forEach((phoneNumber: any, index: number) => {
+            // If phoneNumber is an object with phone property, use that
+            if (typeof phoneNumber === "object" && phoneNumber.phone) {
+              data.append(`phoneNumbers[${index}]`, phoneNumber.phone);
+            }
+            // If phoneNumber is a string, use it directly
+            else if (typeof phoneNumber === "string") {
+              data.append(`phoneNumbers[${index}]`, phoneNumber);
+            }
+          });
+        }
       } else if (key === "location") {
         data.append("location", JSON.stringify(updatedLocation));
       } else if (key === "image") {
-        if (formData.image) {
+        if (formData.image instanceof File) {
           data.append("image", formData.image);
         }
       } else {
         data.append(key, formData[key] || "");
       }
     }
+
+    console.log("Sending data to server");
 
     const response = await axios.put(
       `${API_BASE_URL}/api/users/profile/`,
@@ -132,6 +146,7 @@ export const updateUser = async (
       }
     );
 
+    console.log("Server response:", response.data);
     return response.data; // Return the updated user data
   } catch (error) {
     console.error("Error updating user:", error);

@@ -23,7 +23,7 @@ export function BrowseCategories() {
 
         {/* Brand Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {displayedBrands.map((brand) => (
+          {displayedBrands?.map((brand) => (
             <Link
               key={brand.id}
               href={{

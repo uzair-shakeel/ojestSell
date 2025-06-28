@@ -5,7 +5,10 @@ import { FaSearch, FaPaperPlane, FaBars, FaEnvelope } from "react-icons/fa";
 import { useUser } from "@clerk/nextjs";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:5000", {
+// Define API URL
+const API_URL = "http://localhost:5000";
+
+const socket = io(API_URL, {
   autoConnect: false,
 });
 
@@ -34,20 +37,34 @@ const MessagesPage = () => {
   useEffect(() => {
     if (!user) return;
 
+    console.log("Current user:", user);
+    console.log("Using Clerk user ID:", user.id);
+
     socket.auth = { userId: user.id };
     socket.connect();
 
     const fetchChats = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:5000/api/chat/my-chats",
-          {
-            headers: {
-              "x-clerk-user-id": user.id,
-            },
-          }
-        );
-        if (!response.ok) throw new Error("Failed to fetch chats");
+        console.log("Fetching chats for user ID:", user.id);
+
+        // Use fetch with explicit error handling
+        const response = await fetch(`${API_URL}/api/chat/my-chats`, {
+          headers: {
+            "x-clerk-user-id": user.id,
+            "Content-Type": "application/json",
+          },
+        });
+
+        console.log("Response status:", response.status);
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("Error response:", errorText);
+          throw new Error(
+            `Failed to fetch chats: ${response.status} ${errorText}`
+          );
+        }
+
         const data = await response.json();
         console.log("Initial chats data:", data);
         setChats(data.chats || []);
@@ -55,7 +72,7 @@ const MessagesPage = () => {
         if (data.chats && data.chats.length > 0) setSelectedChat(data.chats[0]);
       } catch (err) {
         console.error("Error fetching chats:", err);
-        setError("Failed to load chats.");
+        setError(`Failed to load chats: ${err.message}`);
       }
     };
 
@@ -123,16 +140,30 @@ const MessagesPage = () => {
 
     const fetchMessages = async () => {
       try {
+        console.log(`Fetching messages for chat: ${selectedChat._id}`);
+
         const response = await fetch(
-          `http://localhost:5000/api/chat/${selectedChat._id}/messages`,
+          `${API_URL}/api/chat/${selectedChat._id}/messages`,
           {
             headers: {
               "x-clerk-user-id": user.id,
+              "Content-Type": "application/json",
             },
           }
         );
-        if (!response.ok) throw new Error("Failed to fetch messages");
+
+        console.log("Messages response status:", response.status);
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("Error response:", errorText);
+          throw new Error(
+            `Failed to fetch messages: ${response.status} ${errorText}`
+          );
+        }
+
         const data = await response.json();
+        console.log("Received messages:", data);
 
         // Ensure messages have text field for display consistency
         const processedData = data.map((msg) => ({
@@ -148,7 +179,7 @@ const MessagesPage = () => {
         });
       } catch (err) {
         console.error("Error fetching messages:", err);
-        setError("Failed to load messages.");
+        setError(`Failed to load messages: ${err.message}`);
       }
     };
 

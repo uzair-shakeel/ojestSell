@@ -6,9 +6,8 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import CustomMap from "../../../components/dashboard/GoogleMapComponent";
 import { motion } from "framer-motion";
-import {  getUserById, updateUser } from "../../../services/userService";
+import { getUserById, updateUser } from "../../../services/userService";
 import Image from "next/image";
-
 
 const ProfileComponent = () => {
   const { getToken, userId } = useAuth();
@@ -42,7 +41,7 @@ const ProfileComponent = () => {
       try {
         const userData = await getUserById(userId);
         setUser(userData);
-        
+
         const newFormData = {
           firstName: userData.firstName || "",
           lastName: userData.lastName || "",
@@ -69,20 +68,20 @@ const ProfileComponent = () => {
             coordinates: userData.location?.coordinates || [51.5074, -0.1278], // default to London if no location
           },
         };
-        
+
         // Log the userData and the new formData
         console.log("User Data:", userData);
         console.log("Form Data:", newFormData);
-        
+
         setFormData(newFormData);
       } catch (err) {
         console.error("Error fetching user:", err);
       }
     };
-  
+
     if (userId) loadUser();
   }, [userId]);
-  
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name in formData.socialMedia) {
@@ -118,14 +117,19 @@ const ProfileComponent = () => {
     if (formData.phoneNumbers.length < 4) {
       setFormData({
         ...formData,
-        phoneNumbers: [...formData.phoneNumbers, { phone: "", countryCode: "pl" }],
+        phoneNumbers: [
+          ...formData.phoneNumbers,
+          { phone: "", countryCode: "pl" },
+        ],
       });
     }
   };
 
   const removePhoneNumber = (index) => {
     if (formData.phoneNumbers.length > 1) {
-      const newPhoneNumbers = formData.phoneNumbers.filter((_, i) => i !== index);
+      const newPhoneNumbers = formData.phoneNumbers.filter(
+        (_, i) => i !== index
+      );
       setFormData({ ...formData, phoneNumbers: newPhoneNumbers });
     }
   };
@@ -137,20 +141,33 @@ const ProfileComponent = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Create a deep copy of the form data
       const data = {
         ...formData,
+        // Extract just the phone numbers from the phoneNumbers array of objects
+        phoneNumbers: formData.phoneNumbers
+          .map((item) => item.phone)
+          .filter((phone) => phone.trim() !== ""),
       };
+
+      // Add the image file if it exists
       if (imageFile) {
         data.image = imageFile;
       }
+
+      console.log("Submitting data:", data);
+
       // Call the updateUser function from userServices
       const updatedUser = await updateUser(data, getToken);
+      console.log("Updated user:", updatedUser);
+
       setUser(updatedUser); // Set the updated user data to the state
+      alert("Profile updated successfully!");
     } catch (error) {
       console.error("Error updating user:", error);
+      alert("Failed to update profile. Please try again.");
     }
   };
-  
 
   if (!user) return <div>Loading...</div>;
 
@@ -176,10 +193,10 @@ const ProfileComponent = () => {
             </label>
             <div className="flex flex-col md:flex-row gap-4 items-center space-x-4">
               <Image
-                 src={formatImageUrl(user?.image)}
-                 alt="Profile"
-                 width={80}
-                 height={80}
+                src={formatImageUrl(user?.image)}
+                alt="Profile"
+                width={80}
+                height={80}
                 className="w-20 h-20 rounded-full object-center border border-gray-300"
               />
               <input
@@ -391,14 +408,14 @@ const ProfileComponent = () => {
             )}
           </div>
         </motion.div>
-       <motion.div className="mb-6 col-span-2">
-        <CustomMap
-          location={formData.location}
-          setLocation={(newLocation) => {
-            setFormData({ ...formData, location: newLocation });
-          }}
-        />
-      </motion.div>
+        <motion.div className="mb-6 col-span-2">
+          <CustomMap
+            location={formData.location}
+            setLocation={(newLocation) => {
+              setFormData({ ...formData, location: newLocation });
+            }}
+          />
+        </motion.div>
 
         {/* Submit and Delete Buttons */}
         <div className="flex gap-4">

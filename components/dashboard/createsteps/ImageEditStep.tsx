@@ -56,22 +56,10 @@ export default function ImageEditStep({
   const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [showBlurBox, setShowBlurBox] = useState(false);
-  const [blurBoxCoordinates, setBlurBoxCoordinates] = useState({
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-  });
-  const [isDraggingBlurBox, setIsDraggingBlurBox] = useState(false);
-  const [blurBoxDragStartPosition, setBlurBoxDragStartPosition] = useState({
-    x: 0,
-    y: 0,
-  });
-  const blurBoxRef = useRef<HTMLDivElement>(null);
-  const [blurIntensity, setBlurIntensity] = useState(5);
   const [showCrop, setShowCrop] = useState(false);
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
+  const [isBlurringPlate, setIsBlurringPlate] = useState(false);
 
   // Image adjustments state
   const [adjustments, setAdjustments] = useState({
@@ -238,209 +226,8 @@ export default function ImageEditStep({
       setActiveImageIndex(index);
       setPreviewUrl(formData.imagePreviews[index]);
       resetAdjustments();
-      setShowBlurBox(false);
       setShowCrop(false);
     }
-  };
-
-  // Initialize blur box when toggling it on
-  useEffect(() => {
-    if (showBlurBox && imageRef.current && containerRef.current) {
-      // Wait a moment for the image to fully render
-      setTimeout(() => {
-        const img = imageRef.current;
-        const container = containerRef.current;
-        if (!img || !container) return;
-
-        const containerRect = container.getBoundingClientRect();
-        const imgRect = img.getBoundingClientRect();
-
-        // Calculate the initial size and position for the blur box
-        // Make it about 1/4 the size of the image and centered
-        const boxWidth = imgRect.width / 4;
-        const boxHeight = imgRect.height / 4;
-
-        // Center the blur box on the image
-        const x =
-          imgRect.left - containerRect.left + (imgRect.width - boxWidth) / 2;
-        const y =
-          imgRect.top - containerRect.top + (imgRect.height - boxHeight) / 2;
-
-        setBlurBoxCoordinates({
-          x: Math.max(0, x),
-          y: Math.max(0, y),
-          width: Math.min(boxWidth, imgRect.width),
-          height: Math.min(boxHeight, imgRect.height),
-        });
-      }, 100);
-    }
-  }, [showBlurBox]);
-
-  // Handle blur box drag start
-  const handleBlurBoxDragStart = (e: React.MouseEvent | React.TouchEvent) => {
-    if (!blurBoxRef.current) return;
-
-    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
-    const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
-
-    setBlurBoxDragStartPosition({
-      x: clientX,
-      y: clientY,
-    });
-    setIsDraggingBlurBox(true);
-  };
-
-  // Handle blur box drag
-  const handleBlurBoxDrag = (e: React.MouseEvent | React.TouchEvent) => {
-    if (
-      !isDraggingBlurBox ||
-      !blurBoxRef.current ||
-      !containerRef.current ||
-      !imageRef.current
-    )
-      return;
-
-    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
-    const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
-
-    const dx = clientX - blurBoxDragStartPosition.x;
-    const dy = clientY - blurBoxDragStartPosition.y;
-
-    setBlurBoxDragStartPosition({
-      x: clientX,
-      y: clientY,
-    });
-
-    setBlurBoxCoordinates((prev) => {
-      const container = containerRef.current;
-      const img = imageRef.current;
-      if (!container || !img) return prev;
-
-      const containerRect = container.getBoundingClientRect();
-      const imgRect = img.getBoundingClientRect();
-
-      // Calculate new position
-      let newX = prev.x + dx;
-      let newY = prev.y + dy;
-
-      // Constrain to image boundaries
-      newX = Math.max(
-        imgRect.left - containerRect.left,
-        Math.min(imgRect.right - containerRect.left - prev.width, newX)
-      );
-      newY = Math.max(
-        imgRect.top - containerRect.top,
-        Math.min(imgRect.bottom - containerRect.top - prev.height, newY)
-      );
-
-      return { ...prev, x: newX, y: newY };
-    });
-  };
-
-  // Handle blur box drag end
-  const handleBlurBoxDragEnd = () => {
-    setIsDraggingBlurBox(false);
-  };
-
-  // Apply the blur box permanently to the image
-  const applyBlurBox = () => {
-    if (!activeImage || !imageRef.current || !containerRef.current) return;
-
-    const img = imageRef.current;
-    const container = containerRef.current;
-    const containerRect = container.getBoundingClientRect();
-    const imgRect = img.getBoundingClientRect();
-
-    // Calculate scale between natural and displayed image
-    const scaleX = img.naturalWidth / imgRect.width;
-    const scaleY = img.naturalHeight / imgRect.height;
-
-    // Convert blur box coordinates to natural image coordinates
-    const blurBoxX = Math.floor(
-      (blurBoxCoordinates.x - (imgRect.left - containerRect.left)) * scaleX
-    );
-    const blurBoxY = Math.floor(
-      (blurBoxCoordinates.y - (imgRect.top - containerRect.top)) * scaleY
-    );
-    const blurBoxWidth = Math.floor(blurBoxCoordinates.width * scaleX);
-    const blurBoxHeight = Math.floor(blurBoxCoordinates.height * scaleY);
-
-    // Create the main canvas
-    const mainCanvas = document.createElement("canvas");
-    const mainCtx = mainCanvas.getContext("2d");
-    if (!mainCtx) return;
-
-    mainCanvas.width = img.naturalWidth;
-    mainCanvas.height = img.naturalHeight;
-
-    // Draw the original image
-    mainCtx.drawImage(img, 0, 0);
-
-    // Create a temporary canvas for the blur area
-    const tempCanvas = document.createElement("canvas");
-    const tempCtx = tempCanvas.getContext("2d");
-    if (!tempCtx) return;
-
-    tempCanvas.width = blurBoxWidth;
-    tempCanvas.height = blurBoxHeight;
-
-    // Draw the region to blur
-    tempCtx.drawImage(
-      img,
-      blurBoxX,
-      blurBoxY,
-      blurBoxWidth,
-      blurBoxHeight,
-      0,
-      0,
-      blurBoxWidth,
-      blurBoxHeight
-    );
-
-    // Apply a strong blur effect
-    tempCtx.filter = `blur(${blurIntensity * 2}px)`;
-    tempCtx.drawImage(tempCanvas, 0, 0);
-
-    // Add a semi-transparent overlay to further obscure details
-    tempCtx.fillStyle = "rgba(150, 150, 150, 0.1)";
-    tempCtx.fillRect(0, 0, blurBoxWidth, blurBoxHeight);
-
-    // Draw the blurred region back to the main canvas
-    mainCtx.drawImage(tempCanvas, blurBoxX, blurBoxY);
-
-    // Convert to blob and update the image
-    mainCanvas.toBlob(
-      (blob) => {
-        if (blob) {
-          // Create a new File object
-          const blurredFile = new File([blob], activeImage.name, {
-            type: activeImage.type,
-          });
-
-          // Update the image in the formData
-          const newImages = [...formData.images];
-          newImages[activeImageIndex] = blurredFile;
-
-          // Generate a new preview URL
-          const newPreviewUrl = URL.createObjectURL(blob);
-          const newPreviews = [...formData.imagePreviews];
-          newPreviews[activeImageIndex] = newPreviewUrl;
-
-          // Update form data
-          updateFormData({
-            images: newImages,
-            imagePreviews: newPreviews,
-          });
-
-          // Update local state
-          setActiveImage(blurredFile);
-          setPreviewUrl(newPreviewUrl);
-          setShowBlurBox(false);
-        }
-      },
-      activeImage.type,
-      1.0 // Maximum quality
-    );
   };
 
   // Apply crop to the image
@@ -499,6 +286,82 @@ export default function ImageEditStep({
       activeImage.type,
       1.0
     );
+  };
+
+  // Update the blurNumberPlate function to handle loading state
+  const blurNumberPlate = async () => {
+    if (!activeImage) {
+      alert("Please select an image first");
+      return;
+    }
+
+    setIsBlurringPlate(true);
+
+    try {
+      // Create FormData for the API request
+      const apiFormData = new FormData();
+      apiFormData.append("file", activeImage);
+
+      console.log("Sending request to blur number plate...");
+      const response = await fetch("/api/blur-plate", {
+        method: "POST",
+        body: apiFormData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Received response:", data);
+
+      if (data.processed_image) {
+        // The processed_image is already a complete data URL
+        const imageUrl = data.processed_image;
+
+        // Update the preview with the blurred image
+        setPreviewUrl(imageUrl);
+
+        // Convert base64 to File object for further processing
+        // Extract the base64 data from the data URL
+        const base64Data = imageUrl.split(",")[1];
+        const byteString = atob(base64Data);
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+          ia[i] = byteString.charCodeAt(i);
+        }
+        const blob = new Blob([ab], { type: "image/jpeg" });
+        const file = new File([blob], "blurred-plate.jpg", {
+          type: "image/jpeg",
+        });
+
+        // Update the image in the component's formData prop
+        const newImages = [...formData.images];
+        newImages[activeImageIndex] = file;
+
+        // Generate a new preview URL
+        const newPreviews = [...formData.imagePreviews];
+        newPreviews[activeImageIndex] = imageUrl;
+
+        // Update form data using the updateFormData prop
+        updateFormData({
+          ...formData,
+          images: newImages,
+          imagePreviews: newPreviews,
+        });
+
+        // Update local state
+        setActiveImage(file);
+      } else {
+        throw new Error("No processed image received in response");
+      }
+    } catch (error) {
+      console.error("Error blurring number plate:", error);
+      alert("Failed to blur number plate. Please try again.");
+    } finally {
+      setIsBlurringPlate(false);
+    }
   };
 
   // Save the current adjustments to the form data
@@ -878,35 +741,6 @@ export default function ImageEditStep({
                           crossOrigin="anonymous"
                         />
                       )}
-
-                      {/* Blur box - only show when not cropping */}
-                      {showBlurBox && !showCrop && (
-                        <div
-                          ref={blurBoxRef}
-                          className="absolute cursor-move border-2 border-blue-500 bg-transparent"
-                          style={{
-                            left: `${blurBoxCoordinates.x}px`,
-                            top: `${blurBoxCoordinates.y}px`,
-                            width: `${blurBoxCoordinates.width}px`,
-                            height: `${blurBoxCoordinates.height}px`,
-                          }}
-                          onMouseDown={handleBlurBoxDragStart}
-                          onMouseMove={handleBlurBoxDrag}
-                          onMouseUp={handleBlurBoxDragEnd}
-                          onMouseLeave={handleBlurBoxDragEnd}
-                          onTouchStart={handleBlurBoxDragStart}
-                          onTouchMove={handleBlurBoxDrag}
-                          onTouchEnd={handleBlurBoxDragEnd}
-                        >
-                          <div
-                            className="absolute inset-0 flex items-center justify-center"
-                            style={{
-                              background: "rgba(200, 200, 200, 0.7)",
-                              backdropFilter: "blur(5px)",
-                            }}
-                          ></div>
-                        </div>
-                      )}
                     </div>
                   ) : (
                     <div className="text-gray-400">Select an image to edit</div>
@@ -924,23 +758,15 @@ export default function ImageEditStep({
                     >
                       <Wand2 className="w-4 h-4" /> Auto Enhance
                     </button>
+
                     <button
-                      onClick={() => setShowBlurBox(!showBlurBox)}
-                      className={`flex items-center gap-1 ${
-                        showBlurBox ? "bg-green-600" : "bg-gray-600"
-                      } text-white px-3 py-2 rounded-md hover:bg-opacity-90 transition-colors`}
+                      onClick={blurNumberPlate}
+                      className="flex items-center gap-1 bg-purple-600 text-white px-3 py-2 rounded-md hover:bg-purple-700 transition-colors"
+                      disabled={!activeImage || isBlurringPlate}
                     >
-                      <Blur className="w-4 h-4" />{" "}
-                      {showBlurBox ? "Cancel Blur" : "Blur Plate"}
+                      <Blur className="w-4 h-4" />
+                      {isBlurringPlate ? "Processing..." : "Auto-Blur Plate"}
                     </button>
-                    {showBlurBox && (
-                      <button
-                        onClick={applyBlurBox}
-                        className="flex items-center gap-1 bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700 transition-colors"
-                      >
-                        Apply Blur
-                      </button>
-                    )}
                     <button
                       onClick={() => setShowCrop(!showCrop)}
                       className={`flex items-center gap-1 ${
