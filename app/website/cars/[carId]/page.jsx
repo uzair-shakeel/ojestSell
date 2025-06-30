@@ -15,7 +15,7 @@ import { getUserById } from "../../../../services/userService";
 import { useUser } from "@clerk/nextjs";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:5000", {
+const socket = io(process.env.NEXT_PUBLIC_API_BASE_URL, {
   autoConnect: false,
 });
 
@@ -105,17 +105,20 @@ const Page = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/chat/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-clerk-user-id": user?.id,
-        },
-        body: JSON.stringify({
-          carId,
-          ownerId: car?.createdBy,
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/chat/create`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-clerk-user-id": user?.id,
+          },
+          body: JSON.stringify({
+            carId,
+            ownerId: car?.createdBy,
+          }),
+        }
+      );
 
       // if (!response?.ok) {
       //   throw new Error("Failed to create chat");

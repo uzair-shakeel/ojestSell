@@ -12,7 +12,7 @@ import Image from "next/image";
 const ProfileComponent = () => {
   const { getToken, userId } = useAuth();
   const [user, setUser] = useState(null);
-  const BASE_URL = "http://localhost:5000/";
+  const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const [formData, setFormData] = useState({
     firstName: "",

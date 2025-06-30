@@ -25,7 +25,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
     const fetchChats = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/chat/my-chats",
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/chat/my-chats`,
           {
             headers: {
               "x-clerk-user-id": user.id,
@@ -129,10 +129,10 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                 transition={{ duration: 0.3 }}
               >
                 <h2 className="text-sm font-semibold text-white">
-                  {user.firstName} {user.lastName}
+                  {user?.firstName} {user?.lastName}
                 </h2>
                 <p className="text-xs text-gray-400">
-                  {user.primaryEmailAddress?.emailAddress}
+                  {user?.primaryEmailAddress?.emailAddress}
                 </p>
               </motion.div>
             )}

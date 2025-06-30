@@ -5,10 +5,7 @@ import { FaSearch, FaPaperPlane, FaBars, FaEnvelope } from "react-icons/fa";
 import { useUser } from "@clerk/nextjs";
 import io from "socket.io-client";
 
-// Define API URL
-const API_URL = "http://localhost:5000";
-
-const socket = io(API_URL, {
+const socket = io(process.env.NEXT_PUBLIC_API_BASE_URL, {
   autoConnect: false,
 });
 
@@ -48,12 +45,15 @@ const MessagesPage = () => {
         console.log("Fetching chats for user ID:", user.id);
 
         // Use fetch with explicit error handling
-        const response = await fetch(`${API_URL}/api/chat/my-chats`, {
-          headers: {
-            "x-clerk-user-id": user.id,
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/chat/my-chats`,
+          {
+            headers: {
+              "x-clerk-user-id": user.id,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         console.log("Response status:", response.status);
 
@@ -143,7 +143,7 @@ const MessagesPage = () => {
         console.log(`Fetching messages for chat: ${selectedChat._id}`);
 
         const response = await fetch(
-          `${API_URL}/api/chat/${selectedChat._id}/messages`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/chat/${selectedChat._id}/messages`,
           {
             headers: {
               "x-clerk-user-id": user.id,

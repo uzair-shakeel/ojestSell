@@ -2,8 +2,7 @@
 import axios from "axios";
 
 // Define the API base URL directly in this file
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 // const API_BASE_URL =
 //   process.env.NEXT_PUBLIC_API_BASE_URL || "https://ojest-ap-is.vercel.app";
 
@@ -105,7 +104,7 @@ export const addCar = async (
       throw new Error("No authentication token found");
     }
 
-    const response = await axios.post(`${API_BASE_URL}/api/cars/`, carData, {
+    const response = await axios.post(`${API_BASE_URL}/api/cars`, carData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",

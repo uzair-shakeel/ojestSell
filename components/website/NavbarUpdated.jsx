@@ -21,7 +21,7 @@ const NavbarUpdated = () => {
     const fetchChats = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/chat/my-chats",
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/chat/my-chats`,
           {
             headers: {
               "x-clerk-user-id": userId,
