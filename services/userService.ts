@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// Define the API base URL directly in this file
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+// Use the Next.js API proxy
+const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 interface UserData {
   clerkUserId: string;
@@ -52,7 +52,7 @@ interface UpdateUserData {
 // Get user by clerk ID (public route, no token required)
 export const getUserById = async (userId: string): Promise<UserData> => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/api/users/${userId}`);
+    const response = await axios.get(`${API_URL}/api/users/${userId}`);
     return response.data;
   } catch (error: any) {
     throw new Error(error?.response?.data?.message || "Failed to fetch user");
@@ -69,7 +69,7 @@ export const getAllUsers = async (
       throw new Error("No authentication token found");
     }
 
-    const response = await axios.get(`${API_BASE_URL}/api/users`, {
+    const response = await axios.get(`${API_URL}/api/users`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -135,16 +135,12 @@ export const updateUser = async (
 
     console.log("Sending data to server");
 
-    const response = await axios.put(
-      `${API_BASE_URL}/api/users/profile/`,
-      data,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    const response = await axios.put(`${API_URL}/api/users/profile/`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
     console.log("Server response:", response.data);
     return response.data; // Return the updated user data
@@ -177,7 +173,7 @@ export const updateUserCustom = async (formData, getToken) => {
     }
 
     const response = await axios.put(
-      `${API_BASE_URL}/api/users/profile/custom`,
+      `${API_URL}/api/users/profile/custom`,
       formDataToSend,
       config
     );
@@ -201,7 +197,7 @@ export const updateUserSellerType = async (
     }
 
     const response = await axios.patch(
-      `${API_BASE_URL}/api/users/type/${userId}`,
+      `${API_URL}/api/users/type/${userId}`,
       { sellerType }, // Payload
       {
         headers: {
@@ -233,7 +229,7 @@ export const deleteUserAccount = async (
       throw new Error("No authentication token found");
     }
 
-    const response = await axios.delete(`${API_BASE_URL}/api/users/account`, {
+    const response = await axios.delete(`${API_URL}/api/users/account`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;

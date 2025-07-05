@@ -7,6 +7,24 @@ try {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: true,
+  swcMinify: true,
+  images: {
+    domains: [
+      "res.cloudinary.com",
+      "images.unsplash.com",
+      "img.clerk.com",
+      "localhost",
+    ],
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: "http://localhost:5000/api/:path*",
+      },
+    ];
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },

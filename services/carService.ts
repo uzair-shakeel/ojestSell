@@ -1,6 +1,9 @@
 // frontend/services/carService.ts
 import axios from "axios";
 
+// Use the Next.js API proxy
+const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 // Define the API base URL directly in this file
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 // const API_BASE_URL =
@@ -319,21 +322,35 @@ export const getCarsByUserId = async (
   getToken: () => Promise<string | null>
 ): Promise<CarData[]> => {
   try {
+    console.log("Getting cars for userId:", userId);
+    console.log("getToken function available:", !!getToken);
+
     const token = await getToken();
+    console.log("Token available:", !!token);
+
     if (!token) {
       throw new Error("No authentication token found");
     }
 
     const response = await axios.get(
-      `${API_BASE_URL}/api/cars/my-cars/${userId}`,
+      `${API_BASE_URL}/api/cars/user/${userId}`,
       {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
+
+    console.log("Cars response:", response.data);
     return response.data;
   } catch (error: any) {
+    console.error("Error fetching user cars:", error);
+    if (axios.isAxiosError(error)) {
+      console.error("Response data:", error.response?.data);
+      console.error("Response status:", error.response?.status);
+    }
     throw new Error(
-      error?.response?.data?.message || "Failed to fetch cars by user"
+      error?.response?.data?.message || "Failed to fetch user cars"
     );
   }
 };

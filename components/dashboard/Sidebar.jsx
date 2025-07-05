@@ -9,33 +9,66 @@ import { MdPhotoFilter } from "react-icons/md";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
-import { useUser } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
   const [chatCount, setChatCount] = useState(0);
-  const { user, isLoaded } = useUser();
+  const { userId, getToken, isLoaded } = useAuth();
   const [profileImage, setProfileImage] = useState(
     "/images/default-seller.png"
   );
+  const [userData, setUserData] = useState(null);
 
   // Fetch chat count when component mounts
   useEffect(() => {
-    if (!user) return;
+    if (!isLoaded || !userId) return;
+
+    const fetchUserData = async () => {
+      try {
+        const token = await getToken();
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setUserData(data);
+          if (data.image) {
+            setProfileImage(data.image);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+      }
+    };
 
     const fetchChats = async () => {
       try {
+        const token = await getToken();
+        if (!token) {
+          console.error("No token available for chat fetch");
+          return;
+        }
+
+        console.log("Fetching chats with token");
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/chat/my-chats`,
           {
             headers: {
-              "x-clerk-user-id": user.id,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
+
         if (!response.ok) {
-          console.error("Failed to fetch chats");
+          console.error("Failed to fetch chats, status:", response.status);
           return;
         }
+
         const data = await response.json();
         // Set the chat count to the number of chats
         setChatCount(data.chats?.length || 0);
@@ -44,13 +77,9 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
       }
     };
 
+    fetchUserData();
     fetchChats();
-
-    // Set profile image from user data
-    if (user.imageUrl) {
-      setProfileImage(user.imageUrl);
-    }
-  }, [user]);
+  }, [userId, isLoaded, getToken]);
 
   const menuItems = [
     {
@@ -120,7 +149,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
               alt="User Avatar"
               className="w-12 h-12 rounded-full object-cover border-2 border-blue-500 shadow-lg"
             />
-            {isOpen && isLoaded && user && (
+            {isOpen && isLoaded && userId && (
               <motion.div
                 className="ml-3"
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -129,11 +158,9 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                 transition={{ duration: 0.3 }}
               >
                 <h2 className="text-sm font-semibold text-white">
-                  {user?.firstName} {user?.lastName}
+                  {userData?.firstName} {userData?.lastName}
                 </h2>
-                <p className="text-xs text-gray-400">
-                  {user?.primaryEmailAddress?.emailAddress}
-                </p>
+                <p className="text-xs text-gray-400">{userData?.email}</p>
               </motion.div>
             )}
           </div>
