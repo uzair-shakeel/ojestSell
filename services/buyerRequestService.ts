@@ -141,7 +141,7 @@ export const getMyBuyerRequests = async (
     );
     return response.data;
   } catch (error) {
-    console.error("Error fetching my buyer requests:", error);
+    console.error("Error fetching my buyer request:", error);
     throw error;
   }
 };
