@@ -4,7 +4,7 @@ import { FaCar } from "react-icons/fa";
 import { BiAddToQueue } from "react-icons/bi";
 import { BsChatLeftDots, BsPersonGear } from "react-icons/bs";
 import { RiDashboardHorizontalLine } from "react-icons/ri";
-import { FiMenu, FiX } from "react-icons/fi";
+import { FiMenu, FiX, FiShoppingBag, FiClipboard } from "react-icons/fi";
 import { MdPhotoFilter } from "react-icons/md";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -96,6 +96,16 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
       label: "My Cars",
       href: "/dashboard/cars",
       icon: <FaCar className="w-6 h-6" />,
+    },
+    {
+      label: "Buyer Requests",
+      href: "/dashboard/buyer-requests",
+      icon: <FiShoppingBag className="w-6 h-6" />,
+    },
+    {
+      label: "Seller Opportunities",
+      href: "/dashboard/seller-opportunities",
+      icon: <FiClipboard className="w-6 h-6" />,
     },
     {
       label: "Photo Enhancer",
