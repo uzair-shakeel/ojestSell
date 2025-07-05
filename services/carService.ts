@@ -333,7 +333,7 @@ export const getCarsByUserId = async (
     }
 
     const response = await axios.get(
-      `${API_BASE_URL}/api/cars/user/${userId}`,
+      `${API_BASE_URL}/api/cars/my-cars/${userId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
