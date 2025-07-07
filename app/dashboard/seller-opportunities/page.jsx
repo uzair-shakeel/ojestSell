@@ -4,7 +4,10 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
-import { getAvailableBuyerRequests } from "../../../services/sellerOfferService";
+import {
+  getAvailableBuyerRequests,
+  getMyOffers,
+} from "../../../services/sellerOfferService";
 import { getCarsByUserId } from "../../../services/carService";
 import { toast } from "react-hot-toast";
 import {
@@ -19,6 +22,10 @@ import {
   FiMapPin,
   FiChevronRight,
   FiTag,
+  FiList,
+  FiCheckCircle,
+  FiXCircle,
+  FiClock as FiClockPending,
 } from "react-icons/fi";
 import { TbCar, TbCarGarage } from "react-icons/tb";
 
@@ -27,7 +34,9 @@ const SellerOpportunitiesPage = () => {
   const { userId, getToken, isLoaded } = useAuth();
   const [requests, setRequests] = useState([]);
   const [userCars, setUserCars] = useState([]);
+  const [myOffers, setMyOffers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [offersLoading, setOffersLoading] = useState(true);
   const [carsLoading, setCarsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -46,6 +55,7 @@ const SellerOpportunitiesPage = () => {
     if (isLoaded && userId) {
       fetchRequests();
       fetchUserCars();
+      fetchMyOffers();
     }
   }, [isLoaded, userId, page, filters]);
 
@@ -83,6 +93,30 @@ const SellerOpportunitiesPage = () => {
       toast.error("Failed to load buyer requests");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchMyOffers = async () => {
+    setOffersLoading(true);
+    try {
+      // Create a proper getToken function
+      const getTokenFn = async () => {
+        try {
+          const token = await getToken();
+          return token;
+        } catch (error) {
+          console.error("Error getting token for offers:", error);
+          return null;
+        }
+      };
+
+      const response = await getMyOffers(getTokenFn, { limit: 5 });
+      setMyOffers(response.offers);
+    } catch (error) {
+      console.error("Error fetching my offers:", error);
+      toast.error("Failed to load your offers");
+    } finally {
+      setOffersLoading(false);
     }
   };
 
@@ -148,6 +182,32 @@ const SellerOpportunitiesPage = () => {
     return diffDays;
   };
 
+  const getOfferStatusBadge = (status) => {
+    const statusColors = {
+      Pending: "bg-yellow-100 text-yellow-800 border border-yellow-200",
+      Accepted: "bg-green-100 text-green-800 border border-green-200",
+      Rejected: "bg-red-100 text-red-800 border border-red-200",
+      Expired: "bg-gray-100 text-gray-800 border border-gray-200",
+      Cancelled: "bg-gray-100 text-gray-800 border border-gray-200",
+    };
+
+    const statusIcons = {
+      Pending: <FiClockPending className="mr-1" />,
+      Accepted: <FiCheckCircle className="mr-1" />,
+      Rejected: <FiXCircle className="mr-1" />,
+      Expired: <FiX className="mr-1" />,
+      Cancelled: <FiX className="mr-1" />,
+    };
+
+    return (
+      <span
+        className={`px-3 py-1 rounded-full text-xs font-medium flex items-center w-fit ${statusColors[status]}`}
+      >
+        {statusIcons[status]} {status}
+      </span>
+    );
+  };
+
   if (!isLoaded) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -158,6 +218,105 @@ const SellerOpportunitiesPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
+      {/* My Offers Section */}
+      <div className="mb-12">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+          <h2 className="text-2xl font-bold text-gray-800">My Offers</h2>
+          <Link
+            href="/dashboard/seller-opportunities/my-offers"
+            className="flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+          >
+            <FiList className="mr-2" /> View All Offers
+          </Link>
+        </div>
+
+        {offersLoading ? (
+          <div className="flex justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+          </div>
+        ) : myOffers.length === 0 ? (
+          <div className="bg-white rounded-xl shadow-md p-8 text-center border">
+            <div className="flex justify-center mb-4">
+              <div className="bg-blue-100 p-3 rounded-full">
+                <FiList className="h-10 w-10 text-blue-600" />
+              </div>
+            </div>
+            <h3 className="text-xl font-medium text-gray-800 mb-2">
+              No offers made yet
+            </h3>
+            <p className="text-gray-500 mb-6">
+              Browse buyer requests below and make your first offer.
+            </p>
+          </div>
+        ) : (
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Offer
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Price
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Date
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {myOffers.map((offer) => (
+                    <tr key={offer._id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">
+                          {offer.title}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-green-600 font-medium">
+                          ${offer.price.toLocaleString()}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-500">
+                          {formatDate(offer.createdAt)}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {getOfferStatusBadge(offer.status)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <Link
+                          href={`/dashboard/seller-opportunities/my-offers/${offer._id}`}
+                          className="text-blue-600 hover:text-blue-900"
+                        >
+                          View Details
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="px-6 py-3 bg-gray-50 border-t border-gray-200 text-right">
+              <Link
+                href="/dashboard/seller-opportunities/my-offers"
+                className="text-blue-600 hover:text-blue-800 font-medium text-sm"
+              >
+                View all offers <FiArrowRight className="inline ml-1" />
+              </Link>
+            </div>
+          </div>
+        )}
+      </div>
+
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">Buyer Requests</h1>
