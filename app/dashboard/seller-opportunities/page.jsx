@@ -26,6 +26,7 @@ import {
   FiCheckCircle,
   FiXCircle,
   FiClock as FiClockPending,
+  FiEye,
 } from "react-icons/fi";
 import { TbCar, TbCarGarage } from "react-icons/tb";
 
@@ -504,12 +505,18 @@ const SellerOpportunitiesPage = () => {
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-4 border-t">
+                  <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t">
+                    <Link
+                      href={`/dashboard/buyer-requests/${request._id}`}
+                      className="flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 transition-colors"
+                    >
+                      <FiEye className="mr-2" /> View Details
+                    </Link>
                     <Link
                       href={`/dashboard/seller-opportunities/${request._id}`}
-                      className="w-full flex items-center justify-center px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                      className="flex items-center px-4 py-2 bg-green-50 text-green-700 rounded-md hover:bg-green-100 transition-colors"
                     >
-                      Make an Offer <FiChevronRight className="ml-1" />
+                      <FiPlus className="mr-2" /> Make Offer
                     </Link>
                   </div>
                 </div>

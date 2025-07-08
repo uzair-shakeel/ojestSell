@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import {
@@ -14,18 +14,51 @@ const AddBuyerRequestPage = () => {
   const router = useRouter();
   const { getToken, userId } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [makes, setMakes] = useState<string[]>([]);
+  const [models, setModels] = useState<string[]>([]);
+  const [carData, setCarData] = useState<any>(null);
 
   const {
     register,
     handleSubmit,
     control,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<BuyerRequestInput>({
     defaultValues: {
       preferredCondition: "Any",
       preferredFeatures: [],
+      type: "",
     },
   });
+
+  // Watch for make changes to update models
+  const selectedMake = watch("make");
+
+  // Fetch car makes and models from the JSON file
+  useEffect(() => {
+    fetch("/data/carMakesModels.json")
+      .then((response) => response.json())
+      .then((data) => {
+        setCarData(data);
+        const makes = Object.keys(data.makesAndModels);
+        setMakes(makes);
+      })
+      .catch((error) => {
+        console.error("Error fetching car data:", error);
+      });
+  }, []);
+
+  // Update models when make changes
+  useEffect(() => {
+    if (selectedMake && carData) {
+      const availableModels = carData.makesAndModels[selectedMake] || [];
+      setModels(availableModels);
+      // Reset model when make changes
+      setValue("model", "");
+    }
+  }, [selectedMake, carData, setValue]);
 
   const onSubmit = async (data: BuyerRequestInput) => {
     if (!userId) {
@@ -69,6 +102,27 @@ const AddBuyerRequestPage = () => {
     "Parking Sensors",
     "Cruise Control",
     "Keyless Entry",
+  ];
+
+  const vehicleTypes = [
+    "Sedan",
+    "SUV",
+    "Truck",
+    "Coupe",
+    "Convertible",
+    "Wagon",
+    "Van",
+    "Hatchback",
+    "Pickup",
+    "Minivan",
+    "Crossover",
+    "Luxury",
+    "Sports",
+    "Electric",
+    "Hybrid",
+    "Classic",
+    "Off-road",
+    "Camper/RV",
   ];
 
   return (
@@ -137,13 +191,18 @@ const AddBuyerRequestPage = () => {
               >
                 Make (Optional)
               </label>
-              <input
+              <select
                 id="make"
-                type="text"
                 {...register("make")}
                 className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="E.g., Toyota, Honda, BMW"
-              />
+              >
+                <option value="">Select Make</option>
+                {makes.map((make) => (
+                  <option key={make} value={make}>
+                    {make}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Model */}
@@ -154,68 +213,41 @@ const AddBuyerRequestPage = () => {
               >
                 Model (Optional)
               </label>
-              <input
+              <select
                 id="model"
-                type="text"
                 {...register("model")}
                 className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="E.g., Camry, Civic, X5"
-              />
+                disabled={!selectedMake}
+              >
+                <option value="">Select Model</option>
+                {models.map((model) => (
+                  <option key={model} value={model}>
+                    {model}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            {/* Year Range */}
+            {/* Vehicle Type */}
             <div>
               <label
-                htmlFor="yearFrom"
+                htmlFor="type"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Year From (Optional)
+                Vehicle Type (Optional)
               </label>
-              <input
-                id="yearFrom"
-                type="number"
-                {...register("yearFrom", {
-                  min: { value: 1900, message: "Year must be 1900 or later" },
-                  max: {
-                    value: new Date().getFullYear(),
-                    message: "Year cannot be in the future",
-                  },
-                })}
+              <select
+                id="type"
+                {...register("type")}
                 className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Minimum year"
-              />
-              {errors.yearFrom && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.yearFrom.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label
-                htmlFor="yearTo"
-                className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Year To (Optional)
-              </label>
-              <input
-                id="yearTo"
-                type="number"
-                {...register("yearTo", {
-                  min: { value: 1900, message: "Year must be 1900 or later" },
-                  max: {
-                    value: new Date().getFullYear(),
-                    message: "Year cannot be in the future",
-                  },
-                })}
-                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Maximum year"
-              />
-              {errors.yearTo && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.yearTo.message}
-                </p>
-              )}
+                <option value="">Select Type</option>
+                {vehicleTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Budget Range */}
@@ -281,10 +313,9 @@ const AddBuyerRequestPage = () => {
               >
                 <option value="Any">Any</option>
                 <option value="New">New</option>
-                <option value="Like New">Like New</option>
-                <option value="Excellent">Excellent</option>
-                <option value="Good">Good</option>
-                <option value="Fair">Fair</option>
+                <option value="Used">Used</option>
+                <option value="Demo">Demo</option>
+                <option value="Slightly Used">Slightly Used</option>
               </select>
             </div>
 

@@ -391,30 +391,35 @@ const BuyerRequestsDashboard = () => {
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t">
+                  <div className="flex space-x-2">
+                    <Link
+                      href={`/dashboard/buyer-requests/${request._id}`}
+                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                      title="View Details"
+                    >
+                      <FiEye size={18} />
+                    </Link>
                     <button
                       onClick={() => handleViewOffers(request)}
-                      className="flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 transition-colors"
+                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                      title="View Offers"
                     >
-                      <FiEye className="mr-2" /> View Offers
+                      <FiDollarSign size={18} />
                     </button>
-
-                    {request.status === "Active" && (
-                      <>
-                        <Link
-                          href={`/dashboard/buyer-requests/${request._id}/edit`}
-                          className="flex items-center px-4 py-2 bg-gray-50 text-gray-700 rounded-md hover:bg-gray-100 transition-colors"
-                        >
-                          <FiEdit className="mr-2" /> Edit
-                        </Link>
-                        <button
-                          onClick={() => handleDeleteRequest(request._id)}
-                          className="flex items-center px-4 py-2 bg-red-50 text-red-700 rounded-md hover:bg-red-100 transition-colors"
-                        >
-                          <FiTrash2 className="mr-2" /> Cancel
-                        </button>
-                      </>
-                    )}
+                    <Link
+                      href={`/dashboard/buyer-requests/${request._id}/edit`}
+                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                      title="Edit Request"
+                    >
+                      <FiEdit size={18} />
+                    </Link>
+                    <button
+                      onClick={() => handleDeleteRequest(request._id)}
+                      className="p-2 text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                      title="Delete Request"
+                    >
+                      <FiTrash2 size={18} />
+                    </button>
                   </div>
                 </div>
               </div>

@@ -10,8 +10,7 @@ export interface BuyerRequest {
   description: string;
   make?: string;
   model?: string;
-  yearFrom?: number;
-  yearTo?: number;
+  type?: string;
   budgetMin?: number;
   budgetMax: number;
   preferredCondition?: string;
@@ -31,8 +30,7 @@ export interface BuyerRequestInput {
   description: string;
   make?: string;
   model?: string;
-  yearFrom?: number;
-  yearTo?: number;
+  type?: string;
   budgetMin?: number;
   budgetMax: number;
   preferredCondition?: string;
