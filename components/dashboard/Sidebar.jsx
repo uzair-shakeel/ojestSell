@@ -18,6 +18,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
     "/images/default-seller.png"
   );
   const [userData, setUserData] = useState(null);
+  const [sellerType, setSellerType] = useState(null);
 
   // Fetch chat count when component mounts
   useEffect(() => {
@@ -37,6 +38,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
         if (response.ok) {
           const data = await response.json();
           setUserData(data);
+          setSellerType(data.sellerType); // Set seller type
           if (data.image) {
             setProfileImage(data.image);
           }
@@ -97,16 +99,25 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
       href: "/dashboard/cars",
       icon: <FaCar className="w-6 h-6" />,
     },
-    {
-      label: "Buyer Requests",
-      href: "/dashboard/buyer-requests",
-      icon: <FiShoppingBag className="w-6 h-6" />,
-    },
-    {
-      label: "Seller Opportunities",
-      href: "/dashboard/seller-opportunities",
-      icon: <FiClipboard className="w-6 h-6" />,
-    },
+    ...(sellerType === "private"
+      ? [
+          {
+            label: "Buyer Requests",
+            href: "/dashboard/buyer-requests",
+            icon: <FiShoppingBag className="w-6 h-6" />,
+          },
+        ]
+      : []),
+    ,
+    ...(sellerType === "company"
+      ? [
+          {
+            label: "Seller Opportunities",
+            href: "/dashboard/seller-opportunities",
+            icon: <FiClipboard className="w-6 h-6" />,
+          },
+        ]
+      : []),
     {
       label: "Photo Enhancer",
       href: "/dashboard/photo-enhancer",

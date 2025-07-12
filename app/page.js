@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { CarsNearMe } from "../components/website/cars-near-me.jsx";
 import { BrowseCategories } from "../components/website/browse-categories";
@@ -9,12 +11,23 @@ import Navbar from "../components/website/Navbar.jsx";
 import { FeaturedCategories } from "../components/website/featured-categories";
 import { FilterSearch } from "../components/website/filter-search";
 import { BlogSection } from "../components/website/blog-section.jsx";
-import { Import } from "lucide-react";
 import { Footer } from "../components/website/Footer.jsx";
 import { useLanguage } from "../lib/i18n/LanguageContext";
 
 export default function Home() {
   const { t } = useLanguage();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    // Check if __clerk_db_jwt parameter exists
+    const clerkJwt = searchParams.get("__clerk_db_jwt");
+    if (clerkJwt) {
+      // Redirect directly to dashboard profile
+      router.replace("/dashboard/profile");
+      return;
+    }
+  }, [searchParams, router]);
 
   return (
     <div className="flex flex-col min-h-screen bg-white">

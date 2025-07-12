@@ -29,6 +29,7 @@ import {
   FiEye,
 } from "react-icons/fi";
 import { TbCar, TbCarGarage } from "react-icons/tb";
+import { getUserById } from "../../../services/userService";
 
 const SellerOpportunitiesPage = () => {
   const router = useRouter();
@@ -41,6 +42,7 @@ const SellerOpportunitiesPage = () => {
   const [carsLoading, setCarsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [sellerType, setSellerType] = useState(null);
   const [filters, setFilters] = useState({
     make: "",
     model: "",
@@ -48,16 +50,37 @@ const SellerOpportunitiesPage = () => {
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
-    if (isLoaded && !userId) {
-      router.push("/sign-in");
-      return;
-    }
+    const checkSellerType = async () => {
+      if (isLoaded && !userId) {
+        router.push("/sign-in");
+        return;
+      }
 
-    if (isLoaded && userId) {
-      fetchRequests();
-      fetchUserCars();
-      fetchMyOffers();
-    }
+      if (isLoaded && userId) {
+        try {
+          const userData = await getUserById(userId);
+          setSellerType(userData.sellerType);
+
+          // Redirect private sellers away from seller opportunities
+          if (userData.sellerType === "private") {
+            router.push("/dashboard");
+            toast.error(
+              "Seller opportunities are only available for company sellers"
+            );
+            return;
+          }
+
+          fetchRequests();
+          fetchUserCars();
+          fetchMyOffers();
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          toast.error("Failed to load user information");
+        }
+      }
+    };
+
+    checkSellerType();
   }, [isLoaded, userId, page, filters]);
 
   const fetchRequests = async () => {

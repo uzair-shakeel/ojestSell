@@ -55,6 +55,22 @@ export const getUserById = async (userId: string): Promise<UserData> => {
     const response = await axios.get(`${API_URL}/api/users/${userId}`);
     return response.data;
   } catch (error: any) {
+    // If user not found, attempt to sync
+    if (error.response && error.response.status === 404) {
+      try {
+        // Attempt to sync user manually
+        const syncResponse = await axios.post(
+          `${API_URL}/api/users/sync-user`,
+          {
+            user: { id: userId },
+          }
+        );
+        return syncResponse.data.user;
+      } catch (syncError) {
+        console.error("Failed to sync user:", syncError);
+        throw new Error("Failed to fetch or sync user");
+      }
+    }
     throw new Error(error?.response?.data?.message || "Failed to fetch user");
   }
 };

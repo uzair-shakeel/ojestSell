@@ -8,9 +8,11 @@ import CustomMap from "../../../components/dashboard/GoogleMapComponent";
 import { motion } from "framer-motion";
 import { getUserById, updateUser } from "../../../services/userService";
 import Image from "next/image";
+import axios from "axios"; // Added axios import
 
 const ProfileComponent = () => {
   const { getToken, userId } = useAuth();
+  console.log("userId", userId);
   const [user, setUser] = useState(null);
   const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -69,18 +71,102 @@ const ProfileComponent = () => {
           },
         };
 
-        // Log the userData and the new formData
         console.log("User Data:", userData);
         console.log("Form Data:", newFormData);
 
         setFormData(newFormData);
       } catch (err) {
         console.error("Error fetching user:", err);
+
+        // Manual sync attempt if user not found
+        try {
+          // Use Clerk's getToken method to get a valid token
+          const token = await getToken();
+
+          // Make a manual sync request to the backend
+          const syncResponse = await axios.post(
+            `${BASE_URL}/api/users/sync-user`,
+            { user: { id: userId } },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          // If sync is successful, reload the user data
+          if (syncResponse.data.user) {
+            const syncedUserData = syncResponse.data.user;
+            setUser(syncedUserData);
+
+            const newFormData = {
+              firstName: syncedUserData.firstName || "",
+              lastName: syncedUserData.lastName || "",
+              description: syncedUserData.description || "",
+              companyName: syncedUserData.companyName || "",
+              email: syncedUserData.email || "",
+              socialMedia: {
+                instagram: syncedUserData.socialMedia?.instagram || "",
+                facebook: syncedUserData.socialMedia?.facebook || "",
+                twitter: syncedUserData.socialMedia?.twitter || "",
+                website: syncedUserData.socialMedia?.website || "",
+                linkedin: syncedUserData.socialMedia?.linkedin || "",
+              },
+              image: syncedUserData.image || "",
+              sellerType: syncedUserData.sellerType || "private",
+              phoneNumbers: syncedUserData.phoneNumbers?.length
+                ? syncedUserData.phoneNumbers.map((phone) => ({
+                    phone,
+                    countryCode: phone.startsWith("+48") ? "pl" : "us",
+                  }))
+                : [{ phone: "", countryCode: "pl" }],
+              location: {
+                type: "Point",
+                coordinates: syncedUserData.location?.coordinates || [
+                  51.5074, -0.1278,
+                ],
+              },
+            };
+
+            setFormData(newFormData);
+          }
+        } catch (syncErr) {
+          console.error("Failed to sync user:", syncErr);
+          // Fallback to default state
+          setUser({
+            firstName: "",
+            lastName: "",
+            image: "/placeholder-user.jpg",
+            sellerType: "private",
+          });
+          setFormData({
+            firstName: "",
+            lastName: "",
+            description: "",
+            companyName: "",
+            email: "",
+            socialMedia: {
+              instagram: "",
+              facebook: "",
+              twitter: "",
+              website: "",
+              linkedin: "",
+            },
+            image: "/placeholder-user.jpg",
+            sellerType: "private",
+            phoneNumbers: [{ phone: "", countryCode: "pl" }],
+            location: {
+              type: "Point",
+              coordinates: [51.5074, -0.1278],
+            },
+          });
+        }
       }
     };
 
     if (userId) loadUser();
-  }, [userId]);
+  }, [userId, getToken]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -134,8 +220,28 @@ const ProfileComponent = () => {
     }
   };
   const formatImageUrl = (imagePath) => {
-    if (!imagePath) return "/images/default-seller.png";
-    return `${BASE_URL}${imagePath.replace("\\", "/")}`;
+    // If no image path, return default image
+    if (!imagePath) return "/placeholder-user.jpg";
+
+    try {
+      // If it's already a full URL, return it directly
+      new URL(imagePath);
+      return imagePath;
+    } catch {
+      // If not a full URL, try to construct it
+      try {
+        // Remove leading slash or backslash if present
+        const cleanPath = imagePath.replace(/^[/\\]/, "");
+        const fullUrl = `${BASE_URL}/${cleanPath}`;
+
+        // Validate the constructed URL
+        new URL(fullUrl);
+        return fullUrl;
+      } catch {
+        // If URL construction fails, return default image
+        return "/placeholder-user.jpg";
+      }
+    }
   };
 
   const handleSubmit = async (e) => {

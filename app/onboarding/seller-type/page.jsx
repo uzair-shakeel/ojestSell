@@ -3,7 +3,10 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Building2, User } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
-import { getUserById, updateUserSellerType } from "../../../services/userService";
+import {
+  getUserById,
+  updateUserSellerType,
+} from "../../../services/userService";
 
 const SellerTypePage = () => {
   const router = useRouter();
