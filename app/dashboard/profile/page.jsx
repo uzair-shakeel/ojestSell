@@ -35,7 +35,59 @@ const ProfileComponent = () => {
       type: "Point",
       coordinates: [51.5074, -0.1278], // Default to London
     },
+    brands: [], // Add brands to initial state
   });
+
+  // List of car brands with logos
+  const carBrands = [
+    { name: "Acura", logo: "/acura.png" },
+    { name: "BMW", logo: "/BMW.png" },
+    { name: "Chevrolet", logo: "/chevrolet.png" },
+    { name: "Dodge", logo: "/dodge.png" },
+    { name: "Ford", logo: "/ford.png" },
+    { name: "Honda", logo: "/honda.png" },
+    { name: "Hyundai", logo: "/hyundai.png" },
+    { name: "Kia", logo: "/kia.png" },
+    { name: "Lexus", logo: "/lexus.png" },
+    { name: "Mercedes", logo: "/Mercedes.png" },
+    { name: "Nissan", logo: "/nissan.png" },
+    { name: "Porsche", logo: "/porsche.png" },
+    { name: "Tesla", logo: "/tesla.png" },
+    { name: "Toyota", logo: "/toyota.png" },
+    // Add more brands with their logos
+  ];
+
+  // Brands selector component
+  const BrandSelector = ({ brands, onBrandChange, selectedBrands }) => {
+    return (
+      <div className="grid grid-cols-3 md:grid-cols-5 gap-4">
+        {brands.map((brand) => (
+          <div
+            key={brand.name}
+            className={`
+              flex flex-col items-center p-2 rounded-lg cursor-pointer transition-all duration-300
+              ${
+                selectedBrands.includes(brand.name)
+                  ? "bg-blue-100 border-2 border-blue-500"
+                  : "bg-gray-100 border-2 border-transparent hover:bg-gray-200"
+              }
+            `}
+            onClick={() => onBrandChange(brand.name)}
+          >
+            <Image
+              src={brand.logo}
+              alt={brand.name}
+              width={50}
+              height={50}
+              className="mb-2 object-contain"
+            />
+            <span className="text-xs font-medium">{brand.name}</span>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => {
@@ -69,6 +121,7 @@ const ProfileComponent = () => {
             type: "Point",
             coordinates: userData.location?.coordinates || [51.5074, -0.1278], // default to London if no location
           },
+          brands: userData.brands || [], // Add brands to form data
         };
 
         console.log("User Data:", userData);
@@ -127,6 +180,7 @@ const ProfileComponent = () => {
                   51.5074, -0.1278,
                 ],
               },
+              brands: syncedUserData.brands || [], // Add brands to form data
             };
 
             setFormData(newFormData);
@@ -160,6 +214,7 @@ const ProfileComponent = () => {
               type: "Point",
               coordinates: [51.5074, -0.1278],
             },
+            brands: [], // Add brands to form data
           });
         }
       }
@@ -247,6 +302,15 @@ const ProfileComponent = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Validate seller type and brands
+      if (
+        formData.sellerType === "company" &&
+        (!formData.brands || formData.brands.length === 0)
+      ) {
+        alert("Please select at least one brand for company sellers");
+        return;
+      }
+
       // Create a deep copy of the form data
       const data = {
         ...formData,
@@ -261,18 +325,59 @@ const ProfileComponent = () => {
         data.image = imageFile;
       }
 
-      console.log("Submitting data:", data);
+      console.log("Submitting data:", JSON.stringify(data, null, 2));
 
       // Call the updateUser function from userServices
       const updatedUser = await updateUser(data, getToken);
-      console.log("Updated user:", updatedUser);
+      console.log("Updated user:", JSON.stringify(updatedUser, null, 2));
 
       setUser(updatedUser); // Set the updated user data to the state
       alert("Profile updated successfully!");
     } catch (error) {
       console.error("Error updating user:", error);
-      alert("Failed to update profile. Please try again.");
+
+      // More detailed error handling
+      let errorMessage = "Failed to update profile";
+
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error("Error response data:", error.response.data);
+
+        // Try to extract a meaningful error message
+        if (Array.isArray(error.response.data.details)) {
+          // If details is an array of error messages
+          errorMessage = error.response.data.details.join(", ");
+        } else if (error.response.data.error) {
+          // If there's a specific error message
+          errorMessage = error.response.data.error;
+        } else if (error.response.data.message) {
+          // Fallback to generic message
+          errorMessage = error.response.data.message;
+        }
+      } else if (error.message) {
+        // Fallback to the error message
+        errorMessage = error.message;
+      }
+
+      // Show the error message to the user
+      alert(errorMessage);
     }
+  };
+
+  // Add method to handle brand selection
+  const handleBrandChange = (brand) => {
+    setFormData((prevData) => {
+      const currentBrands = prevData.brands || [];
+      const updatedBrands = currentBrands.includes(brand)
+        ? currentBrands.filter((b) => b !== brand)
+        : [...currentBrands, brand];
+
+      return {
+        ...prevData,
+        brands: updatedBrands,
+      };
+    });
   };
 
   if (!user) return <div>Loading...</div>;
@@ -522,6 +627,45 @@ const ProfileComponent = () => {
             }}
           />
         </motion.div>
+
+        {/* Brands Selection for Company Sellers */}
+        {formData.sellerType === "company" && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="col-span-2 bg-white p-6 rounded-lg shadow-md"
+          >
+            <h3 className="text-xl font-semibold mb-4 text-gray-800">
+              Brands You Deal With
+            </h3>
+
+            <BrandSelector
+              brands={carBrands}
+              selectedBrands={formData.brands}
+              onBrandChange={(brand) => {
+                setFormData((prevData) => {
+                  const currentBrands = prevData.brands || [];
+                  const updatedBrands = currentBrands.includes(brand)
+                    ? currentBrands.filter((b) => b !== brand)
+                    : [...currentBrands, brand];
+
+                  return {
+                    ...prevData,
+                    brands: updatedBrands,
+                  };
+                });
+              }}
+            />
+
+            {formData.sellerType === "company" &&
+              (!formData.brands || formData.brands.length === 0) && (
+                <p className="text-red-500 text-sm mt-4">
+                  Please select at least one brand you deal with
+                </p>
+              )}
+          </motion.div>
+        )}
 
         {/* Submit and Delete Buttons */}
         <div className="flex gap-4">

@@ -96,7 +96,28 @@ export const getAllUsers = async (
 
 // Update user profile
 export const updateUser = async (
-  formData: any,
+  data: {
+    firstName?: string;
+    lastName?: string;
+    description?: string;
+    companyName?: string;
+    email?: string;
+    socialMedia?: {
+      instagram?: string;
+      facebook?: string;
+      twitter?: string;
+      website?: string;
+      linkedin?: string;
+    };
+    sellerType?: "private" | "company";
+    phoneNumbers?: string[];
+    location?: {
+      type: string;
+      coordinates: number[];
+    };
+    image?: File | string;
+    brands?: string[]; // Add brands to the type definition
+  },
   getToken: () => Promise<string | null>
 ) => {
   try {
@@ -105,64 +126,106 @@ export const updateUser = async (
       throw new Error("No authentication token found");
     }
 
-    console.log("FormData before processing:", formData);
+    console.log("Raw input data:", JSON.stringify(data, null, 2));
 
-    const updatedLocation = {
-      type: "Point",
-      coordinates: [
-        formData.location.coordinates[0],
-        formData.location.coordinates[1],
-      ], // [lng, lat]
-    };
+    // Create a FormData object
+    const formData = new FormData();
 
-    const data = new FormData();
-    for (const key in formData) {
-      if (key === "socialMedia") {
-        for (const socialKey in formData.socialMedia) {
-          data.append(
-            `socialMedia[${socialKey}]`,
-            formData.socialMedia[socialKey] || ""
-          );
-        }
-      } else if (key === "phoneNumbers") {
-        // Handle phone numbers as a simple array of strings
-        if (Array.isArray(formData.phoneNumbers)) {
-          formData.phoneNumbers.forEach((phoneNumber: any, index: number) => {
-            // If phoneNumber is an object with phone property, use that
-            if (typeof phoneNumber === "object" && phoneNumber.phone) {
-              data.append(`phoneNumbers[${index}]`, phoneNumber.phone);
-            }
-            // If phoneNumber is a string, use it directly
-            else if (typeof phoneNumber === "string") {
-              data.append(`phoneNumbers[${index}]`, phoneNumber);
-            }
+    // Modify the appendData function
+    const appendData = (key: string, value: any) => {
+      if (value !== undefined && value !== null) {
+        // If it's an array, append each item separately
+        if (Array.isArray(value)) {
+          value.forEach((item, index) => {
+            formData.append(`${key}[${index}]`, item);
           });
         }
-      } else if (key === "location") {
-        data.append("location", JSON.stringify(updatedLocation));
-      } else if (key === "image") {
-        if (formData.image instanceof File) {
-          data.append("image", formData.image);
+        // If it's an object, stringify it
+        else if (typeof value === "object" && !(value instanceof File)) {
+          formData.append(key, JSON.stringify(value));
+        } else {
+          formData.append(key, value);
         }
-      } else {
-        data.append(key, formData[key] || "");
       }
-    }
+    };
 
-    console.log("Sending data to server");
-
-    const response = await axios.put(`${API_URL}/api/users/profile/`, data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
-      },
+    // Append all fields
+    Object.keys(data).forEach((key) => {
+      switch (key) {
+        case "phoneNumbers":
+          // Ensure phone numbers are an array of strings
+          if (Array.isArray(data[key])) {
+            data[key].forEach((phone: any, index: number) => {
+              // If phone is an object with phone property, use that
+              const phoneValue =
+                typeof phone === "object" ? phone.phone : phone;
+              appendData(`phoneNumbers[${index}]`, phoneValue);
+            });
+          }
+          break;
+        case "socialMedia":
+          // Append each social media field
+          Object.keys(data[key]).forEach((socialKey) => {
+            appendData(`socialMedia[${socialKey}]`, data[key][socialKey]);
+          });
+          break;
+        case "location":
+          // Stringify location
+          appendData(key, JSON.stringify(data[key]));
+          break;
+        case "image":
+          // Handle file upload
+          if (data[key] instanceof File) {
+            formData.append(key, data[key]);
+          }
+          break;
+        default:
+          // Append other fields directly
+          appendData(key, data[key]);
+      }
     });
 
-    console.log("Server response:", response.data);
+    // Log FormData contents
+    console.log("FormData contents:");
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
+
+    const response = await axios.put(
+      `${API_URL}/api/users/profile/`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    console.log("Server response:", JSON.stringify(response.data, null, 2));
     return response.data; // Return the updated user data
   } catch (error) {
     console.error("Error updating user:", error);
-    throw error; // Re-throw the error to be handled in the calling component
+
+    // More detailed error logging
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error details:", {
+        response: error.response?.data,
+        status: error.response?.status,
+        message: error.message,
+      });
+
+      // Throw a more informative error
+      throw new Error(
+        error.response?.data?.details?.join(", ") ||
+          error.response?.data?.error ||
+          error.response?.data?.message ||
+          error.message ||
+          "Failed to update profile"
+      );
+    }
+
+    throw error; // Re-throw other types of errors
   }
 };
 
