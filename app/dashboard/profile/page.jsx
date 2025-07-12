@@ -244,7 +244,38 @@ const ProfileComponent = () => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Validate file type
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        "image/gif",
+      ];
+      if (!allowedTypes.includes(file.type)) {
+        alert(
+          "Invalid file type. Please upload JPEG, PNG, WebP, or GIF images."
+        );
+        return;
+      }
+
+      // Validate file size (5MB limit)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        alert("Image file is too large. Maximum size is 5MB.");
+        return;
+      }
+
+      // Create preview URL
+      const previewUrl = URL.createObjectURL(file);
+
+      // Update state
       setImageFile(file);
+
+      // Optional: Update user's preview image immediately
+      setUser((prevUser) => ({
+        ...prevUser,
+        image: previewUrl,
+      }));
     }
   };
 
@@ -278,24 +309,44 @@ const ProfileComponent = () => {
     // If no image path, return default image
     if (!imagePath) return "/placeholder-user.jpg";
 
-    try {
-      // If it's already a full URL, return it directly
-      new URL(imagePath);
+    // Check if it's a Cloudinary URL or starts with http/https
+    if (/^(https?:\/\/|cloudinary\.com)/.test(imagePath)) {
       return imagePath;
-    } catch {
-      // If not a full URL, try to construct it
-      try {
-        // Remove leading slash or backslash if present
-        const cleanPath = imagePath.replace(/^[/\\]/, "");
-        const fullUrl = `${BASE_URL}/${cleanPath}`;
+    }
 
-        // Validate the constructed URL
-        new URL(fullUrl);
-        return fullUrl;
-      } catch {
-        // If URL construction fails, return default image
-        return "/placeholder-user.jpg";
+    // Check if it's a local path from Clerk
+    if (imagePath.startsWith("/")) {
+      return imagePath;
+    }
+
+    try {
+      // Remove leading slash or backslash if present
+      const cleanPath = imagePath.replace(/^[/\\]/, "");
+
+      // Try multiple base URLs
+      const baseUrls = [
+        BASE_URL,
+        process.env.NEXT_PUBLIC_CLOUDINARY_BASE_URL || "",
+        process.env.NEXT_PUBLIC_STORAGE_BASE_URL || "",
+      ];
+
+      for (const baseUrl of baseUrls) {
+        if (!baseUrl) continue;
+
+        const fullUrl = `${baseUrl.replace(/\/$/, "")}/${cleanPath}`;
+
+        try {
+          // Validate the constructed URL
+          new URL(fullUrl);
+          return fullUrl;
+        } catch {}
       }
+
+      // If no valid URL found, return default
+      return "/placeholder-user.jpg";
+    } catch {
+      // Fallback to default image
+      return "/placeholder-user.jpg";
     }
   };
 
