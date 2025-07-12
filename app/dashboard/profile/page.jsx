@@ -619,14 +619,6 @@ const ProfileComponent = () => {
             )}
           </div>
         </motion.div>
-        <motion.div className="mb-6 col-span-2">
-          <CustomMap
-            location={formData.location}
-            setLocation={(newLocation) => {
-              setFormData({ ...formData, location: newLocation });
-            }}
-          />
-        </motion.div>
 
         {/* Brands Selection for Company Sellers */}
         {formData.sellerType === "company" && (
@@ -666,6 +658,15 @@ const ProfileComponent = () => {
               )}
           </motion.div>
         )}
+
+        <motion.div className="mb-6 col-span-2">
+          <CustomMap
+            location={formData.location}
+            setLocation={(newLocation) => {
+              setFormData({ ...formData, location: newLocation });
+            }}
+          />
+        </motion.div>
 
         {/* Submit and Delete Buttons */}
         <div className="flex gap-4">
