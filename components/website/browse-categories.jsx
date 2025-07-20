@@ -10,9 +10,15 @@ export function BrowseCategories() {
   const { t } = useLanguage();
   const [showAll, setShowAll] = useState(false);
 
-  // Get brands from translations
-  const brands = t("homepage.browseCategories.brands");
-  const displayedBrands = showAll ? brands : brands.slice(0, 12);
+  // Get brands from translations and ensure it's an array
+  const brands =
+    t("homepage.browseCategories.brands", { returnObjects: true }) || [];
+  // Make sure brands is an array before slicing
+  const displayedBrands = Array.isArray(brands)
+    ? showAll
+      ? brands
+      : brands.slice(0, 12)
+    : [];
 
   return (
     <section className="py-12">
@@ -23,7 +29,7 @@ export function BrowseCategories() {
 
         {/* Brand Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {displayedBrands?.map((brand) => (
+          {displayedBrands.map((brand) => (
             <Link
               key={brand.id}
               href={{
@@ -51,15 +57,17 @@ export function BrowseCategories() {
         </div>
 
         {/* See More Button */}
-        <div className="flex justify-center mt-8">
-          <button
-            className="rounded-full px-8 py-2 border border-gray-300 inline-flex items-center hover:bg-gray-100 transition-colors"
-            onClick={() => setShowAll(!showAll)}
-          >
-            {t("homepage.browseCategories.seeMore")}
-            <ChevronDown className="ml-2 h-4 w-4" />
-          </button>
-        </div>
+        {Array.isArray(brands) && brands.length > 12 && (
+          <div className="flex justify-center mt-8">
+            <button
+              className="rounded-full px-8 py-2 border border-gray-300 inline-flex items-center hover:bg-gray-100 transition-colors"
+              onClick={() => setShowAll(!showAll)}
+            >
+              {t("homepage.browseCategories.seeMore")}
+              <ChevronDown className="ml-2 h-4 w-4" />
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
