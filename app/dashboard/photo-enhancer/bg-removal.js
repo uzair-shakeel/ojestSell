@@ -1,7 +1,8 @@
-// Background removal utility using @imgly/background-removal
+// Background removal utility with fallback implementation
 
 /**
- * Removes the background from an image using @imgly/background-removal
+ * Removes the background from an image using fallback method
+ * Note: @imgly/background-removal dependency has been removed for performance
  *
  * @param {string} imageUrl - URL or data URL of the image
  * @param {Object} options - Options for background removal
@@ -10,49 +11,17 @@
  */
 export async function removeImageBackground(imageUrl, options = {}) {
   try {
-    // Import the module
-    const bgRemoval = await import("@imgly/background-removal");
-
-    // Log what we got
-    console.log("Background removal module imported:", bgRemoval);
-    console.log("Available exports:", Object.keys(bgRemoval));
-
-    // Determine which function to use
-    let removeFunction;
-
-    if (typeof bgRemoval.removeBackground === "function") {
-      console.log("Using removeBackground export");
-      removeFunction = bgRemoval.removeBackground;
-    } else if (typeof bgRemoval.default === "function") {
-      console.log("Using default export");
-      removeFunction = bgRemoval.default;
-    } else {
-      throw new Error("Could not find a valid background removal function");
-    }
-
-    // Process the image
-    const result = await removeFunction(imageUrl, {
-      progress: (progress) => {
-        console.log(
-          `Background removal progress: ${Math.round(progress * 100)}%`
-        );
-        if (options.onProgress) {
-          options.onProgress(progress);
-        }
-      },
-      model: "medium", // Use medium quality model for better balance
-      output: {
-        format: "image/png",
-        quality: 1.0, // Use maximum quality to preserve transparency
-      },
+    // Create an image element from the URL
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    await new Promise((resolve, reject) => {
+      img.onload = resolve;
+      img.onerror = reject;
+      img.src = imageUrl;
     });
 
-    // Verify the result is a valid blob with image data
-    if (!(result instanceof Blob) || result.size === 0) {
-      throw new Error("Background removal returned an invalid result");
-    }
-
-    return result;
+    // Use fallback method since @imgly/background-removal is removed
+    return removeBackgroundFallback(img);
   } catch (error) {
     console.error("Error in removeImageBackground:", error);
     throw error;

@@ -2,9 +2,10 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { blogPosts } from "../data";
+import { useBlogPosts } from "../data";
 
 const BlogPost = ({ params }) => {
+  const blogPosts = useBlogPosts();
   const post = blogPosts.find((post) => post.id === parseInt(params.id));
 
   if (!post) {

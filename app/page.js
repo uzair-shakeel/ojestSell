@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { CarsNearMe } from "../components/website/cars-near-me.jsx";
@@ -14,7 +14,8 @@ import { BlogSection } from "../components/website/blog-section.jsx";
 import { Footer } from "../components/website/Footer.jsx";
 import { useLanguage } from "../lib/i18n/LanguageContext";
 
-export default function Home() {
+// Component that uses useSearchParams
+function HomeContent() {
   const { t } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -73,5 +74,20 @@ export default function Home() {
       </main>
       <Footer />
     </div>
+  );
+}
+
+// Main component with Suspense boundary
+export default function Home() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          Loading...
+        </div>
+      }
+    >
+      <HomeContent />
+    </Suspense>
   );
 }

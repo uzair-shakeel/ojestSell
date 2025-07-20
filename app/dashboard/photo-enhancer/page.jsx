@@ -107,23 +107,10 @@ export default function PhotoEnhancer() {
   useEffect(() => {
     const loadBackgroundRemoval = async () => {
       try {
-        console.log("Loading background removal module...");
-
-        // Simple check to see if we can access the CDN that hosts the models
-        const testFetch = await fetch(
-          "https://unpkg.com/@imgly/background-removal@1.0.0/dist/package.json",
-          {
-            method: "HEAD",
-            mode: "no-cors", // This allows us to at least attempt the connection
-          }
-        );
-
-        console.log("CDN connection test completed");
-
-        // We'll set this to true and let the actual usage determine if it works
+        // No need to load external module anymore, just set state to true
         setBackgroundRemovalLoaded(true);
       } catch (error) {
-        console.error("Error checking network connectivity:", error);
+        console.error("Error loading background removal:", error);
         setNetworkError(true);
       }
     };
@@ -487,98 +474,27 @@ export default function PhotoEnhancer() {
   const removeBackground = async () => {
     if (!selectedImage) return;
 
+    setIsProcessingBg(true);
+    setBgRemovalError(null);
+
     try {
-      setIsProcessingBg(true);
-      setBgRemovalError(null);
-      setShowBgRemovalModal(true);
+      // Use our fallback implementation directly
+      const objectUrl = URL.createObjectURL(selectedImage);
+      const blob = await removeImageBackground(objectUrl, {
+        onProgress: (progress) => {
+          console.log(`Progress: ${Math.round(progress * 100)}%`);
+        },
+      });
 
-      console.log("Starting background removal with @imgly/background-removal");
+      // Create URL from the result
+      const resultUrl = URL.createObjectURL(blob);
+      setPreviewUrl(resultUrl);
+      setImageHasTransparency(true);
+    } catch (error) {
+      console.error("Background removal error:", error);
+      setBgRemovalError(`Error: ${error.message}`);
 
-      try {
-        // Import the module directly here to ensure it's loaded
-        const bgRemoval = await import("@imgly/background-removal");
-
-        // Determine which function to use
-        const removeFunction = bgRemoval.removeBackground || bgRemoval.default;
-
-        if (!removeFunction) {
-          throw new Error("Could not find a valid background removal function");
-        }
-
-        // Get image as blob
-        const response = await fetch(previewUrl);
-        const imageBlob = await response.blob();
-
-        // Process the image
-        const resultBlob = await removeFunction(imageBlob, {
-          progress: (progress) => {
-            console.log(
-              `Background removal progress: ${Math.round(progress * 100)}%`
-            );
-          },
-          model: "medium",
-          output: {
-            format: "image/png",
-            quality: 1.0, // Maximum quality to preserve transparency
-          },
-        });
-
-        // Check if we got a valid blob back
-        if (!(resultBlob instanceof Blob) || resultBlob.size === 0) {
-          throw new Error("Background removal returned an invalid result");
-        }
-
-        // Revoke the old URL to prevent memory leaks
-        URL.revokeObjectURL(previewUrl);
-
-        // Create a new URL for the processed image
-        const processedUrl = URL.createObjectURL(resultBlob);
-
-        // Verify the image is valid
-        await new Promise((resolve, reject) => {
-          const verifyImg = new Image();
-          verifyImg.onload = resolve;
-          verifyImg.onerror = () =>
-            reject(new Error("Generated image is invalid"));
-          verifyImg.src = processedUrl;
-        });
-
-        setPreviewUrl(processedUrl);
-
-        // Create a new File object from the blob
-        const processedFile = new File(
-          [resultBlob],
-          selectedImage.name || "image-no-background.png",
-          {
-            type: "image/png",
-          }
-        );
-        setSelectedImage(processedFile);
-
-        // Always set transparency flag to true after background removal
-        setImageHasTransparency(true);
-
-        // Show background options
-        setShowBackgroundOptions(true);
-
-        console.log("Background removal completed successfully");
-        setShowBgRemovalModal(false);
-      } catch (error) {
-        console.error("Background removal failed:", error);
-
-        let errorMessage = "Background removal failed.";
-        if (error.message) {
-          errorMessage += " Error: " + error.message;
-        }
-
-        if (error.message && error.message.includes("Failed to fetch")) {
-          errorMessage =
-            "Network error: Unable to download required models. Please check your internet connection and try again.";
-          setNetworkError(true);
-        }
-
-        setBgRemovalError(errorMessage);
-      }
+      // No need for fallback since we're already using it
     } finally {
       setIsProcessingBg(false);
     }
