@@ -33,11 +33,11 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  experimental: {
-    webpackBuildWorker: true,
-    parallelServerBuildTraces: true,
-    parallelServerCompiles: true,
-  },
+  // experimental: {
+  //   webpackBuildWorker: true,
+  //   parallelServerBuildTraces: true,
+  //   parallelServerCompiles: true,
+  // },
 
   // Use standalone instead of export to avoid the generateStaticParams error
   output: "standalone",
