@@ -2,9 +2,9 @@
 import axios from "axios";
 
 // Define the API base URL directly in this file
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_BASE_URL = "https://ojest-ap-is.vercel.app";
 // const API_BASE_URL =
-//   process.env.NEXT_PUBLIC_API_BASE_URL || "https://ojest-ap-is.vercel.app";
+//   process.env.NEXT_PUBLIC_API_BASE_URL || ;
 
 // Log the API URL being used
 console.log("Using API URL:", API_BASE_URL);
