@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const VideoLoader = () => {
   const [loading, setLoading] = useState(true);
@@ -8,20 +9,21 @@ const VideoLoader = () => {
   const videoRef = useRef(null);
 
   useEffect(() => {
-    // Reduced minimum loading time for better performance
-    const minimumLoadingTime = 500; // Reduced from 2000ms to 500ms
+    // Make sure the loader shows for at least 5 seconds for better user experience
+    const minimumLoadingTime = 500; // 5 seconds
     const startTime = Date.now();
 
-    // Create more realistic loading simulation with faster progress
-    let speed = 25; // Increased initial speed
+    // Create more realistic loading simulation
+    let speed = 10; // Initial speed - faster at start
     let currentProgress = 0;
 
     const interval = setInterval(() => {
-      // Faster progression through loading states
-      if (currentProgress < 30) speed = 25;
-      else if (currentProgress < 60) speed = 15;
-      else if (currentProgress < 80) speed = 8;
-      else speed = 5;
+      // Simulate real loading behavior with varying speeds
+      if (currentProgress < 30) speed = 10;
+      else if (currentProgress < 60) speed = 8;
+      else if (currentProgress < 80) speed = 4;
+      else if (currentProgress < 90) speed = 2;
+      else speed = 1;
 
       // Add some randomness to make it feel more natural
       const increment = Math.random() * speed + speed / 2;
@@ -44,18 +46,18 @@ const VideoLoader = () => {
 
           // Make sure the loading-active class is removed
           document.documentElement.classList.remove("loading-active");
-        }, remainingTime); // Removed extra 500ms delay
+        }, remainingTime + 500); // Extra 500ms for smooth transition
       }
 
       setProgress(currentProgress);
-    }, 100); // Faster interval (was 200ms)
+    }, 200);
 
     // Detect when page is fully loaded
     const handleLoad = () => {
       // When the page is loaded, quickly finish the loading animation
       const quickFinish = setInterval(() => {
         setProgress((prev) => {
-          const newProgress = prev + 10; // Faster progress (was 5)
+          const newProgress = prev + 5;
           if (newProgress >= 100) {
             clearInterval(quickFinish);
 
@@ -70,12 +72,12 @@ const VideoLoader = () => {
 
               // Make sure the loading-active class is removed
               document.documentElement.classList.remove("loading-active");
-            }, remainingTime); // Removed extra 500ms delay
+            }, remainingTime + 500); // Extra 500ms for smooth transition
             return 100;
           }
           return newProgress;
         });
-      }, 30); // Faster interval (was 50ms)
+      }, 50);
     };
 
     if (document.readyState === "complete") {
@@ -90,41 +92,91 @@ const VideoLoader = () => {
     };
   }, []);
 
-  // Use a static image instead of video for better performance
+  // Play the video once when mounted
   useEffect(() => {
-    // Clean up function
+    if (videoRef.current) {
+      // Set video to not loop
+      videoRef.current.loop = false;
+
+      // Play video
+      videoRef.current.play().catch((error) => {
+        console.error("Video play error:", error);
+        setVideoError(true);
+      });
+
+      // Handle video loading errors
+      videoRef.current.addEventListener("error", () => {
+        setVideoError(true);
+      });
+
+      // Handle video end - freeze on last frame
+      videoRef.current.addEventListener("ended", () => {
+        // When video ends, get the current time and set it again to prevent reset
+        const currentTime = videoRef.current.duration;
+        if (currentTime) {
+          // Set to slightly before end to avoid potential black frame
+          videoRef.current.currentTime = currentTime - 0.01;
+        }
+      });
+    }
+
+    // Clean up event listeners
     return () => {
-      // Make sure loading-active class is removed when component unmounts
-      document.documentElement.classList.remove("loading-active");
+      if (videoRef.current) {
+        videoRef.current.removeEventListener("error", () => {
+          setVideoError(true);
+        });
+        videoRef.current.removeEventListener("ended", () => {});
+      }
     };
   }, []);
 
-  if (!loading) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-[9999] bg-white pointer-events-auto transition-opacity duration-700"
-      style={{ opacity: loading ? 1 : 0 }}
-    >
-      <div className="relative w-full h-full">
-        {/* Top progress bar */}
-        <div className="absolute top-0 left-0 right-0 z-10 h-1.5 bg-gray-200">
-          <div
-            className="h-full bg-black rounded-r-full transition-all duration-300"
-            style={{ width: `${progress}%` }}
-          ></div>
-        </div>
+    <AnimatePresence mode="wait">
+      {loading && (
+        <motion.div
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.7 }}
+          className="fixed inset-0 z-[9999] bg-white pointer-events-auto"
+          style={{ pointerEvents: loading ? "auto" : "none" }}
+          onAnimationComplete={() => {
+            if (!loading) {
+              // Extra safety to ensure the loading-active class is removed
+              document.documentElement.classList.remove("loading-active");
+            }
+          }}
+        >
+          <div className="relative w-full h-full">
+            {/* Top progress bar */}
+            <div className="absolute top-0 left-0 right-0 z-10 h-1.5 bg-gray-200">
+              <motion.div
+                className="h-full bg-black rounded-r-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.3 }}
+              ></motion.div>
+            </div>
 
-        {/* Simple logo or brand image instead of video */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <img
-            src="/logo.png"
-            alt="Loading"
-            className="w-32 h-32 object-contain animate-pulse"
-          />
-        </div>
-      </div>
-    </div>
+            {/* Full-screen Video */}
+            {!videoError ? (
+              <video
+                ref={videoRef}
+                className="absolute inset-0 w-full h-full object-contain md:object-cover"
+                src="/Horse bodybuilder-02.mp4"
+                muted
+                playsInline
+              ></video>
+            ) : (
+              <div className="absolute inset-0 bg-white flex items-center justify-center">
+                {/* Simple loading indicator for video error case */}
+                <div className="w-16 h-16 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin"></div>
+              </div>
+            )}
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 
