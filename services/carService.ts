@@ -1,9 +1,6 @@
 // frontend/services/carService.ts
 import axios from "axios";
 
-// Use the Next.js API proxy
-const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
 // Define the API base URL directly in this file
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 // const API_BASE_URL =
@@ -137,7 +134,7 @@ export const getAllCars = async (): Promise<CarData[]> => {
           "Content-Type": "application/json",
           Origin: window.location.origin,
         },
-        timeout: 20000, // 10 second timeout
+        timeout: 10000, // 10 second timeout
       });
 
       if (!response.data) {
