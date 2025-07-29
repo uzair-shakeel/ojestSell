@@ -8,16 +8,97 @@ try {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
-
-  images: {
-    domains: [
-      "res.cloudinary.com",
-      "images.unsplash.com",
-      "img.clerk.com",
-      "localhost",
-    ],
+  
+  // Performance optimizations
+  compiler: {
+    removeConsole: process.env.NODE_ENV === "production",
   },
+  
+  // Enable experimental performance features
+  experimental: {
+    optimizePackageImports: [
+      'react-icons',
+      'lucide-react',
+      '@radix-ui/react-accordion',
+      '@radix-ui/react-select',
+      'framer-motion'
+    ],
+    webpackBuildWorker: true,
+    parallelServerBuildTraces: true,
+    parallelServerCompiles: true,
+    turbo: {
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+      },
+    },
+  },
+
+  // Optimized image configuration
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.clerk.com',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
+    ],
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 60,
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+  },
+  
+  // Bundle analyzer for development
+  webpack: (config, { dev, isServer }) => {
+    // Optimize bundle splitting
+    if (!dev && !isServer) {
+      config.optimization.splitChunks = {
+        chunks: 'all',
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            priority: 10,
+            chunks: 'all',
+          },
+          common: {
+            minChunks: 2,
+            priority: 5,
+            reuseExistingChunk: true,
+          },
+          reactIcons: {
+            test: /[\\/]node_modules[\\/]react-icons[\\/]/,
+            name: 'react-icons',
+            priority: 20,
+            chunks: 'all',
+          },
+          framerMotion: {
+            test: /[\\/]node_modules[\\/]framer-motion[\\/]/,
+            name: 'framer-motion',
+            priority: 20,
+            chunks: 'all',
+          },
+        },
+      };
+    }
+    
+    return config;
+  },
+  
   async rewrites() {
     return [
       {
@@ -26,27 +107,44 @@ const nextConfig = {
       },
     ];
   },
+  
+  // Security headers
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'origin-when-cross-origin',
+          },
+        ],
+      },
+    ];
+  },
+  
   eslint: {
     ignoreDuringBuilds: true,
   },
   typescript: {
     ignoreBuildErrors: true,
   },
-  images: {
-    unoptimized: true,
-  },
-  // experimental: {
-  //   webpackBuildWorker: true,
-  //   parallelServerBuildTraces: true,
-  //   parallelServerCompiles: true,
-  // },
 
-  // Use standalone instead of export to avoid the generateStaticParams error
+  // Use standalone for better performance
   output: "standalone",
 
-  // Remove headers configuration since it's not compatible with export
+  // Performance optimizations
   skipTrailingSlashRedirect: true,
   skipMiddlewareUrlNormalize: true,
+  poweredByHeader: false,
 };
 
 mergeConfig(nextConfig, userConfig);
