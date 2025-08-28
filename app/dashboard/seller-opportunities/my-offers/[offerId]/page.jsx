@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth } from "../../../../../lib/auth/AuthContext";
 import {
   getOfferById,
   deleteOffer,
@@ -27,9 +27,9 @@ import {
 import { TbCar } from "react-icons/tb";
 
 const OfferDetailPage = ({ params }) => {
-  const { offerId } = params;
+  const { offerId } = React.use(params);
   const router = useRouter();
-  const { userId, getToken, isLoaded } = useAuth();
+  const { userId, getToken } = useAuth();
 
   const [offer, setOffer] = useState(null);
   const [buyerRequest, setBuyerRequest] = useState(null);
@@ -37,20 +37,31 @@ const OfferDetailPage = ({ params }) => {
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    if (isLoaded && !userId) {
+    if (!userId) {
       router.push("/sign-in");
       return;
     }
 
-    if (isLoaded && userId && offerId) {
+    if (userId && offerId) {
       fetchOfferDetails();
     }
-  }, [isLoaded, userId, offerId]);
+  }, [userId, offerId]);
 
   const fetchOfferDetails = async () => {
     setLoading(true);
     try {
-      const offerData = await getOfferById(offerId);
+      // Create a proper getToken function
+      const getTokenFn = async () => {
+        try {
+          const token = await getToken();
+          return token;
+        } catch (error) {
+          console.error("Error getting token:", error);
+          return null;
+        }
+      };
+
+      const offerData = await getOfferById(offerId, getTokenFn);
       setOffer(offerData);
 
       // Fetch the associated buyer request
@@ -188,7 +199,7 @@ const OfferDetailPage = ({ params }) => {
     }
   };
 
-  if (!isLoaded || loading) {
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -230,7 +241,12 @@ const OfferDetailPage = ({ params }) => {
     );
   }
 
-  const statusInfo = getStatusMessage(offer.status);
+  // Debug logging
+  console.log("Offer data:", offer);
+  console.log("Offer price:", offer.price);
+  console.log("Offer status:", offer.status);
+
+  const statusInfo = getStatusMessage(offer.status || "Pending");
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -252,7 +268,7 @@ const OfferDetailPage = ({ params }) => {
                 <h1 className="text-2xl font-bold text-gray-800">
                   Offer Details
                 </h1>
-                {getOfferStatusBadge(offer.status)}
+                {getOfferStatusBadge(offer.status || "Pending")}
               </div>
 
               {/* Status message */}
@@ -269,9 +285,11 @@ const OfferDetailPage = ({ params }) => {
               </div>
 
               <div className="mb-6">
-                <h2 className="text-xl font-semibold mb-2">{offer.title}</h2>
+                <h2 className="text-xl font-semibold mb-2">
+                  {offer.title || "No title"}
+                </h2>
                 <p className="text-gray-600 whitespace-pre-line">
-                  {offer.description}
+                  {offer.description || "No description"}
                 </p>
               </div>
 
@@ -282,7 +300,7 @@ const OfferDetailPage = ({ params }) => {
                     <span className="font-medium">Price</span>
                   </div>
                   <p className="text-2xl font-bold text-green-600">
-                    ${offer.price.toLocaleString()}
+                    ${offer.price ? offer.price.toLocaleString() : "N/A"}
                   </p>
                 </div>
 
@@ -294,18 +312,20 @@ const OfferDetailPage = ({ params }) => {
                   <div className="space-y-1">
                     <p className="text-sm">
                       <span className="text-gray-500">Submitted:</span>{" "}
-                      {formatDate(offer.createdAt)}
+                      {offer.createdAt ? formatDate(offer.createdAt) : "N/A"}
                     </p>
                     <p className="text-sm">
                       <span className="text-gray-500">Expires:</span>{" "}
-                      {formatDate(offer.expiryDate)}
+                      {offer.expiryDate ? formatDate(offer.expiryDate) : "N/A"}
                     </p>
-                    {offer.updatedAt !== offer.createdAt && (
-                      <p className="text-sm">
-                        <span className="text-gray-500">Last updated:</span>{" "}
-                        {formatDate(offer.updatedAt)}
-                      </p>
-                    )}
+                    {offer.updatedAt &&
+                      offer.createdAt &&
+                      offer.updatedAt !== offer.createdAt && (
+                        <p className="text-sm">
+                          <span className="text-gray-500">Last updated:</span>{" "}
+                          {formatDate(offer.updatedAt)}
+                        </p>
+                      )}
                   </div>
                 </div>
               </div>
@@ -334,7 +354,7 @@ const OfferDetailPage = ({ params }) => {
               {/* Action buttons */}
               <div className="border-t pt-6 mt-6">
                 <div className="flex flex-wrap gap-4">
-                  {offer.status === "Pending" && (
+                  {(offer.status || "Pending") === "Pending" && (
                     <button
                       onClick={handleDeleteOffer}
                       disabled={deleting}
@@ -345,8 +365,8 @@ const OfferDetailPage = ({ params }) => {
                     </button>
                   )}
 
-                  {(offer.status === "Accepted" ||
-                    offer.status === "Rejected") && (
+                  {((offer.status || "Pending") === "Accepted" ||
+                    (offer.status || "Pending") === "Rejected") && (
                     <Link
                       href="/dashboard/messages"
                       className="flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -356,9 +376,9 @@ const OfferDetailPage = ({ params }) => {
                     </Link>
                   )}
 
-                  {(offer.status === "Rejected" ||
-                    offer.status === "Expired" ||
-                    offer.status === "Cancelled") &&
+                  {((offer.status || "Pending") === "Rejected" ||
+                    (offer.status || "Pending") === "Expired" ||
+                    (offer.status || "Pending") === "Cancelled") &&
                     buyerRequest &&
                     buyerRequest.status === "Active" && (
                       <Link
@@ -383,9 +403,11 @@ const OfferDetailPage = ({ params }) => {
                 Buyer Request
               </h2>
 
-              <h3 className="font-medium text-lg mb-2">{buyerRequest.title}</h3>
+              <h3 className="font-medium text-lg mb-2">
+                {buyerRequest.title || "No title"}
+              </h3>
               <p className="text-gray-600 mb-4 line-clamp-3">
-                {buyerRequest.description}
+                {buyerRequest.description || "No description"}
               </p>
 
               <div className="space-y-4">
@@ -394,7 +416,9 @@ const OfferDetailPage = ({ params }) => {
                   <div>
                     <p className="text-xs text-gray-500">Posted</p>
                     <p className="text-sm font-medium">
-                      {formatDate(buyerRequest.createdAt)}
+                      {buyerRequest.createdAt
+                        ? formatDate(buyerRequest.createdAt)
+                        : "N/A"}
                     </p>
                   </div>
                 </div>

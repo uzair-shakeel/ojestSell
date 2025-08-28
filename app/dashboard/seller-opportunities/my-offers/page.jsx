@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth } from "../../../../lib/auth/AuthContext";
 import {
   getMyOffers,
   deleteOffer,
@@ -25,7 +25,7 @@ import { TbCar } from "react-icons/tb";
 
 const MyOffersPage = () => {
   const router = useRouter();
-  const { userId, getToken, isLoaded } = useAuth();
+  const { userId, getToken } = useAuth();
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -36,15 +36,15 @@ const MyOffersPage = () => {
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
-    if (isLoaded && !userId) {
+    if (!userId) {
       router.push("/sign-in");
       return;
     }
 
-    if (isLoaded && userId) {
+    if (userId) {
       fetchOffers();
     }
-  }, [isLoaded, userId, page, filters]);
+  }, [userId, page, filters]);
 
   const fetchOffers = async () => {
     setLoading(true);
@@ -155,7 +155,7 @@ const MyOffersPage = () => {
     );
   };
 
-  if (!isLoaded) {
+  if (!userId) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>

@@ -81,12 +81,15 @@ export const createOffer = async (
         formData.append("files", file);
       });
 
+      // Append requestId to formData
+      formData.append("requestId", requestId);
+
       console.log(
         "Sending offer with files to:",
-        `${API_URL}/api/seller-offers/${requestId}`
+        `${API_URL}/api/seller-offers`
       );
       const response = await axios.post(
-        `${API_URL}/api/seller-offers/${requestId}`,
+        `${API_URL}/api/seller-offers`,
         formData,
         {
           headers: {
@@ -99,13 +102,18 @@ export const createOffer = async (
       return response.data.offer;
     } else {
       // No files, use regular JSON
+      const dataToSend = {
+        ...offerData,
+        requestId,
+      };
+
       console.log(
         "Sending offer without files to:",
-        `${API_URL}/api/seller-offers/${requestId}`
+        `${API_URL}/api/seller-offers`
       );
       const response = await axios.post(
-        `${API_URL}/api/seller-offers/${requestId}`,
-        offerData,
+        `${API_URL}/api/seller-offers`,
+        dataToSend,
         {
           headers: {
             "Content-Type": "application/json",
@@ -187,10 +195,25 @@ export const getAvailableBuyerRequests = async (
 };
 
 // Get a single offer by ID
-export const getOfferById = async (offerId: string): Promise<SellerOffer> => {
+export const getOfferById = async (
+  offerId: string,
+  getToken: () => Promise<string | null>
+): Promise<SellerOffer> => {
   try {
-    const response = await axios.get(`${API_URL}/api/seller-offers/${offerId}`);
-    return response.data;
+    const token = await getToken();
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+
+    const response = await axios.get(
+      `${API_URL}/api/seller-offers/${offerId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data.offer;
   } catch (error) {
     console.error(`Error fetching offer with ID ${offerId}:`, error);
     throw error;

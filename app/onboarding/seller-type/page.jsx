@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Building2, User } from "lucide-react";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth } from "../../../lib/auth/AuthContext";
 import {
   getUserById,
   updateUserSellerType,

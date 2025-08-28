@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Use the Next.js API proxy
-const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 interface UserData {
   clerkUserId: string;
@@ -49,29 +49,71 @@ interface UpdateUserData {
   image?: string;
 }
 
-// Get user by clerk ID (public route, no token required)
-export const getUserById = async (userId: string): Promise<UserData> => {
+// Get user by ID (requires authentication)
+// NOTE: This function can only access the authenticated user's own profile
+// For getting public information about other users (e.g., seller info in car listings),
+// use getPublicUserInfo() instead.
+export const getUserById = async (
+  userId: string,
+  getToken?: () => string | null | Promise<string | null>
+): Promise<UserData> => {
   try {
-    const response = await axios.get(`${API_URL}/api/users/${userId}`);
-    return response.data;
-  } catch (error: any) {
-    // If user not found, attempt to sync
-    if (error.response && error.response.status === 404) {
-      try {
-        // Attempt to sync user manually
-        const syncResponse = await axios.post(
-          `${API_URL}/api/users/sync-user`,
-          {
-            user: { id: userId },
-          }
-        );
-        return syncResponse.data.user;
-      } catch (syncError) {
-        console.error("Failed to sync user:", syncError);
-        throw new Error("Failed to fetch or sync user");
+    console.log("Fetching user with ID:", userId);
+    console.log("API URL:", API_URL);
+
+    let headers = {};
+    if (getToken) {
+      const token =
+        typeof getToken === "function" ? await getToken() : getToken;
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
       }
     }
+
+    const response = await axios.get(`${API_URL}/api/users/${userId}`, {
+      headers,
+    });
+    console.log("User data received:", response.data);
+    return response.data;
+  } catch (error: any) {
+    console.error("Error fetching user:", error);
+    console.error("Error details:", {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      url: error.config?.url,
+    });
+
+    // Provide helpful error message for 403 errors
+    if (error.response?.status === 403) {
+      throw new Error(
+        "Access denied. You can only access your own profile. For public user information, use getPublicUserInfo() instead."
+      );
+    }
+
     throw new Error(error?.response?.data?.message || "Failed to fetch user");
+  }
+};
+
+// Get public user information (no authentication required)
+export const getPublicUserInfo = async (userId: string): Promise<any> => {
+  try {
+    console.log("Fetching public user info for ID:", userId);
+
+    const response = await axios.get(`${API_URL}/api/users/public/${userId}`);
+    console.log("Public user data received:", response.data);
+    return response.data;
+  } catch (error: any) {
+    console.error("Error fetching public user info:", error);
+    console.error("Error details:", {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      url: error.config?.url,
+    });
+    throw new Error(
+      error?.response?.data?.message || "Failed to fetch public user info"
+    );
   }
 };
 
@@ -118,10 +160,10 @@ export const updateUser = async (
     image?: File | string;
     brands?: string[]; // Add brands to the type definition
   },
-  getToken: () => Promise<string | null>
+  getToken: () => string | null | Promise<string | null>
 ) => {
   try {
-    const token = await getToken();
+    const token = typeof getToken === "function" ? await getToken() : getToken;
     if (!token) {
       throw new Error("No authentication token found");
     }
@@ -191,16 +233,12 @@ export const updateUser = async (
       console.log(`${key}:`, value);
     }
 
-    const response = await axios.put(
-      `${API_URL}/api/users/profile/`,
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    const response = await axios.put(`${API_URL}/api/users/profile`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
     console.log("Server response:", JSON.stringify(response.data, null, 2));
     return response.data; // Return the updated user data

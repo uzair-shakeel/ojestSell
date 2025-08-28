@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth } from "../../../../lib/auth/AuthContext";
 import { getBuyerRequestById } from "../../../../services/buyerRequestService";
 import { toast } from "react-hot-toast";
 import {
@@ -19,24 +19,24 @@ import {
 import { TbCar } from "react-icons/tb";
 
 const BuyerRequestDetailPage = ({ params }) => {
-  const { requestId } = params;
+  const { requestId } = React.use(params);
   const router = useRouter();
-  const { userId, getToken, isLoaded } = useAuth();
+  const { userId, getToken } = useAuth();
 
   const [request, setRequest] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isBuyer, setIsBuyer] = useState(false);
 
   useEffect(() => {
-    if (isLoaded && !userId) {
+    if (!userId) {
       router.push("/sign-in");
       return;
     }
 
-    if (isLoaded && userId) {
+    if (userId) {
       fetchRequest();
     }
-  }, [isLoaded, userId, requestId]);
+  }, [userId, requestId]);
 
   const fetchRequest = async () => {
     try {
@@ -69,10 +69,26 @@ const BuyerRequestDetailPage = ({ params }) => {
     return diffDays;
   };
 
-  if (!isLoaded || loading) {
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (!request) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="text-center">
+          <p className="text-gray-600 mb-4">Request not found</p>
+          <Link
+            href="/dashboard/buyer-requests"
+            className="text-blue-600 hover:text-blue-800 font-medium"
+          >
+            Back to Buyer Requests
+          </Link>
+        </div>
       </div>
     );
   }

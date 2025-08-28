@@ -4,9 +4,7 @@ import { IoPersonCircleOutline } from "react-icons/io5";
 import { BsChatLeftDots } from "react-icons/bs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs"; // Import Clerk hooks
-import { SignOutButton } from "@clerk/nextjs";
-import { SignInButton } from "@clerk/nextjs";
+import { useAuth } from "../../lib/auth/AuthContext";
 
 const NavbarUpdated = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

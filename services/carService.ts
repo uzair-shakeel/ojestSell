@@ -2,9 +2,8 @@
 import axios from "axios";
 
 // Define the API base URL directly in this file
-const API_BASE_URL = "https://ojest-ap-is.vercel.app";
-// const API_BASE_URL =
-//   process.env.NEXT_PUBLIC_API_BASE_URL || ;
+// const API_BASE_URL = "https://ojest-ap-is.vercel.app";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 // Log the API URL being used
 console.log("Using API URL:", API_BASE_URL);
@@ -319,7 +318,7 @@ export const getCarsByUserId = async (
   getToken: () => Promise<string | null>
 ): Promise<CarData[]> => {
   try {
-    console.log("Getting cars for userId:", userId);
+    console.log("Getting cars for authenticated user");
     console.log("getToken function available:", !!getToken);
 
     const token = await getToken();
@@ -329,14 +328,11 @@ export const getCarsByUserId = async (
       throw new Error("No authentication token found");
     }
 
-    const response = await axios.get(
-      `${API_BASE_URL}/api/cars/my-cars/${userId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axios.get(`${API_BASE_URL}/api/cars/my-cars/all`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     console.log("Cars response:", response.data);
     return response.data;

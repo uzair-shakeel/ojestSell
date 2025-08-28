@@ -1,9 +1,6 @@
-import { SignIn } from "@clerk/nextjs";
+"use client";
+import SignInTabs from "../../../components/auth/SignInTabs";
 
 export default function SignInPage() {
-  return (
-    <div className="w-full h-auto min-h-screen flex justify-center items-center">
-      <SignIn  afterSignUpUrl="/onboarding/seller-type" />
-    </div>
-  );
+  return <SignInTabs />;
 }

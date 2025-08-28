@@ -1,12 +1,12 @@
 "use client";
-import { useUser } from "@clerk/nextjs";
+import { useAuth } from "../../lib/auth/AuthContext";
 import DashboardStats from "../../components/dashboard/DashboardStats";
+
 export default function DashboardPage() {
-  const { user } = useUser();
+  const { user } = useAuth();
 
   return (
     <div>
-      <p>Your account has been created successfully.</p>
       <DashboardStats user={user} />
     </div>
   );

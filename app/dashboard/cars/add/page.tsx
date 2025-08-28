@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth } from "../../../../lib/auth/AuthContext";
 import { useRouter } from "next/navigation";
 import { addCar } from "../../../../services/carService";
 import StepFive from "../../../../components/dashboard/createsteps/StepFive";

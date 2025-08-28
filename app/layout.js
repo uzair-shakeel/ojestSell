@@ -1,7 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import React from "react";
-import { ClerkProvider } from "@clerk/nextjs";
 import VideoLoaderWrapper from "../components/website/VideoLoaderWrapper";
 import { GoogleMapsProvider } from "../lib/GoogleMapsContext";
 import Providers from "../components/Providers";
@@ -40,41 +39,39 @@ export default function RootLayout({ children }) {
   const isStaticBuild = process.env.NEXT_PHASE === "phase-production-build";
 
   return (
-    <ClerkProvider>
-      <html
-        lang="en"
-        data-theme="light"
-        suppressHydrationWarning
-        className="loading-active"
-      >
-        <head>
-          <style dangerouslySetInnerHTML={{ __html: loaderStyles }} />
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-              document.documentElement.classList.add('loading-active');
-              window.addEventListener('loaderComplete', function() {
-                document.documentElement.classList.remove('loading-active');
-                // Clean up any loader elements
-                const loaderContainer = document.querySelector('.loader-container');
-                if (loaderContainer) {
-                  loaderContainer.style.display = 'none';
-                  loaderContainer.style.pointerEvents = 'none';
-                }
-              });
-            `,
-            }}
-          />
-        </head>
-        <body>
-          <div className="loader-container">
-            <VideoLoaderWrapper />
-          </div>
-          <Providers>
-            <GoogleMapsProvider>{children}</GoogleMapsProvider>
-          </Providers>
-        </body>
-      </html>
-    </ClerkProvider>
+    <html
+      lang="en"
+      data-theme="light"
+      suppressHydrationWarning
+      className="loading-active"
+    >
+      <head>
+        <style dangerouslySetInnerHTML={{ __html: loaderStyles }} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+            document.documentElement.classList.add('loading-active');
+            window.addEventListener('loaderComplete', function() {
+              document.documentElement.classList.remove('loading-active');
+              // Clean up any loader elements
+              const loaderContainer = document.querySelector('.loader-container');
+              if (loaderContainer) {
+                loaderContainer.style.display = 'none';
+                loaderContainer.style.pointerEvents = 'none';
+              }
+            });
+          `,
+          }}
+        />
+      </head>
+      <body>
+        <div className="loader-container">
+          <VideoLoaderWrapper />
+        </div>
+        <Providers>
+          <GoogleMapsProvider>{children}</GoogleMapsProvider>
+        </Providers>
+      </body>
+    </html>
   );
 }

@@ -4,9 +4,6 @@ import { IoPersonCircleOutline } from "react-icons/io5";
 import { BsChatLeftDots } from "react-icons/bs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs"; // Import Clerk hooks
-import { SignOutButton } from "@clerk/nextjs";
-import { SignInButton } from "@clerk/nextjs";
 import LanguageSwitcher from "../LanguageSwitcher";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
 
@@ -14,37 +11,12 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [chatCount, setChatCount] = useState(0);
   const router = useRouter();
-  const { isSignedIn, userId } = useAuth(); // Check if the user is signed in
   const { t } = useLanguage();
 
-  // Fetch chat count when user is signed in
-  useEffect(() => {
-    if (!isSignedIn || !userId) return;
-
-    const fetchChats = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/chat/my-chats`,
-          {
-            headers: {
-              "x-clerk-user-id": userId,
-            },
-          }
-        );
-        if (!response.ok) {
-          console.error("Failed to fetch chats");
-          return;
-        }
-        const data = await response.json();
-        // Set the chat count to the number of chats
-        setChatCount(data.chats?.length || 0);
-      } catch (err) {
-        console.error("Error fetching chats:", err);
-      }
-    };
-
-    fetchChats();
-  }, [isSignedIn, userId]);
+  const handleSignIn = () => {
+    setIsMenuOpen(false);
+    router.push("/sign-in");
+  };
 
   const navLinks = [
     { name: t("navbar.links.home"), href: "/website" },
@@ -71,22 +43,6 @@ const Navbar = () => {
           {t("navbar.becomeSeller")}
         </button>
 
-        {/* Messages Button - Only show when signed in */}
-        {isSignedIn && (
-          <button
-            onClick={() => router.push("/dashboard/messages")}
-            className="relative text-gray-700"
-            aria-label={t("navbar.messages")}
-          >
-            <BsChatLeftDots size={26} />
-            {chatCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs">
-                {chatCount}
-              </span>
-            )}
-          </button>
-        )}
-
         {/* Profile/Menu Button */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -111,43 +67,12 @@ const Navbar = () => {
             </Link>
           ))}
           <div className="border-t border-gray-200 my-1"></div>
-          {isSignedIn && (
-            <>
-              <button
-                onClick={() => {
-                  router.push("/dashboard/home");
-                  setIsMenuOpen(false);
-                }}
-                className="w-full text-left hover:bg-gray-100 p-2 duration-300"
-              >
-                {t("navbar.dashboard")}
-              </button>
-              <button
-                onClick={() => {
-                  router.push("/dashboard/messages");
-                  setIsMenuOpen(false);
-                }}
-                className="w-full text-left hover:bg-gray-100 p-2 duration-300 flex items-center"
-              >
-                {t("navbar.messages")}
-                {chatCount > 0 && (
-                  <span className="ml-2 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs">
-                    {chatCount}
-                  </span>
-                )}
-              </button>
-            </>
-          )}
-          {/* Conditionally render Login or Logout based on auth status */}
-          {isSignedIn ? (
-            <div className="w-full text-left hover:bg-gray-100 p-2 duration-300">
-              <SignOutButton />
-            </div>
-          ) : (
-            <div className="w-full text-left hover:bg-gray-100 p-2 duration-300">
-              <SignInButton />
-            </div>
-          )}
+          <button
+            onClick={handleSignIn}
+            className="w-full text-left hover:bg-gray-100 p-2 duration-300"
+          >
+            Sign In
+          </button>
         </div>
       )}
     </header>

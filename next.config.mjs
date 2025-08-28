@@ -10,6 +10,13 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
 
+  env: {
+    NEXT_PUBLIC_API_URL:
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000",
+    NEXT_PUBLIC_API_BASE_URL:
+      process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000",
+  },
+
   images: {
     domains: [
       "res.cloudinary.com",
@@ -47,6 +54,21 @@ const nextConfig = {
   // Remove headers configuration since it's not compatible with export
   skipTrailingSlashRedirect: true,
   skipMiddlewareUrlNormalize: true,
+
+  // Add security headers for Google OAuth
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "Cross-Origin-Opener-Policy",
+            value: "same-origin-allow-popups",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 mergeConfig(nextConfig, userConfig);

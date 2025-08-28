@@ -9,44 +9,37 @@ import { MdPhotoFilter } from "react-icons/md";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth } from "../../lib/auth/AuthContext";
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
   const [chatCount, setChatCount] = useState(0);
-  const { userId, getToken, isLoaded } = useAuth();
+  const { userId, getToken, user } = useAuth();
   const [profileImage, setProfileImage] = useState(
     "/images/default-seller.png"
   );
   const [userData, setUserData] = useState(null);
   const [sellerType, setSellerType] = useState(null);
 
+  // Use user data from AuthContext and set profile image
+  useEffect(() => {
+    console.log("Sidebar user data:", user);
+    if (user) {
+      setUserData(user);
+      setSellerType(user.sellerType);
+      console.log("Setting sellerType to:", user.sellerType);
+      if (user.profilePicture) {
+        setProfileImage(user.profilePicture);
+      } else if (user.image) {
+        setProfileImage(user.image);
+      } else {
+        setProfileImage("/images/default-seller.png");
+      }
+    }
+  }, [user]);
+
   // Fetch chat count when component mounts
   useEffect(() => {
-    if (!isLoaded || !userId) return;
-
-    const fetchUserData = async () => {
-      try {
-        const token = await getToken();
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/${userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setUserData(data);
-          setSellerType(data.sellerType); // Set seller type
-          if (data.image) {
-            setProfileImage(data.image);
-          }
-        }
-      } catch (err) {
-        console.error("Error fetching user data:", err);
-      }
-    };
+    if (!userId) return;
 
     const fetchChats = async () => {
       try {
@@ -58,7 +51,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
 
         console.log("Fetching chats with token");
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/chat/my-chats`,
+          `${process.env.NEXT_PUBLIC_API_URL}/api/chat/my-chats`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -79,9 +72,12 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
       }
     };
 
-    fetchUserData();
     fetchChats();
-  }, [userId, isLoaded, getToken]);
+  }, [userId, getToken]);
+
+  // Debug logging
+  console.log("Sidebar sellerType:", sellerType);
+  console.log("Sidebar userData:", userData);
 
   const menuItems = [
     {
@@ -108,7 +104,6 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
           },
         ]
       : []),
-    ,
     ...(sellerType === "company"
       ? [
           {
@@ -170,7 +165,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
               alt="User Avatar"
               className="w-12 h-12 rounded-full object-cover border-2 border-blue-500 shadow-lg"
             />
-            {isOpen && isLoaded && userId && (
+            {isOpen && userData && (
               <motion.div
                 className="ml-3"
                 initial={{ opacity: 0, scale: 0.8 }}

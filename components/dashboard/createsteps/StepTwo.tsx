@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { getCarDetailsByVin } from "../../../services/carService";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth } from "../../../lib/auth/AuthContext";
 import {
   MdBrightness6,
   MdContrast,

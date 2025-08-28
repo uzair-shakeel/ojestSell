@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth } from "../../../lib/auth/AuthContext";
 import {
   getAvailableBuyerRequests,
   getMyOffers,
@@ -33,7 +33,7 @@ import { getUserById } from "../../../services/userService";
 
 const SellerOpportunitiesPage = () => {
   const router = useRouter();
-  const { userId, getToken, isLoaded } = useAuth();
+  const { userId, getToken } = useAuth();
   const [requests, setRequests] = useState([]);
   const [userCars, setUserCars] = useState([]);
   const [myOffers, setMyOffers] = useState([]);
@@ -51,12 +51,12 @@ const SellerOpportunitiesPage = () => {
 
   useEffect(() => {
     const checkSellerType = async () => {
-      if (isLoaded && !userId) {
+      if (!userId) {
         router.push("/sign-in");
         return;
       }
 
-      if (isLoaded && userId) {
+      if (userId) {
         try {
           const userData = await getUserById(userId);
           setSellerType(userData.sellerType);
@@ -81,7 +81,7 @@ const SellerOpportunitiesPage = () => {
     };
 
     checkSellerType();
-  }, [isLoaded, userId, page, filters]);
+  }, [userId, page, filters]);
 
   const fetchRequests = async () => {
     setLoading(true);
@@ -232,7 +232,7 @@ const SellerOpportunitiesPage = () => {
     );
   };
 
-  if (!isLoaded) {
+  if (!userId) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>

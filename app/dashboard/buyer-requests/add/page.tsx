@@ -7,7 +7,7 @@ import {
   BuyerRequestInput,
   createBuyerRequest,
 } from "../../../../services/buyerRequestService";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth } from "../../../../lib/auth/AuthContext";
 import { toast } from "react-hot-toast";
 
 const AddBuyerRequestPage = () => {

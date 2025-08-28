@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useAuth, useClerk } from "@clerk/nextjs";
+import { useAuth } from "../../../lib/auth/AuthContext";
 import { useRouter } from "next/navigation";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -11,10 +11,15 @@ import Image from "next/image";
 import axios from "axios"; // Added axios import
 
 const ProfileComponent = () => {
-  const { getToken, userId } = useAuth();
+  const { userId, updateUserState } = useAuth();
   console.log("userId", userId);
   const [user, setUser] = useState(null);
-  const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+  // Get token directly from localStorage
+  const getToken = () => {
+    return localStorage.getItem("token");
+  };
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -92,8 +97,25 @@ const ProfileComponent = () => {
 
   useEffect(() => {
     const loadUser = async () => {
+      if (!userId) {
+        console.log("No userId available, skipping user load");
+        return;
+      }
+
       try {
-        const userData = await getUserById(userId);
+        console.log("Loading user data for ID:", userId);
+        const userData = await getUserById(userId, getToken);
+        console.log("User data loaded:", userData);
+        console.log("Image fields:", {
+          image: userData.image,
+          profilePicture: userData.profilePicture,
+          formattedImage: formatImageUrl(
+            userData.image || userData.profilePicture
+          ),
+          hasImage: !!userData.image,
+          hasProfilePicture: !!userData.profilePicture,
+        });
+
         setUser(userData);
 
         const newFormData = {
@@ -109,7 +131,7 @@ const ProfileComponent = () => {
             website: userData.socialMedia?.website || "",
             linkedin: userData.socialMedia?.linkedin || "",
           },
-          image: userData.image || "",
+          image: userData.image || userData.profilePicture || "",
           sellerType: userData.sellerType || "private",
           phoneNumbers: userData.phoneNumbers?.length
             ? userData.phoneNumbers.map((phone) => ({
@@ -119,109 +141,53 @@ const ProfileComponent = () => {
             : [{ phone: "", countryCode: "pl" }],
           location: {
             type: "Point",
-            coordinates: userData.location?.coordinates || [51.5074, -0.1278], // default to London if no location
+            coordinates: userData.location?.coordinates || [51.5074, -0.1278],
           },
-          brands: userData.brands || [], // Add brands to form data
+          brands: userData.brands || [],
         };
 
-        console.log("User Data:", userData);
-        console.log("Form Data:", newFormData);
-
+        console.log("Form data set:", newFormData);
         setFormData(newFormData);
       } catch (err) {
         console.error("Error fetching user:", err);
 
-        // Manual sync attempt if user not found
-        try {
-          // Use Clerk's getToken method to get a valid token
-          const token = await getToken();
+        // Show error to user
+        alert(`Failed to load profile: ${err.message || "Unknown error"}`);
 
-          // Make a manual sync request to the backend
-          const syncResponse = await axios.post(
-            `${BASE_URL}/api/users/sync-user`,
-            { user: { id: userId } },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
-            }
-          );
-
-          // If sync is successful, reload the user data
-          if (syncResponse.data.user) {
-            const syncedUserData = syncResponse.data.user;
-            setUser(syncedUserData);
-
-            const newFormData = {
-              firstName: syncedUserData.firstName || "",
-              lastName: syncedUserData.lastName || "",
-              description: syncedUserData.description || "",
-              companyName: syncedUserData.companyName || "",
-              email: syncedUserData.email || "",
-              socialMedia: {
-                instagram: syncedUserData.socialMedia?.instagram || "",
-                facebook: syncedUserData.socialMedia?.facebook || "",
-                twitter: syncedUserData.socialMedia?.twitter || "",
-                website: syncedUserData.socialMedia?.website || "",
-                linkedin: syncedUserData.socialMedia?.linkedin || "",
-              },
-              image: syncedUserData.image || "",
-              sellerType: syncedUserData.sellerType || "private",
-              phoneNumbers: syncedUserData.phoneNumbers?.length
-                ? syncedUserData.phoneNumbers.map((phone) => ({
-                    phone,
-                    countryCode: phone.startsWith("+48") ? "pl" : "us",
-                  }))
-                : [{ phone: "", countryCode: "pl" }],
-              location: {
-                type: "Point",
-                coordinates: syncedUserData.location?.coordinates || [
-                  51.5074, -0.1278,
-                ],
-              },
-              brands: syncedUserData.brands || [], // Add brands to form data
-            };
-
-            setFormData(newFormData);
-          }
-        } catch (syncErr) {
-          console.error("Failed to sync user:", syncErr);
-          // Fallback to default state
-          setUser({
-            firstName: "",
-            lastName: "",
-            image: "/placeholder-user.jpg",
-            sellerType: "private",
-          });
-          setFormData({
-            firstName: "",
-            lastName: "",
-            description: "",
-            companyName: "",
-            email: "",
-            socialMedia: {
-              instagram: "",
-              facebook: "",
-              twitter: "",
-              website: "",
-              linkedin: "",
-            },
-            image: "/placeholder-user.jpg",
-            sellerType: "private",
-            phoneNumbers: [{ phone: "", countryCode: "pl" }],
-            location: {
-              type: "Point",
-              coordinates: [51.5074, -0.1278],
-            },
-            brands: [], // Add brands to form data
-          });
-        }
+        // Set default state
+        setUser({
+          firstName: "",
+          lastName: "",
+          image: "/placeholder-user.jpg",
+          sellerType: "private",
+        });
+        setFormData({
+          firstName: "",
+          lastName: "",
+          description: "",
+          companyName: "",
+          email: "",
+          socialMedia: {
+            instagram: "",
+            facebook: "",
+            twitter: "",
+            website: "",
+            linkedin: "",
+          },
+          image: "/placeholder-user.jpg",
+          sellerType: "private",
+          phoneNumbers: [{ phone: "", countryCode: "pl" }],
+          location: {
+            type: "Point",
+            coordinates: [51.5074, -0.1278],
+          },
+          brands: [],
+        });
       }
     };
 
-    if (userId) loadUser();
-  }, [userId, getToken]);
+    loadUser();
+  }, [userId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -379,10 +345,20 @@ const ProfileComponent = () => {
       console.log("Submitting data:", JSON.stringify(data, null, 2));
 
       // Call the updateUser function from userServices
-      const updatedUser = await updateUser(data, getToken);
-      console.log("Updated user:", JSON.stringify(updatedUser, null, 2));
+      const result = await updateUser(data, getToken);
+      console.log("Updated user result:", JSON.stringify(result, null, 2));
 
-      setUser(updatedUser); // Set the updated user data to the state
+      // Update the user state with the new data
+      if (result.user) {
+        setUser(result.user);
+        // Update AuthContext to sync changes across the app
+        updateUserState(result.user);
+        console.log(
+          "Profile updated successfully, new user data:",
+          result.user
+        );
+      }
+
       alert("Profile updated successfully!");
     } catch (error) {
       console.error("Error updating user:", error);
@@ -455,11 +431,14 @@ const ProfileComponent = () => {
             </label>
             <div className="flex flex-col md:flex-row gap-4 items-center space-x-4">
               <Image
-                src={formatImageUrl(user?.image)}
+                src={formatImageUrl(user?.image || user?.profilePicture)}
                 alt="Profile"
                 width={80}
                 height={80}
                 className="w-20 h-20 rounded-full object-center border border-gray-300"
+                onError={(e) => {
+                  e.target.src = "/placeholder-user.jpg";
+                }}
               />
               <input
                 type="file"

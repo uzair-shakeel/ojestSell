@@ -2,7 +2,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { FaSearch, FaPaperPlane, FaBars, FaEnvelope } from "react-icons/fa";
-import { useUser } from "@clerk/nextjs";
+import { useAuth } from "../../../lib/auth/AuthContext";
 import io from "socket.io-client";
 
 const socket = io(process.env.NEXT_PUBLIC_API_BASE_URL, {
@@ -19,7 +19,7 @@ const MessagesPage = () => {
   const [error, setError] = useState(null);
   const [totalUnread, setTotalUnread] = useState(0);
   const messagesEndRef = useRef(null);
-  const { user } = useUser();
+  const { user } = useAuth();
 
   // Generate temporary ID for optimistic updates
   const generateTempId = () =>

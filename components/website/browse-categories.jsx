@@ -28,7 +28,7 @@ export function BrowseCategories() {
         </h2>
 
         {/* Brand Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-[900px] mx-auto">
           {displayedBrands.map((brand) => (
             <Link
               key={brand.id}
@@ -36,9 +36,9 @@ export function BrowseCategories() {
                 pathname: "/website/cars",
                 query: { make: brand.name },
               }}
-              className="relative bg-white border border-gray-400 rounded-lg shadow-sm p-6 flex flex-col md:flex-row items-center gap-4 hover:shadow-md transition-shadow"
+              className="relative min-h-[120px] bg-white shadow-md rounded-lg p-6 flex flex-col pl-6 md:flex-row items-center gap-2 hover:shadow-md transition-shadow"
             >
-              <div className="relative w-24 h-12">
+              <div className="relative w-20 h-10">
                 <Image
                   src={brand.logo || "/placeholder.svg"}
                   alt={brand.name}
@@ -46,10 +46,10 @@ export function BrowseCategories() {
                   className="object-contain h-full w-auto"
                 />
               </div>
-              <span className="text-lg font-medium">{brand.name}</span>
+              <span className="text-md font-medium">{brand.name}</span>
               {brand.discount && (
-                <span className="absolute top-2 right-2 text-sm text-green-600 font-semibold">
-                  -{brand.discount}
+                <span className="absolute rotate-45 top-6 right-0 text-sm text-green-600 font-semibold">
+                  save {brand.discount}
                 </span>
               )}
             </Link>

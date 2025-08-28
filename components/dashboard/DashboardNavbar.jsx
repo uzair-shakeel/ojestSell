@@ -1,13 +1,35 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
-import { UserButton, SignOutButton } from "@clerk/nextjs";
-import { FiMenu, FiX } from "react-icons/fi";
+import { useAuth } from "../../lib/auth/AuthContext";
+import { FiMenu, FiX, FiUser, FiLogOut, FiSettings } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 
 export default function DashboardNavbar({ isOpen, toggleSidebar }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const { user, logout } = useAuth();
   const router = useRouter();
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsProfileDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    await logout();
+    router.push("/");
+  };
 
   return (
     <header className="w-full p-4 bg-white shadow-md flex justify-between items-center z-30 sticky top-0">
@@ -25,9 +47,59 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
           Add Listing
         </button>
 
-        {/* Clerk UserButton for profile dropdown */}
-        <div className="block">
-          <UserButton />
+        {/* Custom User Profile Dropdown */}
+        <div className="relative" ref={dropdownRef}>
+          <button
+            onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+            className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100 transition-colors"
+          >
+            <IoPersonCircleOutline className="w-6 h-6 text-gray-700" />
+            <span className="hidden md:block text-sm font-medium text-gray-700">
+              {user?.firstName || user?.email || "User"}
+            </span>
+          </button>
+
+          {/* Profile Dropdown Menu */}
+          {isProfileDropdownOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg py-2 z-50">
+              <div className="px-4 py-2 border-b border-gray-100">
+                <p className="text-sm font-medium text-gray-900">
+                  {user?.firstName} {user?.lastName}
+                </p>
+                <p className="text-xs text-gray-500">{user?.email}</p>
+              </div>
+
+              <button
+                onClick={() => {
+                  router.push("/dashboard/profile");
+                  setIsProfileDropdownOpen(false);
+                }}
+                className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                <FiUser className="w-4 h-4 mr-2" />
+                Profile
+              </button>
+
+              <button
+                onClick={() => {
+                  router.push("/dashboard/settings");
+                  setIsProfileDropdownOpen(false);
+                }}
+                className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                <FiSettings className="w-4 h-4 mr-2" />
+                Settings
+              </button>
+
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+              >
+                <FiLogOut className="w-4 h-4 mr-2" />
+                Logout
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
