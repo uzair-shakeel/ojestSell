@@ -1,9 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Optimize Swiper CSS - only import what's needed */
-@import "swiper/css/bundle";
+@import "swiper/css";
+@import "swiper/css/navigation";
+@import "swiper/css/pagination";
 
 /* * {
   background-color: white;
