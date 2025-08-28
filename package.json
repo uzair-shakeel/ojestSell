@@ -6,9 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "analyze": "node scripts/analyze-bundle.js",
-    "build:analyze": "ANALYZE=true npm run build"
+    "lint": "next lint"
   },
   "dependencies": {
     "@clerk/clerk-sdk-node": "^4.13.23",
@@ -46,7 +44,6 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@next/bundle-analyzer": "^15.4.4",
     "@types/node": "^22.13.5",
     "@types/react": "^19.0.11",
     "eslint": "^9",
