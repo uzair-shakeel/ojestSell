@@ -33,29 +33,29 @@ const VideoSection = () => {
   const videoCards = [
     {
       id: "personal",
-      title: "Personal",
+      title: "Smart Trading",
       description:
-        "The all-in-one plan for buying and selling cars. Home or away, local or global — move freely between markets and currencies.",
-      background: "from-amber-50 to-orange-100",
-      accent: "from-amber-400 to-orange-500",
+        "Experience intelligent car trading with AI-powered valuations, instant market insights, and seamless transactions across global automotive markets.",
+      background: "from-blue-50 to-indigo-100",
+      accent: "from-blue-500 to-indigo-600",
       video: "/video.mp4",
     },
     {
       id: "business",
-      title: "Business",
+      title: "Enterprise Solutions",
       description:
-        "For those who want a platform that does more for their automotive business — there's Ojest Business.",
-      background: "from-orange-100 to-yellow-100",
-      accent: "from-orange-500 to-yellow-600",
+        "Scale your automotive business with our comprehensive platform featuring advanced analytics, bulk operations, and enterprise-grade security.",
+      background: "from-indigo-100 to-blue-100",
+      accent: "from-indigo-500 to-blue-600",
       video: "/video.mp4",
     },
     {
       id: "freelance",
-      title: "Freelance",
+      title: "Professional Network",
       description:
-        "Perfect for independent car dealers and brokers who need flexibility and professional tools.",
-      background: "from-green-100 to-emerald-100",
-      accent: "from-green-500 to-emerald-600",
+        "Join thousands of automotive professionals using our platform for seamless deals, verified transactions, and premium marketplace access.",
+      background: "from-cyan-100 to-blue-100",
+      accent: "from-cyan-500 to-blue-600",
       video: "/video.mp4",
     },
   ];
@@ -266,15 +266,15 @@ const VideoSection = () => {
           {/* Left side - Heading */}
           <div className="flex-1 max-w-3xl lg:max-w-3xl w-full">
             <div className="inline-block mb-6">
-              <span className="text-sm font-semibold bg-green-50 px-3 py-2 rounded-full shadow-sm text-green-600 tracking-wider uppercase">
-                Get a Car now
+              <span className="text-sm font-semibold bg-blue-50 px-3 py-2 rounded-full shadow-sm text-blue-600 tracking-wider uppercase">
+                Revolutionary Platform
               </span>
             </div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-black leading-[0.9] mb-0">
-              Discover the{" "}
+              Experience the{" "}
               <span className="relative inline-block">
-                freedom
+                future
                 <svg
                   className="absolute -bottom-1 left-0 w-full h-4"
                   viewBox="0 0 300 20"
@@ -282,7 +282,7 @@ const VideoSection = () => {
                 >
                   <path
                     d="M5,15 Q75,5 150,12 Q225,8 295,15"
-                    stroke="#10b981"
+                    stroke="#3b82f6"
                     strokeWidth="4"
                     fill="none"
                     strokeLinecap="round"
@@ -290,23 +290,26 @@ const VideoSection = () => {
                 </svg>
               </span>
               <br />
-              of car buying & selling
+              of automotive commerce
             </h1>
           </div>
 
           {/* Right side - Description and Button */}
           <div className="flex-shrink-0 lg:ml-16 max-w-md w-full lg:w-auto pt-0 lg:pt-16">
             <p className="text-lg text-gray-600 leading-relaxed mb-8">
-              Get seamless car listings, instant offers, secure payments, and
-              expert support — all in one scalable platform designed for modern
-              automotive commerce.
+              Transform your automotive business with AI-powered insights,
+              real-time market data, secure blockchain transactions, and
+              professional tools built for the next generation of car trading.
             </p>
 
-            <button className="bg-black text-white px-1 pl-8 py-1 flex items-center min-w-[220px] justify-between rounded-full font-medium hover:bg-gray-800 transition-colors duration-200 space-x-3 group">
-              <span>GET STARTED</span>
-              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
+            <button
+              onClick={() => router.push("/signup")}
+              className="group relative bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-4 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:scale-105 hover:shadow-xl shadow-lg overflow-hidden"
+            >
+              <span className="relative z-10 flex items-center space-x-2">
+                <span>Signup Now</span>
                 <svg
-                  className="w-4 h-4 text-black"
+                  className="w-5 h-5 transform group-hover:translate-x-1 transition-transform duration-300"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -315,10 +318,11 @@ const VideoSection = () => {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M9 5l7 7-7 7"
+                    d="M13 7l5 5m0 0l-5 5m5-5H6"
                   />
                 </svg>
-              </div>
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
             </button>
           </div>
         </div>
@@ -459,8 +463,8 @@ const VideoSection = () => {
                   {/* Video Status Indicator */}
                   {activeCard !== card.id && (
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="bg-black/50 text-white px-4 py-2 rounded-full text-sm font-medium">
-                        Hover to play
+                      <div className="bg-blue-600/80 text-white px-4 py-2 rounded-full text-sm font-medium backdrop-blur-sm">
+                        Click to explore
                       </div>
                     </div>
                   )}
