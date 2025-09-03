@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// Use the Next.js API proxy
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+// Use the Next.js API proxy - Fixed to use consistent env var name
+const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
 interface UserData {
   clerkUserId: string;
@@ -99,6 +99,11 @@ export const getUserById = async (
 export const getPublicUserInfo = async (userId: string): Promise<any> => {
   try {
     console.log("Fetching public user info for ID:", userId);
+    console.log("API URL:", API_URL);
+
+    if (!userId) {
+      throw new Error("User ID is required");
+    }
 
     const response = await axios.get(`${API_URL}/api/users/public/${userId}`);
     console.log("Public user data received:", response.data);
@@ -110,7 +115,18 @@ export const getPublicUserInfo = async (userId: string): Promise<any> => {
       response: error.response?.data,
       status: error.response?.status,
       url: error.config?.url,
+      userId: userId,
     });
+
+    // Provide more specific error messages
+    if (error.response?.status === 404) {
+      throw new Error(`User with ID ${userId} not found`);
+    } else if (error.response?.status === 500) {
+      throw new Error("Server error while fetching user information");
+    } else if (!error.response) {
+      throw new Error("Network error - could not connect to server");
+    }
+
     throw new Error(
       error?.response?.data?.message || "Failed to fetch public user info"
     );
