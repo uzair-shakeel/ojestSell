@@ -36,7 +36,7 @@ export default function CarCard({ view, car, onDelete }) {
 
   return (
     <div
-      className={`rounded-xl overflow-hidden border border-gray-200 shadow-sm group flex min-w-[380px] ${
+      className={`rounded-xl overflow-hidden border border-gray-200 shadow-sm group flex  ${
         view === "list" ? "flex-row" : "flex-col max-w-full"
       }`}
     >
@@ -87,13 +87,14 @@ export default function CarCard({ view, car, onDelete }) {
       <div className="px-4 py-3 w-full">
         <div className="flex flex-col justify-start mb-2">
           <div className="flex justify-between items-center">
-            <h2
+            <button
+              onClick={() => router.push(`/website/cars/${car._id}`)}
               className={`font-semibold uppercase text-black mb-2 ${
                 view === "list" ? "text-2xl" : "text-lg"
               }`}
             >
               {car.year} {car.make} {car.model}
-            </h2>
+            </button>
           </div>
           <div className="flex flex-col md:flex-row md:space-x-5">
             {/* Display the city and state (province) */}

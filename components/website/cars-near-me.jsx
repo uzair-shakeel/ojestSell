@@ -1,6 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, A11y } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import CarCard from "./CarCard";
 import { getAllCars } from "../../services/carService";
@@ -11,10 +16,6 @@ export function CarsNearMe() {
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const scrollRef = useRef(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
   const [view, setView] = useState("grid");
 
   useEffect(() => {
@@ -44,32 +45,6 @@ export function CarsNearMe() {
     fetchCars();
   }, []); // No dependencies since we don't need getToken
 
-  const handleMouseDown = (e) => {
-    setIsDragging(true);
-    setStartX(e.pageX - scrollRef.current.offsetLeft);
-    setScrollLeft(scrollRef.current.scrollLeft);
-  };
-
-  const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    const x = e.pageX - scrollRef.current.offsetLeft;
-    const walk = (x - startX) * 2; // Adjust scroll speed
-    scrollRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const scrollLeftFunc = () => {
-    scrollRef.current.scrollBy({ left: -300, behavior: "smooth" });
-  };
-
-  const scrollRightFunc = () => {
-    scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
-  };
-
   return (
     <section className="py-12 bg-gray-50">
       <div className="mx-auto px-4">
@@ -86,34 +61,56 @@ export function CarsNearMe() {
         {!loading && !error && cars.length === 0 && (
           <p>{t("homepage.carsNearMe.noCars")}</p>
         )}
-        {/* Scrollable container */}
+        {/* Swiper container */}
         {cars.length > 0 && (
           <div className="relative">
-            <button
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-2"
-              onClick={scrollLeftFunc}
-            >
-              <FaChevronLeft size={20} />
-            </button>
-
-            <div
-              ref={scrollRef}
-              className="flex overflow-x-auto gap-4 scroll-smooth scrollbar-hide py-4"
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
+            <Swiper
+              modules={[Navigation, A11y]}
+              navigation={{
+                prevEl: ".cars-swiper-prev",
+                nextEl: ".cars-swiper-next",
+              }}
+              spaceBetween={16}
+              slidesPerView={1}
+              breakpoints={{
+                640: {
+                  slidesPerView: 1,
+                  spaceBetween: 16,
+                },
+                768: {
+                  slidesPerView: 2,
+                  spaceBetween: 20,
+                },
+                1024: {
+                  slidesPerView: 3,
+                  spaceBetween: 24,
+                },
+                1280: {
+                  slidesPerView: 3,
+                  spaceBetween: 24,
+                },
+              }}
+              grabCursor={true}
+              touchRatio={1}
+              touchAngle={45}
+              threshold={10}
+              allowTouchMove={true}
+              simulateTouch={true}
+              className="py-4"
             >
               {cars.map((car) => (
-                <CarCard key={car._id} view={view} car={car} />
+                <SwiperSlide key={car._id}>
+                  <CarCard view={view} car={car} />
+                </SwiperSlide>
               ))}
-            </div>
+            </Swiper>
 
-            <button
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-2"
-              onClick={scrollRightFunc}
-            >
-              <FaChevronRight size={20} />
+            {/* Custom Navigation Buttons */}
+            <button className="cars-swiper-prev absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors duration-200 -ml-4">
+              <FaChevronLeft size={20} className="text-gray-600" />
+            </button>
+            <button className="cars-swiper-next absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors duration-200 -mr-4">
+              <FaChevronRight size={20} className="text-gray-600" />
             </button>
           </div>
         )}
