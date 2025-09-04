@@ -66,30 +66,6 @@ export function FeaturedCategories() {
 
   return (
     <section className="py-16 bg-black" ref={containerRef}>
-      {/* Scrolling Logo Banner */}
-      <div className="relative overflow-hidden mb-16" ref={textRef}>
-        {/* Commented out logos since they may not exist in the new project
-        <div className="scroll-text flex items-center gap-16 min-w-max">
-          {[...LOGOS, ...LOGOS, ...LOGOS].map((logo, index) => (
-            <div
-              key={index}
-              className="inline-block w-[120px] h-[60px] relative opacity-100"
-            >
-              <Image
-                src={logo.src}
-                alt={logo.alt}
-                fill
-                sizes="120px"
-                priority={index < 5}
-                className="object-contain"
-                style={{ filter: "brightness(0) invert(1)" }}
-              />
-            </div>
-          ))}
-        </div>
-        */}
-      </div>
-
       {/* Featured Categories Grid */}
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center text-white mb-8">
