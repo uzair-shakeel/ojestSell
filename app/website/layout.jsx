@@ -11,7 +11,6 @@ export default function WebsiteLayout({ children }) {
         <div className="w-full">{children}</div>
       </main>
       <Footer/>
-      <CookieConsent />
     </div>
   );
 }

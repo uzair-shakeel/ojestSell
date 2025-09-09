@@ -4,6 +4,7 @@ import React from "react";
 import VideoLoaderWrapper from "../components/website/VideoLoaderWrapper";
 import { GoogleMapsProvider } from "../lib/GoogleMapsContext";
 import Providers from "../components/Providers";
+import CookieConsent from "../components/website/CookieConsent";
 
 // Add specific CSS to ensure content doesn't flash before loader
 const loaderStyles = `
@@ -71,6 +72,7 @@ export default function RootLayout({ children }) {
         <Providers>
           <GoogleMapsProvider>{children}</GoogleMapsProvider>
         </Providers>
+        <CookieConsent />
       </body>
     </html>
   );
