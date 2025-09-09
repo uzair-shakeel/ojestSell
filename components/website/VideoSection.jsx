@@ -262,7 +262,7 @@ const VideoSection = () => {
   return (
     <section className="relative py-20 bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-10 max-w-[1920px]">
-        <div className="mb-16 flex flex-col lg:flex-row items-start justify-between gap-8 lg:gap-0">
+        <div className="mb-16 grid md:grid-cols-2 gap-8 lg:gap-0">
           {/* Left side - Heading */}
           <div className="flex-1 max-w-3xl lg:max-w-3xl w-full">
             <div className="inline-block mb-6">
@@ -271,7 +271,7 @@ const VideoSection = () => {
               </span>
             </div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-black leading-[0.9] mb-0">
+            <h1 className="text-2xl md:text-3xl lg:text-5xl xl:text-6xl font-bold text-black leading-[0.9] mb-0">
               Experience the{" "}
               <span className="relative inline-block">
                 future
@@ -295,7 +295,7 @@ const VideoSection = () => {
           </div>
 
           {/* Right side - Description and Button */}
-          <div className="flex-shrink-0 lg:ml-16 max-w-md w-full lg:w-auto pt-0 lg:pt-16">
+          <div className="flex-shrink-0 lg:ml-16 max-w-xl w-full lg:w-auto pt-0 xl:pt-16">
             <p className="text-lg text-gray-600 leading-relaxed mb-8">
               Transform your automotive business with AI-powered insights,
               real-time market data, secure blockchain transactions, and
