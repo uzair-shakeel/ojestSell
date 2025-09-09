@@ -1,8 +1,20 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 let userConfig = undefined;
 try {
   userConfig = await import("./v0-user-next.config");
 } catch (e) {
   // ignore error
+}
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+if (!API_URL || !API_BASE_URL) {
+  throw new Error(
+    "❌ Missing required API environment variables in .env file."
+  );
 }
 
 /** @type {import('next').NextConfig} */
@@ -11,10 +23,8 @@ const nextConfig = {
   swcMinify: true,
 
   env: {
-    NEXT_PUBLIC_API_URL:
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000",
-    NEXT_PUBLIC_API_BASE_URL:
-      process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000",
+    NEXT_PUBLIC_API_URL: API_URL,
+    NEXT_PUBLIC_API_BASE_URL: API_BASE_URL,
   },
 
   images: {
@@ -24,38 +34,31 @@ const nextConfig = {
       "img.clerk.com",
       "localhost",
     ],
+    unoptimized: true,
   },
+
   async rewrites() {
     return [
       {
         source: "/api/:path*",
-        destination: "http://localhost:5000/api/:path*",
+        destination: `${API_BASE_URL}/api/:path*`,
       },
     ];
   },
+
   eslint: {
     ignoreDuringBuilds: true,
   },
+
   typescript: {
     ignoreBuildErrors: true,
   },
-  images: {
-    unoptimized: true,
-  },
-  // experimental: {
-  //   webpackBuildWorker: true,
-  //   parallelServerBuildTraces: true,
-  //   parallelServerCompiles: true,
-  // },
 
-  // Use standalone instead of export to avoid the generateStaticParams error
   output: "standalone",
 
-  // Remove headers configuration since it's not compatible with export
   skipTrailingSlashRedirect: true,
   skipMiddlewareUrlNormalize: true,
 
-  // Add security headers for Google OAuth
   async headers() {
     return [
       {
