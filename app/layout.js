@@ -51,7 +51,13 @@ export default function RootLayout({ children }) {
         <script
           dangerouslySetInnerHTML={{
             __html: `
-            document.documentElement.classList.add('loading-active');
+            // Only show loader on initial page load, not on navigation
+            const isInitialLoad = !sessionStorage.getItem('hasNavigated');
+            if (isInitialLoad) {
+              document.documentElement.classList.add('loading-active');
+              sessionStorage.setItem('hasNavigated', 'true');
+            }
+            
             window.addEventListener('loaderComplete', function() {
               document.documentElement.classList.remove('loading-active');
               // Clean up any loader elements

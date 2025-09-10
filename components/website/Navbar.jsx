@@ -35,9 +35,9 @@ const Navbar = () => {
       </div>
 
       <div className="flex items-center space-x-5 sm:mx-4">
-        <div className="">
+        {/* <div className="">
           <LanguageSwitcher />
-        </div>
+        </div> */}
         {/* Add Listing Button */}
         <button className="hidden md:block bg-white border border-gray-300 px-4 py-2 rounded-full hover:bg-gray-100">
           {t("navbar.becomeSeller")}

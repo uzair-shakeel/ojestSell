@@ -20,10 +20,16 @@ const VideoLoader = dynamic(() => import("./VideoLoader"), {
 
 const VideoLoaderWrapper = () => {
   const [mounted, setMounted] = useState(false);
+  const [shouldShow, setShouldShow] = useState(false);
 
   // Make sure component is mounted before rendering
   useEffect(() => {
     setMounted(true);
+
+    // Check if loading-active class is present (only on initial load)
+    const hasLoadingClass =
+      document.documentElement.classList.contains("loading-active");
+    setShouldShow(hasLoadingClass);
 
     // Set up cleanup function
     return () => {
@@ -33,6 +39,11 @@ const VideoLoaderWrapper = () => {
   }, []);
 
   if (!mounted) return <LoaderPlaceholder />;
+
+  // Only show loader if loading-active class is present
+  if (!shouldShow) {
+    return null;
+  }
 
   return <VideoLoader />;
 };
