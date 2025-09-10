@@ -39,6 +39,8 @@ const Page = () => {
   const [error, setError] = useState(null);
   const [city, setCity] = useState("");
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
+  const mainSwiperRef = useRef(null);
+  const fullscreenSwiperRef = useRef(null);
 
   const thumbnailScrollRef = useRef(null);
 
@@ -72,15 +74,27 @@ const Page = () => {
   const images = car?.images || ["/images/hamer1.png"];
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % images.length);
-    setMainImage(images[(currentImageIndex + 1) % images.length]);
+    if (isFullscreen) {
+      if (fullscreenSwiperRef.current && fullscreenSwiperRef.current.swiper) {
+        fullscreenSwiperRef.current.swiper.slideNext();
+      }
+    } else {
+      if (mainSwiperRef.current && mainSwiperRef.current.swiper) {
+        mainSwiperRef.current.swiper.slideNext();
+      }
+    }
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
-    setMainImage(
-      images[(currentImageIndex - 1 + images.length) % images.length]
-    );
+    if (isFullscreen) {
+      if (fullscreenSwiperRef.current && fullscreenSwiperRef.current.swiper) {
+        fullscreenSwiperRef.current.swiper.slidePrev();
+      }
+    } else {
+      if (mainSwiperRef.current && mainSwiperRef.current.swiper) {
+        mainSwiperRef.current.swiper.slidePrev();
+      }
+    }
   };
 
   const selectImage = (index) => {
@@ -101,17 +115,15 @@ const Page = () => {
   // Handle keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (isFullscreen) {
-        if (e.key === "ArrowRight") {
-          e.preventDefault();
-          nextImage();
-        } else if (e.key === "ArrowLeft") {
-          e.preventDefault();
-          prevImage();
-        } else if (e.key === "Escape") {
-          e.preventDefault();
-          setIsFullscreen(false);
-        }
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        nextImage();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        prevImage();
+      } else if (e.key === "Escape" && isFullscreen) {
+        e.preventDefault();
+        setIsFullscreen(false);
       }
     };
 
@@ -334,6 +346,7 @@ const Page = () => {
 
             {/* Fullscreen Swiper */}
             <Swiper
+              ref={fullscreenSwiperRef}
               modules={[Navigation, A11y]}
               navigation={{
                 prevEl: ".fullscreen-swiper-prev",
@@ -342,16 +355,16 @@ const Page = () => {
               spaceBetween={0}
               slidesPerView={1}
               initialSlide={currentImageIndex}
-              onSlideChange={(swiper) =>
-                setCurrentImageIndex(swiper.activeIndex)
-              }
+              onSlideChange={(swiper) => {
+                setCurrentImageIndex(swiper.activeIndex);
+                setMainImage(images[swiper.activeIndex]);
+              }}
               grabCursor={true}
               touchRatio={1}
               touchAngle={45}
               threshold={10}
               allowTouchMove={true}
               simulateTouch={true}
-              centeredSlides={true}
               className="w-full h-full"
             >
               {images.map((img, index) => (
@@ -394,6 +407,7 @@ const Page = () => {
               {/* Main Swiper */}
               <div className="col-span-2 relative group">
                 <Swiper
+                  ref={mainSwiperRef}
                   modules={[Navigation, Thumbs, A11y]}
                   navigation={{
                     prevEl: ".main-swiper-prev",
