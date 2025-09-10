@@ -39,9 +39,12 @@ const Navbar = () => {
           <LanguageSwitcher />
         </div> */}
         {/* Add Listing Button */}
-        <button className="hidden md:block bg-white border border-gray-300 px-4 py-2 rounded-full hover:bg-gray-100">
+        <Link
+          href="/sign-up"
+          className="hidden md:block bg-white border border-gray-300 px-4 py-2 rounded-full hover:bg-gray-100"
+        >
           {t("navbar.becomeSeller")}
-        </button>
+        </Link>
 
         {/* Profile/Menu Button */}
         <button

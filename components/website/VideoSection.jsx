@@ -1,8 +1,11 @@
 "use client";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Play, Pause, Volume2, VolumeX, Maximize2 } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const VideoSection = () => {
+  const router = useRouter();
   const [activeCard, setActiveCard] = useState("personal");
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -303,7 +306,7 @@ const VideoSection = () => {
             </p>
 
             <button
-              onClick={() => router.push("/signup")}
+              onClick={() => router.push("/sign-up")}
               className="group relative bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-4 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:scale-105 hover:shadow-xl shadow-lg overflow-hidden"
             >
               <span className="relative z-10 flex items-center space-x-2">
