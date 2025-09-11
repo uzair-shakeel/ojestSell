@@ -20,7 +20,6 @@ if (!API_URL || !API_BASE_URL) {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
 
   env: {
     NEXT_PUBLIC_API_URL: API_URL,

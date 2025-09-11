@@ -1,10 +1,11 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import React from "react";
+import React, { Suspense } from "react";
 import VideoLoaderWrapper from "../components/website/VideoLoaderWrapper";
 import { GoogleMapsProvider } from "../lib/GoogleMapsContext";
 import Providers from "../components/Providers";
 import CookieConsent from "../components/website/CookieConsent";
+import ErrorBoundary from "../components/ErrorBoundary";
 
 // Add specific CSS to ensure content doesn't flash before loader
 const loaderStyles = `
@@ -72,13 +73,23 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
-        <div className="loader-container">
-          <VideoLoaderWrapper />
-        </div>
-        <Providers>
-          <GoogleMapsProvider>{children}</GoogleMapsProvider>
-        </Providers>
-        <CookieConsent />
+        <ErrorBoundary>
+          <div className="loader-container">
+            <Suspense
+              fallback={
+                <div className="fixed inset-0 z-[9999] bg-white flex items-center justify-center">
+                  <div className="w-8 h-8 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin"></div>
+                </div>
+              }
+            >
+              <VideoLoaderWrapper />
+            </Suspense>
+          </div>
+          <Providers>
+            <GoogleMapsProvider>{children}</GoogleMapsProvider>
+          </Providers>
+          <CookieConsent />
+        </ErrorBoundary>
       </body>
     </html>
   );

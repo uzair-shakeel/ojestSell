@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import dynamic from "next/dynamic";
+import VideoLoader from "./VideoLoader";
 
 // Initial placeholder loader that displays immediately
 const LoaderPlaceholder = () => (
@@ -12,15 +12,10 @@ const LoaderPlaceholder = () => (
   </div>
 );
 
-// Pre-load the VideoLoader component
-const VideoLoader = dynamic(() => import("./VideoLoader"), {
-  ssr: false,
-  loading: () => <LoaderPlaceholder />,
-});
-
 const VideoLoaderWrapper = () => {
   const [mounted, setMounted] = useState(false);
   const [shouldShow, setShouldShow] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
   // Make sure component is mounted before rendering
   useEffect(() => {
@@ -38,6 +33,23 @@ const VideoLoaderWrapper = () => {
     };
   }, []);
 
+  // Handle chunk loading errors
+  useEffect(() => {
+    const handleChunkError = (event) => {
+      console.error("Chunk loading error:", event);
+      if (retryCount < 3) {
+        setRetryCount((prev) => prev + 1);
+        // Retry after a short delay
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
+    };
+
+    window.addEventListener("error", handleChunkError);
+    return () => window.removeEventListener("error", handleChunkError);
+  }, [retryCount]);
+
   if (!mounted) return <LoaderPlaceholder />;
 
   // Only show loader if loading-active class is present
@@ -45,7 +57,12 @@ const VideoLoaderWrapper = () => {
     return null;
   }
 
-  return <VideoLoader />;
+  try {
+    return <VideoLoader />;
+  } catch (error) {
+    console.error("Error loading VideoLoader:", error);
+    return <LoaderPlaceholder />;
+  }
 };
 
 export default VideoLoaderWrapper;
