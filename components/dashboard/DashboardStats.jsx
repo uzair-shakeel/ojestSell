@@ -42,7 +42,7 @@ export default function DashboardStats({ user: userProp }) {
         const token = await getToken();
         if (token) {
           tasks.push(
-            fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chat/my-chats`, {
+            fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/chat/my-chats`, {
               headers: { Authorization: `Bearer ${token}` },
             })
               .then(async (res) => {

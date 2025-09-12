@@ -26,7 +26,7 @@ const page = () => {
 
         // Fetch user's cars
         const carsRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/cars/my-cars/all`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/cars/my-cars/all`,
           { headers }
         );
         const cars = carsRes.ok ? await carsRes.json() : [];
@@ -34,7 +34,7 @@ const page = () => {
 
         // Fetch chats and group by day
         const chatsRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/chat/my-chats`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/chat/my-chats`,
           { headers }
         );
         const chatsJson = chatsRes.ok ? await chatsRes.json() : [];

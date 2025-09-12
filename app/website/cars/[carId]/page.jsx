@@ -45,7 +45,12 @@ const Page = () => {
   const thumbnailScrollRef = useRef(null);
 
   const formatImageUrl = (imagePath) => {
-    if (!imagePath) return "/images/default-seller.png";
+    // Use a known local fallback avatar if seller image is missing
+    if (!imagePath) return "/website/seller.jpg";
+    // If a full URL is provided, return as-is
+    if (typeof imagePath === "string" && /^(https?:)?\/\//i.test(imagePath)) {
+      return imagePath;
+    }
     return `${process.env.NEXT_PUBLIC_API_BASE_URL}/${imagePath.replace(
       "\\",
       "/"
@@ -167,8 +172,15 @@ const Page = () => {
             sellerData?.location?.coordinates?.[0]
           );
           setCity(cityName);
+        } else if (carData?.location?.coordinates) {
+          // Fallback to car location if seller's location is unavailable
+          const cityName = await getCityFromCoordinates(
+            carData?.location?.coordinates?.[1],
+            carData?.location?.coordinates?.[0]
+          );
+          setCity(cityName);
         } else {
-          setCity(carData?.location?.city || "Unknown Location");
+          setCity("Unknown Location");
         }
       } catch (err) {
         console.error("Error fetching data:", err);
@@ -304,11 +316,15 @@ const Page = () => {
     );
   }
 
-  const sellerName = seller
-    ? `${seller?.firstName || ""} ${seller?.lastName || ""}`.trim() ||
-      seller?.companyName ||
-      "Seller"
-    : "Seller";
+  const sellerName = (() => {
+    if (!seller) return "Seller";
+    const type = seller?.sellerType || car?.financialInfo?.sellerType;
+    if (type === "company") {
+      return seller?.companyName || "Company";
+    }
+    const fullName = `${seller?.firstName || ""} ${seller?.lastName || ""}`.trim();
+    return fullName || seller?.companyName || "Private Seller";
+  })();
 
   const locationDisplay = city || "Unknown Location";
 
@@ -594,7 +610,13 @@ const Page = () => {
                     </p>
                   </div>
                   <p className="text-base text-gray-500">
-                    {seller?.sellerType || "Unknown Seller Type"}
+                    {
+                      (() => {
+                        const type = seller?.sellerType || car?.financialInfo?.sellerType;
+                        if (!type) return "Unknown Seller Type";
+                        return type === "company" ? "Company" : "Private Seller";
+                      })()
+                    }
                   </p>
                   <div className="flex justify-start items-center space-x-2">
                     <img

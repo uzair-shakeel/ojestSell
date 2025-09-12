@@ -42,7 +42,7 @@ export default function SignInTabs() {
       }
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/signin`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/signin`,
         {
           method: "POST",
           headers: {

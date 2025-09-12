@@ -14,7 +14,7 @@ const ProfileComponent = () => {
   const { userId, updateUserState } = useAuth();
   console.log("userId", userId);
   const [user, setUser] = useState(null);
-  const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
   // Get token directly from localStorage
   const getToken = () => {

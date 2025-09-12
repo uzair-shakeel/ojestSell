@@ -25,7 +25,7 @@ const PendingApprovalScreen = ({ user }) => {
 
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+          process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
         }/api/users/${user.id || user._id}`,
         {
           headers: {
@@ -69,7 +69,7 @@ const PendingApprovalScreen = ({ user }) => {
       // Fetch updated user data
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+          process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
         }/api/users/${user.id || user._id}`,
         {
           headers: {

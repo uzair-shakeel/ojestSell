@@ -51,7 +51,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
 
         console.log("Fetching chats with token");
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/chat/my-chats`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/chat/my-chats`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
