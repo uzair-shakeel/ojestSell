@@ -20,6 +20,22 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
   const [userData, setUserData] = useState(null);
   const [sellerType, setSellerType] = useState(null);
 
+  // Consistent image URL formatter (aligns with profile page logic)
+  const formatImageUrl = (imagePath) => {
+    if (!imagePath) return "/images/default-seller.png";
+    // Pass through absolute URLs and blob URLs
+    if (/^(https?:\/\/|blob:)/.test(imagePath)) return imagePath;
+    // Allow already-rooted paths (e.g., /images/foo.png)
+    if (imagePath.startsWith("/")) return imagePath;
+    // Fallback to API base URL if provided
+    const base = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+    if (base) {
+      const clean = imagePath.replace(/^[/\\]/, "");
+      return `${base.replace(/\/$/, "")}/${clean}`;
+    }
+    return "/images/default-seller.png";
+  };
+
   // Use user data from AuthContext and set profile image
   useEffect(() => {
     console.log("Sidebar user data:", user);
@@ -27,13 +43,8 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
       setUserData(user);
       setSellerType(user.sellerType);
       console.log("Setting sellerType to:", user.sellerType);
-      if (user.profilePicture) {
-        setProfileImage(user.profilePicture);
-      } else if (user.image) {
-        setProfileImage(user.image);
-      } else {
-        setProfileImage("/images/default-seller.png");
-      }
+      const raw = user.profilePicture || user.image;
+      setProfileImage(formatImageUrl(raw));
     }
   }, [user]);
 
@@ -164,6 +175,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
               src={profileImage}
               alt="User Avatar"
               className="w-12 h-12 rounded-full object-cover border-2 border-blue-500 shadow-lg"
+              onError={() => setProfileImage("/images/default-seller.png")}
             />
             {isOpen && userData && (
               <motion.div

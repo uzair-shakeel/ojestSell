@@ -276,7 +276,7 @@ const ProfileComponent = () => {
     if (!imagePath) return "/placeholder-user.jpg";
 
     // Check if it's a Cloudinary URL or starts with http/https
-    if (/^(https?:\/\/|cloudinary\.com)/.test(imagePath)) {
+    if (/^(https?:\/\/|blob:|cloudinary\.com)/.test(imagePath)) {
       return imagePath;
     }
 
@@ -435,9 +435,10 @@ const ProfileComponent = () => {
                 alt="Profile"
                 width={80}
                 height={80}
+                unoptimized
                 className="w-20 h-20 rounded-full object-center border border-gray-300"
-                onError={(e) => {
-                  e.target.src = "/placeholder-user.jpg";
+                onError={() => {
+                  setUser((prev) => ({ ...prev, image: "/placeholder-user.jpg" }));
                 }}
               />
               <input

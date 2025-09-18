@@ -3,6 +3,72 @@ import axios from "axios";
 // Use the Next.js API proxy - Fixed to use consistent env var name
 const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
+// Install Axios interceptors for debugging profile update flows (once)
+try {
+  const w: any = typeof window !== "undefined" ? window : {};
+  if (!w.__OJEST_AXIOS_DEBUG_INSTALLED__) {
+    axios.interceptors.request.use((config) => {
+      try {
+        const url = config.url || "";
+        const method = (config.method || "").toUpperCase();
+        // Log only relevant user endpoints to reduce noise
+        if (url.includes("/api/users/")) {
+          console.log("[Axios][Request]", { method, url, headers: config.headers });
+          // Attempt to log FormData keys for multipart
+          if (config.data instanceof FormData) {
+            const entries: Record<string, any> = {};
+            (config.data as FormData).forEach((v, k) => {
+              entries[k] = v instanceof File ? { name: v.name, type: v.type, size: v.size } : v;
+            });
+            console.log("[Axios][Request][FormData]", entries);
+          } else if (config.data) {
+            console.log("[Axios][Request][Data]", config.data);
+          }
+        }
+      } catch (e) {
+        console.warn("[Axios][Request] logging failed:", e);
+      }
+      return config;
+    });
+
+    axios.interceptors.response.use(
+      (response) => {
+        try {
+          const url = response.config?.url || "";
+          if (url.includes("/api/users/")) {
+            console.log("[Axios][Response]", {
+              url,
+              status: response.status,
+              data: response.data,
+            });
+          }
+        } catch (e) {
+          console.warn("[Axios][Response] logging failed:", e);
+        }
+        return response;
+      },
+      (error) => {
+        try {
+          const url = error.config?.url || "";
+          if (url.includes("/api/users/")) {
+            console.error("[Axios][Response][Error]", {
+              url,
+              status: error.response?.status,
+              data: error.response?.data,
+              message: error.message,
+            });
+          }
+        } catch (e) {
+          console.warn("[Axios][Response][Error] logging failed:", e);
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    w.__OJEST_AXIOS_DEBUG_INSTALLED__ = true;
+  }
+} catch {}
+
 interface UserData {
   clerkUserId: string;
   email: string;
@@ -61,7 +127,7 @@ export const getUserById = async (
     console.log("Fetching user with ID:", userId);
     console.log("API URL:", API_URL);
 
-    let headers = {};
+    let headers: Record<string, string> = {};
     if (getToken) {
       const token =
         typeof getToken === "function" ? await getToken() : getToken;
@@ -232,9 +298,9 @@ export const updateUser = async (
           appendData(key, JSON.stringify(data[key]));
           break;
         case "image":
-          // Handle file upload
+          // Handle file upload - backend expects field name 'image'
           if (data[key] instanceof File) {
-            formData.append(key, data[key]);
+            formData.append("image", data[key]);
           }
           break;
         default:

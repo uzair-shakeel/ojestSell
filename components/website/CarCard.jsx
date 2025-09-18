@@ -9,6 +9,8 @@ import { ImLocation } from "react-icons/im";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useGoogleMaps } from "../../lib/GoogleMapsContext";
+import Image from "next/image";
+import { getPublicUserInfo } from "../../services/userService";
 
 export default function CarCard({ view, car, onDelete }) {
   const router = useRouter();
@@ -18,6 +20,16 @@ export default function CarCard({ view, car, onDelete }) {
     state: "",
   });
   console.log("car", car);
+
+  const [seller, setSeller] = useState(null);
+
+  const formatImageUrl = (imagePath) => {
+    if (!imagePath) return "/website/seller.jpg";
+    if (typeof imagePath === "string" && /^(https?:)?\/\//i.test(imagePath)) {
+      return imagePath;
+    }
+    return `${process.env.NEXT_PUBLIC_API_BASE_URL}/${String(imagePath).replace("\\", "/")}`;
+  };
 
   useEffect(() => {
     // Fetch the address using cached geocoding when the car location is available
@@ -33,6 +45,25 @@ export default function CarCard({ view, car, onDelete }) {
       fetchLocationDetails();
     }
   }, [car, getGeocodingData]);
+
+  // Fetch public seller info for avatar/name/type
+  useEffect(() => {
+    let mounted = true;
+    const loadSeller = async () => {
+      try {
+        if (!car?.createdBy) return;
+        const info = await getPublicUserInfo(car.createdBy);
+        if (mounted) setSeller(info);
+      } catch (e) {
+        if (mounted)
+          setSeller({ firstName: "Unknown", lastName: "Seller", sellerType: car?.financialInfo?.sellerType || "private", image: null });
+      }
+    };
+    loadSeller();
+    return () => {
+      mounted = false;
+    };
+  }, [car?.createdBy, car?.financialInfo?.sellerType]);
 
   return (
     <div
@@ -131,12 +162,34 @@ export default function CarCard({ view, car, onDelete }) {
         </div>
         <p className="text-sm text-gray-500 mb-4">{car.title}</p>
         <div className="relative flex justify-between items-center">
-          <div className={`flex items-center gap-2`}>
-            <img
-              src="https://static.autotempest.com/prod/build/main/img/at-logos/at-logo-500.a9d7fdcf.png"
-              alt=""
-              className="w-32"
-            />
+          <div className={`flex items-center gap-3`}>
+            <div className="w-10 h-10 overflow-hidden rounded-full border border-gray-200">
+              <Image
+                src={formatImageUrl(seller?.image)}
+                alt={seller?.firstName || "Seller"}
+                width={40}
+                height={40}
+                className="object-cover w-10 h-10"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold text-black">
+                {(() => {
+                  if (!seller) return "Seller";
+                  const type = seller?.sellerType || car?.financialInfo?.sellerType;
+                  if (type === "company") return seller?.companyName || `${seller?.firstName || ""} ${seller?.lastName || ""}`.trim() || "Company";
+                  const full = `${seller?.firstName || ""} ${seller?.lastName || ""}`.trim();
+                  return full || seller?.companyName || "Private Seller";
+                })()}
+              </span>
+              <span className="text-xs text-gray-500">
+                {(() => {
+                  const type = seller?.sellerType || car?.financialInfo?.sellerType;
+                  if (!type) return "";
+                  return type === "company" ? "Company" : "Private Seller";
+                })()}
+              </span>
+            </div>
           </div>
           <div className="flex gap-2">
             <button
