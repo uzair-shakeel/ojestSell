@@ -9,6 +9,8 @@ import { ImLocation } from "react-icons/im";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useGoogleMaps } from "../../lib/GoogleMapsContext";
+import Image from "next/image";
+import { TrashIcon } from "lucide-react";
 
 export default function CarCard({ view, car, onDelete }) {
   const router = useRouter();
@@ -19,8 +21,9 @@ export default function CarCard({ view, car, onDelete }) {
   });
   console.log("car", car);
 
+  const details = `${car.fuel}, ${car.transmission}, ${car.engine}, ${car.mileage} km`;
+
   useEffect(() => {
-    // Fetch the address using cached geocoding when the car location is available
     const fetchLocationDetails = async () => {
       if (!car.location?.coordinates) return;
 
@@ -36,30 +39,25 @@ export default function CarCard({ view, car, onDelete }) {
 
   return (
     <div
-      className={`rounded-xl overflow-hidden border border-gray-200 shadow-sm group flex  ${
+      className={`overflow-hidden group flex  ${
         view === "list" ? "flex-row" : "flex-col max-w-full"
       }`}
     >
       <Swiper
         modules={[Navigation]}
         navigation={{ prevEl: ".custom-prev", nextEl: ".custom-next" }}
-        className={`${view === "list" ? "w-[700px] h-auto" : "w-full h-64"}`}
+        className={`${view === "list" ? "w-[700px] h-auto" : "w-full h-[300px]"}`}
       >
-        {/* Dynamically render images from the car.images array */}
         {car?.images && car?.images?.length > 0 ? (
           car?.images?.map((image, index) => {
-            // Assuming the backend sends image paths like 'uploads/1743981275051-yousriphoto.jpg'
-
-            const imageUrl = `${
-              process.env.NEXT_PUBLIC_API_BASE_URL
-            }/${image?.replace("\\", "/")}`; // Update URL format for static files
-
             return (
               <SwiperSlide key={index}>
-                <div className="">
-                  <img
+                <div className='h-[300px] overflow-hidden rounded-[7px]'>
+                  <Image
                     src={image}
-                    className="w-full h-64 object-cover"
+                    width={1000}
+                    height={500}
+                    className='w-full h-full object-cover'
                     alt={`Car Image ${index + 1}`}
                   />
                 </div>
@@ -68,93 +66,77 @@ export default function CarCard({ view, car, onDelete }) {
           })
         ) : (
           <SwiperSlide>
-            <img
-              src="https://via.placeholder.com/500" // Placeholder image
-              className="w-full h-64 object-cover"
-              alt="Placeholder Image"
-            />
+            <div className='h-[300px] overflow-hidden rounded-[7px]'>
+              <Image
+                src='https://via.placeholder.com/500' // Placeholder image
+                width={1000}
+                height={500}
+                className='w-full h-full object-cover'
+                alt={`Car Image Placeholder`}
+              />
+            </div>
           </SwiperSlide>
         )}
 
-        <button className="custom-prev group-hover:opacity-100 opacity-0 transition-all duration-300 absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/30 text-black w-8 h-8 rounded-full shadow-md z-10">
+        <button className='custom-prev group-hover:opacity-100 opacity-0 transition-all duration-300 absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/30 text-black w-8 h-8 rounded-full shadow-md z-10'>
           ❮
         </button>
-        <button className="custom-next group-hover:opacity-100 opacity-0 transition-all duration-300 absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/30 text-black w-8 h-8 rounded-full shadow-md z-10">
+        <button className='custom-next group-hover:opacity-100 opacity-0 transition-all duration-300 absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/30 text-black w-8 h-8 rounded-full shadow-md z-10'>
           ❯
         </button>
+
+        <div className='flex absolute bottom-1 left-3 z-[10] items-center space-x-2 bg-blue-100 rounded-[4px] h-[24px] pe-3 w-fit my-2'>
+          <div className='bg-blue-400 text-[15px] size-[24px] flex items-center justify-center rounded-l-[4px] text-white'>
+            <FaTags />
+          </div>
+          <span className='text-base text-black'>
+            {car.financialInfo.priceNetto.toLocaleString("pl-PL")} zł
+          </span>
+        </div>
       </Swiper>
 
-      <div className="px-4 py-3 w-full">
-        <div className="flex flex-col justify-start mb-2">
-          <div className="flex justify-between items-center">
-            <button
-              onClick={() => router.push(`/website/cars/${car._id}`)}
-              className={`font-semibold uppercase text-black mb-2 ${
-                view === "list" ? "text-2xl" : "text-lg"
-              }`}
-            >
+      <div
+        onClick={() => router.push(`/website/cars/${car._id}`)}
+        className='relative w-full cursor-pointer overflow-hidden px-2 py-3'
+      >
+        <div className='flex flex-col'>
+          <div className='mb-4 flex-grow'>
+            <h2 className='text-2xl font-bold text-gray-800 transition-colors group-hover:text-blue-600'>
               {car.year} {car.make} {car.model}
-            </button>
-          </div>
-          <div className="flex flex-col md:flex-row md:space-x-5">
-            {/* Display the city and state (province) */}
-            <div className={`text-black flex items-center gap-1 `}>
-              <ImLocation />
-              {locationDetails.city && locationDetails.state
-                ? `${locationDetails.city}, ${locationDetails.state}`
-                : "Loading location..."}
+            </h2>
+
+            <p className='text-sm font-medium text-gray-500'>{car.title}</p>
+
+            <p className='text-base text-gray-600'>{details}</p>
+
+            <div className='mt-1 text-sm text-gray-400'>
+              {locationDetails.city &&
+                locationDetails.state &&
+                `${locationDetails.city}, ${locationDetails.state}`}
             </div>
           </div>
-          <div className="flex items-center space-x-2 bg-blue-100 rounded-lg pe-2 w-fit my-2">
-            <div className="bg-blue-400 text-sm p-1 rounded-l text-white">
-              <FaTags />
-            </div>
-            <span className="text-base text-black">
-              {car.financialInfo.priceNetto.toLocaleString("pl-PL")} zł
-            </span>
+
+          <div className='flex items-center justify-between'>
+            <img
+              src='https://static.autotempest.com/prod/build/main/img/at-logos/at-logo-500.a9d7fdcf.png'
+              alt='AutoTempest'
+              className='w-24'
+            />
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 font-medium mb-3 text-base text-black">
-          <div>
-            <span className="font-light">Fuel:</span> {car.fuel}
-          </div>
-          <div>
-            <span className="font-light">Transmission:</span> {car.transmission}
-          </div>
-          <div>
-            <span className="font-light">Engine:</span> {car.engine}
-          </div>
-          <div>
-            <span className="font-light">Mileage:</span> {car.mileage}
-          </div>
-        </div>
-        <p className="text-sm text-gray-500 mb-4">{car.title}</p>
-        <div className="relative flex justify-between items-center">
-          <div className={`flex items-center gap-2`}>
-            <img
-              src="https://static.autotempest.com/prod/build/main/img/at-logos/at-logo-500.a9d7fdcf.png"
-              alt=""
-              className="w-32"
-            />
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => router.push(`/website/cars/${car._id}`)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
-            >
-              View details
-            </button>
-            {onDelete && (
-              <button
-                onClick={() => onDelete(car._id)}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md"
-              >
-                Delete
-              </button>
-            )}
-          </div>
-        </div>
+        {onDelete && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation(); 
+              onDelete(car._id);
+            }}
+            className='absolute right-4 top-4 rounded-full bg-red-100 p-2 text-red-400 transition-all duration-300 hover:bg-red-300 hover:text-red-700'
+            aria-label='Delete car'
+          >
+            <TrashIcon className='h-5 w-5' />
+          </button>
+        )}
       </div>
     </div>
   );

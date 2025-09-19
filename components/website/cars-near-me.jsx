@@ -90,7 +90,7 @@ export function CarsNearMe() {
                   spaceBetween: 24,
                 },
               }}
-              grabCursor={true}
+              // grabCursor={true}
               touchRatio={1}
               touchAngle={45}
               threshold={10}
