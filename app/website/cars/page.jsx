@@ -297,36 +297,36 @@ const CarsContent = () => {
               {t("cars.filters.mobileButton")}
             </button>
             <select
-              className="flex items-center border border-black rounded bg-transparent px-7 py-2 text-black font-medium"
+              className="flex items-center font-sans border border-black rounded bg-transparent px-7 py-2 text-black font-medium"
               value={sortBy}
               onChange={(e) => handleSort(e.target.value)}
               disabled={isLoading}
             >
-              <option value="best-match">
+              <option className="font-sans" value="best-match">
                 {t("cars.filters.sort.options.bestMatch")}
               </option>
-              <option value="lowest-price">
+              <option className="font-sans" value="lowest-price">
                 {t("cars.filters.sort.options.lowestPrice")}
               </option>
-              <option value="highest-price">
+              <option className="font-sans" value="highest-price">
                 {t("cars.filters.sort.options.highestPrice")}
               </option>
-              <option value="lowest-mileage">
+              <option className="font-sans" value="lowest-mileage">
                 {t("cars.filters.sort.options.lowestMileage")}
               </option>
-              <option value="highest-mileage">
+              <option className="font-sans" value="highest-mileage">
                 {t("cars.filters.sort.options.highestMileage")}
               </option>
-              <option value="newest-year">
+              <option className="font-sans" value="newest-year">
                 {t("cars.filters.sort.options.newestYear")}
               </option>
-              <option value="oldest-year">
+              <option className="font-sans" value="oldest-year">
                 {t("cars.filters.sort.options.oldestYear")}
               </option>
-              <option value="newest-listed">
+              <option className="font-sans" value="newest-listed">
                 {t("cars.filters.sort.options.newestListed")}
               </option>
-              <option value="oldest-listed">
+              <option className="font-sans" value="oldest-listed">
                 {t("cars.filters.sort.options.oldestListed")}
               </option>
             </select>
@@ -373,12 +373,12 @@ const CarsContent = () => {
           {/* Pagination */}
           <div className="w-full flex bg-white justify-center items-center py-8">
             <div className="join">
-              <button className="join-item btn">«</button>
-              <button className="join-item btn btn-active">1</button>
-              <button className="join-item btn">2</button>
-              <button className="join-item btn">3</button>
-              <button className="join-item btn">4</button>
-              <button className="join-item btn">»</button>
+              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">«</button>
+              <button className="join-item btn bg-gray-200 text-gray-900 border border-gray-300 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">1</button>
+              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">2</button>
+              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">3</button>
+              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">4</button>
+              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">»</button>
             </div>
           </div>
 

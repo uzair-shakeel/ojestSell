@@ -71,11 +71,12 @@ export default function CarCard({ view, car, onDelete }) {
         view === "list" ? "flex-row" : "flex-col max-w-full"
       }`}
     >
-      <Swiper
-        modules={[Navigation]}
-        navigation={{ prevEl: ".custom-prev", nextEl: ".custom-next" }}
-        className={`${view === "list" ? "w-[700px] h-auto" : "w-full h-64"}`}
-      >
+      <div className={`${view === "list" ? "w-[700px]" : "w-full"} relative`}>
+        <Swiper
+          modules={[Navigation]}
+          navigation={{ prevEl: ".custom-prev", nextEl: ".custom-next" }}
+          className={`${view === "list" ? "w-[700px] h-auto" : "w-full h-48  md:h-64"}`}
+        >
         {/* Dynamically render images from the car.images array */}
         {car?.images && car?.images?.length > 0 ? (
           car?.images?.map((image, index) => {
@@ -113,21 +114,22 @@ export default function CarCard({ view, car, onDelete }) {
         <button className="custom-next group-hover:opacity-100 opacity-0 transition-all duration-300 absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/30 text-black w-8 h-8 rounded-full shadow-md z-10">
           ❯
         </button>
-      </Swiper>
-
+        </Swiper>
+        {/* Price badge overlay */}
+        <div className="absolute bottom-2 left-2 z-20">
+          <div className="flex items-center space-x-2 bg-blue-100/90 backdrop-blur-sm rounded-lg pe-2 w-fit">
+            <div className="bg-blue-500 text-sm p-1 rounded-l text-white">
+              <FaTags />
+            </div>
+            <span className="text-base text-black">
+              {car.financialInfo.priceNetto.toLocaleString("pl-PL")} zł
+            </span>
+          </div>
+        </div>
+      </div>
       <div className="px-4 py-3 w-full">
         <div className="flex flex-col justify-start mb-2">
-          <div className="flex justify-between items-center">
-            <button
-              onClick={() => router.push(`/website/cars/${car._id}`)}
-              className={`font-semibold uppercase text-black mb-2 ${
-                view === "list" ? "text-2xl" : "text-lg"
-              }`}
-            >
-              {car.year} {car.make} {car.model}
-            </button>
-          </div>
-          <div className="flex flex-col md:flex-row md:space-x-5">
+        <div className="flex flex-col md:flex-row md:space-x-5">
             {/* Display the city and state (province) */}
             <div className={`text-black flex items-center gap-1 `}>
               <ImLocation />
@@ -136,31 +138,26 @@ export default function CarCard({ view, car, onDelete }) {
                 : "Loading location..."}
             </div>
           </div>
-          <div className="flex items-center space-x-2 bg-blue-100 rounded-lg pe-2 w-fit my-2">
-            <div className="bg-blue-400 text-sm p-1 rounded-l text-white">
-              <FaTags />
-            </div>
-            <span className="text-base text-black">
-              {car.financialInfo.priceNetto.toLocaleString("pl-PL")} zł
-            </span>
+          <div className="flex mt-2 justify-between items-center">
+            <button
+              onClick={() => router.push(`/website/cars/${car._id}`)}
+              className={`font-semibold uppercase text-black  ${
+                view === "list" ? "text-2xl" : "text-lg"
+              }`}
+            >
+              {car.year} {car.make} {car.model}
+            </button>
           </div>
+          
+          
         </div>
 
-        <div className="grid grid-cols-2 gap-2 font-medium mb-3 text-base text-black">
+        <div className="flex gap-2 font-medium mb-3 text-base text-black">
           <div>
-            <span className="font-light">Fuel:</span> {car.fuel}
-          </div>
-          <div>
-            <span className="font-light">Transmission:</span> {car.transmission}
-          </div>
-          <div>
-            <span className="font-light">Engine:</span> {car.engine}
-          </div>
-          <div>
-            <span className="font-light">Mileage:</span> {car.mileage}
+             {car.fuel} - {car.transmission} - {car.engine} - {car.mileage}
           </div>
         </div>
-        <p className="text-sm text-gray-500 mb-4">{car.title}</p>
+        {/* <p className="text-sm text-gray-500 mb-4">{car.title}</p> */}
         <div className="relative flex justify-between items-center">
           <div className={`flex items-center gap-3`}>
             <div className="w-10 h-10 overflow-hidden rounded-full border border-gray-200">
@@ -191,7 +188,7 @@ export default function CarCard({ view, car, onDelete }) {
               </span>
             </div>
           </div>
-          <div className="flex gap-2">
+          {/* <div className="flex gap-2">
             <button
               onClick={() => router.push(`/website/cars/${car._id}`)}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
@@ -206,7 +203,7 @@ export default function CarCard({ view, car, onDelete }) {
                 Delete
               </button>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
