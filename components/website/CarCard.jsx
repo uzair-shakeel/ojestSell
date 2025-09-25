@@ -209,7 +209,7 @@ export default function CarCard({ view, car, onDelete }) {
           </div>
         </>
       ) : (
-        <>
+        <div className="cursor-pointer" onClick={() => router.push(`/website/cars/${car._id}`)}>
           {/* GRID/NORMAL VIEW: Keep new overlay badge and simplified details */}
           <div className={`w-full relative`}>
             <Swiper
@@ -239,7 +239,7 @@ export default function CarCard({ view, car, onDelete }) {
             {/* Price badge overlay */}
             <div className="absolute bottom-2 left-2 z-20">
               <div className="flex items-center space-x-2 bg-blue-100/90 backdrop-blur-sm rounded-lg pe-2 w-fit">
-                <div className="bg-blue-500 text-sm p-1 rounded-l text-white">
+                <div className="bg-blue-500 text-sm py-2 px-1 rounded-l text-white">
                   <FaTags />
                 </div>
                 <span className="text-base text-black">
@@ -253,7 +253,6 @@ export default function CarCard({ view, car, onDelete }) {
             <div className="flex flex-col justify-start mb-2">
               <div className="flex mb-2 justify-between items-center">
                 <button
-                  onClick={() => router.push(`/website/cars/${car._id}`)}
                   className={`font-semibold uppercase text-black  ${
                     view === "list" ? "text-2xl" : "text-lg"
                   }`}
@@ -273,7 +272,7 @@ export default function CarCard({ view, car, onDelete }) {
 
             <div className="flex gap-2 font-medium mb-3 text-base text-black">
               <div>
-                {car.fuel} - {car.transmission} - {car.engine} - {car.mileage}
+            {car.mileage}, {car.fuel}, {car.engine}, {car.transmission}, {car.title} 
               </div>
             </div>
             <div className="relative flex justify-between items-center">
@@ -308,7 +307,7 @@ export default function CarCard({ view, car, onDelete }) {
               </div>
             </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   );
