@@ -52,16 +52,25 @@ export default function RootLayout({ children }) {
         <script
           dangerouslySetInnerHTML={{
             __html: `
-            // Only show loader on initial page load, not on navigation
+            // Show loader only on home page initial load
             const isInitialLoad = !sessionStorage.getItem('hasNavigated');
-            if (isInitialLoad) {
+            const isHomePage = window.location.pathname === '/' || window.location.pathname === '';
+            
+            if (isInitialLoad && isHomePage) {
               document.documentElement.classList.add('loading-active');
               sessionStorage.setItem('hasNavigated', 'true');
+            } else {
+              // Remove loading-active class for non-home pages or subsequent loads
+              document.documentElement.classList.remove('loading-active');
+              const loaderContainer = document.querySelector('.loader-container');
+              if (loaderContainer) {
+                loaderContainer.style.display = 'none';
+                loaderContainer.style.pointerEvents = 'none';
+              }
             }
             
             window.addEventListener('loaderComplete', function() {
               document.documentElement.classList.remove('loading-active');
-              // Clean up any loader elements
               const loaderContainer = document.querySelector('.loader-container');
               if (loaderContainer) {
                 loaderContainer.style.display = 'none';

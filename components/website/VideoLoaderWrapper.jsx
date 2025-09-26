@@ -21,10 +21,13 @@ const VideoLoaderWrapper = () => {
   useEffect(() => {
     setMounted(true);
 
-    // Check if loading-active class is present (only on initial load)
+    // Check if loading-active class is present and if we're on home page
     const hasLoadingClass =
       document.documentElement.classList.contains("loading-active");
-    setShouldShow(hasLoadingClass);
+    const isHomePage =
+      window.location.pathname === "/" || window.location.pathname === "";
+
+    setShouldShow(hasLoadingClass && isHomePage);
 
     // Set up cleanup function
     return () => {
