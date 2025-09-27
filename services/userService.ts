@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Use the Next.js API proxy - Fixed to use consistent env var name
-const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 // Install Axios interceptors for debugging profile update flows (once)
 try {
@@ -13,12 +13,19 @@ try {
         const method = (config.method || "").toUpperCase();
         // Log only relevant user endpoints to reduce noise
         if (url.includes("/api/users/")) {
-          console.log("[Axios][Request]", { method, url, headers: config.headers });
+          console.log("[Axios][Request]", {
+            method,
+            url,
+            headers: config.headers,
+          });
           // Attempt to log FormData keys for multipart
           if (config.data instanceof FormData) {
             const entries: Record<string, any> = {};
             (config.data as FormData).forEach((v, k) => {
-              entries[k] = v instanceof File ? { name: v.name, type: v.type, size: v.size } : v;
+              entries[k] =
+                v instanceof File
+                  ? { name: v.name, type: v.type, size: v.size }
+                  : v;
             });
             console.log("[Axios][Request][FormData]", entries);
           } else if (config.data) {

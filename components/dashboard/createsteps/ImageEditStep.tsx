@@ -315,9 +315,11 @@ export default function ImageEditStep({
       const data = await response.json();
       console.log("Received response:", data);
 
-      if (data.processed_image) {
-        // The processed_image is already a complete data URL
-        const imageUrl = data.processed_image;
+      if (data.image_base64) {
+        // Add data URL prefix if not present
+        const imageUrl = data.image_base64.startsWith("data:")
+          ? data.image_base64
+          : `data:image/jpeg;base64,${data.image_base64}`;
 
         // Update the preview with the blurred image
         setPreviewUrl(imageUrl);
@@ -354,7 +356,10 @@ export default function ImageEditStep({
         // Update local state
         setActiveImage(file);
       } else {
-        throw new Error("No processed image received in response");
+        throw new Error(
+          "No image_base64 received in response. Response: " +
+            JSON.stringify(data)
+        );
       }
     } catch (error) {
       console.error("Error blurring number plate:", error);

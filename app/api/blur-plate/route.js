@@ -15,7 +15,7 @@ export async function POST(request) {
     apiFormData.append("file", file);
 
     // Make the request to the external API
-    const response = await fetch("http://209.38.211.146/obscure-plates-info", {
+    const response = await fetch("http://174.138.64.65/detect", {
       method: "POST",
       body: apiFormData,
     });
