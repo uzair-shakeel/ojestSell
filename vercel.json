@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://ojest-ap-is.vercel.app/api/$1"
+    }
+  ]
+}
