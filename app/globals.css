@@ -65,6 +65,7 @@ html:not(.loading-active) body > *:not(.loader-container) {
   opacity: 1 !important;
   pointer-events: auto !important;
 }
+<<<<<<< HEAD
 
 /* Enhanced Card Styling Utilities */
 .line-clamp-1 {
@@ -131,3 +132,5 @@ html:not(.loading-active) body > *:not(.loader-container) {
 .hover\:shadow-gray-200\/60:hover {
   box-shadow: 0 20px 25px -5px rgba(229, 231, 235, 0.6), 0 10px 10px -5px rgba(229, 231, 235, 0.6);
 }
+=======
+>>>>>>> c7426ed39f5a6e240ada6632ecdd44eb4d63ffeb

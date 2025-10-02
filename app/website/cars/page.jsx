@@ -10,6 +10,7 @@ import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 const CarsContent = () => {
   const { t } = useLanguage();
+  const [view, setView] = useState("list");
   const [cars, setCars] = useState([]);
   const [showMobileFilter, setShowMobileFilter] = useState(false);
   const [sortBy, setSortBy] = useState("best-match");
@@ -18,6 +19,20 @@ const CarsContent = () => {
   const [viewMode, setViewMode] = useState('grid'); // Add view mode state
   const searchParams = useSearchParams();
 
+  // Handle responsive view toggle (list/grid) based on screen size
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setView("grid");
+      } else {
+        setView("list");
+      }
+    };
+
+    handleResize(); // Initial check
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   // Control body scrolling based on filter visibility
   useEffect(() => {
     if (showMobileFilter) {
@@ -411,6 +426,16 @@ const CarsContent = () => {
             </div>
           </div>
 
+          {/* Mobile Filter Sidebar */}
+          {showMobileFilter && (
+            <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+              <FilterSidebar
+                onApplyFilters={handleApplyFilters}
+                setShowMobileFilter={setShowMobileFilter}
+                isVisible={showMobileFilter}
+              />
+            </div>
+          )}
         </main>
       </div>
     </div>

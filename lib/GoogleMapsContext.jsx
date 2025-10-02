@@ -13,6 +13,8 @@ export function GoogleMapsProvider({ children }) {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     libraries,
+    // Add these to prevent unnecessary reloads
+    googleMapsClientId: "ojestSell-app",
   });
 
   // Geocoding cache to prevent duplicate API calls

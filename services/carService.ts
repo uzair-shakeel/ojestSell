@@ -131,6 +131,7 @@ export const getAllCars = async (): Promise<CarData[]> => {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
+          Origin: window.location.origin,
         },
         timeout: 30000, // 30 second timeout
       });
