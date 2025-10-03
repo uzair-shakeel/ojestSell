@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Use the Next.js API proxy - Fixed to use consistent env var name
-const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_URL = "/api";
 
 // Install Axios interceptors for debugging profile update flows (once)
 try {
@@ -143,7 +143,7 @@ export const getUserById = async (
       }
     }
 
-    const response = await axios.get(`${API_URL}/api/users/${userId}`, {
+    const response = await axios.get(`${API_URL}/users/${userId}`, {
       headers,
     });
     console.log("User data received:", response.data);
@@ -178,7 +178,7 @@ export const getPublicUserInfo = async (userId: string): Promise<any> => {
       throw new Error("User ID is required");
     }
 
-    const response = await axios.get(`${API_URL}/api/users/public/${userId}`);
+    const response = await axios.get(`${API_URL}/users/public/${userId}`);
     console.log("Public user data received:", response.data);
     return response.data;
   } catch (error: any) {
@@ -216,7 +216,7 @@ export const getAllUsers = async (
       throw new Error("No authentication token found");
     }
 
-    const response = await axios.get(`${API_URL}/api/users`, {
+    const response = await axios.get(`${API_URL}/users`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -322,7 +322,7 @@ export const updateUser = async (
       console.log(`${key}:`, value);
     }
 
-    const response = await axios.put(`${API_URL}/api/users/profile`, formData, {
+    const response = await axios.put(`${API_URL}/users/profile`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
@@ -379,7 +379,7 @@ export const updateUserCustom = async (formData, getToken) => {
     }
 
     const response = await axios.put(
-      `${API_URL}/api/users/profile/custom`,
+      `${API_URL}/users/profile/custom`,
       formDataToSend,
       config
     );
@@ -403,7 +403,7 @@ export const updateUserSellerType = async (
     }
 
     const response = await axios.patch(
-      `${API_URL}/api/users/type/${userId}`,
+      `${API_URL}/users/type/${userId}`,
       { sellerType }, // Payload
       {
         headers: {
@@ -435,7 +435,7 @@ export const deleteUserAccount = async (
       throw new Error("No authentication token found");
     }
 
-    const response = await axios.delete(`${API_URL}/api/users/account`, {
+    const response = await axios.delete(`${API_URL}/users/account`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;

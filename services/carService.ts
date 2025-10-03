@@ -1,9 +1,9 @@
 // frontend/services/carService.ts
 import axios from "axios";
 
-// Define the API base URL directly in this file
+// Define the API base URL - use local proxy to avoid CORS issues
 // const API_BASE_URL = "https://ojest-ap-is.vercel.app";
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_BASE_URL = "/api";
 
 // Log the API URL being used
 console.log("Using API URL:", API_BASE_URL);
@@ -103,7 +103,7 @@ export const addCar = async (
       throw new Error("No authentication token found");
     }
 
-    const response = await axios.post(`${API_BASE_URL}/api/cars`, carData, {
+    const response = await axios.post(`${API_BASE_URL}/cars`, carData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
@@ -124,14 +124,13 @@ export const getAllCars = async (): Promise<CarData[]> => {
     try {
       console.log(
         `Attempt ${retryCount + 1} to fetch cars from:`,
-        `${API_BASE_URL}/api/cars`
+        `${API_BASE_URL}/cars`
       );
 
-      const response = await axios.get(`${API_BASE_URL}/api/cars`, {
+      const response = await axios.get(`${API_BASE_URL}/cars`, {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Origin: window.location.origin,
         },
         timeout: 30000, // 30 second timeout
       });
@@ -157,7 +156,7 @@ export const getAllCars = async (): Promise<CarData[]> => {
         code: error.code,
         response: error.response?.data,
         status: error.response?.status,
-        url: `${API_BASE_URL}/api/cars`,
+        url: `${API_BASE_URL}/cars`,
         isAxiosError: axios.isAxiosError(error),
         isNetworkError: error.message === "Network Error",
         attempt: retryCount + 1,
@@ -198,10 +197,10 @@ export const getAllCars = async (): Promise<CarData[]> => {
 export const getCarById = async (carId: string): Promise<CarData> => {
   try {
     console.log(
-      `Calling API: ${API_BASE_URL}/api/cars/${carId} with carId:`,
+      `Calling API: ${API_BASE_URL}/cars/${carId} with carId:`,
       carId
     ); // Debug log
-    const response = await axios.get(`${API_BASE_URL}/api/cars/${carId}`);
+    const response = await axios.get(`${API_BASE_URL}/cars/${carId}`);
     return response.data;
   } catch (error: any) {
     throw new Error(error?.response?.data?.message || "Failed to fetch car");
@@ -221,7 +220,7 @@ export const updateCar = async (
     }
 
     const response = await axios.put(
-      `${API_BASE_URL}/api/cars/${carId}`,
+      `${API_BASE_URL}/cars/${carId}`,
       carData,
       {
         headers: {
@@ -247,7 +246,7 @@ export const deleteCar = async (
       throw new Error("No authentication token found");
     }
 
-    const response = await axios.delete(`${API_BASE_URL}/api/cars/${carId}`, {
+    const response = await axios.delete(`${API_BASE_URL}/cars/${carId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -269,7 +268,7 @@ export const updateCarStatus = async (
     }
 
     const response = await axios.put(
-      `${API_BASE_URL}/api/cars/status/${carId}`,
+      `${API_BASE_URL}/cars/status/${carId}`,
       { status },
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -303,7 +302,7 @@ export const searchCars = async (queryParams: {
   radius?: number; // in kilometers
 }): Promise<CarData[]> => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/api/cars/search`, {
+    const response = await axios.get(`${API_BASE_URL}/cars/search`, {
       params: queryParams,
     });
     // Handle both array and object responses
@@ -334,7 +333,7 @@ export const getCarsByUserId = async (
       throw new Error("No authentication token found");
     }
 
-    const response = await axios.get(`${API_BASE_URL}/api/cars/my-cars/all`, {
+    const response = await axios.get(`${API_BASE_URL}/cars/my-cars/all`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -358,7 +357,7 @@ export const getCarsByUserId = async (
 export const getRecommendedCars = async (carId: string): Promise<CarData[]> => {
   try {
     const response = await axios.get(
-      `${API_BASE_URL}/api/cars/recommended/${carId}`
+      `${API_BASE_URL}/cars/recommended/${carId}`
     );
     return response.data;
   } catch (error: any) {

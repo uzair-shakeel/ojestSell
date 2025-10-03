@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Use the Next.js API proxy
-const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+const API_URL = "/api";
 
 export interface BuyerRequest {
   _id: string;
@@ -65,7 +65,7 @@ export const createBuyerRequest = async (
     console.log("Token available:", !!token);
 
     const response = await axios.post(
-      `${API_URL}/api/buyer-requests`,
+      `${API_URL}/buyer-requests`,
       requestData,
       {
         headers: {
@@ -103,7 +103,7 @@ export const getAllBuyerRequests = async (
   } = {}
 ): Promise<BuyerRequestsResponse> => {
   try {
-    const response = await axios.get(`${API_URL}/api/buyer-requests`, {
+    const response = await axios.get(`${API_URL}/buyer-requests`, {
       params: filters,
     });
     return response.data;
@@ -129,7 +129,7 @@ export const getMyBuyerRequests = async (
     }
 
     const response = await axios.get(
-      `${API_URL}/api/buyer-requests/my-requests`,
+      `${API_URL}/buyer-requests/my-requests`,
       {
         params: filters,
         headers: {
@@ -150,7 +150,7 @@ export const getBuyerRequestById = async (
 ): Promise<BuyerRequest> => {
   try {
     const response = await axios.get(
-      `${API_URL}/api/buyer-requests/${requestId}`
+      `${API_URL}/buyer-requests/${requestId}`
     );
     return response.data;
   } catch (error) {
@@ -172,7 +172,7 @@ export const updateBuyerRequest = async (
     }
 
     const response = await axios.put(
-      `${API_URL}/api/buyer-requests/${requestId}`,
+      `${API_URL}/buyer-requests/${requestId}`,
       updateData,
       {
         headers: {
@@ -199,7 +199,7 @@ export const deleteBuyerRequest = async (
       throw new Error("No authentication token found");
     }
 
-    await axios.delete(`${API_URL}/api/buyer-requests/${requestId}`, {
+    await axios.delete(`${API_URL}/buyer-requests/${requestId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -222,7 +222,7 @@ export const getOffersForRequest = async (
     }
 
     const response = await axios.get(
-      `${API_URL}/api/buyer-requests/${requestId}/offers`,
+      `${API_URL}/buyer-requests/${requestId}/offers`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

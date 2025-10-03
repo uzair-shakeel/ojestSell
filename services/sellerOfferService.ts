@@ -2,7 +2,7 @@ import axios from "axios";
 import { BuyerRequest } from "./buyerRequestService";
 
 // Use the Next.js API proxy
-const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+const API_URL = "/api";
 
 export interface SellerOffer {
   _id: string;
@@ -86,10 +86,10 @@ export const createOffer = async (
 
       console.log(
         "Sending offer with files to:",
-        `${API_URL}/api/seller-offers`
+        `${API_URL}/seller-offers`
       );
       const response = await axios.post(
-        `${API_URL}/api/seller-offers`,
+        `${API_URL}/seller-offers`,
         formData,
         {
           headers: {
@@ -109,10 +109,10 @@ export const createOffer = async (
 
       console.log(
         "Sending offer without files to:",
-        `${API_URL}/api/seller-offers`
+        `${API_URL}/seller-offers`
       );
       const response = await axios.post(
-        `${API_URL}/api/seller-offers`,
+        `${API_URL}/seller-offers`,
         dataToSend,
         {
           headers: {
@@ -149,7 +149,7 @@ export const getMyOffers = async (
       throw new Error("No authentication token found");
     }
 
-    const response = await axios.get(`${API_URL}/api/seller-offers/my-offers`, {
+    const response = await axios.get(`${API_URL}/seller-offers/my-offers`, {
       params: filters,
       headers: {
         Authorization: `Bearer ${token}`,
@@ -179,7 +179,7 @@ export const getAvailableBuyerRequests = async (
     }
 
     const response = await axios.get(
-      `${API_URL}/api/seller-offers/available-requests`,
+      `${API_URL}/seller-offers/available-requests`,
       {
         params: filters,
         headers: {
@@ -206,7 +206,7 @@ export const getOfferById = async (
     }
 
     const response = await axios.get(
-      `${API_URL}/api/seller-offers/${offerId}`,
+      `${API_URL}/seller-offers/${offerId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -252,7 +252,7 @@ export const updateOffer = async (
       });
 
       const response = await axios.put(
-        `${API_URL}/api/seller-offers/${offerId}`,
+        `${API_URL}/seller-offers/${offerId}`,
         formData,
         {
           headers: {
@@ -266,7 +266,7 @@ export const updateOffer = async (
     } else {
       // No files, use regular JSON
       const response = await axios.put(
-        `${API_URL}/api/seller-offers/${offerId}`,
+        `${API_URL}/seller-offers/${offerId}`,
         updateData,
         {
           headers: {
@@ -295,7 +295,7 @@ export const deleteOffer = async (
       throw new Error("No authentication token found");
     }
 
-    await axios.delete(`${API_URL}/api/seller-offers/${offerId}`, {
+    await axios.delete(`${API_URL}/seller-offers/${offerId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -318,7 +318,7 @@ export const acceptOffer = async (
     }
 
     await axios.post(
-      `${API_URL}/api/seller-offers/${offerId}/accept`,
+      `${API_URL}/seller-offers/${offerId}/accept`,
       {},
       {
         headers: {
@@ -344,7 +344,7 @@ export const rejectOffer = async (
     }
 
     await axios.post(
-      `${API_URL}/api/seller-offers/${offerId}/reject`,
+      `${API_URL}/seller-offers/${offerId}/reject`,
       {},
       {
         headers: {
