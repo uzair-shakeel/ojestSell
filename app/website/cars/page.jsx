@@ -342,7 +342,7 @@ const CarsContent = () => {
             </div>
 
             {/* Bottom on Mobile, Left on Desktop - Sort Inline List */}
-            <div className="flex items-center justify-between w-full overflow-hidden order-2 lg:order-1 lg:w-auto lg:space-x-6 lg:justify-start mt-4 lg:mt-4">
+            <div className="flex items-center justify-between w-full overflow-hidden order-2 lg:order-1 lg:w-auto lg:space-x-3 lg:justify-start mt-4 lg:mt-4">
               <button
                 onClick={() => handleSort("best-match")}
                 className={`text-[9px] lg:text-sm font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
@@ -351,67 +351,67 @@ const CarsContent = () => {
                     : "text-gray-600"
                 }`}
               >
-                Best Match
+                Najlepszy dopasowanie
               </button>
               <button
                 onClick={() => handleSort("lowest-price")}
-                className={`text-[9px] lg:text-sm font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
+                className={`text-[9px] lg:text-xs font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
                   sortBy === "lowest-price"
                     ? "text-black border-b-2 border-black pb-0.5"
                     : "text-gray-600"
                 }`}
               >
-                Lowest Price
+                Najlepszy dopasowanie
               </button>
               <button
                 onClick={() => handleSort("highest-price")}
-                className={`text-[9px] lg:text-sm font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
+                className={`text-[9px] lg:text-xs font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
                   sortBy === "highest-price"
                     ? "text-black border-b-2 border-black pb-0.5"
                     : "text-gray-600"
                 }`}
               >
-                Highest Price
+                Najlepszy dopasowanie
               </button>
               <button
                 onClick={() => handleSort("lowest-mileage")}
-                className={`text-[9px] lg:text-sm font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
+                className={`text-[9px] lg:text-xs font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
                   sortBy === "lowest-mileage"
                     ? "text-black border-b-2 border-black pb-0.5"
                     : "text-gray-600"
                 }`}
               >
-                Lowest Mileage
+                Najlepszy dopasowanie
               </button>
               <button
                 onClick={() => handleSort("highest-mileage")}
-                className={`text-[9px] lg:text-sm font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
+                className={`text-[9px] lg:text-xs font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
                   sortBy === "highest-mileage"
                     ? "text-black border-b-2 border-black pb-0.5"
                     : "text-gray-600"
                 }`}
               >
-                Highest Mileage
+                Najlepszy dopasowanie
               </button>
               <button
                 onClick={() => handleSort("newest-year")}
-                className={`text-[9px] lg:text-sm font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
+                className={`text-[9px] lg:text-xs font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
                   sortBy === "newest-year"
                     ? "text-black border-b-2 border-black pb-0.5"
                     : "text-gray-600"
                 }`}
               >
-                Newest Year
+                Najlepszy dopasowanie
               </button>
               <button
                 onClick={() => handleSort("oldest-year")}
-                className={`text-[9px] lg:text-sm font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
+                className={`text-[9px] lg:text-xs font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
                   sortBy === "oldest-year"
                     ? "text-black border-b-2 border-black pb-0.5"
                     : "text-gray-600"
                 }`}
               >
-                Oldest Year
+                Najlepszy dopasowanie
               </button>
             </div>
           </div>
