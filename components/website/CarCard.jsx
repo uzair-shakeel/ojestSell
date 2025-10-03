@@ -19,7 +19,6 @@ export default function CarCard({ car, viewMode = 'grid' }) {
     city: "",
     state: "",
   });
-  console.log("car", car);
 
   const [seller, setSeller] = useState(null);
 
@@ -94,19 +93,19 @@ export default function CarCard({ car, viewMode = 'grid' }) {
         tabIndex={0}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
             handleCardClick();
           }
         }}
       >
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden relative">
+        <div className="bg-white rounded-2xl hover:shadow-xl hover:shadow-gray-200/60 transition-all duration-300 hover:-translate-y-2 overflow-hidden group relative">
           <div className="relative h-60 md:h-40 overflow-hidden">
             <img 
               src={firstImage} 
               alt={`${car.year} ${car.make} ${car.model}`}
               className="w-full h-full object-cover"
             />
-            <div className="absolute bottom-2 left-2 bg-white/95 backdrop-blur-sm px-2 py-1 rounded-md shadow-lg">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute bottom-2 left-2 bg-white/95 backdrop-blur-sm px-2 py-1 rounded-md shadow-lg group-hover:shadow-xl transition-all duration-300">
               <div className="text-xs font-bold text-gray-900">
                 {car.financialInfo?.priceNetto ? 
                   `${car.financialInfo.priceNetto.toLocaleString("pl-PL")} zł` : 
@@ -114,6 +113,13 @@ export default function CarCard({ car, viewMode = 'grid' }) {
                 }
               </div>
             </div>
+            {car?.isFeatured && (
+              <div className="absolute top-2 right-2">
+                <div className="inline-flex items-center gap-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] font-bold px-2 py-1 rounded-md shadow-lg">
+                  <FaTags className="w-3 h-3" /> FEATURED
+                </div>
+              </div>
+            )}
           </div>
           <div className="p-3 relative bg-white">
             <div className="mb-1">
@@ -165,14 +171,15 @@ export default function CarCard({ car, viewMode = 'grid' }) {
         }
       }}
     >
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden relative flex flex-col md:flex-row">
+      <div className="bg-white rounded-2xl hover:shadow-xl hover:shadow-gray-200/60 transition-all duration-300 hover:-translate-y-1 overflow-hidden group backdrop-blur-sm relative flex flex-col md:flex-row">
         <div className="relative w-full md:w-80 h-80 md:h-48 flex-shrink-0 overflow-hidden">
           <img 
             src={firstImage} 
             alt={`${car.year} ${car.make} ${car.model}`}
             className="w-full h-full object-cover"
           />
-          <div className="absolute bottom-2 left-2 bg-white/95 backdrop-blur-sm px-2 py-1 rounded-md shadow-lg">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div className="absolute bottom-2 left-2 bg-white/95 backdrop-blur-sm px-2 py-1 rounded-md shadow-lg group-hover:shadow-xl transition-all duration-300">
             <div className="text-xs font-bold text-gray-900">
               {car.financialInfo?.priceNetto ? 
                 `${car.financialInfo.priceNetto.toLocaleString("pl-PL")} zł` : 
@@ -180,6 +187,13 @@ export default function CarCard({ car, viewMode = 'grid' }) {
               }
             </div>
           </div>
+          {car?.isFeatured && (
+            <div className="absolute top-2 right-2">
+              <div className="inline-flex items-center gap-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] font-bold px-2 py-1 rounded-md shadow-lg">
+                <FaTags className="w-3 h-3" /> FEATURED
+              </div>
+            </div>
+          )}
         </div>
         <div className="p-4 relative bg-white flex-1 flex flex-col justify-between min-h-[112px] md:min-h-[192px]">
           <div>

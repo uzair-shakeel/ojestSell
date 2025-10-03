@@ -798,6 +798,8 @@ export default function StepTwo({
             }
           />
         </div>
+
+        {/* Featured Car moved to Step 4 */}
       </div>
 
       {/* Navigation Buttons */}

@@ -188,7 +188,7 @@ export function BrowseByMake() {
         {/* Title overlay */}
         <div className="absolute top-8 left-8 z-20">
           <h2 className="text-4xl font-bold text-white drop-shadow-lg">
-            {t("homepage.browseByMake.title")}
+          Producenci
           </h2>
         </div>
 

@@ -31,6 +31,7 @@ interface CarData {
   serviceHistory?: "Yes" | "No";
   vin?: string;
   country?: string;
+  isFeatured?: boolean;
   carCondition?: {
     interior?: "New" | "Very Good" | "Good" | "Normal" | "Bad";
     mechanical?: "New" | "Very Good" | "Good" | "Normal" | "Bad";
@@ -77,6 +78,7 @@ interface AddCarData {
   serviceHistory?: "Yes" | "No";
   vin?: string;
   country?: string;
+  isFeatured?: boolean;
   carCondition?: {
     interior?: "New" | "Very Good" | "Good" | "Normal" | "Bad";
     mechanical?: "New" | "Very Good" | "Good" | "Normal" | "Bad";
@@ -363,6 +365,18 @@ export const getRecommendedCars = async (carId: string): Promise<CarData[]> => {
   } catch (error: any) {
     throw new Error(
       error?.response?.data?.message || "Failed to fetch recommended cars"
+    );
+  }
+};
+
+// Get featured cars
+export const getFeaturedCars = async (): Promise<CarData[]> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/api/cars/featured`);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error?.response?.data?.message || "Failed to fetch featured cars"
     );
   }
 };
