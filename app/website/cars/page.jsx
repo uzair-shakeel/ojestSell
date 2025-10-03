@@ -16,7 +16,7 @@ const CarsContent = () => {
   const [sortBy, setSortBy] = useState("best-match");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [viewMode, setViewMode] = useState('grid'); // Add view mode state
+  const [viewMode, setViewMode] = useState("grid"); // Add view mode state
   const searchParams = useSearchParams();
 
   // Handle responsive view toggle (list/grid) based on screen size
@@ -54,7 +54,7 @@ const CarsContent = () => {
     const fetchCarsWithFilters = async () => {
       setIsLoading(true);
       setError(null);
-      
+
       try {
         const searchQuery = searchParams.get("search");
         const make = searchParams.get("make");
@@ -69,7 +69,18 @@ const CarsContent = () => {
 
         let carsData;
 
-        if (searchQuery || make || model || minPrice || maxPrice || minYear || maxYear || fuel || transmission || location) {
+        if (
+          searchQuery ||
+          make ||
+          model ||
+          minPrice ||
+          maxPrice ||
+          minYear ||
+          maxYear ||
+          fuel ||
+          transmission ||
+          location
+        ) {
           // Use search with filters - map to service interface
           const searchParams_obj = {
             make: make || undefined,
@@ -109,27 +120,35 @@ const CarsContent = () => {
   // Handle sorting
   const handleSort = (sortValue) => {
     setSortBy(sortValue);
-    
+
     let sortedCars = [...cars];
 
     switch (sortValue) {
       case "lowest-price":
-        sortedCars.sort((a, b) => (a.financialInfo?.priceNetto || 0) - (b.financialInfo?.priceNetto || 0));
+        sortedCars.sort(
+          (a, b) =>
+            (a.financialInfo?.priceNetto || 0) -
+            (b.financialInfo?.priceNetto || 0)
+        );
         break;
       case "highest-price":
-        sortedCars.sort((a, b) => (b.financialInfo?.priceNetto || 0) - (a.financialInfo?.priceNetto || 0));
+        sortedCars.sort(
+          (a, b) =>
+            (b.financialInfo?.priceNetto || 0) -
+            (a.financialInfo?.priceNetto || 0)
+        );
         break;
       case "lowest-mileage":
         sortedCars.sort((a, b) => {
-          const mileageA = parseInt(a.mileage?.replace(/[^\d]/g, '') || '0');
-          const mileageB = parseInt(b.mileage?.replace(/[^\d]/g, '') || '0');
+          const mileageA = parseInt(a.mileage?.replace(/[^\d]/g, "") || "0");
+          const mileageB = parseInt(b.mileage?.replace(/[^\d]/g, "") || "0");
           return mileageA - mileageB;
         });
         break;
       case "highest-mileage":
         sortedCars.sort((a, b) => {
-          const mileageA = parseInt(a.mileage?.replace(/[^\d]/g, '') || '0');
-          const mileageB = parseInt(b.mileage?.replace(/[^\d]/g, '') || '0');
+          const mileageA = parseInt(a.mileage?.replace(/[^\d]/g, "") || "0");
+          const mileageB = parseInt(b.mileage?.replace(/[^\d]/g, "") || "0");
           return mileageB - mileageA;
         });
         break;
@@ -140,10 +159,14 @@ const CarsContent = () => {
         sortedCars.sort((a, b) => (a.year || 0) - (b.year || 0));
         break;
       case "newest-listed":
-        sortedCars.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+        sortedCars.sort(
+          (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+        );
         break;
       case "oldest-listed":
-        sortedCars.sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
+        sortedCars.sort(
+          (a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0)
+        );
         break;
       default:
         // best-match - keep original order
@@ -157,7 +180,7 @@ const CarsContent = () => {
   const handleApplyFilters = async (filters) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       // Map filter parameters to match the searchCars service interface
       const searchParams_obj = {
@@ -167,8 +190,12 @@ const CarsContent = () => {
         yearTo: filters.yearTo || undefined,
         type: filters.type || undefined,
         condition: filters.condition || undefined,
-        mileageMin: filters.minMileage ? parseInt(filters.minMileage) : undefined,
-        mileageMax: filters.maxMileage ? parseInt(filters.maxMileage) : undefined,
+        mileageMin: filters.minMileage
+          ? parseInt(filters.minMileage)
+          : undefined,
+        mileageMax: filters.maxMileage
+          ? parseInt(filters.maxMileage)
+          : undefined,
         drivetrain: filters.drivetrain || undefined,
         transmission: filters.transmission || undefined,
         fuel: filters.fuel || undefined,
@@ -176,11 +203,13 @@ const CarsContent = () => {
         serviceHistory: filters.serviceHistory || undefined,
         accidentHistory: filters.accidentHistory || undefined,
         // Location params (if needed)
-        ...(filters.latitude && filters.longitude ? {
-          latitude: filters.latitude,
-          longitude: filters.longitude,
-          maxDistance: filters.maxDistance,
-        } : {}),
+        ...(filters.latitude && filters.longitude
+          ? {
+              latitude: filters.latitude,
+              longitude: filters.longitude,
+              maxDistance: filters.maxDistance,
+            }
+          : {}),
       };
 
       // Remove undefined values
@@ -200,7 +229,7 @@ const CarsContent = () => {
 
       // Apply frontend price filtering if price filters are specified
       if (filters.minPrice || filters.maxPrice) {
-        carsData = carsData.filter(car => {
+        carsData = carsData.filter((car) => {
           const price = car.financialInfo?.priceNetto || 0;
           const minPrice = filters.minPrice || 0;
           const maxPrice = filters.maxPrice || Infinity;
@@ -210,16 +239,18 @@ const CarsContent = () => {
 
       // Apply frontend filtering for other unsupported filters
       if (filters.doors) {
-        carsData = carsData.filter(car => car.doors === filters.doors);
+        carsData = carsData.filter((car) => car.doors === filters.doors);
       }
       if (filters.color) {
-        carsData = carsData.filter(car => car.color === filters.color);
+        carsData = carsData.filter((car) => car.color === filters.color);
       }
       if (filters.horsepower) {
-        carsData = carsData.filter(car => car.horsepower === filters.horsepower);
+        carsData = carsData.filter(
+          (car) => car.horsepower === filters.horsepower
+        );
       }
       if (filters.seats) {
-        carsData = carsData.filter(car => car.seats === filters.seats);
+        carsData = carsData.filter((car) => car.seats === filters.seats);
       }
 
       setCars(carsData);
@@ -234,7 +265,7 @@ const CarsContent = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <section className="relative max-w-screen-2xl mx-auto h-[300px] md:h-[400px] w-[98%] my-[10px] rounded-2xl overflow-hidden">
+      {/* <section className="relative max-w-screen-2xl mx-auto h-[300px] md:h-[400px] w-[98%] my-[10px] rounded-2xl overflow-hidden">
         <div className="absolute inset-0">
           <Image
             src="/images/result.jpg"
@@ -249,7 +280,7 @@ const CarsContent = () => {
             Find your dream car easily with advanced search filters.
           </h1>
         </div>
-      </section>
+      </section> */}
 
       {/* Horizontal Filter Navbar */}
       <div className="w-full">
@@ -269,30 +300,42 @@ const CarsContent = () => {
             {/* Top on Mobile, Right on Desktop - View Toggle Buttons */}
             <div className="flex justify-center lg:justify-end w-full lg:w-auto order-1 lg:order-2">
               <div className="bg-white rounded-lg p-1 shadow-sm border flex gap-1">
-            <button
-                  type="button"
-                  onClick={() => setViewMode('grid')}
-                  className={`px-3 py-2 lg:px-4 lg:py-3 rounded-md text-sm font-medium transition-all duration-200 flex items-center justify-center ${
-                    viewMode === 'grid' 
-                      ? 'bg-blue-500 text-white shadow-md' 
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                  }`}
-                >
-                  <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                  </svg>
-            </button>
                 <button
                   type="button"
-                  onClick={() => setViewMode('list')}
+                  onClick={() => setViewMode("grid")}
                   className={`px-3 py-2 lg:px-4 lg:py-3 rounded-md text-sm font-medium transition-all duration-200 flex items-center justify-center ${
-                    viewMode === 'list' 
-                      ? 'bg-blue-500 text-white shadow-md' 
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                    viewMode === "grid"
+                      ? "bg-blue-500 text-white shadow-md"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                   }`}
                 >
-                  <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+                  <svg
+                    className="w-4 h-4 lg:w-5 lg:h-5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode("list")}
+                  className={`px-3 py-2 lg:px-4 lg:py-3 rounded-md text-sm font-medium transition-all duration-200 flex items-center justify-center ${
+                    viewMode === "list"
+                      ? "bg-blue-500 text-white shadow-md"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                  }`}
+                >
+                  <svg
+                    className="w-4 h-4 lg:w-5 lg:h-5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </button>
               </div>
@@ -301,71 +344,71 @@ const CarsContent = () => {
             {/* Bottom on Mobile, Left on Desktop - Sort Inline List */}
             <div className="flex items-center justify-between w-full overflow-hidden order-2 lg:order-1 lg:w-auto lg:space-x-6 lg:justify-start mt-4 lg:mt-4">
               <button
-                onClick={() => handleSort('best-match')}
+                onClick={() => handleSort("best-match")}
                 className={`text-[9px] lg:text-sm font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
-                  sortBy === 'best-match' 
-                    ? 'text-black border-b-2 border-black pb-0.5' 
-                    : 'text-gray-600'
+                  sortBy === "best-match"
+                    ? "text-black border-b-2 border-black pb-0.5"
+                    : "text-gray-600"
                 }`}
               >
                 Best Match
               </button>
               <button
-                onClick={() => handleSort('lowest-price')}
+                onClick={() => handleSort("lowest-price")}
                 className={`text-[9px] lg:text-sm font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
-                  sortBy === 'lowest-price' 
-                    ? 'text-black border-b-2 border-black pb-0.5' 
-                    : 'text-gray-600'
+                  sortBy === "lowest-price"
+                    ? "text-black border-b-2 border-black pb-0.5"
+                    : "text-gray-600"
                 }`}
               >
                 Lowest Price
               </button>
               <button
-                onClick={() => handleSort('highest-price')}
+                onClick={() => handleSort("highest-price")}
                 className={`text-[9px] lg:text-sm font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
-                  sortBy === 'highest-price' 
-                    ? 'text-black border-b-2 border-black pb-0.5' 
-                    : 'text-gray-600'
+                  sortBy === "highest-price"
+                    ? "text-black border-b-2 border-black pb-0.5"
+                    : "text-gray-600"
                 }`}
               >
                 Highest Price
               </button>
               <button
-                onClick={() => handleSort('lowest-mileage')}
+                onClick={() => handleSort("lowest-mileage")}
                 className={`text-[9px] lg:text-sm font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
-                  sortBy === 'lowest-mileage' 
-                    ? 'text-black border-b-2 border-black pb-0.5' 
-                    : 'text-gray-600'
+                  sortBy === "lowest-mileage"
+                    ? "text-black border-b-2 border-black pb-0.5"
+                    : "text-gray-600"
                 }`}
               >
                 Lowest Mileage
               </button>
               <button
-                onClick={() => handleSort('highest-mileage')}
+                onClick={() => handleSort("highest-mileage")}
                 className={`text-[9px] lg:text-sm font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
-                  sortBy === 'highest-mileage' 
-                    ? 'text-black border-b-2 border-black pb-0.5' 
-                    : 'text-gray-600'
+                  sortBy === "highest-mileage"
+                    ? "text-black border-b-2 border-black pb-0.5"
+                    : "text-gray-600"
                 }`}
               >
                 Highest Mileage
               </button>
               <button
-                onClick={() => handleSort('newest-year')}
+                onClick={() => handleSort("newest-year")}
                 className={`text-[9px] lg:text-sm font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
-                  sortBy === 'newest-year' 
-                    ? 'text-black border-b-2 border-black pb-0.5' 
-                    : 'text-gray-600'
+                  sortBy === "newest-year"
+                    ? "text-black border-b-2 border-black pb-0.5"
+                    : "text-gray-600"
                 }`}
               >
                 Newest Year
               </button>
               <button
-                onClick={() => handleSort('oldest-year')}
+                onClick={() => handleSort("oldest-year")}
                 className={`text-[9px] lg:text-sm font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
-                  sortBy === 'oldest-year' 
-                    ? 'text-black border-b-2 border-black pb-0.5' 
-                    : 'text-gray-600'
+                  sortBy === "oldest-year"
+                    ? "text-black border-b-2 border-black pb-0.5"
+                    : "text-gray-600"
                 }`}
               >
                 Oldest Year
@@ -374,10 +417,13 @@ const CarsContent = () => {
           </div>
 
           {/* Car Cards - Responsive grid/list layout */}
-          <div className={viewMode === 'grid' 
-            ? "grid gap-6 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1" 
-            : "flex flex-col space-y-4"
-          }>
+          <div
+            className={
+              viewMode === "grid"
+                ? "grid gap-6 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1"
+                : "flex flex-col space-y-4"
+            }
+          >
             {isLoading ? (
               <div className="text-center py-8">
                 <div
@@ -401,7 +447,9 @@ const CarsContent = () => {
                 </button>
               </div>
             ) : cars.length > 0 ? (
-              cars.map((car) => <CarCard key={car._id} car={car} viewMode={viewMode} />)
+              cars.map((car) => (
+                <CarCard key={car._id} car={car} viewMode={viewMode} />
+              ))
             ) : (
               <div className="text-center py-12">
                 <h3 className="text-lg font-medium text-gray-900">
@@ -417,12 +465,24 @@ const CarsContent = () => {
           {/* Pagination */}
           <div className="w-full flex bg-white justify-center items-center py-8">
             <div className="join">
-              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">«</button>
-              <button className="join-item btn bg-gray-200 text-gray-900 border border-gray-300 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">1</button>
-              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">2</button>
-              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">3</button>
-              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">4</button>
-              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">»</button>
+              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">
+                «
+              </button>
+              <button className="join-item btn bg-gray-200 text-gray-900 border border-gray-300 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">
+                1
+              </button>
+              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">
+                2
+              </button>
+              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">
+                3
+              </button>
+              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">
+                4
+              </button>
+              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">
+                »
+              </button>
             </div>
           </div>
 
