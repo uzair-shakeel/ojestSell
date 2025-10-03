@@ -151,7 +151,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 onChange={handleInputChange}
                 className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
               >
-              <option value="">Make</option>
+              <option value="">Marka</option>
               <option value="BMW">BMW</option>
               <option value="Mercedes-Benz">Mercedes-Benz</option>
               <option value="Audi">Audi</option>
@@ -208,7 +208,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 onChange={handleInputChange}
                 className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
               >
-              <option value="">Type</option>
+              <option value="">Typ</option>
               <option value="New">New</option>
               <option value="Used">Used</option>
               <option value="Certified">Certified</option>
@@ -250,7 +250,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                         onChange={handleInputChange}
                         className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
                       >
-                        <option value="">Select Year</option>
+                        <option value="">Rok od</option>
                         <option value="2025">2025</option>
                         <option value="2024">2024</option>
                         <option value="2023">2023</option>
@@ -287,7 +287,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                         onChange={handleInputChange}
                         className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
                       >
-                        <option value="">Select Year</option>
+                        <option value="">Roku Do </option>
                         <option value="2025">2025</option>
                         <option value="2024">2024</option>
                         <option value="2023">2023</option>
@@ -331,7 +331,7 @@ export default function FilterNavbar({ onApplyFilters }) {
               onClick={handleReset}
               className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 rounded-md lg:rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex-1 justify-center"
             >
-              Reset
+              Resetuj
             </button>
 
             {/* Show More Button - Desktop only */}
@@ -340,7 +340,7 @@ export default function FilterNavbar({ onApplyFilters }) {
               className="flex items-center gap-1 lg:gap-2 px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-blue-500 rounded-md lg:rounded-lg focus:outline-none whitespace-nowrap shadow-sm flex-1 justify-center text-white bg-blue-500"
             >
               <span className="flex items-center gap-1">
-                Show More
+              Pokaż Więcej 
               </span>
               <svg className="w-3 h-3 lg:w-4 lg:h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -361,7 +361,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 onChange={handleInputChange}
                 className="px-2 py-1.5 pr-6 text-xs font-medium border border-gray-200 rounded-md focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
               >
-              <option value="">Make</option>
+              <option value="">Marka</option>
               <option value="BMW">BMW</option>
               <option value="Mercedes-Benz">Mercedes-Benz</option>
               <option value="Audi">Audi</option>
@@ -421,7 +421,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 onChange={handleInputChange}
                 className="px-2 py-1.5 pr-6 text-xs font-medium border border-gray-200 rounded-md focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
               >
-              <option value="">Type</option>
+              <option value="">Typ</option>
               <option value="New">New</option>
               <option value="Used">Used</option>
               <option value="Certified">Certified</option>
@@ -463,7 +463,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                         onChange={handleInputChange}
                         className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
                       >
-                        <option value="">Select Year</option>
+                        <option value="">Rok od</option>
                         <option value="2025">2025</option>
                         <option value="2024">2024</option>
                         <option value="2023">2023</option>
@@ -500,7 +500,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                         onChange={handleInputChange}
                         className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
                       >
-                        <option value="">Select Year</option>
+                        <option value="">roku Do </option>
                         <option value="2025">2025</option>
                         <option value="2024">2024</option>
                         <option value="2023">2023</option>
@@ -543,7 +543,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 onClick={handleReset}
                 className="px-2 py-1.5 pr-6 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 rounded-md transition-all duration-200 shadow-sm hover:shadow-md flex-1 justify-center"
               >
-                Reset
+                Resetuj
               </button>
 
               {/* Show More Button - Mobile only */}
@@ -552,7 +552,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 className="flex items-center gap-1 px-2 py-1.5 pr-6 text-xs font-medium border border-blue-500 rounded-md focus:outline-none whitespace-nowrap shadow-sm flex-1 justify-center text-white bg-blue-500"
               >
                 <span className="flex items-center gap-1">
-                  Show More
+                  Pokaż Więcej
                 </span>
                 <svg className="w-3 h-3 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -591,7 +591,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                       onChange={handleInputChange}
                       className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                     >
-                    <option value="">Distance</option>
+                    <option value="">Dystans</option>
                     <option value="10">Within 10 miles</option>
                     <option value="25">Within 25 miles</option>
                     <option value="50">Within 50 miles</option>
@@ -616,7 +616,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                       onChange={handleInputChange}
                       className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                     >
-                    <option value="">Condition</option>
+                    <option value="">Stan</option>
                     <option value="Excellent">Excellent</option>
                     <option value="Very Good">Very Good</option>
                     <option value="Good">Good</option>
@@ -696,7 +696,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                       onChange={handleInputChange}
                       className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                     >
-                    <option value="">Fuel Type</option>
+                    <option value="">Paliwo Typ</option>
                     <option value="Gasoline">Gasoline</option>
                     <option value="Diesel">Diesel</option>
                     <option value="Hybrid">Hybrid</option>
@@ -720,7 +720,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                       onChange={handleInputChange}
                       className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                     >
-                    <option value="">Engine</option>
+                    <option value="">Silnik</option>
                     <option value="1.0L">1.0L</option>
                     <option value="1.2L">1.2L</option>
                     <option value="1.4L">1.4L</option>
@@ -755,7 +755,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                       onChange={handleInputChange}
                       className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                     >
-                    <option value="">Transmission</option>
+                    <option value="">Skrzynia Biegów</option>
                     <option value="Automatic">Automatic</option>
                     <option value="Manual">Manual</option>
                     <option value="CVT">CVT</option>
@@ -776,7 +776,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                       onChange={handleInputChange}
                       className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                     >
-                    <option value="">Drivetrain</option>
+                    <option value="">Przewodnik</option>
                     <option value="FWD">FWD</option>
                     <option value="RWD">RWD</option>
                     <option value="AWD">AWD</option>
@@ -806,9 +806,9 @@ export default function FilterNavbar({ onApplyFilters }) {
                       onChange={handleInputChange}
                       className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                     >
-                    <option value="">Service History</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
+                    <option value="">Historia Serwisowa</option>
+                    <option value="Yes">Tak</option>
+                    <option value="No">Nie</option>
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
                       <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -825,7 +825,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                       onChange={handleInputChange}
                       className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                     >
-                    <option value="">Accident History</option>
+                    <option value="">Bezwypadkowość</option>
                     <option value="Yes">Yes</option>
                     <option value="No">No</option>
                     </select>
@@ -899,7 +899,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 onClick={handleReset}
                 className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 rounded-md lg:rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex-1 justify-center"
               >
-                Reset
+                Resetuj
               </button>
 
               {/* Show Less Button */}
@@ -908,7 +908,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 className="flex items-center gap-1 lg:gap-2 px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-blue-500 rounded-md lg:rounded-lg focus:outline-none whitespace-nowrap shadow-sm flex-1 justify-center text-white bg-blue-500"
               >
                 <span className="flex items-center gap-1">
-                  Show Less
+                  Pokaż mniej
                 </span>
                 <svg className="w-3 h-3 lg:w-4 lg:h-4 transition-transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
