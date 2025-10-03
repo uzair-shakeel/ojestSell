@@ -103,34 +103,32 @@ export default function FilterNavbar({ onApplyFilters }) {
       return `${filters.yearFrom} - ${filters.yearTo}`;
     } else if (filters.yearFrom) {
       return `From ${filters.yearFrom}`;
-    } else if (filters.yearTo) {
-      return `To ${filters.yearTo}`;
     }
-    return "Year";
+    return "Rok";
   };
 
   const getMileageDisplayText = () => {
     if (filters.minMileage && filters.maxMileage) {
       return `${filters.minMileage} - ${filters.maxMileage}`;
     } else if (filters.minMileage) {
-      return `From ${filters.minMileage}`;
+      return `Od ${filters.minMileage}`;
     } else if (filters.maxMileage) {
-      return `To ${filters.maxMileage}`;
+      return `Do ${filters.maxMileage}`;
     }
-    return "Mileage";
+    return "Przebieg";
   };
+
 
   const getPriceDisplayText = () => {
     if (filters.priceFrom && filters.priceTo) {
       return `${filters.priceFrom} - ${filters.priceTo}`;
     } else if (filters.priceFrom) {
-      return `From ${filters.priceFrom}`;
+      return `Od ${filters.priceFrom}`;
     } else if (filters.priceTo) {
-      return `To ${filters.priceTo}`;
+      return `Do ${filters.priceTo}`;
     }
-    return "Price";
+    return "Cena";
   };
-
   return (
     <div className="bg-gradient-to-r from-gray-50 to-white border-b border-gray-100 shadow-sm">
       <div className="w-full lg:w-[50vw] px-4 lg:px-6 py-6">
@@ -578,7 +576,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                       name="location"
                       value={filters.location}
                       onChange={handleInputChange}
-                      placeholder="Location"
+                      placeholder="Lokalizacja"
                       className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 w-full"
                     />
                   </div>
