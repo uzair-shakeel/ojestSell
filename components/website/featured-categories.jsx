@@ -10,19 +10,19 @@ import { useLanguage } from "../../lib/i18n/LanguageContext";
 const CATEGORIES = [
   {
     id: 1,
-    titleKey: "luxuryCars",
+    titleKey: "Luksusowe",
     image: "/luxury.jpg",
     descriptionKey: "luxuryCarsDesc",
   },
   {
     id: 2,
-    titleKey: "sportsCars",
+    titleKey: "Sportowe",
     image: "/sports.jpg",
     descriptionKey: "sportsCarsDesc",
   },
   {
     id: 3,
-    titleKey: "classicCars",
+    titleKey: "Kompakty",
     image: "/classic.jpg",
     descriptionKey: "classicCarsDesc",
   },
@@ -69,7 +69,7 @@ export function FeaturedCategories() {
       {/* Featured Categories Grid */}
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center text-white mb-8">
-          {t("homepage.featuredCategories.title")}
+        Kategorie
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {CATEGORIES.map((category) => (
@@ -97,14 +97,10 @@ export function FeaturedCategories() {
               <div className="absolute inset-0 p-8 flex flex-col justify-between text-white">
                 <div className="transform translate-y-8 transition-transform duration-700 group-hover:translate-y-0">
                   <h3 className="text-2xl font-bold mb-2">
-                    {t(
-                      `homepage.featuredCategories.categories.${category.titleKey}`
-                    )}
+                    {category.titleKey}
                   </h3>
                   <p className="text-white/80 opacity-0 transition-opacity duration-700 group-hover:opacity-100">
-                    {t(
-                      `homepage.featuredCategories.categories.${category.descriptionKey}`
-                    )}
+                    {category.descriptionKey}
                   </p>
                 </div>
 

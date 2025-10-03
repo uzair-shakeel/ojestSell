@@ -24,7 +24,7 @@ export function BrowseCategories() {
     <section className="py-12">
       <div className=" mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-8">
-          {t("homepage.browseCategories.title")}
+        Szukaj po Marce 
         </h2>
 
         {/* Brand Grid */}

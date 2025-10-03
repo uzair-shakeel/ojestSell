@@ -50,10 +50,10 @@ export function CarsNearMe() {
       <div className="mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-2xl font-bold">
-            {t("homepage.carsNearMe.title")}
+          Ostatnio Dodane  
           </h2>
           <button className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-100">
-            {t("homepage.carsNearMe.viewAll")}
+          Więcej
           </button>
         </div>
         {loading && <p>{t("homepage.carsNearMe.loading")}</p>}

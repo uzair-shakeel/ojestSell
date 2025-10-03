@@ -96,7 +96,7 @@ export function FilterSearch() {
                 className="w-full h-12 px-3 border  rounded-md bg-white/70 text-black font-medium "
               >
                 <option value="" disabled>
-                  Make
+                Marka
                 </option>
                 {CAR_MAKES.map((carMake) => (
                   <option key={carMake.name} value={carMake.name}>
@@ -133,7 +133,7 @@ export function FilterSearch() {
                 className="w-full h-12 px-3 border rounded-md bg-white/70 text-black font-medium "
               >
                 <option value="" disabled>
-                  Start Year
+                Rok od
                 </option>
                 {YEARS.map((year) => (
                   <option key={year} value={year}>
@@ -150,7 +150,7 @@ export function FilterSearch() {
                 className="w-full h-12 px-3 border rounded-md bg-white/70 text-black font-medium "
               >
                 <option value="" disabled>
-                  End Year
+                Rok do 
                 </option>
                 {YEARS.map((year) => (
                   <option key={year} value={year}>
@@ -160,7 +160,7 @@ export function FilterSearch() {
               </select>
             </div>
 
-            <p>OR</p>
+            <p>lub</p>
 
             {/* Type Dropdown - Moved to just before search button */}
             <select
@@ -176,7 +176,7 @@ export function FilterSearch() {
               disabled={model}
             >
               <option value="" disabled>
-                Type
+                Typ
               </option>
               {CAR_TYPES.map((carType) => (
                 <option key={carType} value={carType}>
@@ -190,7 +190,7 @@ export function FilterSearch() {
               onClick={handleSearch}
               className="w-full py-4 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors"
             >
-              Search
+              Szukaj
             </button>
           </div>
         </div>
@@ -215,7 +215,7 @@ export function FilterSearch() {
                   style={{ height: "100%" }} // Inline style for Safari
                 >
                   <option value="" disabled>
-                    Make
+                    Marka
                   </option>
                   {CAR_MAKES.map((carMake) => (
                     <option key={carMake.name} value={carMake.name}>
@@ -240,7 +240,7 @@ export function FilterSearch() {
                   style={{ height: "100%" }} // Inline style for Safari
                 >
                   <option value="" disabled>
-                    Model
+                      Model
                   </option>
                   {availableModels.map((modelOption) => (
                     <option key={modelOption} value={modelOption}>
@@ -265,7 +265,7 @@ export function FilterSearch() {
                   style={{ height: "100%" }} // Inline style for Safari
                 >
                   <option value="" disabled>
-                    Type
+                    Typ
                   </option>
                   {CAR_TYPES.map((carType) => (
                     <option key={carType} value={carType}>
@@ -287,7 +287,7 @@ export function FilterSearch() {
                   style={{ height: "100%" }} // Inline style for Safari
                 >
                   <option value="" disabled>
-                    Start Year
+                    Rok od
                   </option>
                   {YEARS.map((year) => (
                     <option key={year} value={year}>
@@ -308,7 +308,7 @@ export function FilterSearch() {
                   style={{ height: "100%" }} // Inline style for Safari
                 >
                   <option value="" disabled>
-                    End Year
+                    Rok do
                   </option>
                   {YEARS.map((year) => (
                     <option key={year} value={year}>
@@ -325,7 +325,7 @@ export function FilterSearch() {
                   className="w-full h-full bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
                   style={{ height: "100%" }} // Inline style for Safari
                 >
-                  Search
+                  Szukaj
                 </button>
               </div>
             </div>

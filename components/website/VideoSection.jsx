@@ -270,14 +270,15 @@ const VideoSection = () => {
           <div className="flex-1 max-w-3xl lg:max-w-3xl w-full">
             <div className="inline-block mb-6">
               <span className="text-sm font-semibold bg-blue-50 px-3 py-2 rounded-full shadow-sm text-blue-600 tracking-wider uppercase">
-                Revolutionary Platform
+              Rewolucyjna platforma
               </span>
             </div>
 
             <h1 className="text-2xl md:text-3xl lg:text-5xl xl:text-6xl font-bold text-black leading-[0.9] mb-0">
-              Experience the{" "}
+            Poznaj przyszłość 
+
               <span className="relative inline-block">
-                future
+              handlu 
                 <svg
                   className="absolute -bottom-1 left-0 w-full h-4"
                   viewBox="0 0 300 20"
@@ -293,16 +294,15 @@ const VideoSection = () => {
                 </svg>
               </span>
               <br />
-              of automotive commerce
+              autami na Ojest
             </h1>
           </div>
 
           {/* Right side - Description and Button */}
           <div className="flex-shrink-0 lg:ml-16 max-w-xl w-full lg:w-auto pt-0 xl:pt-16">
             <p className="text-lg text-gray-600 leading-relaxed mb-8">
-              Transform your automotive business with AI-powered insights,
-              real-time market data, secure blockchain transactions, and
-              professional tools built for the next generation of car trading.
+            Stworzony przez amatorów, z możliwością negocjacji, wewnętrznych okazji, taniej jak na otodrogo ;) Prosto i bez reklam 
+
             </p>
 
             <button
@@ -310,7 +310,7 @@ const VideoSection = () => {
               className="group relative bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-4 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:scale-105 hover:shadow-xl shadow-lg overflow-hidden"
             >
               <span className="relative z-10 flex items-center space-x-2">
-                <span>Signup Now</span>
+                <span>Stwórz konto </span>
                 <svg
                   className="w-5 h-5 transform group-hover:translate-x-1 transition-transform duration-300"
                   fill="none"
