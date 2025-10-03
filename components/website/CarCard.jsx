@@ -74,44 +74,55 @@ export default function CarCard({ view, car, onDelete }) {
       {view === "list" ? (
         <>
           {/* LIST VIEW: Previous design restored */}
-          <Swiper
-            modules={[Navigation]}
-            navigation={{ prevEl: ".custom-prev", nextEl: ".custom-next" }}
-            className="w-[700px] h-auto"
-          >
-            {/* Dynamically render images from the car.images array */}
-            {car?.images && car?.images?.length > 0 ? (
-              car?.images?.map((image, index) => {
-                const imageUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/${image?.replace("\\", "/")}`;
-                return (
-                  <SwiperSlide key={index}>
-                    <div className="">
-                      <img
-                        src={image}
-                        className="w-full h-64 object-cover"
-                        alt={`Car Image ${index + 1}`}
-                      />
-                    </div>
-                  </SwiperSlide>
-                );
-              })
-            ) : (
-              <SwiperSlide>
-                <img
-                  src="https://via.placeholder.com/500"
-                  className="w-full h-64 object-cover"
-                  alt="Placeholder Image"
-                />
-              </SwiperSlide>
-            )}
+          <div className="relative">
+            <Swiper
+              modules={[Navigation]}
+              navigation={{ prevEl: ".custom-prev", nextEl: ".custom-next" }}
+              className="w-[700px] h-auto"
+            >
+              {/* Dynamically render images from the car.images array */}
+              {car?.images && car?.images?.length > 0 ? (
+                car?.images?.map((image, index) => {
+                  const imageUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/${image?.replace("\\", "/")}`;
+                  return (
+                    <SwiperSlide key={index}>
+                      <div className="">
+                        <img
+                          src={image}
+                          className="w-full h-64 object-cover"
+                          alt={`Car Image ${index + 1}`}
+                        />
+                      </div>
+                    </SwiperSlide>
+                  );
+                })
+              ) : (
+                <SwiperSlide>
+                  <img
+                    src="https://via.placeholder.com/500"
+                    className="w-full h-64 object-cover"
+                    alt="Placeholder Image"
+                  />
+                </SwiperSlide>
+              )}
 
-            <button className="custom-prev group-hover:opacity-100 opacity-0 transition-all duration-300 absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/30 text-black w-8 h-8 rounded-full shadow-md z-10">
-              ❮
-            </button>
-            <button className="custom-next group-hover:opacity-100 opacity-0 transition-all duration-300 absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/30 text-black w-8 h-8 rounded-full shadow-md z-10">
-              ❯
-            </button>
-          </Swiper>
+              <button className="custom-prev group-hover:opacity-100 opacity-0 transition-all duration-300 absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/30 text-black w-8 h-8 rounded-full shadow-md z-10">
+                ❮
+              </button>
+              <button className="custom-next group-hover:opacity-100 opacity-0 transition-all duration-300 absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/30 text-black w-8 h-8 rounded-full shadow-md z-10">
+                ❯
+              </button>
+            </Swiper>
+
+            {/* Featured badge overlay for list view */}
+            {car.isFeatured && (
+              <div className="absolute top-2 right-2 z-20">
+                <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                  ⭐ FEATURED
+                </div>
+              </div>
+            )}
+          </div>
 
           <div className="px-4 py-3 w-full">
             <div className="flex flex-col justify-start mb-2">
@@ -247,6 +258,15 @@ export default function CarCard({ view, car, onDelete }) {
                 </span>
               </div>
             </div>
+
+            {/* Featured badge overlay */}
+            {car.isFeatured && (
+              <div className="absolute top-2 right-2 z-20">
+                <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                  ⭐ FEATURED
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="px-4 py-3 w-full">

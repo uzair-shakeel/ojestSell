@@ -35,6 +35,7 @@ export default function StepTwo({
     serviceHistory: formData.serviceHistory || "",
     vin: formData.vin || "",
     country: formData.country || "",
+    isFeatured: formData.isFeatured || false,
   });
 
   const [makes, setMakes] = useState<string[]>([]); // State for car makes
@@ -797,6 +798,27 @@ export default function StepTwo({
               setLocalData({ ...localData, country: e.target.value })
             }
           />
+        </div>
+
+        {/* Featured Car */}
+        <div className="col-span-2">
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="isFeatured"
+              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+              checked={localData.isFeatured}
+              onChange={(e) =>
+                setLocalData({ ...localData, isFeatured: e.target.checked })
+              }
+            />
+            <label htmlFor="isFeatured" className="text-gray-700 font-medium">
+              Mark as Featured Car
+            </label>
+          </div>
+          <p className="text-xs text-gray-500 mt-1">
+            Featured cars will be highlighted and shown prominently on the website
+          </p>
         </div>
       </div>
 

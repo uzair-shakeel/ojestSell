@@ -275,7 +275,7 @@ const CarsContent = () => {
         </div>
         <div className="relative z-10 container h-full flex flex-col justify-center items-end py-[90px] md:py-[120px] text-center text-white">
           <h1 className="z-10 text-white sm:text-4xl md:text-5xl text-3xl font-bold max-w-3xl xl:text-start text-center">
-            Find your dream car easily with advanced search filters.
+            Find your dream car easily with advanced search filters.sss
           </h1>
         </div>
       </section>
@@ -373,12 +373,24 @@ const CarsContent = () => {
           {/* Pagination */}
           <div className="w-full flex bg-white justify-center items-center py-8">
             <div className="join">
-              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">«</button>
-              <button className="join-item btn bg-gray-200 text-gray-900 border border-gray-300 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">1</button>
-              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">2</button>
-              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">3</button>
-              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">4</button>
-              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">»</button>
+              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">
+                «
+              </button>
+              <button className="join-item btn bg-gray-200 text-gray-900 border border-gray-300 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">
+                1
+              </button>
+              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">
+                2
+              </button>
+              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">
+                3
+              </button>
+              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">
+                4
+              </button>
+              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">
+                »
+              </button>
             </div>
           </div>
 

@@ -13,6 +13,7 @@ import { FilterSearch } from "../components/website/filter-search";
 import { BlogSection } from "../components/website/blog-section.jsx";
 import { Footer } from "../components/website/Footer.jsx";
 import VideoSection from "../components/website/VideoSection";
+import { FeaturedCars } from "../components/website/FeaturedCars.jsx";
 import { useLanguage } from "../lib/i18n/LanguageContext";
 
 // Component that uses useSearchParams
@@ -69,6 +70,7 @@ function HomeContent() {
       <VideoSection />
 
       <main className="flex-grow text-gray-900">
+        <FeaturedCars />
         <CarsNearMe />
         <FeaturedCategories />
         <BrowseCategories />

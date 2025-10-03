@@ -46,6 +46,7 @@ export default function MultiStepForm() {
     serviceHistory: "",
     vin: "",
     country: "",
+    isFeatured: false,
 
     // Step 3: Car Condition
     condition: {
@@ -220,6 +221,7 @@ export default function MultiStepForm() {
         serviceHistory: formData.serviceHistory,
         vin: formData.vin,
         country: formData.country,
+        isFeatured: formData.isFeatured,
         carCondition: formData.condition,
         location: formData.location,
         financialInfo: {
