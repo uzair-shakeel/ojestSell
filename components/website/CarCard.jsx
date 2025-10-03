@@ -19,7 +19,6 @@ export default function CarCard({ car, viewMode = 'grid' }) {
     city: "",
     state: "",
   });
-  console.log("car", car);
 
   const [seller, setSeller] = useState(null);
 
@@ -94,7 +93,6 @@ export default function CarCard({ car, viewMode = 'grid' }) {
         tabIndex={0}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
             handleCardClick();
           }
         }}
@@ -115,6 +113,13 @@ export default function CarCard({ car, viewMode = 'grid' }) {
                 }
               </div>
             </div>
+            {car?.isFeatured && (
+              <div className="absolute top-2 right-2">
+                <div className="inline-flex items-center gap-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] font-bold px-2 py-1 rounded-md shadow-lg">
+                  <FaTags className="w-3 h-3" /> FEATURED
+                </div>
+              </div>
+            )}
           </div>
           <div className="p-3 relative bg-white">
             <div className="mb-1">
@@ -182,6 +187,13 @@ export default function CarCard({ car, viewMode = 'grid' }) {
               }
             </div>
           </div>
+          {car?.isFeatured && (
+            <div className="absolute top-2 right-2">
+              <div className="inline-flex items-center gap-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] font-bold px-2 py-1 rounded-md shadow-lg">
+                <FaTags className="w-3 h-3" /> FEATURED
+              </div>
+            </div>
+          )}
         </div>
         <div className="p-4 relative bg-white flex-1 flex flex-col justify-between min-h-[112px] md:min-h-[192px]">
           <div>

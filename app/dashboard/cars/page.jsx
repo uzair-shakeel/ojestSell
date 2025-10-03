@@ -15,6 +15,7 @@ export default function DashboardCarsPage() {
     try {
       setIsLoading(true);
       const response = await getCarsByUserId(userId, getToken);
+      console.log("responseeeeee", response);
       setCars(response);
     } catch (error) {
       console.error("Error loading cars:", error);
@@ -94,6 +95,7 @@ export default function DashboardCarsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
           {cars.map((car) => (
             <CarCard key={car._id} car={car} onDelete={handleDelete} />
           ))}

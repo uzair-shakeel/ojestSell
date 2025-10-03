@@ -70,7 +70,6 @@ function HomeContent() {
       <VideoSection />
 
       <main className="flex-grow text-gray-900">
-        <FeaturedCars />
         <CarsNearMe />
         <FeaturedCategories />
         <BrowseCategories />

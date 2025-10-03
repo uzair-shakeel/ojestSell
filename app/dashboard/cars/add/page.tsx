@@ -21,6 +21,7 @@ export default function MultiStepForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const [formData, setFormData] = useState({
     // Step 1: Basic Information
@@ -265,6 +266,9 @@ export default function MultiStepForm() {
               );
             }
           }
+        } else if (key === "isFeatured") {
+          // Ensure boolean is sent as string
+          formDataToSend.append("isFeatured", String(carData[key]));
         } else if (key === "carCondition") {
           for (const conditionKey in carData[key]) {
             formDataToSend.append(
@@ -273,13 +277,30 @@ export default function MultiStepForm() {
             );
           }
         } else {
-          formDataToSend.append(key, carData[key]);
+          // Coerce non-file values to string for FormData
+          const value =
+            typeof carData[key] === "number" || typeof carData[key] === "boolean"
+              ? String(carData[key])
+              : (carData[key] as any) ?? "";
+          formDataToSend.append(key, value);
         }
       }
 
+      // Debug: verify isFeatured and full FormData before sending
+      console.log("Submitting car with isFeatured:", carData.isFeatured);
+      try {
+        const entries: any[] = [];
+        (formDataToSend as any).forEach((value: any, key: string) => {
+          const printable = value instanceof File ? `File(name=${value.name}, size=${value.size})` : String(value);
+          entries.push({ key, value: printable });
+        });
+        console.table(entries);
+        console.log("FormData isFeatured entry:", entries.find((e) => e.key === "isFeatured")?.value);
+      } catch (e) {
+        console.log("Could not iterate FormData entries in this environment", e);
+      }
       await addCar(formDataToSend, getToken);
-      alert("Car created successfully!");
-      router.push("/dashboard/cars");
+      setShowSuccessModal(true);
     } catch (err) {
       setError(err.message || "Failed to create car. Please try again.");
       console.error("Error creating car:", err);
@@ -289,7 +310,7 @@ export default function MultiStepForm() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-5 overflow-hidden h-auto border border-gray-200 shadow-md rounded-lg">
+    <div className="max-w-5xl mx-auto p-5 overflow-hidden h-auto border border-gray-200 shadow-md rounded-lg relative">
       {error && <div className="text-red-500 mb-4">{error}</div>}
       <AnimatePresence mode="wait">
         <motion.div
@@ -350,6 +371,31 @@ export default function MultiStepForm() {
           )}
         </motion.div>
       </AnimatePresence>
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setShowSuccessModal(false)} />
+          <div className="relative bg-white rounded-lg shadow-xl w-full max-w-md p-6 mx-4">
+            <h3 className="text-xl font-semibold mb-2">Car created successfully</h3>
+            <p className="text-gray-600 mb-6">Your listing has been submitted and will appear in your dashboard.</p>
+            <div className="flex justify-end gap-3">
+              <button
+                className="px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-50"
+                onClick={() => setShowSuccessModal(false)}
+              >
+                Close
+              </button>
+              <button
+                className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+                onClick={() => router.push("/dashboard/cars")}
+              >
+                Go to My Cars
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -67,7 +67,8 @@ export default function EditCarPage() {
       updateData.append("model", formData.model);
       updateData.append("year", formData.year);
       updateData.append("mileage", formData.mileage);
-      updateData.append("isFeatured", formData.isFeatured);
+      // Ensure boolean is sent as string for reliable backend parsing
+      updateData.append("isFeatured", String(formData.isFeatured));
       updateData.append("financialInfo[priceNetto]", formData.financialInfo.priceNetto);
 
       await updateCar(carId, updateData, getToken);
