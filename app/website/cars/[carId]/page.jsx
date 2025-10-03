@@ -27,7 +27,7 @@ const socket = io(process.env.NEXT_PUBLIC_API_BASE_URL, {
 });
 
 const Page = () => {
-  const [activeTab, setActiveTab] = useState("description");
+  const [activeTab, setActiveTab] = useState("opis");
   const { carId } = useParams();
   const router = useRouter();
   const { user } = useAuth();
@@ -247,10 +247,10 @@ const Page = () => {
     if (!car) return <p>Loading...</p>;
 
     switch (activeTab) {
-      case "description":
+      case "opis":
         return (
           <motion.div
-            key="description"
+            key="opis"
             initial="initial"
             animate="animate"
             exit="exit"
@@ -259,10 +259,10 @@ const Page = () => {
             <DetailTab cardetails={car} />
           </motion.div>
         );
-      case "conditions":
+      case "stan":
         return (
           <motion.div
-            key="conditions"
+            key="stan"
             initial="initial"
             animate="animate"
             exit="exit"
@@ -271,10 +271,10 @@ const Page = () => {
             <ConditionTab carCondition={car?.carCondition} />
           </motion.div>
         );
-      case "location":
+      case "lokalizacja":
         return (
           <motion.div
-            key="location"
+            key="lokalizacja"
             initial="initial"
             animate="animate"
             exit="exit"
@@ -283,10 +283,10 @@ const Page = () => {
             <LocationTab location={car?.location} />
           </motion.div>
         );
-      case "financial":
+      case "finanse":
         return (
           <motion.div
-            key="financial"
+            key="finanse"
             initial="initial"
             animate="animate"
             exit="exit"
@@ -543,7 +543,7 @@ const Page = () => {
             </div>
             <div className="col-span-2 bg-white rounded-md mt-5">
               <div className="gap-2 mb-4 grid grid-cols-2 md:grid-cols-4">
-                {["description", "conditions", "location", "financial"].map(
+                {["opis", "stan", "lokalizacja", "finanse"].map(
                   (tab) => (
                     <button
                       key={tab}
@@ -566,7 +566,7 @@ const Page = () => {
             <div className="w-full p-4 bg-white rounded-sm border sticky top-4 shadow">
               <div className="py-3 flex flex-row">
                 <div className="flex flex-col items-start">
-                  <h3 className="text-base font-medium mb-2">PRICE</h3>
+                  <h3 className="text-base font-medium mb-2">Cena</h3>
                   <p className="text-4xl font-bold text-gray-900 mb-2">
                     {car?.financialInfo?.priceNetto
                       ? `${car?.financialInfo?.priceNetto} zł `
@@ -582,7 +582,7 @@ const Page = () => {
               </div>
               <div className="flex items-center my-4">
                 <div className="flex-grow border-b"></div>
-                <p className="px-2 text-gray-500 text-sm">OR</p>
+                <p className="px-2 text-gray-500 text-sm">LUB</p>
                 <div className="flex-grow border-b"></div>
               </div>
               <div className="gap-2 flex flex-col">
@@ -590,7 +590,7 @@ const Page = () => {
                   className="w-full border border-gray-500 py-3 rounded-md font-semibold"
                   onClick={() => setActiveTab("financial")}
                 >
-                  See more Financial Details
+                  Zobacz więcej szczegółów finansowych
                 </button>
               </div>
               <div className="flex items-center space-x-3 my-5">
@@ -631,7 +631,7 @@ const Page = () => {
               <hr className="my-4" />
               <div className="grid grid-cols-2 gap-2 mt-4">
                 <h2 className="text-base font-medium mb-2 col-span-2">
-                  Contact Seller
+                  Kontakt z sprzedawcą
                 </h2>
                 <button
                   onClick={startChat}
@@ -642,7 +642,7 @@ const Page = () => {
                     alt="Message"
                     className="w-5 h-5"
                   />
-                  <span>Message</span>
+                  <span>Wiadomość</span>
                 </button>
                 <button
                   className="w-full border py-3 rounded-md font-semibold bg-blue-500 flex items-center justify-center space-x-2"

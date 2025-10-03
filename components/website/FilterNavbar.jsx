@@ -134,7 +134,7 @@ export default function FilterNavbar({ onApplyFilters }) {
       <div className="w-full lg:w-[50vw] px-4 lg:px-6 py-6">
         {/* Filter Heading */}
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Filters</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Filtrowanie</h2>
         </div>
         
         <div className="space-y-1">

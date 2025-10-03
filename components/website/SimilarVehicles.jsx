@@ -20,9 +20,9 @@ const SimilarVehicles = () => {
 
   return (
     <div className="relative w-full py-5 sm:py-12">
-      <h2 className="text-2xl font-semibold">Similar Vehicles</h2>
+      <h2 className="text-2xl font-semibold">Podobne pojazdy</h2>
       <p className="text-gray-600 text-sm mb-4">
-        Best Compact Croma Turbo for 2025
+        Najlepszy Compact Croma Turbo for 2025
       </p>
 
       {/* Swiper container */}
