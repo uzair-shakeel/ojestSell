@@ -654,7 +654,7 @@ const Page = () => {
                 >
                   <img src="/website/call.svg" alt="Call" className="w-5 h-5" />
                   <span className="text-white">
-                    {seller?.phoneNumbers?.[0] ? "Call" : "No Phone"}
+                    {seller?.phoneNumbers?.[0] ? "Wywołaj" : "Brak numeru"}
                   </span>
                 </button>
               </div>
