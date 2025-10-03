@@ -135,7 +135,7 @@ export const getAllCars = async (): Promise<CarData[]> => {
           "Content-Type": "application/json",
           Origin: window.location.origin,
         },
-        timeout: 10000, // 10 second timeout
+        timeout: 30000, // 30 second timeout
       });
 
       if (!response.data) {
@@ -308,8 +308,14 @@ export const searchCars = async (queryParams: {
     const response = await axios.get(`${API_BASE_URL}/api/cars/search`, {
       params: queryParams,
     });
-    return response.data;
+    // Handle both array and object responses
+    const cars = Array.isArray(response.data)
+      ? response.data
+      : response.data.cars || [];
+    
+    return cars;
   } catch (error: any) {
+    console.error("searchCars error:", error);
     throw new Error(error?.response?.data?.message || "Failed to search cars");
   }
 };

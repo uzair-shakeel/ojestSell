@@ -100,7 +100,7 @@ export function CarsNearMe() {
             >
               {cars.map((car) => (
                 <SwiperSlide key={car._id}>
-                  <CarCard view={view} car={car} />
+                  <CarCard viewMode="grid" car={car} />
                 </SwiperSlide>
               ))}
             </Swiper>

@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "http://164.90.219.243:5000/api/$1"
+      "destination": "https://ojest-ap-is.vercel.app/api/$1"
     }
   ]
 }
