@@ -190,7 +190,11 @@ const CarsContent = () => {
         yearFrom: filters.yearFrom || undefined,
         yearTo: filters.yearTo || undefined,
         type: filters.type || undefined,
-        condition: filters.condition || undefined,
+        // Only pass condition to backend if it's the backend-supported values
+        condition:
+          filters.condition === "New" || filters.condition === "Used"
+            ? filters.condition
+            : undefined,
         mileageMin: filters.minMileage
           ? parseInt(filters.minMileage)
           : undefined,
@@ -228,13 +232,46 @@ const CarsContent = () => {
         carsData = [];
       }
 
-      // Apply frontend price filtering if price filters are specified
-      if (filters.minPrice || filters.maxPrice) {
+      // Apply frontend price filtering (support priceFrom/priceTo from FilterNavbar)
+      const priceMin =
+        filters.minPrice !== undefined && filters.minPrice !== ""
+          ? Number(filters.minPrice)
+          : filters.priceFrom !== undefined && filters.priceFrom !== ""
+          ? Number(filters.priceFrom)
+          : undefined;
+      const priceMax =
+        filters.maxPrice !== undefined && filters.maxPrice !== ""
+          ? Number(filters.maxPrice)
+          : filters.priceTo !== undefined && filters.priceTo !== ""
+          ? Number(filters.priceTo)
+          : undefined;
+
+      if (priceMin !== undefined || priceMax !== undefined) {
         carsData = carsData.filter((car) => {
-          const price = car.financialInfo?.priceNetto || 0;
-          const minPrice = filters.minPrice || 0;
-          const maxPrice = filters.maxPrice || Infinity;
-          return price >= minPrice && price <= maxPrice;
+          const price = Number(car.financialInfo?.priceNetto || 0);
+          const min = priceMin ?? 0;
+          const max = priceMax ?? Infinity;
+          return price >= min && price <= max;
+        });
+      }
+
+      // Apply frontend mileage filtering (supports minMileage/maxMileage from FilterNavbar)
+      const uiMileageMin =
+        filters.minMileage !== undefined && filters.minMileage !== ""
+          ? parseInt(filters.minMileage, 10)
+          : undefined;
+      const uiMileageMax =
+        filters.maxMileage !== undefined && filters.maxMileage !== ""
+          ? parseInt(filters.maxMileage, 10)
+          : undefined;
+
+      if (uiMileageMin !== undefined || uiMileageMax !== undefined) {
+        carsData = carsData.filter((car) => {
+          // car.mileage may be a string like "120,000 km"; extract digits
+          const numeric = parseInt(String(car.mileage || "0").replace(/[^\d]/g, ""), 10) || 0;
+          const min = uiMileageMin ?? 0;
+          const max = uiMileageMax ?? Number.MAX_SAFE_INTEGER;
+          return numeric >= min && numeric <= max;
         });
       }
 
@@ -252,6 +289,14 @@ const CarsContent = () => {
       }
       if (filters.seats) {
         carsData = carsData.filter((car) => car.seats === filters.seats);
+      }
+
+      // Apply frontend condition filtering for UI values (Excellent/Very Good/Good/Fair/Poor)
+      const overallValues = ["Excellent", "Very Good", "Good", "Fair", "Poor"];
+      if (overallValues.includes(filters.condition)) {
+        carsData = carsData.filter(
+          (car) => car?.carCondition?.overall === filters.condition
+        );
       }
 
       setCars(carsData);
