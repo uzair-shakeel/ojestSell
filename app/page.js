@@ -67,7 +67,7 @@ function HomeContent() {
       </section>
 
       {/* Video Section */}
-      <VideoSection />
+      {/* <VideoSection /> */}
 
       <main className="flex-grow text-gray-900">
         <CarsNearMe />
@@ -75,7 +75,7 @@ function HomeContent() {
         <BrowseCategories />
         <BrowseLocations />
         <BrowseByMake />
-        <BlogSection />
+        {/* <BlogSection /> */}
       </main>
       <Footer />
     </div>

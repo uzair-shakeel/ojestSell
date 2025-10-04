@@ -451,7 +451,7 @@ const Page = () => {
                           alt={`${car?.make} ${car?.model} - Image ${
                             index + 1
                           }`}
-                          className="w-full h-[450px] object-cover rounded cursor-pointer transition-transform duration-300 hover:scale-105"
+                          className="w-full h-[450px] object-cover rounded cursor-pointer"
                           onClick={() => setIsFullscreen(true)}
                         />
                       </div>
@@ -520,7 +520,7 @@ const Page = () => {
                         alt={`Thumbnail ${index + 1}`}
                         className={`w-[120px] h-[80px] object-cover rounded-md border-2 transition-all duration-200 cursor-pointer ${
                           currentImageIndex === index
-                            ? "border-blue-500 scale-105 shadow-lg"
+                            ? "border-blue-500 shadow-lg"
                             : "border-gray-300 hover:border-gray-400"
                         }`}
                       />
@@ -594,15 +594,16 @@ const Page = () => {
                 </button>
               </div>
               <div className="flex items-center space-x-3 my-5">
-                <div className="w-24 h-20 overflow-hidden rounded-full">
-                  <Image
-                    src={formatImageUrl(seller?.image)}
-                    alt={sellerName}
-                    width={80}
-                    height={80}
-                    className="object-center w-20 h-20"
-                  />
-                </div>
+              <div className="relative w-24 h-20 aspect-square overflow-hidden rounded-full">
+  <Image
+    src={formatImageUrl(seller?.image)}
+    alt={sellerName}
+    fill
+    className="object-cover"
+    sizes="96px"
+  />
+</div>
+
                 <div className="w-full">
                   <div className="flex justify-between items-center">
                     <p className="text-black text-lg lg:text-xl">

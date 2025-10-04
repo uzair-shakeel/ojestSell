@@ -119,9 +119,7 @@ export function BrowseLocations() {
             {CAR_TYPES.map((type) => (
               <Link
                 key={type.id}
-                href={`/cars/${t(
-                  `homepage.browseLocations.types.${type.nameKey}`
-                ).toLowerCase()}`}
+                href={`/website/cars`}
                 className="flex-none w-[100px] md:w-[150px] group/item transition-all duration-300 md:hover:w-[270px]"
               >
                 <div className=" overflow-hidden bg-white h-full">

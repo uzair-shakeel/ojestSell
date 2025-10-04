@@ -144,7 +144,6 @@ export default function AuthTabs() {
       if (result.success) {
         if (result.requiresOTP) {
           // Show OTP in alert for testing
-          alert(`Your OTP is: ${result.otp}`);
           setTempUserId(result.userId);
           setStep("otp");
           toast.success("Please verify your OTP");
@@ -184,7 +183,6 @@ export default function AuthTabs() {
       const result = await resendOTP(tempUserId);
 
       if (result.success) {
-        alert(`Your new OTP is: ${result.otp}`);
         toast.success("OTP resent successfully");
       } else {
         toast.error(result.error || "Failed to resend OTP");

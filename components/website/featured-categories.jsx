@@ -75,9 +75,7 @@ export function FeaturedCategories() {
           {CATEGORIES.map((category) => (
             <Link
               key={category.id}
-              href={`/category/${t(
-                `homepage.featuredCategories.categories.${category.titleKey}`
-              ).toLowerCase()}`}
+              href={`/website/cars`}
               className="group relative aspect-[4/3] overflow-hidden"
             >
               <Image

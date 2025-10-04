@@ -72,8 +72,8 @@ const NavbarUpdated = () => {
           onClick={handleAddListing}
           className="hidden md:block bg-white border border-gray-300 px-4 py-2 rounded-full hover:bg-gray-100"
         >
-          {isSignedIn ? "Add Listing" : "Become a seller"}
-        </button>
+{isSignedIn ? "Dodaj ogłoszenie" : "Zostań sprzedawcą"}
+</button>
 
         {/* Messages Button - Only show when signed in */}
         {isSignedIn && (
