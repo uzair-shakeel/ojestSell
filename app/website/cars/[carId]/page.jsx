@@ -256,6 +256,17 @@ const Page = () => {
     }
   };
 
+  // Open WhatsApp chat to a specific number using wa.me format
+  const openWhatsApp = (rawNumber) => {
+    const sanitized = String(rawNumber).replace(/[^\d]/g, ""); // remove + and non-digits for wa.me
+    const url = `https://wa.me/${sanitized}`;
+    try {
+      window.open(url, "_blank");
+    } catch (e) {
+      window.location.href = url;
+    }
+  };
+
   const renderContent = () => {
     const animationVariants = {
       initial: { opacity: 0, y: 20 },
@@ -651,11 +662,11 @@ const Page = () => {
                 </div>
               </div>
               <hr className="my-4" />
-              <div className="grid grid-cols-2 gap-2 mt-4">
+              <div className="grid grid-cols-1 gap-2 mt-4">
                 <h2 className="text-base font-medium mb-2 col-span-2">
                   Kontakt z sprzedawcą
                 </h2>
-                <button
+                {/* <button
                   onClick={startChat}
                   className="w-full bg-white-500 text-blue-600 py-3 border border-blue-600 rounded-md font-semibold flex items-center justify-center space-x-2"
                 >
@@ -665,16 +676,12 @@ const Page = () => {
                     className="w-5 h-5"
                   />
                   <span>Wiadomość</span>
-                </button>
+                </button> */}
                 <button
                   className="w-full border py-3 rounded-md font-semibold bg-blue-500 flex items-center justify-center space-x-2"
-                  disabled={!seller?.phoneNumbers?.[0]}
-                  onClick={callSeller}
+                  onClick={() => openWhatsApp("+48669993336")}
                 >
-                  <img src="/website/call.svg" alt="Call" className="w-5 h-5" />
-                  <span className="text-white">
-                    {seller?.phoneNumbers?.[0] ? "Wywołaj" : "Brak numeru"}
-                  </span>
+                  <span className="text-white">WhatsApp</span>
                 </button>
               </div>
               {socialMediaLinks.length > 0 && (
