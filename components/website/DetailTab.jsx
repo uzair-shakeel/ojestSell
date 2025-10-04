@@ -18,6 +18,52 @@ const DetailTab = ({ cardetails }) => {
       return val;
     };
 
+    const translateTransmission = (val) => {
+      if (!val) return "";
+      const key = String(val).trim().toLowerCase();
+      const map = {
+        manual: "Manualna",
+        automatic: "Automatyczna",
+        "semi-automatic": "Półautomatyczna",
+        normal: "Normalna",
+      };
+      return map[key] || val;
+    };
+
+    const translateFuel = (val) => {
+      if (!val) return "";
+      const key = String(val).trim().toLowerCase();
+      const map = {
+        petrol: "Benzyna",
+        gasoline: "Benzyna",
+        diesel: "Diesel",
+        hybrid: "Hybrydowy",
+        electric: "Elektryczny",
+        ev: "Elektryczny",
+        lpg: "LPG",
+        cng: "CNG",
+      };
+      return map[key] || val;
+    };
+
+    const toBoolean = (val) => {
+      if (typeof val === "boolean") return val;
+      if (val === null || val === undefined) return null;
+      const s = String(val).trim().toLowerCase();
+      if (s === "yes" || s === "true") return true;
+      if (s === "no" || s === "false") return false;
+      return null;
+    };
+
+    // For label "Bezwypadkowość" (accident-free): invert accidentHistory value
+    const translateAccidentFree = (accidentHistoryVal) => {
+      const b = toBoolean(accidentHistoryVal);
+      if (b === null) return translateYesNo(accidentHistoryVal);
+      // accidentHistory: true => had accidents => NOT accident-free => "Nie"
+      // accidentHistory: false => no accidents => accident-free => "Tak"
+      return b ? "Nie" : "Tak";
+    };
+
   return (
     <div>
       <div>
@@ -57,11 +103,11 @@ const DetailTab = ({ cardetails }) => {
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Skrzynia Biegów</p>{" "}
-          <p className="font-medium text-black ">{cardetails.transmission}</p>
+          <p className="font-medium text-black ">{translateTransmission(cardetails.transmission)}</p>
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Paliwo</p>{" "}
-          <p className="font-medium text-black ">{cardetails.fuel}</p>
+          <p className="font-medium text-black ">{translateFuel(cardetails.fuel)}</p>
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Kolor</p>{" "}
@@ -85,7 +131,7 @@ const DetailTab = ({ cardetails }) => {
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Bezwypadkowość</p>{" "}
-          <p className="font-medium text-black ">{translateYesNo(cardetails.accidentHistory)}</p>
+          <p className="font-medium text-black ">{translateAccidentFree(cardetails.accidentHistory)}</p>
         </div>
       </div>
     </div>
