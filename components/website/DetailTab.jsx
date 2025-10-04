@@ -46,6 +46,20 @@ const DetailTab = ({ cardetails }) => {
       return map[key] || val;
     };
 
+    const translateCondition = (val) => {
+      if (!val) return "";
+      const key = String(val).trim().toLowerCase();
+      const map = {
+        used: "Używany",
+        new: "Nowy",
+        "like new": "Jak nowy",
+        excellent: "Doskonały",
+        good: "Dobry",
+        fair: "Umiarkowany"
+      };
+      return map[key] || val;
+    };
+
     const toBoolean = (val) => {
       if (typeof val === "boolean") return val;
       if (val === null || val === undefined) return null;
@@ -123,7 +137,7 @@ const DetailTab = ({ cardetails }) => {
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Stan</p>{" "}
-          <p className="font-medium text-black ">{cardetails.condition}</p>
+          <p className="font-medium text-black ">{translateCondition(cardetails.condition)}</p>
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Historia Serwisowa</p>{" "}
