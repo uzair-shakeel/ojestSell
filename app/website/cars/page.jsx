@@ -3,6 +3,7 @@ import { useState, useEffect, Suspense } from "react";
 import FilterSidebar from "../../../components/website/FilterSidebar";
 import FilterNavbar from "../../../components/website/FilterNavbar";
 import CarCard from "../../../components/website/CarCard";
+import HeroFeaturedCarousel from "../../../components/website/HeroFeaturedCarousel";
 import Image from "next/image";
 import { getAllCars, searchCars } from "../../../services/carService";
 import { useSearchParams } from "next/navigation";
@@ -265,22 +266,7 @@ const CarsContent = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      {/* <section className="relative max-w-screen-2xl mx-auto h-[300px] md:h-[400px] w-[98%] my-[10px] rounded-2xl overflow-hidden">
-        <div className="absolute inset-0">
-          <Image
-            src="/images/result.jpg"
-            alt="Car sales hero image"
-            fill
-            className="object-cover brightness-75"
-            priority
-          />
-        </div>
-        <div className="relative z-10 container h-full flex flex-col justify-center items-end py-[90px] md:py-[120px] text-center text-white">
-          <h1 className="z-10 text-white sm:text-4xl md:text-5xl text-3xl font-bold max-w-3xl xl:text-start text-center">
-            Find your dream car easily with advanced search filters.sss
-          </h1>
-        </div>
-      </section> */}
+      <HeroFeaturedCarousel />
 
       {/* Horizontal Filter Navbar */}
       <div className="w-full">

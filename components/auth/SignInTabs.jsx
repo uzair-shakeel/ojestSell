@@ -145,7 +145,7 @@ export default function SignInTabs() {
           </div>
 
           {/* Tab Navigation */}
-          <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
+          {/* <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
             <button
               onClick={() => handleTabChange("email")}
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
@@ -166,7 +166,7 @@ export default function SignInTabs() {
             >
               Phone Number
             </button>
-          </div>
+          </div> */}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
@@ -222,7 +222,7 @@ export default function SignInTabs() {
             </button>
           </form>
 
-          <div className="mt-8">
+          {/* <div className="mt-8">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300" />
@@ -237,7 +237,7 @@ export default function SignInTabs() {
             <div className="mt-6">
               <GoogleSignIn onSuccess={handleGoogleSuccess} />
             </div>
-          </div>
+          </div> */}
 
           <div className="mt-8 text-center">
             <p className="text-gray-600">

@@ -339,7 +339,7 @@ export default function AuthTabs() {
           </div>
 
           {/* Tab Navigation */}
-          <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
+          {/* <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
             <button
               onClick={() => handleTabChange("email")}
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
@@ -360,7 +360,7 @@ export default function AuthTabs() {
             >
               Phone Number
             </button>
-          </div>
+          </div> */}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
@@ -476,7 +476,7 @@ export default function AuthTabs() {
             </button>
           </form>
 
-          <div className="mt-8">
+          {/* <div className="mt-8">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300" />
@@ -491,7 +491,7 @@ export default function AuthTabs() {
             <div className="mt-6">
               <GoogleSignIn onSuccess={handleGoogleSuccess} />
             </div>
-          </div>
+          </div> */}
 
           <div className="mt-8 text-center">
             <p className="text-gray-600">

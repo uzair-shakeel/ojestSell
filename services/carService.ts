@@ -372,7 +372,7 @@ export const getRecommendedCars = async (carId: string): Promise<CarData[]> => {
 // Get featured cars
 export const getFeaturedCars = async (): Promise<CarData[]> => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/api/cars/featured`);
+    const response = await axios.get(`${API_BASE_URL}/cars/featured`);
     return response.data;
   } catch (error: any) {
     throw new Error(
