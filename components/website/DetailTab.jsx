@@ -9,6 +9,15 @@ const DetailTab = ({ cardetails }) => {
     const shouldTruncate = words.length > 30;
     const previewText = shouldTruncate ? words.slice(0, 30).join(" ") + "..." : fullText;
 
+    const translateYesNo = (val) => {
+      if (typeof val === "boolean") return val ? "Tak" : "Nie";
+      if (!val) return "";
+      const s = String(val).trim().toLowerCase();
+      if (s === "yes" || s === "true") return "Tak";
+      if (s === "no" || s === "false") return "Nie";
+      return val;
+    };
+
   return (
     <div>
       <div>
@@ -32,10 +41,7 @@ const DetailTab = ({ cardetails }) => {
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Model</p>
-          <p className="font-medium text-black ">
-            {" "}
-            {cardetails.model}
-          </p>
+          <p className="font-medium text-black ">{cardetails.model}</p>
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Rok</p>{" "}
@@ -75,15 +81,14 @@ const DetailTab = ({ cardetails }) => {
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Historia Serwisowa</p>{" "}
-          <p className="font-medium text-black ">{cardetails.serviceHistory}</p>
+          <p className="font-medium text-black ">{translateYesNo(cardetails.serviceHistory)}</p>
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Bezwypadkowość</p>{" "}
-          <p className="font-medium text-black ">{cardetails.accidentHistory}</p>
+          <p className="font-medium text-black ">{translateYesNo(cardetails.accidentHistory)}</p>
         </div>
       </div>
     </div>
   );
 };
-
 export default DetailTab;
