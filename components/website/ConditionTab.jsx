@@ -1,6 +1,16 @@
 import React from "react";
 
 const ConditionTab = ({ carCondition }) => {
+  const translateCondition = (value) => {
+    if (!value || typeof value !== "string") return value || "";
+    const key = value.trim().toLowerCase();
+    const map = {
+      "very good": "Bardzo dobry",
+      good: "Dobry",
+      new: "Nowy",
+    };
+    return map[key] || value;
+  };
   return (
     <div>
       {/* Condition Sections */}
@@ -8,31 +18,31 @@ const ConditionTab = ({ carCondition }) => {
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full ">
           <p className="text-xs uppercase">Lakier i karoseria</p>{" "}
           <p className=" text-base font-meduim text-black ">
-            {carCondition?.paintandBody}
+            {translateCondition(carCondition?.paintandBody)}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Wnętrze</p>{" "}
           <p className=" font-meduim text-black ">
-            {carCondition?.interior}
+            {translateCondition(carCondition?.interior)}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Podwozie I rama </p>{" "}
           <p className=" font-meduim text-black ">
-            {carCondition?.frameandUnderbody}
+            {translateCondition(carCondition?.frameandUnderbody)}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Mechaniczny</p>{" "}
           <p className=" font-meduim text-black ">
-            {carCondition?.mechanical}
+            {translateCondition(carCondition?.mechanical)}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Ogólny</p>{" "}
           <p className=" font-meduim text-black ">
-          {carCondition?.overall}
+          {translateCondition(carCondition?.overall)}
 
           </p>
         </div>
