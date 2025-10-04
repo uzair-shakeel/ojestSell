@@ -201,7 +201,12 @@ const Page = () => {
 
   const startChat = async () => {
     if (!user) {
-      alert("Please log in to start a chat.");
+      // Redirect unauthenticated users to sign-in
+      try {
+        router.push("/sign-in");
+      } catch (e) {
+        alert("Please log in to start a chat.");
+      }
       return;
     }
     if (!seller) {
@@ -225,15 +230,29 @@ const Page = () => {
         }
       );
 
-      // if (!response?.ok) {
-      //   throw new Error("Failed to create chat");
-      // }
+      if (!response?.ok) {
+        // If chat already exists or backend returns non-OK, still navigate to messages
+        console.warn("Chat create returned non-OK status", response.status);
+      }
 
       const chat = await response?.json();
       router.push(`/dashboard/messages`);
     } catch (err) {
       console.error("Error creating chat:", err);
       alert("Failed to start chat. Please try again.");
+    }
+  };
+
+  const callSeller = () => {
+    const raw = seller?.phoneNumbers?.[0];
+    if (!raw) return;
+    // Sanitize common separators to make sure tel: works across devices
+    const sanitized = String(raw).replace(/[^+\d]/g, "");
+    try {
+      window.location.href = `tel:${sanitized}`;
+    } catch (e) {
+      // Fallback
+      window.open(`tel:${sanitized}`, "_self");
     }
   };
 
@@ -649,10 +668,7 @@ const Page = () => {
                 <button
                   className="w-full border py-3 rounded-md font-semibold bg-blue-500 flex items-center justify-center space-x-2"
                   disabled={!seller?.phoneNumbers?.[0]}
-                  onClick={() =>
-                    seller?.phoneNumbers?.[0] &&
-                    window.open(`tel:${seller?.phoneNumbers?.[0]}`)
-                  }
+                  onClick={callSeller}
                 >
                   <img src="/website/call.svg" alt="Call" className="w-5 h-5" />
                   <span className="text-white">
