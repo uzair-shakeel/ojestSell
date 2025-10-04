@@ -40,9 +40,11 @@ export default function StepTwo({
   const [makes, setMakes] = useState<string[]>([]); // State for car makes
   const [models, setModels] = useState<string[]>([]); // State for car models
   const [carData, setCarData] = useState<any>(null); // Store the full car data
+  const currentYear = new Date().getFullYear();
+  const startYear = 1900;
   const years = Array.from(
-    new Array(50),
-    (_, i) => new Date().getFullYear() - i
+    { length: currentYear - startYear + 1 },
+    (_, i) => currentYear - i
   );
   const engines = ["0.5", "1.0", "1.5", "2.0", "3.0", "4.0", "5.0", "7.3"];
 

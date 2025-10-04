@@ -587,10 +587,11 @@ const Page = () => {
                 <div className="flex flex-col items-start">
                   <h3 className="text-base font-medium mb-2">Cena</h3>
                   <p className="text-4xl font-bold text-gray-900 mb-2">
-                    {car?.financialInfo?.priceNetto
-                      ? `${car?.financialInfo?.priceNetto} zł `
-                      : "N/A"}{" "}
-                    <span className="text-xl text-gray-600">(NETTO)</span>
+                  {car?.financialInfo?.priceNetto
+  ? `${Number(car.financialInfo.priceNetto).toLocaleString("pl-PL")} zł`
+  : "N/A"}
+
+                    {/* <span className="text-xl text-gray-600">(NETTO)</span> */}
                   </p>
                   <p className="text-xl text-medium text-gray-600 underline">
                     {car?.financialInfo?.priceWithVat
