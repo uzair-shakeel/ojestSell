@@ -625,7 +625,8 @@ const Page = () => {
                       alt="Map Icon"
                       className="w-5 h-5"
                     />
-                    <p className="text-base text-gray-500">{locationDisplay}</p>
+                    {/* <p className="text-base text-gray-500">{locationDisplay || "Nowy Targ"}</p> */}
+                    <p className="text-base text-gray-500">Nowy Targ</p>
                   </div>
                 </div>
               </div>
