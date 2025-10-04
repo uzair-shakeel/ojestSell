@@ -903,7 +903,7 @@ export default function FilterNavbar({ onApplyFilters }) {
               {/* Show Less Button */}
               <button
                 onClick={() => setShowMoreFilters(false)}
-                className="flex items-center gap-1 lg:gap-2 px-2 py-1.5 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-blue-500 rounded-md lg:rounded-lg focus:outline-none whitespace-nowrap shadow-sm flex-1 justify-center text-white bg-blue-500"
+                className="flex items-center gap-1 lg:gap-2 px-3 py-3 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-blue-500 rounded-md lg:rounded-lg focus:outline-none whitespace-nowrap shadow-sm flex-1 justify-center text-white bg-blue-500"
               >
                 <span className="flex items-center gap-1">
                   Pokaż mniej
