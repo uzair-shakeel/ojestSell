@@ -411,7 +411,7 @@ const Page = () => {
                     <img
                       src={img}
                       alt={`${car?.make} ${car?.model} - Image ${index + 1}`}
-                      className="max-w-full max-h-[200px] object-contain"
+                      className="max-w-full max-h-[90vh] object-contain"
                     />
                   </div>
                 </SwiperSlide>
