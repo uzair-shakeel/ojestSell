@@ -4,22 +4,25 @@ import { useState } from "react";
 
 const DetailTab = ({ cardetails }) => {
     const [showMore, setShowMore] = useState(false);
+    const fullText = cardetails?.description || "";
+    const words = fullText.trim() ? fullText.trim().split(/\s+/) : [];
+    const shouldTruncate = words.length > 30;
+    const previewText = shouldTruncate ? words.slice(0, 30).join(" ") + "..." : fullText;
 
   return (
     <div>
       <div>
-        <p className="font-medium text-black uppercase">{cardetails.description}</p>
-        <p className="text-gray-700"> 
-          {showMore
-            ? cardetails.description +
-              " The car has been kept in pristine condition with no modifications or restorations."
-            : cardetails.description.slice(0, 150)}
-          <button
-            className="text-blue-500 ml-2 underline"
-            onClick={() => setShowMore(!showMore)}
-          >
-            {showMore ? "Show Less" : "Show More"}
-          </button>
+        <p className="font-medium text-black uppercase">Description</p>
+        <p className="text-gray-700">
+          {showMore ? fullText : previewText}
+          {shouldTruncate && (
+            <button
+              className="text-blue-500 ml-2 underline"
+              onClick={() => setShowMore(!showMore)}
+            >
+              {showMore ? "Show Less" : "Show More"}
+            </button>
+          )}
         </p>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-2 gap-x-20 gap-y-5 mt-6 text-gray-700">
