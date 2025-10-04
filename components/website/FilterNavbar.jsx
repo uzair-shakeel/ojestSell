@@ -147,7 +147,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 name="make"
                 value={filters.make}
                 onChange={handleInputChange}
-                className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                className="px-2 py-1.5 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
               >
               <option value="">Marka</option>
               <option value="BMW">BMW</option>
@@ -179,7 +179,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 name="model"
                 value={filters.model}
                 onChange={handleInputChange}
-                className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                className="px-2 py-1.5 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
               >
               <option value="">Model</option>
               <option value="Sedan">Sedan</option>
@@ -204,7 +204,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 name="type"
                 value={filters.type}
                 onChange={handleInputChange}
-                className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                className="px-2 py-1.5 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
               >
               <option value="">Typ</option>
               <option value="New">New</option>
@@ -222,7 +222,7 @@ export default function FilterNavbar({ onApplyFilters }) {
             <div className="relative flex-1" ref={yearDropdownRef}>
               <button
                 onClick={() => setShowYearDropdown(!showYearDropdown)}
-                className={`w-full px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none transition-all duration-200 shadow-sm hover:shadow-md text-left ${
+                className={`w-full px-2 py-1.5 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none transition-all duration-200 shadow-sm hover:shadow-md text-left ${
                   showYearDropdown || filters.yearFrom || filters.yearTo
                     ? 'text-black bg-white border-blue-300' 
                     : 'text-gray-700 bg-white hover:bg-gray-50'
@@ -241,7 +241,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-4 w-64">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">From</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">From</label>
                       <select
                         name="yearFrom"
                         value={filters.yearFrom}
@@ -278,7 +278,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">To</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">To</label>
                       <select
                         name="yearTo"
                         value={filters.yearTo}
@@ -327,7 +327,7 @@ export default function FilterNavbar({ onApplyFilters }) {
             {/* Reset Button - Desktop only */}
             <button
               onClick={handleReset}
-              className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 rounded-md lg:rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex-1 justify-center"
+              className="px-2 py-1.5 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 rounded-md lg:rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex-1 justify-center"
             >
               Resetuj
             </button>
@@ -335,7 +335,7 @@ export default function FilterNavbar({ onApplyFilters }) {
             {/* Show More Button - Desktop only */}
             <button
               onClick={() => setShowMoreFilters(true)}
-              className="flex items-center gap-1 lg:gap-2 px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-blue-500 rounded-md lg:rounded-lg focus:outline-none whitespace-nowrap shadow-sm flex-1 justify-center text-white bg-blue-500"
+              className="flex items-center gap-1 lg:gap-2 px-2 py-1.5 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-blue-500 rounded-md lg:rounded-lg focus:outline-none whitespace-nowrap shadow-sm flex-1 justify-center text-white bg-blue-500"
             >
               <span className="flex items-center gap-1">
               Pokaż Więcej 
@@ -357,7 +357,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 name="make"
                 value={filters.make}
                 onChange={handleInputChange}
-                className="px-2 py-1.5 pr-6 text-xs font-medium border border-gray-200 rounded-md focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                className="px-3 py-3 pr-6 text-sm font-medium border border-gray-200 rounded-md focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
               >
               <option value="">Marka</option>
               <option value="BMW">BMW</option>
@@ -389,7 +389,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 name="model"
                 value={filters.model}
                 onChange={handleInputChange}
-                className="px-2 py-1.5 pr-6 text-xs font-medium border border-gray-200 rounded-md focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                className="px-3 py-3 pr-6 text-sm font-medium border border-gray-200 rounded-md focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
               >
               <option value="">Model</option>
               <option value="Sedan">Sedan</option>
@@ -417,7 +417,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 name="type"
                 value={filters.type}
                 onChange={handleInputChange}
-                className="px-2 py-1.5 pr-6 text-xs font-medium border border-gray-200 rounded-md focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                className="px-3 py-3 pr-6 text-sm font-medium border border-gray-200 rounded-md focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
               >
               <option value="">Typ</option>
               <option value="New">New</option>
@@ -435,7 +435,7 @@ export default function FilterNavbar({ onApplyFilters }) {
             <div className="relative flex-1" ref={yearDropdownRef}>
               <button
                 onClick={() => setShowYearDropdown(!showYearDropdown)}
-                className={`w-full px-2 py-1.5 pr-6 text-xs font-medium border border-gray-200 rounded-md focus:outline-none transition-all duration-200 shadow-sm hover:shadow-md text-left ${
+                className={`w-full px-3 py-3 pr-6 text-sm font-medium border border-gray-200 rounded-md focus:outline-none transition-all duration-200 shadow-sm hover:shadow-md text-left ${
                   showYearDropdown || filters.yearFrom || filters.yearTo
                     ? 'text-black bg-white border-blue-300' 
                     : 'text-gray-700 bg-white hover:bg-gray-50'
@@ -454,12 +454,12 @@ export default function FilterNavbar({ onApplyFilters }) {
                 <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-4 w-64">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">From</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">From</label>
                       <select
                         name="yearFrom"
                         value={filters.yearFrom}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
+                        className="w-full px-3 py-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
                       >
                         <option value="">Rok od</option>
                         <option value="2025">2025</option>
@@ -491,12 +491,12 @@ export default function FilterNavbar({ onApplyFilters }) {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">To</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">To</label>
                       <select
                         name="yearTo"
                         value={filters.yearTo}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
+                        className="w-full px-3 py-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
                       >
                         <option value="">roku Do </option>
                         <option value="2025">2025</option>
@@ -539,7 +539,7 @@ export default function FilterNavbar({ onApplyFilters }) {
               {/* Reset Button - Mobile only */}
               <button
                 onClick={handleReset}
-                className="px-2 py-1.5 pr-6 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 rounded-md transition-all duration-200 shadow-sm hover:shadow-md flex-1 justify-center"
+                className="px-3 py-3 pr-6 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 rounded-md transition-all duration-200 shadow-sm hover:shadow-md flex-1 justify-center"
               >
                 Resetuj
               </button>
@@ -547,7 +547,7 @@ export default function FilterNavbar({ onApplyFilters }) {
               {/* Show More Button - Mobile only */}
               <button
                 onClick={() => setShowMoreFilters(true)}
-                className="flex items-center gap-1 px-2 py-1.5 pr-6 text-xs font-medium border border-blue-500 rounded-md focus:outline-none whitespace-nowrap shadow-sm flex-1 justify-center text-white bg-blue-500"
+                className="flex items-center gap-1 px-3 py-3 pr-6 text-sm font-medium border border-blue-500 rounded-md focus:outline-none whitespace-nowrap shadow-sm flex-1 justify-center text-white bg-blue-500"
               >
                 <span className="flex items-center gap-1">
                   Pokaż Więcej
@@ -577,7 +577,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                       value={filters.location}
                       onChange={handleInputChange}
                       placeholder="Lokalizacja"
-                      className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 w-full"
+                      className="px-3 py-3 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 w-full"
                     />
                   </div>
 
@@ -587,7 +587,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                       name="maxDistance"
                       value={filters.maxDistance}
                       onChange={handleInputChange}
-                      className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                      className="px-3 py-3 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                     >
                     <option value="">Dystans</option>
                     <option value="10">Within 10 miles</option>
@@ -612,7 +612,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                       name="condition"
                       value={filters.condition}
                       onChange={handleInputChange}
-                      className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                      className="px-3 py-3 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                     >
                     <option value="">Stan</option>
                     <option value="Excellent">Excellent</option>
@@ -632,7 +632,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                   <div className="relative flex-1 mx-0.5 my-0.5" ref={mileageDropdownRef}>
                     <button
                       onClick={() => setShowMileageDropdown(!showMileageDropdown)}
-                      className={`w-full px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none transition-all duration-200 shadow-sm hover:shadow-md text-left ${
+                      className={`w-full px-3 py-3 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none transition-all duration-200 shadow-sm hover:shadow-md text-left ${
                         showMileageDropdown || filters.minMileage || filters.maxMileage
                           ? 'text-black bg-white border-blue-300' 
                           : 'text-gray-700 bg-white hover:bg-gray-50'
@@ -651,25 +651,25 @@ export default function FilterNavbar({ onApplyFilters }) {
                       <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-4 w-64">
                         <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">From</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">From</label>
                             <input
                               type="number"
                               name="minMileage"
                               value={filters.minMileage}
                               onChange={handleInputChange}
                               placeholder="Min Mileage"
-                              className="w-full px-2 py-1.5 lg:px-3 lg:py-2 text-xs lg:text-sm border border-gray-200 rounded-md lg:rounded-lg focus:outline-none focus:border-blue-500"
+                              className="w-full px-3 py-3 lg:px-3 lg:py-2 text-sm lg:text-sm border border-gray-200 rounded-md lg:rounded-lg focus:outline-none focus:border-blue-500"
                             />
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">To</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">To</label>
                             <input
                               type="number"
                               name="maxMileage"
                               value={filters.maxMileage}
                               onChange={handleInputChange}
                               placeholder="Max Mileage"
-                              className="w-full px-2 py-1.5 lg:px-3 lg:py-2 text-xs lg:text-sm border border-gray-200 rounded-md lg:rounded-lg focus:outline-none focus:border-blue-500"
+                              className="w-full px-3 py-3 lg:px-3 lg:py-2 text-sm lg:text-sm border border-gray-200 rounded-md lg:rounded-lg focus:outline-none focus:border-blue-500"
                             />
                           </div>
                         </div>
@@ -692,7 +692,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                       name="fuel"
                       value={filters.fuel}
                       onChange={handleInputChange}
-                      className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                      className="px-3 py-3 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                     >
                     <option value="">Paliwo Typ</option>
                     <option value="Gasoline">Gasoline</option>
@@ -716,7 +716,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                       name="engine"
                       value={filters.engine}
                       onChange={handleInputChange}
-                      className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                      className="px-3 py-3 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                     >
                     <option value="">Silnik</option>
                     <option value="1.0L">1.0L</option>
@@ -751,7 +751,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                       name="transmission"
                       value={filters.transmission}
                       onChange={handleInputChange}
-                      className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                      className="px-3 py-3 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                     >
                     <option value="">Skrzynia Biegów</option>
                     <option value="Automatic">Automatic</option>
@@ -772,7 +772,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                       name="drivetrain"
                       value={filters.drivetrain}
                       onChange={handleInputChange}
-                      className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                      className="px-3 py-3 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                     >
                     <option value="">Przewodnik</option>
                     <option value="FWD">FWD</option>
@@ -802,7 +802,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                       name="serviceHistory"
                       value={filters.serviceHistory}
                       onChange={handleInputChange}
-                      className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                      className="px-3 py-3 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                     >
                     <option value="">Historia Serwisowa</option>
                     <option value="Yes">Tak</option>
@@ -821,7 +821,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                       name="accidentHistory"
                       value={filters.accidentHistory}
                       onChange={handleInputChange}
-                      className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                      className="px-3 py-3 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                     >
                     <option value="">Bezwypadkowość</option>
                     <option value="Yes">Yes</option>
@@ -841,7 +841,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                   <div className="relative flex-1 mx-0.5 my-0.5" ref={priceDropdownRef}>
                     <button
                       onClick={() => setShowPriceDropdown(!showPriceDropdown)}
-                      className={`w-full px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none transition-all duration-200 shadow-sm hover:shadow-md text-left ${
+                      className={`w-full px-3 py-3 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none transition-all duration-200 shadow-sm hover:shadow-md text-left ${
                         showPriceDropdown || filters.priceFrom || filters.priceTo
                           ? 'text-black bg-white border-blue-300' 
                           : 'text-gray-700 bg-white hover:bg-gray-50'
@@ -860,25 +860,25 @@ export default function FilterNavbar({ onApplyFilters }) {
                       <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-4 w-64">
                         <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">From</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">From</label>
                             <input
                               type="number"
                               name="priceFrom"
                               value={filters.priceFrom}
                               onChange={handleInputChange}
                               placeholder="Min Price"
-                              className="w-full px-2 py-1.5 lg:px-3 lg:py-2 text-xs lg:text-sm border border-gray-200 rounded-md lg:rounded-lg focus:outline-none focus:border-blue-500"
+                              className="w-full px-3 py-3 lg:px-3 lg:py-2 text-sm lg:text-sm border border-gray-200 rounded-md lg:rounded-lg focus:outline-none focus:border-blue-500"
                             />
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">To</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">To</label>
                             <input
                               type="number"
                               name="priceTo"
                               value={filters.priceTo}
                               onChange={handleInputChange}
                               placeholder="Max Price"
-                              className="w-full px-2 py-1.5 lg:px-3 lg:py-2 text-xs lg:text-sm border border-gray-200 rounded-md lg:rounded-lg focus:outline-none focus:border-blue-500"
+                              className="w-full px-3 py-3 lg:px-3 lg:py-2 text-sm lg:text-sm border border-gray-200 rounded-md lg:rounded-lg focus:outline-none focus:border-blue-500"
                             />
                           </div>
                         </div>
@@ -895,7 +895,7 @@ export default function FilterNavbar({ onApplyFilters }) {
               {/* Reset Button */}
               <button
                 onClick={handleReset}
-                className="px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 rounded-md lg:rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex-1 justify-center"
+                className="px-3 py-3 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 rounded-md lg:rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex-1 justify-center"
               >
                 Resetuj
               </button>
@@ -903,7 +903,7 @@ export default function FilterNavbar({ onApplyFilters }) {
               {/* Show Less Button */}
               <button
                 onClick={() => setShowMoreFilters(false)}
-                className="flex items-center gap-1 lg:gap-2 px-2 py-1.5 pr-6 text-xs lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-blue-500 rounded-md lg:rounded-lg focus:outline-none whitespace-nowrap shadow-sm flex-1 justify-center text-white bg-blue-500"
+                className="flex items-center gap-1 lg:gap-2 px-2 py-1.5 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-blue-500 rounded-md lg:rounded-lg focus:outline-none whitespace-nowrap shadow-sm flex-1 justify-center text-white bg-blue-500"
               >
                 <span className="flex items-center gap-1">
                   Pokaż mniej
