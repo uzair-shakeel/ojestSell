@@ -9,12 +9,23 @@ export default function Providers({ children }) {
     <LanguageProvider>
       <AuthProvider>
         {children}
-        <Toaster position="top-right" />
+
+        <Toaster
+          position="top-right"
+          containerClassName="pointer-events-none fixed inset-0 z-0"
+          toastOptions={{
+            className: "pointer-events-auto",
+          }}
+        />
+
+        {/* Fallback if you’re not using Tailwind */}
         <style jsx global>{`
           #_rht_toaster {
-            z-index: 0 !important;
-            opacity: 0 !important;
             pointer-events: none !important;
+            z-index: 0 !important;
+          }
+          #_rht_toaster > * {
+            pointer-events: auto !important;
           }
         `}</style>
       </AuthProvider>
