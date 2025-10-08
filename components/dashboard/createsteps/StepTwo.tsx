@@ -15,6 +15,7 @@ export default function StepTwo({
   prevStep,
   updateFormData,
   formData,
+  makesModelsData,
 }) {
   const { getToken } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -37,9 +38,7 @@ export default function StepTwo({
     country: formData.country || "",
   });
 
-  const [makes, setMakes] = useState<string[]>([]); // State for car makes
   const [models, setModels] = useState<string[]>([]); // State for car models
-  const [carData, setCarData] = useState<any>(null); // Store the full car data
   const currentYear = new Date().getFullYear();
   const startYear = 1900;
   const years = Array.from(
@@ -48,24 +47,13 @@ export default function StepTwo({
   );
   const engines = ["0.5", "1.0", "1.5", "2.0", "3.0", "4.0", "5.0", "7.3"];
 
-  // Fetch car makes and models from the JSON file
-  useEffect(() => {
-    fetch("/data/carMakesModels.json")
-      .then((response) => response.json())
-      .then((data) => {
-        setCarData(data); // Store the full car data
-        const makes = Object.keys(data.makesAndModels); // Extract all car makes
-        setMakes(makes); // Set the makes state
-      })
-      .catch((error) => {
-        console.error("Error fetching car data:", error);
-      });
-  }, []);
+  // Get makes from the hook data
+  const makes = makesModelsData?.getMakes() || [];
 
   // Update models when a make is selected
   useEffect(() => {
-    if (localData.make && carData) {
-      let modelsList = carData.makesAndModels[localData.make] || [];
+    if (localData.make && makesModelsData) {
+      let modelsList = makesModelsData.getModelsForMake(localData.make) || [];
 
       // If we have a model from VIN lookup that's not in the list, add it
       if (localData.model && !modelsList.includes(localData.model)) {
@@ -76,7 +64,7 @@ export default function StepTwo({
     } else {
       setModels([]); // Reset models if no make is selected
     }
-  }, [localData.make, localData.model, carData]);
+  }, [localData.make, localData.model, makesModelsData]);
 
   const handleNext = () => {
     if (!localData.make) {
@@ -525,6 +513,7 @@ export default function StepTwo({
             onChange={(e) =>
               setLocalData({ ...localData, make: e.target.value, model: "" })
             }
+            disabled={makesModelsData?.loading}
           >
             <option value="">Select Make</option>
             {makes.map((make, index) => (
@@ -544,7 +533,7 @@ export default function StepTwo({
             onChange={(e) =>
               setLocalData({ ...localData, model: e.target.value })
             }
-            disabled={!localData.make}
+            disabled={makesModelsData?.loading || !localData.make}
           >
             <option value="">Select Model</option>
             {models.map((model, index) => (

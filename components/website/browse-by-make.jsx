@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRef, useEffect, useState } from "react";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
+import { useMakesModels } from "../../hooks/useMakesModels";
 
 const MAKES = [
   {
@@ -74,10 +75,32 @@ const MAKES = [
 
 export function BrowseByMake() {
   const { t } = useLanguage();
+  const { getMakes, loading } = useMakesModels();
   const sectionRef = useRef(null);
   const containerRef = useRef(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isPinned, setIsPinned] = useState(false);
+
+  // Get popular makes from the JSON data and merge with existing display data
+  const getPopularMakes = () => {
+    if (loading) return MAKES;
+    
+    const allMakes = getMakes();
+    const popularMakeNames = ['Toyota', 'BMW', 'Mercedes-Benz', 'Audi', 'Porsche', 'Tesla', 'Ford', 'Honda'];
+    
+    return MAKES.map((makeData, index) => {
+      const makeName = popularMakeNames[index];
+      if (allMakes.includes(makeName)) {
+        return {
+          ...makeData,
+          actualMake: makeName
+        };
+      }
+      return makeData;
+    });
+  };
+
+  const displayMakes = getPopularMakes();
 
   useEffect(() => {
     // Skip effect during SSR
@@ -97,7 +120,7 @@ export function BrowseByMake() {
     const setScrollHeight = () => {
       if (!section) return;
       // Add an extra viewport height to ensure we can trigger the first make
-      section.style.height = `${window.innerHeight * (MAKES.length + 0.5)}px`;
+      section.style.height = `${window.innerHeight * (displayMakes.length + 0.5)}px`;
     };
 
     let currentIndex = 0;
@@ -131,7 +154,7 @@ export function BrowseByMake() {
         const scrolledIntoSection = viewportHeight - sectionTop;
         const makeIndex = Math.min(
           Math.max(0, Math.floor(scrolledIntoSection / viewportHeight)),
-          MAKES.length - 1
+          displayMakes.length - 1
         );
 
         if (makeIndex !== currentIndex) {
@@ -139,12 +162,12 @@ export function BrowseByMake() {
           currentIndex = makeIndex;
 
           // Update progress for progress bar
-          const progress = currentIndex / (MAKES.length - 1);
+          const progress = currentIndex / (displayMakes.length - 1);
           setScrollProgress(progress);
 
           // Apply horizontal scroll to show the current make
           const scrollDistance = calculateScrollDistance();
-          const targetX = (scrollDistance / (MAKES.length - 1)) * currentIndex;
+          const targetX = (scrollDistance / (displayMakes.length - 1)) * currentIndex;
 
           container.style.transform = `translateX(-${targetX}px)`;
 
@@ -169,7 +192,7 @@ export function BrowseByMake() {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", setScrollHeight);
     };
-  }, []);
+  }, [displayMakes.length]);
 
   return (
     <section ref={sectionRef} className="relative">
@@ -200,7 +223,7 @@ export function BrowseByMake() {
             transform: "translateX(0)",
           }}
         >
-          {MAKES.map((make) => (
+          {displayMakes.map((make) => (
             <div
               key={make.id}
               className="relative w-screen h-screen flex-none overflow-hidden"
@@ -235,7 +258,7 @@ export function BrowseByMake() {
                     {t(`homepage.browseByMake.makes.${make.descriptionKey}`)}
                   </p>
                   <Link
-                    href={`/website/cars?make=${t(
+                    href={`/website/cars?make=${make.actualMake || t(
                       `homepage.browseByMake.makes.${make.nameKey}`
                     )}`}
                     className="inline-block bg-white text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors"

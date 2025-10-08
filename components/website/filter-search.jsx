@@ -4,27 +4,9 @@ import { useState } from "react";
 import { cn } from "../../lib/utils";
 import { RotateCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useMakesModels } from "../../hooks/useMakesModels";
 
-// Car makes and models data (using existing data from search-bar.tsx)
-const CAR_MAKES = [
-  {
-    name: "Toyota",
-    models: ["Camry", "Corolla", "RAV4", "Highlander", "Prius"],
-  },
-  { name: "BMW", models: ["3 Series", "5 Series", "X3", "X5", "M3", "M5"] },
-  { name: "Mercedes", models: ["C-Class", "E-Class", "S-Class", "GLC", "GLE"] },
-  { name: "Honda", models: ["Civic", "Accord", "CR-V", "Pilot", "HR-V"] },
-  { name: "Ford", models: ["F-150", "Mustang", "Explorer", "Escape", "Edge"] },
-  { name: "Audi", models: ["A3", "A4", "A6", "Q3", "Q5", "Q7"] },
-  { name: "Tesla", models: ["Model 3", "Model S", "Model X", "Model Y"] },
-  { name: "Lexus", models: ["RX", "NX", "ES", "IS", "GX"] },
-  { name: "Chevrolet", models: ["Silverado", "Equinox", "Malibu", "Tahoe"] },
-  { name: "Porsche", models: ["911", "Cayenne", "Macan", "Panamera"] },
-  {
-    name: "Nissan",
-    models: ["Altima", "Rogue", "Sentra", "Kicks", "Pathfinder"],
-  },
-];
+// Car makes and models are now loaded from the JSON file via useMakesModels hook
 
 // Car types
 const CAR_TYPES = [
@@ -47,6 +29,7 @@ const YEARS = Array.from({ length: 30 }, (_, i) =>
 
 export function FilterSearch() {
   const router = useRouter();
+  const { getMakes, getModelsForMake, loading } = useMakesModels();
   const [make, setMake] = useState("");
   const [model, setModel] = useState("");
   const [type, setType] = useState("");
@@ -54,8 +37,7 @@ export function FilterSearch() {
   const [endYear, setEndYear] = useState("");
 
   // Get models for selected make
-  const availableModels =
-    CAR_MAKES.find((carMake) => carMake.name === make)?.models || [];
+  const availableModels = make ? getModelsForMake(make) : [];
 
   const handleSearch = () => {
     console.log("Searching with params:", {
@@ -94,13 +76,14 @@ export function FilterSearch() {
                   setModel(""); // Reset model when make changes
                 }}
                 className="w-full h-12 px-3 border  rounded-md bg-white/70 text-black font-medium "
+                disabled={loading}
               >
                 <option value="" disabled>
                 Marka
                 </option>
-                {CAR_MAKES.map((carMake) => (
-                  <option key={carMake.name} value={carMake.name}>
-                    {carMake.name}
+                {getMakes().map((makeName) => (
+                  <option key={makeName} value={makeName}>
+                    {makeName}
                   </option>
                 ))}
               </select>
@@ -112,7 +95,7 @@ export function FilterSearch() {
                   setModel(e.target.value);
                 }}
                 className="w-full h-12 px-3 border rounded-md bg-white/70 text-black font-medium "
-                disabled={!make || type !== ""}
+                disabled={loading || !make || type !== ""}
               >
                 <option value="" disabled>
                   Model
@@ -213,13 +196,14 @@ export function FilterSearch() {
                   }}
                   className="w-full h-full px-4 font-semibold border-0 bg-white/70 text-black  focus:ring-0 focus:outline-none appearance-none"
                   style={{ height: "100%" }} // Inline style for Safari
+                  disabled={loading}
                 >
                   <option value="" disabled>
                     Marka
                   </option>
-                  {CAR_MAKES.map((carMake) => (
-                    <option key={carMake.name} value={carMake.name}>
-                      {carMake.name}
+                  {getMakes().map((makeName) => (
+                    <option key={makeName} value={makeName}>
+                      {makeName}
                     </option>
                   ))}
                 </select>
@@ -236,7 +220,7 @@ export function FilterSearch() {
                       ? "text-gray-600 font-light"
                       : "text-black"
                   }`}
-                  disabled={!make || type !== ""}
+                  disabled={loading || !make || type !== ""}
                   style={{ height: "100%" }} // Inline style for Safari
                 >
                   <option value="" disabled>

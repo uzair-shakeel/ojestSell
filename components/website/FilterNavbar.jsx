@@ -1,8 +1,10 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { useMakesModels } from "../../hooks/useMakesModels";
 import { createPortal } from "react-dom";
 
 export default function FilterNavbar({ onApplyFilters }) {
+  const { getMakes, getModelsForMake, loading } = useMakesModels();
   const [filters, setFilters] = useState({
     location: "",
     maxDistance: "",
@@ -43,17 +45,14 @@ export default function FilterNavbar({ onApplyFilters }) {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFilters(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    const updatedFilters = { ...filters, [name]: value };
     
-    // Apply filters immediately
-    const updatedFilters = {
-      ...filters,
-      [name]: value
-    };
+    // Reset model when make changes
+    if (name === 'make') {
+      updatedFilters.model = '';
+    }
     
+    setFilters(updatedFilters);
     onApplyFilters(updatedFilters);
   };
 
@@ -260,24 +259,15 @@ export default function FilterNavbar({ onApplyFilters }) {
                 name="make"
                 value={filters.make}
                 onChange={handleInputChange}
-                className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                className="px-2 py-1.5 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                disabled={loading}
               >
-              <option value="">Marka</option>
-              <option value="BMW">BMW</option>
-              <option value="Mercedes-Benz">Mercedes-Benz</option>
-              <option value="Audi">Audi</option>
-              <option value="Volkswagen">Volkswagen</option>
-              <option value="Toyota">Toyota</option>
-              <option value="Honda">Honda</option>
-              <option value="Ford">Ford</option>
-              <option value="Nissan">Nissan</option>
-              <option value="Hyundai">Hyundai</option>
-              <option value="Kia">Kia</option>
-              <option value="Mazda">Mazda</option>
-              <option value="Subaru">Subaru</option>
-              <option value="Lexus">Lexus</option>
-              <option value="Infiniti">Infiniti</option>
-              <option value="Acura">Acura</option>
+                <option value="">Marka</option>
+                {getMakes().map((make) => (
+                  <option key={make} value={make}>
+                    {make}
+                  </option>
+                ))}
               </select>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
                 <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -292,17 +282,15 @@ export default function FilterNavbar({ onApplyFilters }) {
                 name="model"
                 value={filters.model}
                 onChange={handleInputChange}
-                className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                className="px-2 py-1.5 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                disabled={loading || !filters.make}
               >
-              <option value="">Model</option>
-              <option value="Sedan">Sedan</option>
-              <option value="SUV">SUV</option>
-              <option value="Hatchback">Hatchback</option>
-              <option value="Coupe">Coupe</option>
-              <option value="Convertible">Convertible</option>
-              <option value="Wagon">Wagon</option>
-              <option value="Pickup">Pickup</option>
-              <option value="Crossover">Crossover</option>
+                <option value="">Model</option>
+                {filters.make && getModelsForMake(filters.make).map((model) => (
+                  <option key={model} value={model}>
+                    {model}
+                  </option>
+                ))}
               </select>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
                 <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

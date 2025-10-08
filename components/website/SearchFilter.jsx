@@ -1,17 +1,28 @@
 "use client";
 import { useState } from "react";
+import { useMakesModels } from "../../hooks/useMakesModels";
 
 const SearchFilter = ({ onSearch }) => {
   const [filters, setFilters] = useState({
-    Make: "",
+    make: "",
     model: "",
     yearFrom: "",
     yearTo: "",
     type: "",
   });
 
+  const { getMakes, getModelsForMake, loading } = useMakesModels();
+
   const handleChange = (e) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    const updatedFilters = { ...filters, [name]: value };
+    
+    // Reset model when make changes
+    if (name === 'make') {
+      updatedFilters.model = '';
+    }
+    
+    setFilters(updatedFilters);
   };
 
   const handleSearch = () => {
@@ -25,24 +36,36 @@ const SearchFilter = ({ onSearch }) => {
       </h1> */}
       <div className="w-full max-w-5xl mx-auto bg-white rounded-lg flex flex-wrap gap-4 items-center">
         {/* Make */}
-        <input
-          type="text"
-          name="makeModel"
-          placeholder="Make"
-          value={filters.makeModel}
+        <select
+          name="make"
+          value={filters.make}
           onChange={handleChange}
           className="border border-gray-300 min-w-28 rounded-md p-2 w-full sm:w-auto flex-1"
-        />
-        {/*Model */}
+          disabled={loading}
+        >
+          <option value="">Select Make</option>
+          {getMakes().map((make) => (
+            <option key={make} value={make}>
+              {make}
+            </option>
+          ))}
+        </select>
 
-        <input
-          type="text"
+        {/* Model */}
+        <select
           name="model"
-          placeholder="Model"
           value={filters.model}
           onChange={handleChange}
           className="border border-gray-300 min-w-28 rounded-md p-2 w-full sm:w-auto flex-1"
-        />
+          disabled={loading || !filters.make}
+        >
+          <option value="">Select Model</option>
+          {filters.make && getModelsForMake(filters.make).map((model) => (
+            <option key={model} value={model}>
+              {model}
+            </option>
+          ))}
+        </select>
 
         {/* Year From */}
         <input

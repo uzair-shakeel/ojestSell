@@ -1,6 +1,7 @@
 "use client";
 import { X } from "lucide-react";
 import { useState } from "react";
+import { useMakesModels } from "../../hooks/useMakesModels";
 
 export default function FilterSidebar({
   onApplyFilters,
@@ -8,6 +9,7 @@ export default function FilterSidebar({
   isVisible = true,
 }) {
   const [openIndex, setOpenIndex] = useState(null);
+  const { getMakes, getModelsForMake, loading } = useMakesModels();
   const [filters, setFilters] = useState({
     location: "",
     maxDistance: "",
@@ -68,6 +70,11 @@ export default function FilterSidebar({
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     const updatedFilters = { ...filters, [name]: value };
+    
+    // Reset model when make changes
+    if (name === 'make') {
+      updatedFilters.model = '';
+    }
     setFilters(updatedFilters);
 
     // If on desktop (no mobile filter prop), apply filters immediately
@@ -260,12 +267,14 @@ export default function FilterSidebar({
                 value={filters.make}
                 onChange={handleInputChange}
                 className="w-full p-4 min-h-[50px] rounded-md bg-white border border-gray-300 text-md appearance-none"
+                disabled={loading}
               >
                 <option value="">All</option>
-                <option value="Toyota">Toyota</option>
-                <option value="Honda">Honda</option>
-                <option value="Nissan">Nissan</option>
-                <option value="BMW">BMW</option>
+                {getMakes().map((make) => (
+                  <option key={make} value={make}>
+                    {make}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -289,12 +298,14 @@ export default function FilterSidebar({
                 value={filters.model}
                 onChange={handleInputChange}
                 className="w-full p-4 min-h-[50px] rounded-md bg-white border border-gray-300 text-md appearance-none"
+                disabled={loading || !filters.make}
               >
                 <option value="">All</option>
-                <option value="MX3">MX3</option>
-                <option value="MX2">MX2</option>
-                <option value="MX1">MX1</option>
-                <option value="320i">320i</option>
+                {filters.make && getModelsForMake(filters.make).map((model) => (
+                  <option key={model} value={model}>
+                    {model}
+                  </option>
+                ))}
               </select>
             </div>
           </div>

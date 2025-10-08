@@ -12,10 +12,12 @@ import StepOne from "../../../../components/dashboard/createsteps/StepOne";
 import StepPhotoEnhancer from "../../../../components/dashboard/createsteps/StepPhotoEnhancer";
 import { getUserById } from "../../../../services/userService";
 import ImageEditStep from "../../../../components/dashboard/createsteps/ImageEditStep";
+import { useMakesModels } from "../../../../hooks/useMakesModels";
 
 export default function MultiStepForm() {
   const { getToken, userId } = useAuth();
   const router = useRouter();
+  const makesModelsData = useMakesModels();
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1); // 1 for forward, -1 for backward
   const [loading, setLoading] = useState(false);
@@ -342,6 +344,7 @@ export default function MultiStepForm() {
               prevStep={prevStep}
               updateFormData={updateFormData}
               formData={formData}
+              makesModelsData={makesModelsData}
             />
           )}
           {step === 4 && (
