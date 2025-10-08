@@ -6,16 +6,24 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import LanguageSwitcher from "../LanguageSwitcher";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
+import { useAuth } from "../../lib/auth/AuthContext";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [chatCount, setChatCount] = useState(0);
   const router = useRouter();
   const { t } = useLanguage();
+  const { isSignedIn, logout } = useAuth();
 
   const handleSignIn = () => {
     setIsMenuOpen(false);
     router.push("/sign-in");
+  };
+
+  const handleSignOut = () => {
+    setIsMenuOpen(false);
+    logout();
+    router.push("/");
   };
 
   const navLinks = [
@@ -38,13 +46,22 @@ const Navbar = () => {
         {/* <div className="">
           <LanguageSwitcher />
         </div> */}
-        {/* Add Listing Button */}
-        <Link
-          href="/sign-up"
-          className="hidden md:block bg-white border border-gray-300 px-4 py-2 rounded-full hover:bg-gray-100"
-        >
-          {t("navbar.becomeSeller")}
-        </Link>
+        {/* CTA Button: Become a seller (signed out) or Dashboard (signed in) */}
+        {isSignedIn ? (
+          <button
+            onClick={() => router.push("/dashboard/home")}
+            className="hidden md:block bg-white border border-gray-300 px-4 py-2 rounded-full hover:bg-gray-100"
+          >
+            Panel
+          </button>
+        ) : (
+          <Link
+            href="/sign-up"
+            className="hidden md:block bg-white border border-gray-300 px-4 py-2 rounded-full hover:bg-gray-100"
+          >
+            {t("navbar.becomeSeller")}
+          </Link>
+        )}
 
         {/* Profile/Menu Button */}
         <button
@@ -70,12 +87,32 @@ const Navbar = () => {
             </Link>
           ))}
           <div className="border-t border-gray-200 my-1"></div>
-          <button
-            onClick={handleSignIn}
-            className="w-full text-left hover:bg-gray-100 p-2 duration-300"
-          >
-            Sign In
-          </button>
+          {isSignedIn ? (
+            <>
+              <button
+                onClick={() => {
+                  router.push("/dashboard/home");
+                  setIsMenuOpen(false);
+                }}
+                className="w-full text-left hover:bg-gray-100 p-2 duration-300"
+              >
+                Panel
+              </button>
+              <button
+                onClick={handleSignOut}
+                className="w-full text-left hover:bg-gray-100 p-2 duration-300"
+              >
+                Wyloguj się
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={handleSignIn}
+              className="w-full text-left hover:bg-gray-100 p-2 duration-300"
+            >
+              Zalogować się
+            </button>
+          )}
         </div>
       )}
     </header>

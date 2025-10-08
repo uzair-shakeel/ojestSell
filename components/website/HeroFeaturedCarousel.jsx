@@ -7,7 +7,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay, A11y } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaTags } from "react-icons/fa";
 import { getFeaturedCars, getAllCars } from "../../services/carService";
 
 const ensureFiveImages = (images = []) => {
@@ -142,19 +142,18 @@ export default function HeroFeaturedCarousel() {
                       sizes="(max-width: 768px) 100vw, 60vw"
                     />
                     {/* Featured badge */}
-                    <span className="absolute top-3 left-3 text-[10px] sm:text-xs font-semibold bg-white/90 text-gray-900 px-2 py-1 rounded-md shadow">
-                      FEATURED
-                    </span>
-                    {/* Title top center */}
-                    <div className="absolute top-0 inset-x-0 text-center pt-2">
-                      <span className="inline-block text-white/95 text-sm sm:text-base md:text-lg font-semibold bg-black/30 px-3 py-1 rounded">
-                        {s.title}
-                      </span>
+                    <div className="absolute top-2 right-2">
+                      <div className="inline-flex items-center gap-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] font-bold px-2 py-1 rounded-md shadow-lg">
+                        <FaTags className="w-3 h-3" /> FEATURED
+                      </div>
                     </div>
+              
                     {/* Bottom left price (if available) */}
                     {typeof s.price === "number" && (
-                      <div className="absolute bottom-3 left-3 bg-black/60 text-white text-xs sm:text-sm px-2 py-1 rounded">
-                        Price {new Intl.NumberFormat("pl-PL").format(s.price)} zł
+                      <div className="absolute bottom-2 left-2 bg-white/95 backdrop-blur-sm px-2 py-1 rounded-md shadow-lg hover:shadow-xl transition-all duration-300">
+                        <div className="text-xs font-bold text-gray-900">
+                          {new Intl.NumberFormat("pl-PL").format(s.price)} zł
+                        </div>
                       </div>
                     )}
                   </div>

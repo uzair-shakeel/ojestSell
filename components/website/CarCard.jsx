@@ -80,6 +80,18 @@ export default function CarCard({ car, viewMode = 'grid' }) {
     return full || seller?.companyName || "Private Seller";
   };
 
+  const getSellerType = () => {
+    if (!seller) return "Seller";
+    const type = seller?.sellerType || car?.financialInfo?.sellerType;
+    if (type === "company") return "Company";
+    return "Private Seller";
+  };
+
+  const getSellerImage = () => {
+    if (!seller?.image) return "/website/seller.jpg";
+    return formatImageUrl(seller.image);
+  };
+
   const handleCardClick = () => {
     router.push(`/website/cars/${car._id}`);
   };
@@ -138,15 +150,17 @@ export default function CarCard({ car, viewMode = 'grid' }) {
             </div>
             <div className="pt-2 border-t border-gray-100">
               <div className="flex items-center space-x-2">
-                <div className="w-5 h-5 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
-                  {getSellerName().charAt(0).toUpperCase()}
-                </div>
+                <img 
+                  src={getSellerImage()} 
+                  alt={getSellerName()}
+                  className="w-5 h-5 rounded-full object-cover"
+                />
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-semibold text-gray-900 truncate">
                     {getSellerName()}
                   </div>
                   <div className="text-sm text-gray-500 truncate">
-                    Verified Dealer
+                    {getSellerType()}
                   </div>
                 </div>
               </div>
@@ -213,15 +227,17 @@ export default function CarCard({ car, viewMode = 'grid' }) {
           </div>
           <div className="pt-3 border-t border-gray-100">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                {getSellerName().charAt(0).toUpperCase()}
-              </div>
+              <img 
+                src={getSellerImage()} 
+                alt={getSellerName()}
+                className="w-8 h-8 rounded-full object-cover"
+              />
               <div className="flex-1 min-w-0">
                 <div className="text-base font-semibold text-gray-900 truncate">
                   {getSellerName()}
                 </div>
                 <div className="text-base text-gray-500 truncate">
-                  Verified Dealer
+                  {getSellerType()}
                 </div>
               </div>
             </div>
