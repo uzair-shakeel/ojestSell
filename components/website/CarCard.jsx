@@ -109,16 +109,15 @@ export default function CarCard({ car, viewMode = 'grid' }) {
           }
         }}
       >
-        <div className="bg-white rounded-2xl hover:shadow-xl hover:shadow-gray-200/60 transition-all duration-300 hover:-translate-y-2 overflow-hidden group relative">
-          <div className="relative h-60 md:h-40 overflow-hidden">
+        <div className="bg-white rounded-b-2xl overflow-hidden relative shadow-sm hover:shadow-md transition-shadow duration-200">
+          <div className="relative h-[200px] md:h-40 lg:h-[182px] overflow-hidden rounded-lg lg:rounded-none mx-[10px] md:mx-0">
             <img 
               src={firstImage} 
               alt={`${car.year} ${car.make} ${car.model}`}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-lg lg:rounded-none"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div className="absolute bottom-2 left-2 bg-white/95 backdrop-blur-sm px-2 py-1 rounded-md shadow-lg group-hover:shadow-xl transition-all duration-300">
-              <div className="text-xs font-bold text-gray-900">
+            <div className="absolute bottom-2 left-2 bg-gray-900/95 px-3 py-1.5 rounded-lg shadow-lg backdrop-blur-sm">
+              <div className="text-xs font-bold text-white tracking-wide">
                 {car.financialInfo?.priceNetto ? 
                   `${car.financialInfo.priceNetto.toLocaleString("pl-PL")} zł` : 
                   "Price N/A"
@@ -133,17 +132,17 @@ export default function CarCard({ car, viewMode = 'grid' }) {
               </div>
             )}
           </div>
-          <div className="p-3 relative bg-white">
+          <div className="p-4 relative bg-white">
             <div className="mb-1">
               <h3 className="text-base font-bold text-gray-900 mb-1 line-clamp-1">
                 {car.year} {car.make} {car.model}
               </h3>
             </div>
             <div className="space-y-1 mb-2">
-              <div className="text-xs text-gray-700 font-medium leading-relaxed">
+              <div className="text-[14px] text-gray-700 font-normal leading-[1.5]">
                 {car.mileage || "N/A"}, {car.fuel || "N/A"}, {car.engine || "N/A"}, {car.transmission || "N/A"}
               </div>
-              <div className="text-xs text-gray-500 font-normal flex items-center">
+              <div className="text-[14px] text-gray-500 font-normal leading-[1.5] flex items-center">
                 {locationDetails.city && locationDetails.state
                   ? `${locationDetails.city}, ${locationDetails.state}`
                   : "Loading location..."}
@@ -185,16 +184,15 @@ export default function CarCard({ car, viewMode = 'grid' }) {
         }
       }}
     >
-      <div className="bg-white rounded-2xl hover:shadow-xl hover:shadow-gray-200/60 transition-all duration-300 hover:-translate-y-1 overflow-hidden group backdrop-blur-sm relative flex flex-col md:flex-row">
-        <div className="relative w-full md:w-80 h-80 md:h-48 flex-shrink-0 overflow-hidden">
+      <div className="bg-white rounded-b-2xl overflow-hidden backdrop-blur-sm relative flex flex-col md:flex-row">
+        <div className="relative w-full md:w-80 h-[280px] md:h-48 lg:h-[182px] flex-shrink-0 overflow-hidden rounded-lg lg:rounded-none mx-[10px] md:mx-0">
           <img 
             src={firstImage} 
             alt={`${car.year} ${car.make} ${car.model}`}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover rounded-lg lg:rounded-none"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          <div className="absolute bottom-2 left-2 bg-white/95 backdrop-blur-sm px-2 py-1 rounded-md shadow-lg group-hover:shadow-xl transition-all duration-300">
-            <div className="text-xs font-bold text-gray-900">
+          <div className="absolute bottom-2 left-2 bg-gray-900/90 px-2 py-1 rounded-md shadow-lg">
+            <div className="text-xs font-bold text-white">
               {car.financialInfo?.priceNetto ? 
                 `${car.financialInfo.priceNetto.toLocaleString("pl-PL")} zł` : 
                 "Price N/A"
@@ -217,10 +215,10 @@ export default function CarCard({ car, viewMode = 'grid' }) {
               </h3>
             </div>
             <div className="space-y-1 mb-3">
-              <div className="text-sm text-gray-700 font-medium leading-relaxed">
+              <div className="text-[14px] text-gray-700 font-normal leading-[1.5]">
                 {car.mileage || "N/A"}, {car.fuel || "N/A"}, {car.engine || "N/A"}, {car.transmission || "N/A"}
               </div>
-              <div className="text-sm text-gray-500 font-normal flex items-center">
+              <div className="text-[14px] text-gray-500 font-normal leading-[1.5] flex items-center">
                 {locationDetails.city && locationDetails.state
                   ? `${locationDetails.city}, ${locationDetails.state}`
                   : "Loading location..."}
