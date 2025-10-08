@@ -111,11 +111,20 @@ export default function FilterNavbar({ onApplyFilters }) {
   useEffect(() => {
     let originalTop = 0;
     let isInitialized = false;
+    let ticking = false;
+    let lastScrollY = 0;
+    let isStickyState = false;
+    const threshold = 10; // Increased threshold for more stability
 
-    const handleScroll = () => {
+    const update = () => {
+      ticking = false;
+      
       // Only apply sticky behavior on mobile (screen width < 768px)
       if (window.innerWidth >= 768) {
-        setIsSticky(false);
+        if (isStickyState) {
+          setIsSticky(false);
+          isStickyState = false;
+        }
         return;
       }
 
@@ -128,14 +137,28 @@ export default function FilterNavbar({ onApplyFilters }) {
       
       if (filterRef.current && isInitialized) {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const rect = filterRef.current.getBoundingClientRect();
         
-        // Only stick when scrolling down past the original position
-        setIsSticky(scrollTop > originalTop && rect.top <= 0);
+        // Stick when scrolled past original position, unstick when back to original position
+        const shouldStick = scrollTop > originalTop + threshold;
+        
+        // Only update state if it actually changed to prevent blinking
+        if (shouldStick !== isStickyState) {
+          setIsSticky(shouldStick);
+          isStickyState = shouldStick;
+        }
+        
+        lastScrollY = scrollTop;
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    const handleScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -146,7 +169,9 @@ export default function FilterNavbar({ onApplyFilters }) {
   // Update navbar height when sticky state changes
   useEffect(() => {
     if (filterRef.current && !isSticky) {
-      setNavbarHeight(filterRef.current.offsetHeight);
+      // Measure height when returning to normal position
+      const currentHeight = filterRef.current.offsetHeight;
+      setNavbarHeight(currentHeight);
     }
   }, [isSticky]);
 
@@ -185,13 +210,13 @@ export default function FilterNavbar({ onApplyFilters }) {
     <>
     <div 
       ref={filterRef}
-      className={`bg-white z-50 transition-all duration-300 ease-in-out ${
+      className={`bg-white z-50 ${
         isSticky 
           ? 'fixed top-0 left-0 right-0 shadow-xl backdrop-blur-sm bg-white/70' 
           : 'relative'
       }`}
     >
-      <div className={`w-full lg:w-full px-0 lg:px-8 transition-all duration-200 ${
+      <div className={`w-full lg:w-full px-0 lg:px-8 ${
         isSticky ? 'py-2' : 'py-6'
       }`}>
         {/* Filter Heading with mobile view toggle on the right - Hidden when sticky */}
@@ -435,9 +460,9 @@ export default function FilterNavbar({ onApplyFilters }) {
 
         {/* Mobile Layout: Single row with Make, Model, Show More + View Toggle */}
           <div className="md:hidden">
-            <div className={`flex items-center justify-between w-[calc(100%-18px)] gap-2 mx-[10px] transition-all duration-200 ${
-              isSticky ? 'mb-0' : 'mb-[10px]'
-            }`}>
+             <div className={`flex items-center justify-between w-[calc(100%-18px)] gap-2 mx-[10px] ${
+               isSticky ? 'mb-0' : 'mb-[10px]'
+             }`}>
             {/* Make */}
             <div className="relative flex-1">
               <select

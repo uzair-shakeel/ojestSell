@@ -431,7 +431,7 @@ const CarsContent = () => {
             </div>
 
             {/* Bottom on Mobile, Left on Desktop - Sort Inline List */}
-            <div className="order-2 lg:order-1 w-full -mt-[29px] lg:mt-4 lg:w-auto">
+            <div className="order-2 lg:order-1 w-full -mt-[28px] lg:mt-4 lg:w-auto">
               <ul ref={sortListRef} className="filter-sorts flex flex-nowrap items-center overflow-x-scroll scroll-x-touch scrollbar-hide whitespace-nowrap -mx-2 px-2 pr-4 gap-2 lg:gap-4 cursor-grab select-none active:cursor-grabbing">
                 <li className="sort-option pr-3 flex-none">
               <button
