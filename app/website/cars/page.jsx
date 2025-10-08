@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useRef } from "react";
 import FilterSidebar from "../../../components/website/FilterSidebar";
 import FilterNavbar from "../../../components/website/FilterNavbar";
 import CarCard from "../../../components/website/CarCard";
@@ -19,6 +19,7 @@ const CarsContent = () => {
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState("grid"); // Add view mode state
   const searchParams = useSearchParams();
+  const sortListRef = useRef(null);
 
   // Handle responsive view toggle (list/grid) based on screen size
   useEffect(() => {
@@ -33,6 +34,63 @@ const CarsContent = () => {
     handleResize(); // Initial check
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Enable drag-to-scroll on the sort list (mobile and desktop)
+  useEffect(() => {
+    const el = sortListRef.current;
+    if (!el) return;
+
+    let isDown = false;
+    let startX = 0;
+    let startScrollLeft = 0;
+
+    const onPointerDown = (e) => {
+      isDown = true;
+      el.classList.add("dragging");
+      startX = (e.touches ? e.touches[0].pageX : e.pageX) - el.offsetLeft;
+      startScrollLeft = el.scrollLeft;
+    };
+
+    const onPointerMove = (e) => {
+      if (!isDown) return;
+      const x = (e.touches ? e.touches[0].pageX : e.pageX) - el.offsetLeft;
+      const walk = (x - startX) * 1; // multiplier for sensitivity
+      el.scrollLeft = startScrollLeft - walk;
+    };
+
+    const onPointerUp = () => {
+      isDown = false;
+      el.classList.remove("dragging");
+    };
+
+    el.addEventListener("mousedown", onPointerDown, { passive: true });
+    el.addEventListener("mousemove", onPointerMove, { passive: true });
+    el.addEventListener("mouseleave", onPointerUp, { passive: true });
+    el.addEventListener("mouseup", onPointerUp, { passive: true });
+    el.addEventListener("touchstart", onPointerDown, { passive: true });
+    el.addEventListener("touchmove", onPointerMove, { passive: true });
+    el.addEventListener("touchend", onPointerUp, { passive: true });
+
+    return () => {
+      el.removeEventListener("mousedown", onPointerDown);
+      el.removeEventListener("mousemove", onPointerMove);
+      el.removeEventListener("mouseleave", onPointerUp);
+      el.removeEventListener("mouseup", onPointerUp);
+      el.removeEventListener("touchstart", onPointerDown);
+      el.removeEventListener("touchmove", onPointerMove);
+      el.removeEventListener("touchend", onPointerUp);
+    };
+  }, []);
+
+  // Listen for mobile view toggle events from FilterNavbar
+  useEffect(() => {
+    const onViewMode = (e) => {
+      const mode = e.detail;
+      if (mode === 'grid' || mode === 'list') setViewMode(mode);
+    };
+    window.addEventListener('ojest:viewMode', onViewMode);
+    return () => window.removeEventListener('ojest:viewMode', onViewMode);
   }, []);
   // Control body scrolling based on filter visibility
   useEffect(() => {
@@ -55,7 +113,7 @@ const CarsContent = () => {
     const fetchCarsWithFilters = async () => {
       setIsLoading(true);
       setError(null);
-
+      
       try {
         const searchQuery = searchParams.get("search");
         const make = searchParams.get("make");
@@ -121,7 +179,7 @@ const CarsContent = () => {
   // Handle sorting
   const handleSort = (sortValue) => {
     setSortBy(sortValue);
-
+    
     let sortedCars = [...cars];
 
     switch (sortValue) {
@@ -181,7 +239,7 @@ const CarsContent = () => {
   const handleApplyFilters = async (filters) => {
     setIsLoading(true);
     setError(null);
-
+    
     try {
       // Map filter parameters to match the searchCars service interface
       const searchParams_obj = {
@@ -210,9 +268,9 @@ const CarsContent = () => {
         // Location params (if needed)
         ...(filters.latitude && filters.longitude
           ? {
-              latitude: filters.latitude,
-              longitude: filters.longitude,
-              maxDistance: filters.maxDistance,
+          latitude: filters.latitude,
+          longitude: filters.longitude,
+          maxDistance: filters.maxDistance,
             }
           : {}),
       };
@@ -325,13 +383,13 @@ const CarsContent = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="h-full w-full sm:px-4">
+        <main className="h-full w-full px-0 sm:px-4">
           {/* Header Cards (View Toggle and Sort Options) */}
-          <div className="sticky top-0 z-10 bg-white/40 backdrop-blur-sm flex flex-col lg:flex-row justify-between items-center py-1 pb-2 px-2 gap-2 lg:gap-4">
+          <div className="bg-white flex flex-col lg:flex-row justify-between items-center py-1 pb-2 px-[10px] sm:px-2 gap-2 lg:gap-4">
             {/* Top on Mobile, Right on Desktop - View Toggle Buttons */}
-            <div className="flex justify-center lg:justify-end w-full lg:w-auto order-1 lg:order-2">
+            <div className="hidden lg:flex justify-center lg:justify-end w-full lg:w-auto order-1 lg:order-2">
               <div className="bg-white rounded-lg p-1 shadow-sm border flex gap-1">
-                <button
+            <button
                   type="button"
                   onClick={() => setViewMode("grid")}
                   className={`px-3 py-2 lg:px-4 lg:py-3 rounded-md text-sm font-medium transition-all duration-200 flex items-center justify-center ${
@@ -347,7 +405,7 @@ const CarsContent = () => {
                   >
                     <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                   </svg>
-                </button>
+            </button>
                 <button
                   type="button"
                   onClick={() => setViewMode("list")}
@@ -373,88 +431,105 @@ const CarsContent = () => {
             </div>
 
             {/* Bottom on Mobile, Left on Desktop - Sort Inline List */}
-            <div className="flex items-center justify-between w-full overflow-hidden order-2 lg:order-1 lg:w-auto lg:space-x-3 lg:justify-start mt-4 lg:mt-4">
+            <div className="order-2 lg:order-1 w-full -mt-[29px] lg:mt-4 lg:w-auto">
+              <ul ref={sortListRef} className="filter-sorts flex flex-nowrap items-center overflow-x-scroll scroll-x-touch scrollbar-hide whitespace-nowrap -mx-2 px-2 pr-4 gap-2 lg:gap-4 cursor-grab select-none active:cursor-grabbing">
+                <li className="sort-option pr-3 flex-none">
               <button
-                onClick={() => handleSort("best-match")}
-                className={`text-[9px] lg:text-sm font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
-                  sortBy === "best-match"
-                    ? "text-black border-b-2 border-black pb-0.5"
-                    : "text-gray-600"
-                }`}
-              >
-                Najlepszy dopasowanie
+                    onClick={() => handleSort("best-match")}
+                    className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${
+                      sortBy === "best-match"
+                        ? "text-gray-900 border-gray-900 relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
+                        : "text-gray-500 border-transparent hover:text-gray-700"
+                    } bg-transparent focus:outline-none appearance-none`}
+                  >
+                    Najlepsze dopasowanie
               </button>
+                </li>
+                <li className="sort-option pr-3 flex-none">
               <button
-                onClick={() => handleSort("lowest-price")}
-                className={`text-[9px] lg:text-xs font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
-                  sortBy === "lowest-price"
-                    ? "text-black border-b-2 border-black pb-0.5"
-                    : "text-gray-600"
-                }`}
-              >
-                Najlepszy dopasowanie
+                    onClick={() => handleSort("lowest-price")}
+                    className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${
+                      sortBy === "lowest-price"
+                        ? "text-gray-900 border-gray-900 relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
+                        : "text-gray-500 border-transparent hover:text-gray-700"
+                    } bg-transparent focus:outline-none appearance-none`}
+                  >
+                    Najniższa cena
               </button>
+                </li>
+                <li className="sort-option pr-3 flex-none">
               <button
-                onClick={() => handleSort("highest-price")}
-                className={`text-[9px] lg:text-xs font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
-                  sortBy === "highest-price"
-                    ? "text-black border-b-2 border-black pb-0.5"
-                    : "text-gray-600"
-                }`}
-              >
-                Najlepszy dopasowanie
+                    onClick={() => handleSort("highest-price")}
+                    className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${
+                      sortBy === "highest-price"
+                        ? "text-gray-900 border-gray-900 relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
+                        : "text-gray-500 border-transparent hover:text-gray-700"
+                    } bg-transparent focus:outline-none appearance-none`}
+                  >
+                    Najwyższa cena
               </button>
+                </li>
+                <li className="sort-option pr-3 flex-none">
               <button
-                onClick={() => handleSort("lowest-mileage")}
-                className={`text-[9px] lg:text-xs font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
-                  sortBy === "lowest-mileage"
-                    ? "text-black border-b-2 border-black pb-0.5"
-                    : "text-gray-600"
-                }`}
-              >
-                Najlepszy dopasowanie
+                    onClick={() => handleSort("lowest-mileage")}
+                    className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${
+                      sortBy === "lowest-mileage"
+                        ? "text-gray-900 border-gray-900 relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
+                        : "text-gray-500 border-transparent hover:text-gray-700"
+                    } bg-transparent focus:outline-none appearance-none`}
+                  >
+                    Najniższy przebieg
               </button>
+                </li>
+                <li className="sort-option pr-3 flex-none">
               <button
-                onClick={() => handleSort("highest-mileage")}
-                className={`text-[9px] lg:text-xs font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
-                  sortBy === "highest-mileage"
-                    ? "text-black border-b-2 border-black pb-0.5"
-                    : "text-gray-600"
-                }`}
-              >
-                Najlepszy dopasowanie
+                    onClick={() => handleSort("highest-mileage")}
+                    className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${
+                      sortBy === "highest-mileage"
+                        ? "text-gray-900 border-gray-900 relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
+                        : "text-gray-500 border-transparent hover:text-gray-700"
+                    } bg-transparent focus:outline-none appearance-none`}
+                  >
+                    Najwyższy przebieg
               </button>
+                </li>
+                <li className="sort-option pr-3 flex-none">
               <button
-                onClick={() => handleSort("newest-year")}
-                className={`text-[9px] lg:text-xs font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
-                  sortBy === "newest-year"
-                    ? "text-black border-b-2 border-black pb-0.5"
-                    : "text-gray-600"
-                }`}
-              >
-                Najlepszy dopasowanie
+                    onClick={() => handleSort("newest-year")}
+                    className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${
+                      sortBy === "newest-year"
+                        ? "text-gray-900 border-gray-900 relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
+                        : "text-gray-500 border-transparent hover:text-gray-700"
+                    } bg-transparent focus:outline-none appearance-none`}
+                  >
+                    Najnowszy rok
               </button>
+                </li>
+                <li className="sort-option pr-3 flex-none">
               <button
-                onClick={() => handleSort("oldest-year")}
-                className={`text-[9px] lg:text-xs font-light transition-all duration-200 hover:text-black whitespace-nowrap flex-1 lg:flex-none text-center px-1 lg:px-0 ${
-                  sortBy === "oldest-year"
-                    ? "text-black border-b-2 border-black pb-0.5"
-                    : "text-gray-600"
-                }`}
-              >
-                Najlepszy dopasowanie
+                    onClick={() => handleSort("oldest-year")}
+                    className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${
+                      sortBy === "oldest-year"
+                        ? "text-gray-900 border-gray-900 relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
+                        : "text-gray-500 border-transparent hover:text-gray-700"
+                    } bg-transparent focus:outline-none appearance-none`}
+                  >
+                    Najstarszy rok
               </button>
+                </li>
+              </ul>
             </div>
           </div>
+          
 
           {/* Car Cards - Responsive grid/list layout */}
-          <div
-            className={
-              viewMode === "grid"
-                ? "grid gap-6 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1"
-                : "flex flex-col space-y-4"
-            }
-          >
+        <div
+          className={
+            viewMode === "grid"
+              ? "grid gap-6 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1 -mt-[5px] lg:mt-4"
+              : "flex flex-col space-y-4 -mt-[5px] lg:mt-4"
+          }
+        >
             {isLoading ? (
               <div className="text-center py-8">
                 <div

@@ -1,4 +1,4 @@
-  @tailwind base;
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 @import "swiper/css";
@@ -34,6 +34,12 @@
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* Enable smooth horizontal scrolling on touch devices */
+.scroll-x-touch {
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
 }
 
 /* Loader animation */

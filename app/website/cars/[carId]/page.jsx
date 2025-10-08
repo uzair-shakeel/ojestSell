@@ -451,7 +451,7 @@ const Page = () => {
             <h1 className="text-3xl font-bold mt-6">{`${car?.make} ${car?.model} ${car?.year}`}</h1>
             <div className="grid grid-cols-2 mt-6">
               {/* Main Swiper */}
-              <div className="col-span-2 relative group">
+              <div className="col-span-2 relative group px-2 md:px-0">
                 <Swiper
                   ref={mainSwiperRef}
                   modules={[Navigation, Thumbs, A11y]}
@@ -475,13 +475,11 @@ const Page = () => {
                 >
                   {images.map((img, index) => (
                     <SwiperSlide key={index}>
-                      <div className="relative overflow-hidden">
+                      <div className="relative overflow-hidden rounded-lg lg:rounded-tl-[10px] lg:rounded-bl-[10px] lg:rounded-tr-none lg:rounded-br-none">
                         <img
                           src={img}
-                          alt={`${car?.make} ${car?.model} - Image ${
-                            index + 1
-                          }`}
-                          className="w-full h-[450px] object-cover rounded cursor-pointer"
+                          alt={`${car?.make} ${car?.model} - Image ${index + 1}`}
+                          className="w-full h-[460px] md:h-[420px] lg:h-[300px] object-cover cursor-pointer rounded-lg lg:rounded-none"
                           onClick={() => setIsFullscreen(true)}
                         />
                       </div>
