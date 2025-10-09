@@ -223,24 +223,24 @@ export default function FilterNavbar({ onApplyFilters }) {
           <div className="flex items-center justify-between mx-[10px] mb-[10px]">
             <h2 className="font-bold text-gray-900 text-2xl">Filtrowanie</h2>
             {/* Mobile inline view toggle (adjacent to heading) */}
-            <div className="flex md:hidden items-center gap-0.5 bg-white rounded-md p-0.5 shadow-sm border">
+            <div className="flex md:hidden items-center gap-1 bg-white rounded-md p-1 shadow-sm border">
               <button
                 type="button"
                 onClick={() => { setMobileViewMode('grid'); if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('ojest:viewMode', { detail: 'grid' })); }}
-                className={`px-1.5 py-1 rounded-md text-[11px] leading-none font-medium flex items-center justify-center ${mobileViewMode === 'grid' ? 'text-white bg-blue-500' : 'text-gray-600'}`}
+                className={`px-2 py-1 rounded-md text-[12px] leading-none font-medium flex items-center justify-center ${mobileViewMode === 'grid' ? 'text-white bg-blue-500' : 'text-gray-600'}`}
                 aria-label="Grid view"
               >
-                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                 </svg>
               </button>
               <button
                 type="button"
                 onClick={() => { setMobileViewMode('list'); if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('ojest:viewMode', { detail: 'list' })); }}
-                className={`px-1.5 py-1 rounded-md text-[11px] leading-none font-medium flex items-center justify-center ${mobileViewMode === 'list' ? 'text-white bg-blue-500' : 'text-gray-600'}`}
+                className={`px-2 py-1 rounded-md text-[12px] leading-none font-medium flex items-center justify-center ${mobileViewMode === 'list' ? 'text-white bg-blue-500' : 'text-gray-600'}`}
                 aria-label="List view"
               >
-                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
                 </svg>
               </button>
