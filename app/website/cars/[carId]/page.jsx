@@ -430,11 +430,11 @@ const Page = () => {
             </Swiper>
 
             {/* Navigation arrows */}
-            <button className="fullscreen-swiper-prev absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition-all z-10">
-              <IoIosArrowBack className="w-8 h-8" />
+            <button className="fullscreen-swiper-prev absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 md:p-3 rounded-full hover:bg-opacity-70 transition-all z-10">
+              <IoIosArrowBack className="w-5 md:w-7 h-5 md:h-7" />
             </button>
-            <button className="fullscreen-swiper-next absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition-all z-10">
-              <IoIosArrowForward className="w-8 h-8" />
+            <button className="fullscreen-swiper-next absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 md:p-3 rounded-full hover:bg-opacity-70 transition-all z-10">
+              <IoIosArrowForward className="w-5 md:w-7 h-5 md:h-7" />
             </button>
 
             {/* Image counter */}
@@ -479,7 +479,7 @@ const Page = () => {
                         <img
                           src={img}
                           alt={`${car?.make} ${car?.model} - Image ${index + 1}`}
-                          className="w-full h-[460px] md:h-[420px] lg:h-[300px] object-cover cursor-pointer rounded-lg lg:rounded-none"
+                          className="w-full aspect-[5/3] object-cover cursor-pointer rounded-lg lg:rounded-none"
                           onClick={() => setIsFullscreen(true)}
                         />
                       </div>
@@ -487,20 +487,20 @@ const Page = () => {
                   ))}
                 </Swiper>
 
-                {/* Fullscreen button overlay */}
+                {/* Fullscreen button overlay - Hidden on mobile */}
                 <button
                   onClick={() => setIsFullscreen(true)}
-                  className="absolute top-4 right-4 bg-black bg-opacity-50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-opacity-70 z-10"
+                  className="hidden md:block absolute top-4 right-4 bg-black bg-opacity-50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-opacity-70 z-10"
                 >
                   <IoExpand className="w-5 h-5" />
                 </button>
 
-                {/* Custom Navigation Arrows */}
-                <button className="main-swiper-prev absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 text-white p-3 rounded-full hover:bg-opacity-80 transition-all opacity-0 group-hover:opacity-100 z-10">
-                  <IoIosArrowBack className="w-6 h-6" />
+                {/* Custom Navigation Arrows - Hidden on mobile */}
+                <button className="hidden md:block main-swiper-prev absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 text-white p-2 rounded-full hover:bg-opacity-80 transition-all opacity-0 group-hover:opacity-100 z-10">
+                  <IoIosArrowBack className="w-4 h-4" />
                 </button>
-                <button className="main-swiper-next absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 text-white p-3 rounded-full hover:bg-opacity-80 transition-all opacity-0 group-hover:opacity-100 z-10">
-                  <IoIosArrowForward className="w-6 h-6" />
+                <button className="hidden md:block main-swiper-next absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 text-white p-2 rounded-full hover:bg-opacity-80 transition-all opacity-0 group-hover:opacity-100 z-10">
+                  <IoIosArrowForward className="w-4 h-4" />
                 </button>
               </div>
 
@@ -559,11 +559,11 @@ const Page = () => {
                 {/* Thumbnail Navigation */}
                 {images.length > 6 && (
                   <>
-                    <button className="thumb-swiper-prev absolute left-0 top-1/2 transform -translate-y-1/2 bg-white shadow-md rounded-full p-2 z-10 -ml-4 hover:bg-gray-50 transition-colors">
-                      <IoIosArrowBack className="w-4 h-4 text-gray-600" />
+                    <button className="thumb-swiper-prev absolute left-0 top-1/2 transform -translate-y-1/2 bg-white shadow-md rounded-full p-1.5 md:p-2 z-10 -ml-3 hover:bg-gray-50 transition-colors">
+                      <IoIosArrowBack className="w-3 h-3 md:w-5 md:h-5 text-gray-600" />
                     </button>
-                    <button className="thumb-swiper-next absolute right-0 top-1/2 transform -translate-y-1/2 bg-white shadow-md rounded-full p-2 z-10 -mr-4 hover:bg-gray-50 transition-colors">
-                      <IoIosArrowForward className="w-4 h-4 text-gray-600" />
+                    <button className="thumb-swiper-next absolute right-0 top-1/2 transform -translate-y-1/2 bg-white shadow-md rounded-full p-1.5 md:p-2 z-10 -mr-3 hover:bg-gray-50 transition-colors">
+                      <IoIosArrowForward className="w-3 h-3 md:w-5 md:h-5 text-gray-600" />
                     </button>
                   </>
                 )}
