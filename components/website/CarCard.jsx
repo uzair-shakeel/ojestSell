@@ -184,8 +184,8 @@ export default function CarCard({ car, viewMode = 'grid' }) {
         }
       }}
     >
-      <div className="bg-white rounded-b-2xl overflow-hidden backdrop-blur-sm relative flex flex-col md:flex-row">
-        <div className="relative w-full md:w-80 h-[280px] md:h-48 lg:h-[182px] flex-shrink-0 overflow-hidden rounded-lg lg:rounded-none mx-[10px] md:mx-0">
+      <div className="bg-white rounded-b-2xl overflow-hidden backdrop-blur-sm relative flex flex-row">
+        <div className="relative w-32 md:w-80 h-24 md:h-48 lg:h-[182px] flex-shrink-0 overflow-hidden rounded-lg lg:rounded-none mx-[10px] md:mx-0">
           <img 
             src={firstImage} 
             alt={`${car.year} ${car.make} ${car.model}`}
@@ -207,36 +207,36 @@ export default function CarCard({ car, viewMode = 'grid' }) {
             </div>
           )}
         </div>
-        <div className="p-4 relative bg-white flex-1 flex flex-col justify-between min-h-[112px] md:min-h-[192px]">
+        <div className="p-2 md:p-4 relative bg-white flex-1 flex flex-col justify-between min-h-[96px] md:min-h-[192px]">
           <div>
-            <div className="mb-2">
-              <h3 className="text-lg font-bold text-gray-900 mb-1 line-clamp-1">
+            <div className="mb-1 md:mb-2">
+              <h3 className="text-sm md:text-lg font-bold text-gray-900 mb-1 line-clamp-1">
                 {car.year} {car.make} {car.model}
               </h3>
             </div>
-            <div className="space-y-1 mb-3">
-              <div className="text-[14px] text-gray-700 font-normal leading-[1.5]">
-                {car.mileage || "N/A"}, {car.fuel || "N/A"}, {car.engine || "N/A"}, {car.transmission || "N/A"}
+            <div className="space-y-0.5 md:space-y-1 mb-2 md:mb-3">
+              <div className="text-xs md:text-[14px] text-gray-700 font-normal leading-[1.3] md:leading-[1.5]">
+                {car.mileage || "N/A"}, {car.fuel || "N/A"}
               </div>
-              <div className="text-[14px] text-gray-500 font-normal leading-[1.5] flex items-center">
+              <div className="text-xs md:text-[14px] text-gray-500 font-normal leading-[1.3] md:leading-[1.5] flex items-center">
                 {locationDetails.city && locationDetails.state
                   ? `${locationDetails.city}, ${locationDetails.state}`
                   : "Loading location..."}
               </div>
             </div>
           </div>
-          <div className="pt-3 border-t border-gray-100">
-            <div className="flex items-center space-x-3">
+          <div className="pt-2 md:pt-3 border-t border-gray-100">
+            <div className="flex items-center space-x-2 md:space-x-3">
               <img 
                 src={getSellerImage()} 
                 alt={getSellerName()}
-                className="w-8 h-8 rounded-full object-cover"
+                className="w-5 h-5 md:w-8 md:h-8 rounded-full object-cover"
               />
               <div className="flex-1 min-w-0">
-                <div className="text-base font-semibold text-gray-900 truncate">
+                <div className="text-xs md:text-base font-semibold text-gray-900 truncate">
                   {getSellerName()}
                 </div>
-                <div className="text-base text-gray-500 truncate">
+                <div className="text-xs md:text-base text-gray-500 truncate">
                   {getSellerType()}
                 </div>
               </div>
