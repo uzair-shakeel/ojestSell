@@ -4,6 +4,7 @@ import FilterSidebar from "../../../components/website/FilterSidebar";
 import FilterNavbar from "../../../components/website/FilterNavbar";
 import CarCard from "../../../components/website/CarCard";
 import HeroFeaturedCarousel from "../../../components/website/HeroFeaturedCarousel";
+import Pagination from "../../../components/website/Pagination";
 import Image from "next/image";
 import { getAllCars, searchCars } from "../../../services/carService";
 import { useSearchParams } from "next/navigation";
@@ -13,11 +14,15 @@ const CarsContent = () => {
   const { t } = useLanguage();
   const [view, setView] = useState("list");
   const [cars, setCars] = useState([]);
+  const [allCars, setAllCars] = useState([]); // Store all cars for pagination
   const [showMobileFilter, setShowMobileFilter] = useState(false);
   const [sortBy, setSortBy] = useState("best-match");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState("grid"); // Add view mode state
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
   const searchParams = useSearchParams();
   const sortListRef = useRef(null);
 
@@ -164,7 +169,8 @@ const CarsContent = () => {
           carsData = await getAllCars();
         }
 
-        setCars(carsData);
+        setAllCars(carsData);
+        setCurrentPage(1); // Reset to first page when data changes
       } catch (err) {
         console.error("Error fetching cars:", err);
         setError("Failed to load cars. Please try again.");
@@ -232,7 +238,8 @@ const CarsContent = () => {
         break;
     }
 
-    setCars(sortedCars);
+    setAllCars(sortedCars);
+    setCurrentPage(1); // Reset to first page when sorting
   };
 
   // Handle filter application
@@ -357,7 +364,8 @@ const CarsContent = () => {
         );
       }
 
-      setCars(carsData);
+      setAllCars(carsData);
+      setCurrentPage(1); // Reset to first page when filters change
     } catch (err) {
       console.error("Error applying filters:", err);
       setError("Failed to apply filters. Please try again.");
@@ -365,6 +373,28 @@ const CarsContent = () => {
       setIsLoading(false);
     }
   };
+
+  // Pagination handlers
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    // Scroll to top when page changes
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1); // Reset to first page when changing items per page
+  };
+
+  // Calculate paginated cars
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedCars = allCars.slice(startIndex, endIndex);
+
+  // Update cars state when pagination changes
+  useEffect(() => {
+    setCars(paginatedCars);
+  }, [allCars, currentPage, itemsPerPage]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -569,28 +599,17 @@ const CarsContent = () => {
           </div>
 
           {/* Pagination */}
-          <div className="w-full flex bg-white justify-center items-center py-8">
-            <div className="join">
-              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">
-                «
-              </button>
-              <button className="join-item btn bg-gray-200 text-gray-900 border border-gray-300 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">
-                1
-              </button>
-              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">
-                2
-              </button>
-              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">
-                3
-              </button>
-              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">
-                4
-              </button>
-              <button className="join-item btn btn-ghost text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-0 appearance-none [-webkit-tap-highlight-color:transparent]">
-                »
-              </button>
-            </div>
-          </div>
+          {!isLoading && !error && allCars.length > 0 && (
+            <Pagination
+              currentPage={currentPage}
+              totalItems={allCars.length}
+              itemsPerPage={itemsPerPage}
+              onPageChange={handlePageChange}
+              onItemsPerPageChange={handleItemsPerPageChange}
+              showItemsPerPage={true}
+              className="border-t border-gray-200"
+            />
+          )}
 
           {/* Mobile Filter Sidebar */}
           {showMobileFilter && (
