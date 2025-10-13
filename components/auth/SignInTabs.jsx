@@ -44,7 +44,7 @@ export default function SignInTabs() {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/signin`,
         {
-          method: "POST",
+          method: "POST", 
           headers: {
             "Content-Type": "application/json",
           },
@@ -60,6 +60,7 @@ export default function SignInTabs() {
         toast.success("Sign in successful!");
         router.push("/dashboard/home");
       } else {
+        console.log('error aagaya guys', data);
         toast.error(data.message || "Sign in failed");
       }
     } catch (error) {

@@ -27,6 +27,10 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
     },
   });
 
+  // Drag & drop reordering state
+  const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
   // Check for edited images when component mounts or when returning from photo enhancer
   useEffect(() => {
     const editedImagePath = localStorage.getItem("editedImagePath");
@@ -84,6 +88,51 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
       console.error("Error updating image:", error);
       alert("Failed to update the edited image. Please try again.");
     }
+  };
+
+  // Helper to reorder arrays (immutably)
+  const reorder = <T,>(list: T[], startIndex: number, endIndex: number): T[] => {
+    const result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+    return result;
+  };
+
+  // Drag & drop handlers
+  const handleDragStart = (index: number) => () => {
+    setDraggingIndex(index);
+  };
+
+  const handleDragOver = (index: number) => (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (dragOverIndex !== index) setDragOverIndex(index);
+  };
+
+  const handleDragEnd = () => {
+    setDraggingIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDrop = (index: number) => (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (draggingIndex === null || draggingIndex === index) return handleDragEnd();
+
+    // Reorder both images (File[]) and previews (string[])
+    const newImages = reorder(formData.images, draggingIndex, index);
+    const newPreviews = reorder(formData.imagePreviews, draggingIndex, index);
+
+    updateFormData({
+      ...formData,
+      images: newImages,
+      imagePreviews: newPreviews,
+    });
+
+    setLocalData(prev => ({
+      ...prev,
+      images: newImages,
+    }));
+
+    handleDragEnd();
   };
 
   // Function to open the photo enhancer for a specific image
@@ -380,7 +429,18 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
           {formData.imagePreviews?.length > 0 && (
             <div className="grid grid-cols-5 gap-2 mt-2">
               {formData.imagePreviews.map((preview, index) => (
-                <div key={index} className="relative">
+                <div
+                  key={index}
+                  className={`relative border-2 rounded-md ${
+                    dragOverIndex === index ? "border-blue-400" : "border-transparent"
+                  }`}
+                  draggable
+                  onDragStart={handleDragStart(index)}
+                  onDragOver={handleDragOver(index)}
+                  onDrop={handleDrop(index)}
+                  onDragEnd={handleDragEnd}
+                  title="Drag to reorder"
+                >
                   <img
                     src={preview}
                     alt={`Preview ${index + 1}`}
@@ -403,6 +463,9 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
                     >
                       ×
                     </button>
+                  </div>
+                  <div className="absolute bottom-1 left-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded">
+                    {index + 1}
                   </div>
                 </div>
               ))}
