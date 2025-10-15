@@ -11,6 +11,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../lib/auth/AuthContext";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+
 export default function Sidebar({ isOpen, toggleSidebar }) {
   const [chatCount, setChatCount] = useState(0);
   const { userId, getToken, user } = useAuth();
@@ -28,7 +30,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
     // Allow already-rooted paths (e.g., /images/foo.png)
     if (imagePath.startsWith("/")) return imagePath;
     // Fallback to API base URL if provided
-    const base = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+    const base = API_BASE || "";
     if (base) {
       const clean = imagePath.replace(/^[/\\]/, "");
       return `${base.replace(/\/$/, "")}/${clean}`;
@@ -62,7 +64,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
 
         console.log("Fetching chats with token");
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/chat/my-chats`,
+          `${API_BASE}/api/chat/my-chats`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

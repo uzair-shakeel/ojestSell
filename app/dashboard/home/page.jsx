@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useAuth } from "../../../lib/auth/AuthContext";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+
 const page = () => {
   const { user } = useAuth();
   const router = useRouter();
@@ -26,7 +28,7 @@ const page = () => {
 
         // Fetch user's cars
         const carsRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/cars/my-cars/all`,
+          `${API_BASE}/api/cars/my-cars/all`,
           { headers }
         );
         const cars = carsRes.ok ? await carsRes.json() : [];
@@ -34,7 +36,7 @@ const page = () => {
 
         // Fetch chats and group by day
         const chatsRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/chat/my-chats`,
+          `${API_BASE}/api/chat/my-chats`,
           { headers }
         );
         const chatsJson = chatsRes.ok ? await chatsRes.json() : [];

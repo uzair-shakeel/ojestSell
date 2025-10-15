@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { FiClock, FiMail, FiShield, FiRefreshCw } from "react-icons/fi";
 import { useAuth } from "../../lib/auth/AuthContext";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+
 const PendingApprovalScreen = ({ user }) => {
   const { logout, updateUserState } = useAuth();
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -24,9 +26,7 @@ const PendingApprovalScreen = ({ user }) => {
       if (!token) return;
 
       const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
-        }/api/users/${user.id || user._id}`,
+        `${API_BASE}/api/users/${user.id || user._id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -68,9 +68,7 @@ const PendingApprovalScreen = ({ user }) => {
 
       // Fetch updated user data
       const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
-        }/api/users/${user.id || user._id}`,
+        `${API_BASE}/api/users/${user.id || user._id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

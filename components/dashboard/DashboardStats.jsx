@@ -8,6 +8,8 @@ import { BsChatLeftDots } from "react-icons/bs";
 import { FaCar } from "react-icons/fa";
 import { HiOutlineUser } from "react-icons/hi";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+
 export default function DashboardStats({ user: userProp }) {
   const { user: contextUser, userId, getToken } = useAuth();
   const user = contextUser || userProp;
@@ -42,7 +44,7 @@ export default function DashboardStats({ user: userProp }) {
         const token = await getToken();
         if (token) {
           tasks.push(
-            fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/chat/my-chats`, {
+            fetch(`${API_BASE}/api/chat/my-chats`, {
               headers: { Authorization: `Bearer ${token}` },
             })
               .then(async (res) => {

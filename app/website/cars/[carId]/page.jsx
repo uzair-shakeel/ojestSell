@@ -22,7 +22,8 @@ import { getPublicUserInfo } from "../../../../services/userService";
 import { useAuth } from "../../../../lib/auth/AuthContext";
 import io from "socket.io-client";
 
-const socket = io(process.env.NEXT_PUBLIC_API_BASE_URL, {
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+const socket = io(API_BASE || undefined, {
   autoConnect: false,
 });
 
@@ -51,7 +52,7 @@ const Page = () => {
     if (typeof imagePath === "string" && /^(https?:)?\/\//i.test(imagePath)) {
       return imagePath;
     }
-    return `${process.env.NEXT_PUBLIC_API_BASE_URL}/${imagePath.replace(
+    return `${API_BASE}/${imagePath.replace(
       "\\",
       "/"
     )}`;
@@ -216,7 +217,7 @@ const Page = () => {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/chat/create`,
+        `${API_BASE}/api/chat/create`,
         {
           method: "POST",
           headers: {

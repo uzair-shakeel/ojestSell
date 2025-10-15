@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../lib/auth/AuthContext";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+
 const NavbarUpdated = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [chatCount, setChatCount] = useState(0);
@@ -19,7 +21,7 @@ const NavbarUpdated = () => {
     const fetchChats = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/chat/my-chats`,
+          `${API_BASE}/api/chat/my-chats`,
           {
             headers: {
               "x-clerk-user-id": userId,

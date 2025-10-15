@@ -6,6 +6,8 @@ import toast from "react-hot-toast";
 import GoogleSignIn from "./GoogleSignIn";
 import Image from "next/image";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+
 export default function SignInTabs() {
   const [activeTab, setActiveTab] = useState("email");
   const [formData, setFormData] = useState({
@@ -42,7 +44,7 @@ export default function SignInTabs() {
       }
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/signin`,
+        `${API_BASE}/api/auth/signin`,
         {
           method: "POST", 
           headers: {

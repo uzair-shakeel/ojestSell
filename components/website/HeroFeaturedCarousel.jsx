@@ -10,6 +10,8 @@ import "swiper/css/navigation";
 import { FaChevronLeft, FaChevronRight, FaTags } from "react-icons/fa";
 import { getFeaturedCars, getAllCars } from "../../services/carService";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+
 const ensureFiveImages = (images = []) => {
   const safe = Array.isArray(images) ? images : [];
   const out = [...safe];
@@ -25,7 +27,7 @@ const formatCarImage = (imagePath) => {
   }
   // Normalize backslashes from server paths
   const normalized = String(imagePath).replace("\\", "/");
-  const base = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+  const base = API_BASE || "";
   return base ? `${base}/${normalized}` : `/${normalized}`;
 };
 

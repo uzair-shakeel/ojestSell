@@ -1,9 +1,9 @@
 // frontend/services/carService.ts
 import axios from "axios";
 
-// Define the API base URL - use local proxy to avoid CORS issues
-const API_BASE_URL = "https://ojest-ap-is.vercel.app/api";
-// const API_BASE_URL = "/api";
+// Define the API base URL - prefer same-origin, else use NEXT_PUBLIC_API_BASE_URL
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+const API_BASE_URL = API_BASE ? `${API_BASE}/api` : "/api";
 
 // Log the API URL being used
 console.log("Using API URL:", API_BASE_URL);

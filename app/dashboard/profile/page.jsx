@@ -14,7 +14,7 @@ const ProfileComponent = () => {
   const { userId, updateUserState } = useAuth();
   console.log("userId", userId);
   const [user, setUser] = useState(null);
-  const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
   // Get token directly from localStorage
   const getToken = () => {
@@ -291,7 +291,7 @@ const ProfileComponent = () => {
 
       // Try multiple base URLs
       const baseUrls = [
-        BASE_URL,
+        API_BASE,
         process.env.NEXT_PUBLIC_CLOUDINARY_BASE_URL || "",
         process.env.NEXT_PUBLIC_STORAGE_BASE_URL || "",
       ];
