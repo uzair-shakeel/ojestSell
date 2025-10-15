@@ -129,7 +129,7 @@ const BlogPost = ({ params }) => {
                     </div>
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">
                       {relatedPost.title}
                     </h3>
                     <p className="text-gray-600">{relatedPost.excerpt}</p>

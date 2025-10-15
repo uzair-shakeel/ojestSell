@@ -160,15 +160,15 @@ export default function DashboardCharts({
 
   return (
     <div className="grid gap-4 lg:grid-cols-3">
-      <div className="p-4 bg-white shadow rounded-xl ring-1 ring-black/5 h-80 lg:col-span-2">
+      <div className="p-4 bg-white dark:bg-black shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 h-80 lg:col-span-2 transition-colors duration-300">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold">Cars activity</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white transition-colors duration-300">Cars activity</h3>
         </div>
         <Line data={lineData} options={commonOptions} />
       </div>
-      <div className="p-4 bg-white shadow rounded-xl ring-1 ring-black/5 h-80">
+      <div className="p-4 bg-white dark:bg-black shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 h-80 transition-colors duration-300">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold">Status mix</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white transition-colors duration-300">Status mix</h3>
         </div>
         <Doughnut
           data={doughnutData}
@@ -180,9 +180,9 @@ export default function DashboardCharts({
           }}
         />
       </div>
-      <div className="p-4 bg-white shadow rounded-xl ring-1 ring-black/5 h-80 lg:col-span-3">
+      <div className="p-4 bg-white dark:bg-black shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 h-80 lg:col-span-3 transition-colors duration-300">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold">Chats last 7 days</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white transition-colors duration-300">Chats last 7 days</h3>
         </div>
         <Bar data={barData} options={commonOptions} />
       </div>

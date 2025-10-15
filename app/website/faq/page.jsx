@@ -14,13 +14,13 @@ const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="border-b border-gray-200 overflow-hidden">
+    <div className="border-b border-gray-200 dark:border-gray-700 overflow-hidden transition-colors duration-300">
       <button
         className="w-full flex justify-between items-center py-6 px-6 text-left focus:outline-none group"
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
       >
-        <h3 className="text-lg font-medium text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
           {question}
         </h3>
         <motion.div
@@ -48,7 +48,7 @@ const FAQItem = ({ question, answer }) => {
               <motion.p
                 initial={{ y: -10 }}
                 animate={{ y: 0 }}
-                className="text-base text-gray-600"
+                className="text-base text-gray-600 dark:text-gray-300 transition-colors duration-300"
               >
                 {answer}
               </motion.p>
@@ -67,7 +67,7 @@ const FAQPage = () => {
   const remainingFaqs = faqs.slice(1);
 
   return (
-    <div className="bg-gradient-to-b from-gray-50 to-white ">
+    <div className="bg-gradient-to-b from-gray-50 to-white dark:from-black dark:to-black transition-colors duration-300">
       {/* Hero Section */}
       <section className="relative h-[600px] w-[98%] mx-auto my-[10px] rounded-2xl overflow-hidden">
         <div className="absolute inset-0">
@@ -86,17 +86,17 @@ const FAQPage = () => {
               {t("faq.hero.title")}
             </h1>
           </div>
-          <div className="absolute md:bottom-20 bottom-10 left-5 right-5 bg-white/70 backdrop-blur-sm p-2 rounded-xl shadow-lg max-w-3xl mx-auto">
+          <div className="absolute md:bottom-20 bottom-10 left-5 right-5 bg-white/70 dark:bg-black/70 backdrop-blur-sm p-2 rounded-xl shadow-lg max-w-3xl mx-auto transition-colors duration-300">
             <FAQItem question={firstFaq.question} answer={firstFaq.answer} />
           </div>
         </div>
       </section>
       <div className="max-w-7xl mx-auto py-20 px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
+          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400 transition-colors duration-300">
             {t("faq.hero.title")}
           </h2>
-          <p className="mt-4 text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="mt-4 text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto transition-colors duration-300">
             {t("faq.hero.subtitle")}
           </p>
         </div>
@@ -107,7 +107,7 @@ const FAQPage = () => {
           transition={{ duration: 0.5 }}
           className="mt-12 rounded-xl overflow-hidden"
         >
-          <dl className="divide-y divide-gray-200">
+          <dl className="divide-y divide-gray-200 dark:divide-gray-700 transition-colors duration-300">
             {remainingFaqs.map((faq, index) => (
               <motion.div
                 key={index}
@@ -132,7 +132,7 @@ const FAQPage = () => {
         >
           <div className="bg-black/40 flex justify-start  md:justify-end py-4 md:py-24 px-4">
             <div className="flex flex-col items-center  w-full  md:w-1/3 justify-end">
-              <h3 className="text-xl font-extrabold text-gray-900 sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
+              <h3 className="text-xl font-extrabold text-gray-900 dark:text-white sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400 transition-colors duration-300">
                 {t("faq.moreQuestions.title")}
               </h3>
               <p className="mt-4 text-lg text-white hidden md:block">

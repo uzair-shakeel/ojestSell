@@ -5,6 +5,18 @@
 @import "swiper/css/navigation";
 @import "swiper/css/pagination";
 
+/* Dark mode base styles */
+@layer base {
+  * {
+    @apply border-gray-200 dark:border-gray-700;
+  }
+
+  body {
+    @apply bg-white dark:bg-black text-gray-900 dark:text-gray-100;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
 /* * {
   background-color: white;
 } */
@@ -136,4 +148,65 @@ html:not(.loading-active) body > *:not(.loader-container) {
 /* Enhanced shadow utilities */
 .hover\:shadow-gray-200\/60:hover {
   box-shadow: 0 20px 25px -5px rgba(229, 231, 235, 0.6), 0 10px 10px -5px rgba(229, 231, 235, 0.6);
+}
+
+/* Dark mode specific styles */
+@layer components {
+  /* Dark mode scrollbar */
+  .dark .scrollbar-custom::-webkit-scrollbar-track {
+    background: #374151;
+  }
+
+  .dark .scrollbar-custom::-webkit-scrollbar-thumb {
+    background: #6b7280;
+  }
+
+  .dark .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
+
+  /* Dark mode card shadows */
+  .dark .hover\:shadow-gray-200\/60:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Dark mode transitions */
+  .theme-transition {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+
+  /* Dark mode text colors */
+  .dark .text-gray-800 {
+    @apply text-gray-200;
+  }
+
+  .dark .text-gray-700 {
+    @apply text-gray-300;
+  }
+
+  .dark .text-gray-600 {
+    @apply text-gray-400;
+  }
+
+  /* Dark mode background colors */
+  .dark .bg-white {
+    @apply bg-black;
+  }
+
+  .dark .bg-gray-50 {
+    @apply bg-black;
+  }
+
+  .dark .bg-gray-100 {
+    @apply bg-gray-900;
+  }
+
+  /* Dark mode border colors */
+  .dark .border-gray-200 {
+    @apply border-gray-700;
+  }
+
+  .dark .border-gray-300 {
+    @apply border-gray-600;
+  }
 }

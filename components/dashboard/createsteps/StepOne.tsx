@@ -331,7 +331,7 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
                   <FaMapMarkerAlt className="text-white" size={16} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-800">Car Location</h3>
+                  <h3 className="font-semibold text-gray-800 dark:text-black transition-colors duration-300">Car Location</h3>
                   <p className="text-xs text-gray-500">
                     Set the location where the car is available
                   </p>

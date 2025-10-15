@@ -134,21 +134,21 @@ export default function CarCard({ car, viewMode = 'grid' }) {
           </div>
           <div className="p-4 relative bg-white">
             <div className="mb-1">
-              <h3 className="text-base font-bold text-gray-900 mb-1 line-clamp-1">
+              <h3 className="text-base font-bold text-gray-900 dark:text-white mb-1 line-clamp-1 transition-colors duration-300">
                 {car.year} {car.make} {car.model}
               </h3>
             </div>
             <div className="space-y-1 mb-2">
-              <div className="text-[14px] text-gray-700 font-normal leading-[1.5]">
+              <div className="text-[14px] text-gray-700 dark:text-gray-300 font-normal leading-[1.5] transition-colors duration-300">
                 {car.mileage || "N/A"}, {car.fuel || "N/A"}, {car.engine || "N/A"}, {car.transmission || "N/A"}
               </div>
-              <div className="text-[14px] text-gray-500 font-normal leading-[1.5] flex items-center">
+              <div className="text-[14px] text-gray-500 dark:text-gray-400 font-normal leading-[1.5] flex items-center transition-colors duration-300">
                 {locationDetails.city && locationDetails.state
                   ? `${locationDetails.city}, ${locationDetails.state}`
                   : "Loading location..."}
               </div>
             </div>
-            <div className="pt-2 border-t border-gray-100">
+            <div className="pt-2 border-t border-gray-100 dark:border-gray-800 transition-colors duration-300">
               <div className="flex items-center space-x-2">
                 <img 
                   src={getSellerImage()} 
@@ -156,10 +156,10 @@ export default function CarCard({ car, viewMode = 'grid' }) {
                   className="w-5 h-5 rounded-full object-cover"
                 />
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-semibold text-gray-900 truncate">
+                  <div className="text-sm font-semibold text-gray-900 dark:text-white truncate transition-colors duration-300">
                     {getSellerName()}
                   </div>
-                  <div className="text-sm text-gray-500 truncate">
+                  <div className="text-sm text-gray-500 dark:text-gray-400 truncate transition-colors duration-300">
                     {getSellerType()}
                   </div>
                 </div>
@@ -210,22 +210,22 @@ export default function CarCard({ car, viewMode = 'grid' }) {
         <div className="p-2 md:p-4 relative bg-white flex-1 flex flex-col justify-between min-h-[96px] md:min-h-[192px]">
           <div>
             <div className="mb-1 md:mb-2">
-              <h3 className="text-sm md:text-lg font-bold text-gray-900 mb-1 line-clamp-1">
+              <h3 className="text-sm md:text-lg font-bold text-gray-900 dark:text-white mb-1 line-clamp-1 transition-colors duration-300">
                 {car.year} {car.make} {car.model}
               </h3>
             </div>
             <div className="space-y-0.5 md:space-y-1 mb-2 md:mb-3">
-              <div className="text-xs md:text-[14px] text-gray-700 font-normal leading-[1.3] md:leading-[1.5]">
+              <div className="text-xs md:text-[14px] text-gray-700 dark:text-gray-300 font-normal leading-[1.3] md:leading-[1.5] transition-colors duration-300">
                 {car.mileage || "N/A"}, {car.fuel || "N/A"}
               </div>
-              <div className="text-xs md:text-[14px] text-gray-500 font-normal leading-[1.3] md:leading-[1.5] flex items-center">
+              <div className="text-xs md:text-[14px] text-gray-500 dark:text-gray-400 font-normal leading-[1.3] md:leading-[1.5] flex items-center transition-colors duration-300">
                 {locationDetails.city && locationDetails.state
                   ? `${locationDetails.city}, ${locationDetails.state}`
                   : "Loading location..."}
               </div>
             </div>
           </div>
-          <div className="pt-2 md:pt-3 border-t border-gray-100">
+          <div className="pt-2 md:pt-3 border-t border-gray-100 dark:border-gray-800 transition-colors duration-300">
             <div className="flex items-center space-x-2 md:space-x-3">
               <img 
                 src={getSellerImage()} 
@@ -233,10 +233,10 @@ export default function CarCard({ car, viewMode = 'grid' }) {
                 className="w-5 h-5 md:w-8 md:h-8 rounded-full object-cover"
               />
               <div className="flex-1 min-w-0">
-                <div className="text-xs md:text-base font-semibold text-gray-900 truncate">
+                <div className="text-xs md:text-base font-semibold text-gray-900 dark:text-white truncate transition-colors duration-300">
                   {getSellerName()}
                 </div>
-                <div className="text-xs md:text-base text-gray-500 truncate">
+                <div className="text-xs md:text-base text-gray-500 dark:text-gray-400 truncate transition-colors duration-300">
                   {getSellerType()}
                 </div>
               </div>

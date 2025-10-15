@@ -46,20 +46,20 @@ export function CarsNearMe() {
   }, []); // No dependencies since we don't need getToken
 
   return (
-    <section className="py-12 bg-gray-50">
+    <section className="py-12 bg-gray-50 dark:bg-black transition-colors duration-300">
       <div className="mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-2xl font-bold">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white transition-colors duration-300">
           Ostatnio Dodane  
           </h2>
-          <button className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-100">
+          <button className="px-4 py-2 border border-gray-300 dark:border-white rounded-md text-sm font-medium text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors duration-300">
           Więcej
           </button>
         </div>
-        {loading && <p>{t("homepage.carsNearMe.loading")}</p>}
-        {error && <p className="text-red-500">{error}</p>}
+        {loading && <p className="text-gray-600 dark:text-gray-300 transition-colors duration-300">{t("homepage.carsNearMe.loading")}</p>}
+        {error && <p className="text-red-500 dark:text-red-400 transition-colors duration-300">{error}</p>}
         {!loading && !error && cars.length === 0 && (
-          <p>{t("homepage.carsNearMe.noCars")}</p>
+          <p className="text-gray-600 dark:text-gray-300 transition-colors duration-300">{t("homepage.carsNearMe.noCars")}</p>
         )}
         {/* Swiper container */}
         {cars.length > 0 && (
@@ -106,11 +106,11 @@ export function CarsNearMe() {
             </Swiper>
 
             {/* Custom Navigation Buttons */}
-            <button className="cars-swiper-prev absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors duration-200 -ml-4">
-              <FaChevronLeft size={20} className="text-gray-600" />
+            <button className="cars-swiper-prev absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-gray-900 shadow-lg rounded-full p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200 -ml-4 border border-gray-200 dark:border-gray-700">
+              <FaChevronLeft size={20} className="text-gray-600 dark:text-gray-300" />
             </button>
-            <button className="cars-swiper-next absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors duration-200 -mr-4">
-              <FaChevronRight size={20} className="text-gray-600" />
+            <button className="cars-swiper-next absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-gray-900 shadow-lg rounded-full p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200 -mr-4 border border-gray-200 dark:border-gray-700">
+              <FaChevronRight size={20} className="text-gray-600 dark:text-gray-300" />
             </button>
           </div>
         )}

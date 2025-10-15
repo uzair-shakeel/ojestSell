@@ -210,7 +210,7 @@ export function BrowseByMake() {
 
         {/* Title overlay */}
         <div className="absolute top-8 left-8 z-20">
-          <h2 className="text-4xl font-bold text-white drop-shadow-lg">
+          <h2 className="text-4xl font-bold text-white dark:text-white drop-shadow-lg transition-colors duration-300">
           Producenci
           </h2>
         </div>
@@ -261,7 +261,7 @@ export function BrowseByMake() {
                     href={`/website/cars?make=${make.actualMake || t(
                       `homepage.browseByMake.makes.${make.nameKey}`
                     )}`}
-                    className="inline-block bg-white text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+                    className="inline-block !bg-white !text-black px-6 py-3 rounded-lg font-medium hover:!bg-gray-100 transition-colors"
                   >
                     {t("homepage.browseByMake.viewAll")}
                   </Link>

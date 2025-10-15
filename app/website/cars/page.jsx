@@ -425,7 +425,7 @@ const CarsContent = () => {
                   className={`px-3 py-2 lg:px-4 lg:py-3 rounded-md text-sm font-medium transition-all duration-200 flex items-center justify-center ${
                     viewMode === "grid"
                       ? "bg-blue-500 text-white shadow-md"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                      : "text-gray-600 dark:text-gray-300 hover:text-gray-900 hover:bg-gray-100 dark:hover:text-gray-300 dark:hover:bg-transparent"
                   }`}
                 >
                   <svg
@@ -442,7 +442,7 @@ const CarsContent = () => {
                   className={`px-3 py-2 lg:px-4 lg:py-3 rounded-md text-sm font-medium transition-all duration-200 flex items-center justify-center ${
                     viewMode === "list"
                       ? "bg-blue-500 text-white shadow-md"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                      : "text-gray-600 dark:text-gray-300 hover:text-gray-900 hover:bg-gray-100 dark:hover:text-gray-300 dark:hover:bg-transparent"
                   }`}
                 >
                   <svg
@@ -468,8 +468,8 @@ const CarsContent = () => {
                     onClick={() => handleSort("best-match")}
                     className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${
                       sortBy === "best-match"
-                        ? "text-gray-900 border-gray-900 relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
-                        : "text-gray-500 border-transparent hover:text-gray-700"
+                        ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
+                        : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"
                     } bg-transparent focus:outline-none appearance-none`}
                   >
                     Najlepsze dopasowanie
@@ -480,8 +480,8 @@ const CarsContent = () => {
                     onClick={() => handleSort("lowest-price")}
                     className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${
                       sortBy === "lowest-price"
-                        ? "text-gray-900 border-gray-900 relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
-                        : "text-gray-500 border-transparent hover:text-gray-700"
+                        ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
+                        : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"
                     } bg-transparent focus:outline-none appearance-none`}
                   >
                     Najniższa cena
@@ -492,8 +492,8 @@ const CarsContent = () => {
                     onClick={() => handleSort("highest-price")}
                     className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${
                       sortBy === "highest-price"
-                        ? "text-gray-900 border-gray-900 relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
-                        : "text-gray-500 border-transparent hover:text-gray-700"
+                        ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
+                        : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"
                     } bg-transparent focus:outline-none appearance-none`}
                   >
                     Najwyższa cena
@@ -504,8 +504,8 @@ const CarsContent = () => {
                     onClick={() => handleSort("lowest-mileage")}
                     className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${
                       sortBy === "lowest-mileage"
-                        ? "text-gray-900 border-gray-900 relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
-                        : "text-gray-500 border-transparent hover:text-gray-700"
+                        ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
+                        : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"
                     } bg-transparent focus:outline-none appearance-none`}
                   >
                     Najniższy przebieg
@@ -516,8 +516,8 @@ const CarsContent = () => {
                     onClick={() => handleSort("highest-mileage")}
                     className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${
                       sortBy === "highest-mileage"
-                        ? "text-gray-900 border-gray-900 relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
-                        : "text-gray-500 border-transparent hover:text-gray-700"
+                        ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
+                        : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"
                     } bg-transparent focus:outline-none appearance-none`}
                   >
                     Najwyższy przebieg
@@ -528,8 +528,8 @@ const CarsContent = () => {
                     onClick={() => handleSort("newest-year")}
                     className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${
                       sortBy === "newest-year"
-                        ? "text-gray-900 border-gray-900 relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
-                        : "text-gray-500 border-transparent hover:text-gray-700"
+                        ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
+                        : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"
                     } bg-transparent focus:outline-none appearance-none`}
                   >
                     Najnowszy rok
@@ -540,8 +540,8 @@ const CarsContent = () => {
                     onClick={() => handleSort("oldest-year")}
                     className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${
                       sortBy === "oldest-year"
-                        ? "text-gray-900 border-gray-900 relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
-                        : "text-gray-500 border-transparent hover:text-gray-700"
+                        ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
+                        : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"
                     } bg-transparent focus:outline-none appearance-none`}
                   >
                     Najstarszy rok

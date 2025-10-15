@@ -201,13 +201,13 @@ export default function AuthTabs() {
     return (
       <div className="min-h-screen flex">
         {/* Left Side - Form Section */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-black transition-colors duration-300">
           <div className="w-full max-w-md">
             <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold text-gray-900 mb-3">
+              <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">
                 Verify Your Account
               </h1>
-              <p className="text-lg text-gray-600">
+              <p className="text-lg text-gray-600 dark:text-gray-300 transition-colors duration-300">
                 Enter the OTP sent to your{" "}
                 {activeTab === "email" ? "email" : "phone"}
               </p>
@@ -215,7 +215,7 @@ export default function AuthTabs() {
 
             <form onSubmit={handleOTPSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-4 text-center">
+                <label className="block text-sm font-medium text-gray-700 dark:text-white mb-4 text-center transition-colors duration-300">
                   OTP Code
                 </label>
                 <div className="flex justify-center space-x-3 mb-4">
@@ -256,14 +256,14 @@ export default function AuthTabs() {
               <button
                 onClick={handleResendOTP}
                 disabled={loading}
-                className="text-blue-600 hover:text-blue-700 disabled:opacity-50 font-medium"
+                className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 disabled:opacity-50 font-medium transition-colors duration-300"
               >
                 Resend OTP
               </button>
               <div>
                 <button
                   onClick={() => setStep("input")}
-                  className="text-gray-600 hover:text-gray-700"
+                  className="text-gray-600 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white transition-colors duration-300"
                 >
                   ← Back to form
                 </button>
@@ -328,7 +328,7 @@ export default function AuthTabs() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-3">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">
               Join OjestSell
             </h1>
             <p className="text-lg text-gray-600">

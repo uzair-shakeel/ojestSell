@@ -174,7 +174,7 @@ const SellerDetailsPage = () => {
         <div className="bg-white/80 backdrop-blur-sm  rounded-2xl shadow ring-1 ring-black/5 p-6">
           {/* Progress */}
           <div className="mb-6">
-            <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-300 mb-2 transition-colors duration-300">
               <span>
                 Step {stepIndex + 1} of {steps.length}
               </span>
@@ -189,7 +189,7 @@ const SellerDetailsPage = () => {
           </div>
 
           {/* Question */}
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4 text-center">
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4 text-center transition-colors duration-300">
             {current?.title}
           </h2>
           {current?.key === "sellerType" && (
@@ -200,11 +200,15 @@ const SellerDetailsPage = () => {
                 className={`p-4 rounded-xl border text-left transition ${
                   sellerType === "private"
                     ? "border-blue-600 ring-1 ring-blue-200 bg-blue-50"
-                    : "border-gray-200 hover:bg-gray-50"
+                    : "border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 group"
                 }`}
               >
-                <div className="font-medium text-gray-900">Private seller</div>
-                <div className="text-xs text-gray-600 mt-1">
+                <div className={`font-medium transition-colors duration-300 ${
+                  sellerType === "private" ? "text-gray-900" : "text-gray-900 group-hover:dark:text-white"
+                }`}>Private seller</div>
+                <div className={`text-xs mt-1 transition-colors duration-300 ${
+                  sellerType === "private" ? "text-gray-600" : "text-gray-600 group-hover:dark:text-gray-300"
+                }`}>
                   Ideal for individuals listing personal vehicles
                 </div>
               </button>
@@ -214,11 +218,15 @@ const SellerDetailsPage = () => {
                 className={`p-4 rounded-xl border text-left transition ${
                   sellerType === "company"
                     ? "border-blue-600 ring-1 ring-blue-200 bg-blue-50"
-                    : "border-gray-200 hover:bg-gray-50"
+                    : "border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 group"
                 }`}
               >
-                <div className="font-medium text-gray-900">Company</div>
-                <div className="text-xs text-gray-600 mt-1">
+                <div className={`font-medium transition-colors duration-300 ${
+                  sellerType === "company" ? "text-gray-900" : "text-gray-900 group-hover:dark:text-white"
+                }`}>Company</div>
+                <div className={`text-xs mt-1 transition-colors duration-300 ${
+                  sellerType === "company" ? "text-gray-600" : "text-gray-600 group-hover:dark:text-gray-300"
+                }`}>
                   Great for dealerships and automotive businesses
                 </div>
               </button>
@@ -258,13 +266,13 @@ const SellerDetailsPage = () => {
                       setPreviewUrl(null);
                       setValue("image", null);
                     }}
-                    className="text-sm text-gray-600 hover:text-gray-900"
+                    className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-300"
                   >
                     Remove
                   </button>
                 )}
               </div>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-gray-300 transition-colors duration-300">
                 You can skip this and add a photo later.
               </p>
             </div>
@@ -308,7 +316,7 @@ const SellerDetailsPage = () => {
 
           {current?.key === "brands" && (
             <div className="space-y-3">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-300 transition-colors duration-300">
                 Pick the brands you specialize in
               </p>
               <div className="grid grid-cols-2 gap-2">
@@ -354,7 +362,7 @@ const SellerDetailsPage = () => {
                   );
                 })}
               </div>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-gray-300 transition-colors duration-300">
                 Optional. You can edit brands later in your profile.
               </p>
             </div>
@@ -369,7 +377,7 @@ const SellerDetailsPage = () => {
                 placeholder="Phone number"
                 className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-gray-500 dark:text-gray-300 mt-2 transition-colors duration-300">
                 Optional. You can add more later in your profile.
               </p>
             </div>
@@ -418,10 +426,10 @@ const SellerDetailsPage = () => {
               type="button"
               onClick={back}
               disabled={stepIndex === 0}
-              className={`px-4 py-2 rounded-md border ${
+              className={`px-4 py-2 rounded-md border text-gray-700 dark:text-gray-300 transition-colors duration-300 ${
                 stepIndex === 0
-                  ? "opacity-40 cursor-not-allowed"
-                  : "hover:bg-gray-50"
+                  ? "opacity-40 cursor-not-allowed !text-gray-900 dark:!text-white"
+                  : "hover:bg-gray-50 dark:hover:bg-gray-800"
               }`}
             >
               Back
@@ -432,7 +440,7 @@ const SellerDetailsPage = () => {
                 <button
                   type="button"
                   onClick={skip}
-                  className="px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50"
+                  className="px-4 py-2 rounded-md text-gray-700 dark:text-black hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-300"
                 >
                   Skip
                 </button>

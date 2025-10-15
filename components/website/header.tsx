@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../lib/auth/AuthContext";
+import ThemeToggle from "../ThemeToggle";
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -128,8 +129,11 @@ export function Header() {
             ))}
           </div>
 
-          {/* CTA Buttons */}
+          {/* Theme Toggle and CTA Buttons */}
           <div className="flex items-center gap-2">
+            {/* Theme Toggle */}
+            <ThemeToggle size={20} />
+            
             {isSignedIn ? (
               <>
                 <button

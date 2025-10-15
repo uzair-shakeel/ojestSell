@@ -5,6 +5,7 @@ export default {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
@@ -18,7 +19,7 @@ export default {
     base: true,
     styled: true,
     utils: true,
-    themes: ["light"],
+    themes: ["light", "dark"],
     logs: false,
     prefix: "",
   },

@@ -43,9 +43,9 @@ export function BlogSection() {
   const { t } = useLanguage();
 
   return (
-    <section className="py-12">
+    <section className="py-12 bg-white dark:bg-black transition-colors duration-300">
       <div className=" mx-auto px-4">
-        <h2 className="text-2xl font-bold mb-8">
+        <h2 className="text-2xl font-bold mb-8 text-gray-900 dark:text-white transition-colors duration-300">
           {t("homepage.blogSection.title")}
         </h2>
 
@@ -63,10 +63,10 @@ export function BlogSection() {
                   {t(`homepage.blogSection.categories.${post.categoryKey}`)}
                 </div>
               </div>
-              <p className="text-sm text-gray-500 mb-2">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2 transition-colors duration-300">
                 {t(`homepage.blogSection.dates.${post.dateKey}`)}
               </p>
-              <h3 className="font-semibold group-hover:text-blue-600 transition-colors">
+              <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
                 {t(`homepage.blogSection.posts.${post.titleKey}`)}
               </h3>
             </Link>
@@ -74,7 +74,7 @@ export function BlogSection() {
         </div>
 
         <div className="text-center">
-          <button className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-100">
+          <button className="px-4 py-2 border border-gray-300 dark:border-white rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-700 dark:text-white transition-colors duration-300">
             {t("homepage.blogSection.viewAll")}
           </button>
         </div>

@@ -9,7 +9,7 @@ export function Footer() {
   const { t } = useLanguage();
 
   return (
-    <footer className="bg-gray-900 text-white pt-16 pb-8">
+    <footer className="bg-gray-900 dark:bg-black text-white pt-16 pb-8 transition-colors duration-300">
       <div className="mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           <div>
@@ -97,14 +97,14 @@ export function Footer() {
                 placeholder="Wprowadź swój adres e-mail"
                 className="bg-gray-800 border-gray-700 rounded px-3 py-2 w-full"
               />
-              <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">
+              <button className="!bg-white !text-black hover:!bg-gray-100 px-4 py-2 rounded transition-colors duration-300">
                 Subskrybuj
               </button>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+        <div className="border-t border-gray-800 dark:border-gray-900 pt-8 flex flex-col md:flex-row justify-between items-center transition-colors duration-300">
           <div className="mb-4 md:mb-0">
             <Link href="/" className="inline-block">
               <div className="relative w-32 h-10">

@@ -5,6 +5,7 @@ import { BsChatLeftDots } from "react-icons/bs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import LanguageSwitcher from "../LanguageSwitcher";
+import ThemeToggle from "../ThemeToggle";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
 import { useAuth } from "../../lib/auth/AuthContext";
 
@@ -34,7 +35,7 @@ const Navbar = () => {
   ];
 
   return (
-    <header className="w-full p-4 bg-white shadow-md flex justify-between items-center text-black">
+    <header className="w-full p-4 bg-white dark:bg-black shadow-md flex justify-between items-center text-black dark:text-white transition-colors duration-300">
       {/* Logo */}
       <div className="">
         <Link href="/website">
@@ -42,7 +43,10 @@ const Navbar = () => {
         </Link>
       </div>
 
-      <div className="flex items-center space-x-5 sm:mx-4">
+      <div className="flex items-center space-x-3 sm:mx-4">
+        {/* Theme Toggle */}
+        <ThemeToggle size={24} />
+        
         {/* <div className="">
           <LanguageSwitcher />
         </div> */}
@@ -50,14 +54,14 @@ const Navbar = () => {
         {isSignedIn ? (
           <button
             onClick={() => router.push("/dashboard/home")}
-            className="hidden md:block bg-white border border-gray-300 px-4 py-2 rounded-full hover:bg-gray-100"
+            className="hidden md:block bg-white dark:bg-black border border-gray-300 dark:border-white px-4 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-900 text-black dark:text-white transition-colors duration-300"
           >
             Panel
           </button>
         ) : (
           <Link
             href="/sign-up"
-            className="hidden md:block bg-white border border-gray-300 px-4 py-2 rounded-full hover:bg-gray-100"
+            className="hidden md:block bg-white dark:bg-black border border-gray-300 dark:border-white px-4 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-900 text-black dark:text-white transition-colors duration-300"
           >
             {t("navbar.becomeSeller")}
           </Link>
@@ -66,7 +70,7 @@ const Navbar = () => {
         {/* Profile/Menu Button */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="text-gray-700"
+          className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-300"
         >
           <IoPersonCircleOutline size={30} />
         </button>
@@ -74,19 +78,19 @@ const Navbar = () => {
 
       {/* Mobile Dropdown Menu */}
       {isMenuOpen && (
-        <div className="absolute z-50 right-4 top-16 bg-white border border-gray-200 shadow-lg rounded-lg p-2 w-48 flex flex-col space-y-2">
+        <div className="absolute z-50 right-4 top-16 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-lg rounded-lg p-2 w-48 flex flex-col space-y-2">
           {/* Navigation Links for Mobile */}
           {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.href}
-              className="w-full text-left hover:bg-gray-100 p-2 duration-300"
+              className="w-full text-left hover:bg-gray-100 dark:hover:bg-gray-800 p-2 duration-300 text-black dark:text-white"
               onClick={() => setIsMenuOpen(false)}
             >
               {link.name}
             </Link>
           ))}
-          <div className="border-t border-gray-200 my-1"></div>
+          <div className="border-t border-gray-200 dark:border-gray-800 my-1"></div>
           {isSignedIn ? (
             <>
               <button
@@ -94,13 +98,13 @@ const Navbar = () => {
                   router.push("/dashboard/home");
                   setIsMenuOpen(false);
                 }}
-                className="w-full text-left hover:bg-gray-100 p-2 duration-300"
+                className="w-full text-left hover:bg-gray-100 dark:hover:bg-gray-800 p-2 duration-300 text-black dark:text-white"
               >
                 Panel
               </button>
               <button
                 onClick={handleSignOut}
-                className="w-full text-left hover:bg-gray-100 p-2 duration-300"
+                className="w-full text-left hover:bg-gray-100 dark:hover:bg-gray-800 p-2 duration-300 text-black dark:text-white"
               >
                 Wyloguj się
               </button>
@@ -108,7 +112,7 @@ const Navbar = () => {
           ) : (
             <button
               onClick={handleSignIn}
-              className="w-full text-left hover:bg-gray-100 p-2 duration-300"
+              className="w-full text-left hover:bg-gray-100 dark:hover:bg-gray-800 p-2 duration-300 text-black dark:text-white"
             >
               Zalogować się
             </button>

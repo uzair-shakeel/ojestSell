@@ -221,7 +221,7 @@ export default function FilterNavbar({ onApplyFilters }) {
         {/* Filter Heading with mobile view toggle on the right - Hidden when sticky */}
         {!isSticky && (
           <div className="flex items-center justify-between mx-[10px] mb-[10px]">
-            <h2 className="font-bold text-gray-900 text-2xl">Filtrowanie</h2>
+            <h2 className="font-bold text-gray-900 dark:text-white text-2xl transition-colors duration-300">Filtrowanie</h2>
             {/* Mobile inline view toggle (adjacent to heading) */}
             <div className="flex md:hidden items-center gap-1 bg-white rounded-md p-1 shadow-sm border">
               <button
@@ -244,7 +244,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                   <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
                 </svg>
               </button>
-            </div>
+        </div>
           </div>
         )}
         
@@ -285,7 +285,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 className="px-2 py-1.5 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                 disabled={loading || !filters.make}
               >
-                <option value="">Model</option>
+              <option value="">Model</option>
                 {filters.make && getModelsForMake(filters.make).map((model) => (
                   <option key={model} value={model}>
                     {model}
@@ -1132,12 +1132,12 @@ export default function FilterNavbar({ onApplyFilters }) {
           </button>
         </div>
 
-          </div>
+        </div>
         )}
 
 
-        </div>
       </div>
+    </div>
     </div>
     {isSticky && (
       <div style={{ height: navbarHeight }} />

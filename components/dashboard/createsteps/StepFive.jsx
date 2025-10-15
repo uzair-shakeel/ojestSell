@@ -39,133 +39,133 @@ export default function StepFive({
   }, [formData.location, isLoaded, getGeocodingData]);
 
   return (
-    <div className="bg-white rounded-lg">
-      <h2 className="text-xl font-bold mb-6">Step 5: Review & Submit</h2>
+    <div className="bg-white dark:bg-black rounded-lg transition-colors duration-300">
+      <h2 className="text-xl font-bold mb-6 text-gray-900 dark:text-white transition-colors duration-300">Step 5: Review & Submit</h2>
 
       {/* Grid Layout */}
-      <div className="sm:grid sm:grid-cols-2 space-y-5 gap-y-5 text-gray-700">
+      <div className="sm:grid sm:grid-cols-2 space-y-5 gap-y-5 text-gray-700 dark:text-gray-300 transition-colors duration-300">
         {/* Title & Description */}
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Title</p>
-          <p className="font-medium text-black">{formData.title}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{formData.title}</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Description</p>
-          <p className="font-medium text-black">{formData.description}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{formData.description}</p>
         </div>
 
         {/* Car Details */}
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Make</p>
-          <p className="font-medium text-black">{formData.make}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{formData.make}</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Model</p>
-          <p className="font-medium text-black">{formData.model}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{formData.model}</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Trim</p>
-          <p className="font-medium text-black">{formData.trim || "N/A"}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{formData.trim || "N/A"}</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Type</p>
-          <p className="font-medium text-black">{formData.type}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{formData.type}</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Year</p>
-          <p className="font-medium text-black">{formData.year || "N/A"}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{formData.year || "N/A"}</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Mileage</p>
-          <p className="font-medium text-black">
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.mileage ? `${formData.mileage} km` : "N/A"}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Drivetrain</p>
-          <p className="font-medium text-black">
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.drivetrain || "N/A"}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Transmission</p>
-          <p className="font-medium text-black">
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.transmission || "N/A"}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Fuel</p>
-          <p className="font-medium text-black">{formData.fuel || "N/A"}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{formData.fuel || "N/A"}</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Engine</p>
-          <p className="font-medium text-black">
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.engine ? `${formData.engine}L` : "N/A"}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Horsepower</p>
-          <p className="font-medium text-black">
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.horsepower ? `${formData.horsepower} HP` : "N/A"}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Accident History</p>
-          <p className="font-medium text-black">
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.accidentHistory || "N/A"}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Service History</p>
-          <p className="font-medium text-black">
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.serviceHistory || "N/A"}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">VIN</p>
-          <p className="font-medium text-black">{formData.vin || "N/A"}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{formData.vin || "N/A"}</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Country of Origin</p>
-          <p className="font-medium text-black">{formData.country || "N/A"}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{formData.country || "N/A"}</p>
         </div>
 
         {/* Car Condition */}
-        <div className="col-span-2 text-lg font-bold mt-4">Condition</div>
+        <div className="col-span-2 text-lg font-bold mt-4 text-gray-900 dark:text-white transition-colors duration-300">Condition</div>
         {Object.entries(formData.condition).map(([key, value], index) => (
           <div key={index} className="grid grid-cols-2 sm:grid-cols-1 w-full">
             <p className="text-xs uppercase">
               {key.replace(/([A-Z])/g, " $1").trim()}
             </p>
-            <p className="font-medium text-black">{value || "N/A"}</p>
+            <p className="font-medium text-black dark:text-white transition-colors duration-300">{value || "N/A"}</p>
           </div>
         ))}
 
         {/* Financial Information */}
-        <div className="col-span-2 text-lg font-bold mt-4">
+        <div className="col-span-2 text-lg font-bold mt-4 text-gray-900 dark:text-white transition-colors duration-300">
           Financial Information
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Sell Options</p>
-          <p className="font-medium text-black">
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.financialInfo.sellOptions.join(", ") || "N/A"}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Invoice Options</p>
-          <p className="font-medium text-black">
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.financialInfo.invoiceOptions.join(", ") || "N/A"}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Seller Type</p>
-          <p className="font-medium text-black">
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.financialInfo.sellerType}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Price</p>
-          <p className="font-medium text-black">
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.financialInfo.invoiceOptions.includes("Invoice VAT")
               ? `Netto: ${formData.financialInfo.priceNetto} €, With VAT: ${
                   formData.financialInfo.priceWithVat || "Auto-calculated"
@@ -175,14 +175,14 @@ export default function StepFive({
         </div>
 
         {/* Location Information */}
-        <div className="col-span-2 text-lg font-bold mt-4">Location</div>
+        <div className="col-span-2 text-lg font-bold mt-4 text-gray-900 dark:text-white transition-colors duration-300">Location</div>
         {locationDetails.city && (
-          <div className="col-span-2 p-3 bg-blue-50 border border-blue-100 rounded-lg mb-3 flex items-center">
-            <FaMapMarkerAlt className="text-blue-500 mr-2 flex-shrink-0" />
+          <div className="col-span-2 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-lg mb-3 flex items-center transition-colors duration-300">
+            <FaMapMarkerAlt className="text-blue-500 dark:text-blue-400 mr-2 flex-shrink-0 transition-colors duration-300" />
             <div>
-              <span className="font-medium">Car Location:</span>{" "}
-              {locationDetails.city}
-              {locationDetails.state ? `, ${locationDetails.state}` : ""}
+              <span className="font-medium text-gray-900 dark:text-white transition-colors duration-300">Car Location:</span>{" "}
+              <span className="text-gray-900 dark:text-white transition-colors duration-300">{locationDetails.city}
+              {locationDetails.state ? `, ${locationDetails.state}` : ""}</span>
             </div>
           </div>
         )}

@@ -595,7 +595,7 @@ const Page = () => {
               <div className="py-3 flex flex-row">
                 <div className="flex flex-col items-start">
                   <h3 className="text-base font-medium mb-2">Cena</h3>
-                  <p className="text-4xl font-bold text-gray-900 mb-2">
+                  <p className="text-4xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">
                   {car?.financialInfo?.priceNetto
   ? `${Number(car.financialInfo.priceNetto).toLocaleString("pl-PL")} zł`
   : "N/A"}
@@ -635,7 +635,7 @@ const Page = () => {
 
                 <div className="w-full">
                   <div className="flex justify-between items-center">
-                    <p className="text-black text-lg lg:text-xl">
+                    <p className="text-black dark:text-white text-lg lg:text-xl transition-colors duration-300">
                       <strong>{sellerName}</strong>
                     </p>
                   </div>

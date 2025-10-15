@@ -136,7 +136,7 @@ export default function SignInTabs() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-3">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">
               Welcome Back
             </h1>
             <p className="text-lg text-gray-600">

@@ -3679,11 +3679,11 @@ export default function PhotoEnhancer() {
         </div>
       </div>
 
-      <div className="mt-8 bg-blue-50 p-4 rounded-lg">
-        <h3 className="text-lg font-semibold mb-2">
+      <div className="mt-8 bg-blue-50 dark:bg-blue-50 p-4 rounded-lg transition-colors duration-300">
+        <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-black transition-colors duration-300">
           How to use Photo Enhancer
         </h3>
-        <ol className="list-decimal pl-5 space-y-2">
+        <ol className="list-decimal pl-5 space-y-2 text-gray-900 dark:text-black transition-colors duration-300">
           <li>Upload an image using the Upload button</li>
           <li>
             Try out different car-specific filter presets to quickly enhance

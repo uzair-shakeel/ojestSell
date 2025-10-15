@@ -81,12 +81,12 @@ const DetailTab = ({ cardetails }) => {
   return (
     <div>
       <div>
-        <p className="font-medium text-black uppercase">Description</p>
-        <p className="text-gray-700">
+        <p className="font-medium text-black dark:text-white uppercase transition-colors duration-300">Description</p>
+        <p className="text-gray-700 dark:text-gray-300 transition-colors duration-300">
           {showMore ? fullText : previewText}
           {shouldTruncate && (
             <button
-              className="text-blue-500 ml-2 underline"
+              className="text-blue-500 dark:text-blue-400 ml-2 underline transition-colors duration-300"
               onClick={() => setShowMore(!showMore)}
             >
               {showMore ? "Show Less" : "Show More"}
@@ -94,58 +94,58 @@ const DetailTab = ({ cardetails }) => {
           )}
         </p>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-2 gap-x-20 gap-y-5 mt-6 text-gray-700">
+      <div className="grid grid-cols-2 sm:grid-cols-2 gap-x-20 gap-y-5 mt-6 text-gray-700 dark:text-gray-300 transition-colors duration-300">
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Marka</p>{" "}
-          <p className="font-medium text-black ">{cardetails.make}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{cardetails.make}</p>
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Model</p>
-          <p className="font-medium text-black ">{cardetails.model}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{cardetails.model}</p>
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Rok</p>{" "}
-          <p className="font-medium text-black ">{cardetails.year}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{cardetails.year}</p>
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Lokalizacja</p>{" "}
-          <p className="font-medium text-black ">{cardetails.country}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{cardetails.country}</p>
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Przebieg</p>{" "}
-          <p className="font-medium text-black ">{cardetails.mileage}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{cardetails.mileage}</p>
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Skrzynia Biegów</p>{" "}
-          <p className="font-medium text-black ">{translateTransmission(cardetails.transmission)}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{translateTransmission(cardetails.transmission)}</p>
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Paliwo</p>{" "}
-          <p className="font-medium text-black ">{translateFuel(cardetails.fuel)}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{translateFuel(cardetails.fuel)}</p>
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Kolor</p>{" "}
-          <p className="font-medium text-black ">{cardetails.color}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{cardetails.color}</p>
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Konie Mechaniczne</p>{" "}
-          <p className="font-medium text-black ">{cardetails.horsepower}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{cardetails.horsepower}</p>
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Silnik</p>{" "}
-          <p className="font-medium text-black ">{cardetails.engine}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{cardetails.engine}</p>
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Stan</p>{" "}
-          <p className="font-medium text-black ">{translateCondition(cardetails.condition)}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{translateCondition(cardetails.condition)}</p>
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Historia Serwisowa</p>{" "}
-          <p className="font-medium text-black ">{translateYesNo(cardetails.serviceHistory)}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{translateYesNo(cardetails.serviceHistory)}</p>
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Bezwypadkowość</p>{" "}
-          <p className="font-medium text-black ">{translateAccidentFree(cardetails.accidentHistory)}</p>
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{translateAccidentFree(cardetails.accidentHistory)}</p>
         </div>
       </div>
     </div>

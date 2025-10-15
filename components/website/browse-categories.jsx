@@ -21,9 +21,9 @@ export function BrowseCategories() {
     : [];
 
   return (
-    <section className="py-12">
+    <section className="py-12 bg-white dark:bg-black transition-colors duration-300">
       <div className=" mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-8">
+        <h2 className="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-white transition-colors duration-300">
         Szukaj po Marce 
         </h2>
 
@@ -36,7 +36,7 @@ export function BrowseCategories() {
                 pathname: "/website/cars",
                 query: { make: brand.name },
               }}
-              className="relative min-h-[120px] bg-white shadow-md rounded-lg p-6 flex flex-col pl-6 md:flex-row items-center gap-2 hover:shadow-md transition-shadow"
+              className="relative min-h-[120px] bg-white dark:bg-gray-900 shadow-md rounded-lg p-6 flex flex-col pl-6 md:flex-row items-center gap-2 hover:shadow-md dark:hover:shadow-lg transition-all duration-300 border border-gray-200 dark:border-gray-800"
             >
               <div className="relative w-20 h-10">
                 <Image
@@ -46,9 +46,9 @@ export function BrowseCategories() {
                   className="object-contain h-full w-auto"
                 />
               </div>
-              <span className="text-md font-medium">{brand.name}</span>
+              <span className="text-md font-medium text-gray-900 dark:text-white transition-colors duration-300">{brand.name}</span>
               {brand.discount && (
-                <span className="absolute rotate-45 top-6 right-0 text-sm text-green-600 font-semibold">
+                <span className="absolute rotate-45 top-6 right-0 text-sm text-green-600 dark:text-green-400 font-semibold transition-colors duration-300">
                   save {brand.discount}
                 </span>
               )}
@@ -60,7 +60,7 @@ export function BrowseCategories() {
         {Array.isArray(brands) && brands.length > 12 && (
           <div className="flex justify-center mt-8">
             <button
-              className="rounded-full px-8 py-2 border border-gray-300 inline-flex items-center hover:bg-gray-100 transition-colors"
+              className="rounded-full px-8 py-2 border border-gray-300 dark:border-white inline-flex items-center hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-700 dark:text-white transition-colors duration-300"
               onClick={() => setShowAll(!showAll)}
             >
               {t("homepage.browseCategories.seeMore")}
