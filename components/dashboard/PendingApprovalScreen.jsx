@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { FiClock, FiMail, FiShield, FiRefreshCw } from "react-icons/fi";
 import { useAuth } from "../../lib/auth/AuthContext";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 const PendingApprovalScreen = ({ user }) => {
   const { logout, updateUserState } = useAuth();

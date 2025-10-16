@@ -22,7 +22,7 @@ import { getPublicUserInfo } from "../../../../services/userService";
 import { useAuth } from "../../../../lib/auth/AuthContext";
 import io from "socket.io-client";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 const socket = io(API_BASE || undefined, {
   autoConnect: false,
 });

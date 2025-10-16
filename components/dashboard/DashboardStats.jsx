@@ -8,7 +8,7 @@ import { BsChatLeftDots } from "react-icons/bs";
 import { FaCar } from "react-icons/fa";
 import { HiOutlineUser } from "react-icons/hi";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 export default function DashboardStats({ user: userProp }) {
   const { user: contextUser, userId, getToken } = useAuth();

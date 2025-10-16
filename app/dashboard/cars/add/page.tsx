@@ -79,7 +79,8 @@ export default function MultiStepForm() {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const userData = await getUserById(userId);
+        // Ensure authenticated request supplies token for protected endpoint
+        const userData = await getUserById(userId, getToken);
         setUser(userData);
         console.log(userData);
         setFormData({
@@ -281,7 +282,8 @@ export default function MultiStepForm() {
         } else {
           // Coerce non-file values to string for FormData
           const value =
-            typeof carData[key] === "number" || typeof carData[key] === "boolean"
+            typeof carData[key] === "number" ||
+            typeof carData[key] === "boolean"
               ? String(carData[key])
               : (carData[key] as any) ?? "";
           formDataToSend.append(key, value);
@@ -293,13 +295,22 @@ export default function MultiStepForm() {
       try {
         const entries: any[] = [];
         (formDataToSend as any).forEach((value: any, key: string) => {
-          const printable = value instanceof File ? `File(name=${value.name}, size=${value.size})` : String(value);
+          const printable =
+            value instanceof File
+              ? `File(name=${value.name}, size=${value.size})`
+              : String(value);
           entries.push({ key, value: printable });
         });
         console.table(entries);
-        console.log("FormData isFeatured entry:", entries.find((e) => e.key === "isFeatured")?.value);
+        console.log(
+          "FormData isFeatured entry:",
+          entries.find((e) => e.key === "isFeatured")?.value
+        );
       } catch (e) {
-        console.log("Could not iterate FormData entries in this environment", e);
+        console.log(
+          "Could not iterate FormData entries in this environment",
+          e
+        );
       }
       await addCar(formDataToSend, getToken);
       setShowSuccessModal(true);
@@ -378,10 +389,17 @@ export default function MultiStepForm() {
       {/* Success Modal */}
       {showSuccessModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setShowSuccessModal(false)} />
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setShowSuccessModal(false)}
+          />
           <div className="relative bg-white rounded-lg shadow-xl w-full max-w-md p-6 mx-4">
-            <h3 className="text-xl font-semibold mb-2">Car created successfully</h3>
-            <p className="text-gray-600 mb-6">Your listing has been submitted and will appear in your dashboard.</p>
+            <h3 className="text-xl font-semibold mb-2">
+              Car created successfully
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Your listing has been submitted and will appear in your dashboard.
+            </p>
             <div className="flex justify-end gap-3">
               <button
                 className="px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-50"

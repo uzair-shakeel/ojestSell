@@ -12,7 +12,7 @@ import { useGoogleMaps } from "../../lib/GoogleMapsContext";
 import Image from "next/image";
 import { getPublicUserInfo } from "../../services/userService";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 export default function CarCard({ car, viewMode = 'grid' }) {
   const router = useRouter();

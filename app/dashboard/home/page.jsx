@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useAuth } from "../../../lib/auth/AuthContext";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 const page = () => {
   const { user } = useAuth();
@@ -24,21 +24,20 @@ const page = () => {
     const loadCharts = async () => {
       try {
         const token = await getToken();
+        console.log("token milrha hai kia?", token);
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
         // Fetch user's cars
-        const carsRes = await fetch(
-          `${API_BASE}/api/cars/my-cars/all`,
-          { headers }
-        );
+        const carsRes = await fetch(`${API_BASE}/api/cars/my-cars/all`, {
+          headers,
+        });
         const cars = carsRes.ok ? await carsRes.json() : [];
         setRecentCars(Array.isArray(cars) ? cars.slice(-7) : []);
 
         // Fetch chats and group by day
-        const chatsRes = await fetch(
-          `${API_BASE}/api/chat/my-chats`,
-          { headers }
-        );
+        const chatsRes = await fetch(`${API_BASE}/api/chat/my-chats`, {
+          headers,
+        });
         const chatsJson = chatsRes.ok ? await chatsRes.json() : [];
         const chats = Array.isArray(chatsJson)
           ? chatsJson

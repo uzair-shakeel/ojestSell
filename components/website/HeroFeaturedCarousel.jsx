@@ -10,7 +10,7 @@ import "swiper/css/navigation";
 import { FaChevronLeft, FaChevronRight, FaTags } from "react-icons/fa";
 import { getFeaturedCars, getAllCars } from "../../services/carService";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 const ensureFiveImages = (images = []) => {
   const safe = Array.isArray(images) ? images : [];

@@ -5,7 +5,7 @@ import { FaSearch, FaPaperPlane, FaBars, FaEnvelope } from "react-icons/fa";
 import { useAuth } from "../../../lib/auth/AuthContext";
 import io from "socket.io-client";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 const socket = io(API_BASE || undefined, {
   autoConnect: false,
 });
@@ -46,15 +46,12 @@ const MessagesPage = () => {
         console.log("Fetching chats for user ID:", user.id);
 
         // Use fetch with explicit error handling
-        const response = await fetch(
-          `${API_BASE}/api/chat/my-chats`,
-          {
-            headers: {
-              "x-clerk-user-id": user.id,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`${API_BASE}/api/chat/my-chats`, {
+          headers: {
+            "x-clerk-user-id": user.id,
+            "Content-Type": "application/json",
+          },
+        });
 
         console.log("Response status:", response.status);
 

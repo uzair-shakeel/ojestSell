@@ -11,7 +11,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../lib/auth/AuthContext";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+// Prefer same-origin proxy (/api) unless a full external base is explicitly provided
+const RAW_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+const API_BASE = RAW_BASE ? RAW_BASE.replace(/\/$/, "") : "";
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
   const [chatCount, setChatCount] = useState(0);
@@ -33,7 +35,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
     const base = API_BASE || "";
     if (base) {
       const clean = imagePath.replace(/^[/\\]/, "");
-      return `${base.replace(/\/$/, "")}/${clean}`;
+      return `${base}/${clean}`;
     }
     return "/images/default-seller.png";
   };
@@ -63,14 +65,15 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
         }
 
         console.log("Fetching chats with token");
-        const response = await fetch(
-          `${API_BASE}/api/chat/my-chats`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        // If external base provided, hit it directly, otherwise use Next.js rewrite via /api
+        const chatUrl = API_BASE
+          ? `${API_BASE}/api/chat/my-chats`
+          : `/api/chat/my-chats`;
+        const response = await fetch(chatUrl, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!response.ok) {
           console.error("Failed to fetch chats, status:", response.status);

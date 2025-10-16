@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import GoogleSignIn from "./GoogleSignIn";
 import Image from "next/image";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 export default function SignInTabs() {
   const [activeTab, setActiveTab] = useState("email");
@@ -43,26 +43,24 @@ export default function SignInTabs() {
         payload.phoneNumber = formData.phoneNumber;
       }
 
-      const response = await fetch(
-        `${API_BASE}/api/auth/signin`,
-        {
-          method: "POST", 
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+      const response = await fetch(`${API_BASE}/api/auth/signin`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
       const data = await response.json();
 
       if (response.ok) {
         localStorage.setItem("token", data.token);
+        console.log("error nahi aaya guys", data);
         localStorage.setItem("user", JSON.stringify(data.user));
         toast.success("Sign in successful!");
         router.push("/dashboard/home");
       } else {
-        console.log('error aagaya guys', data);
+        console.log("error aagaya guys", data);
         toast.error(data.message || "Sign in failed");
       }
     } catch (error) {
