@@ -221,16 +221,12 @@ export const updateCar = async (
       throw new Error("No authentication token found");
     }
 
-    const response = await axios.put(
-      `${API_BASE_URL}/cars/${carId}`,
-      carData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    const response = await axios.put(`${API_BASE_URL}/cars/${carId}`, carData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data;
   } catch (error: any) {
     throw new Error(error?.response?.data?.message || "Failed to update car");
@@ -311,7 +307,7 @@ export const searchCars = async (queryParams: {
     const cars = Array.isArray(response.data)
       ? response.data
       : response.data.cars || [];
-    
+
     return cars;
   } catch (error: any) {
     console.error("searchCars error:", error);
