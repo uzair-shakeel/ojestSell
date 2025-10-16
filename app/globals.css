@@ -12,7 +12,7 @@
   }
 
   body {
-    @apply bg-white dark:bg-black text-gray-900 dark:text-gray-100;
+    @apply bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 }
@@ -107,7 +107,8 @@ html:not(.loading-active) body > *:not(.loader-container) {
 }
 
 .group:hover .group-hover\:shadow-xl {
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .group:hover .group-hover\:text-gray-800 {
@@ -125,7 +126,8 @@ html:not(.loading-active) body > *:not(.loader-container) {
 
 .from-blue-500 {
   --tw-gradient-from: #3b82f6;
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(59, 130, 246, 0));
+  --tw-gradient-stops: var(--tw-gradient-from),
+    var(--tw-gradient-to, rgba(59, 130, 246, 0));
 }
 
 .to-purple-600 {
@@ -134,11 +136,13 @@ html:not(.loading-active) body > *:not(.loader-container) {
 
 .from-black\/30 {
   --tw-gradient-from: rgba(0, 0, 0, 0.3);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(0, 0, 0, 0));
+  --tw-gradient-stops: var(--tw-gradient-from),
+    var(--tw-gradient-to, rgba(0, 0, 0, 0));
 }
 
 .via-transparent {
-  --tw-gradient-stops: var(--tw-gradient-from), transparent, var(--tw-gradient-to, transparent);
+  --tw-gradient-stops: var(--tw-gradient-from), transparent,
+    var(--tw-gradient-to, transparent);
 }
 
 .to-transparent {
@@ -147,7 +151,8 @@ html:not(.loading-active) body > *:not(.loader-container) {
 
 /* Enhanced shadow utilities */
 .hover\:shadow-gray-200\/60:hover {
-  box-shadow: 0 20px 25px -5px rgba(229, 231, 235, 0.6), 0 10px 10px -5px rgba(229, 231, 235, 0.6);
+  box-shadow: 0 20px 25px -5px rgba(229, 231, 235, 0.6),
+    0 10px 10px -5px rgba(229, 231, 235, 0.6);
 }
 
 /* Dark mode specific styles */
@@ -167,12 +172,14 @@ html:not(.loading-active) body > *:not(.loader-container) {
 
   /* Dark mode card shadows */
   .dark .hover\:shadow-gray-200\/60:hover {
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3),
+      0 10px 10px -5px rgba(0, 0, 0, 0.3);
   }
 
   /* Dark mode transitions */
   .theme-transition {
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease,
+      border-color 0.3s ease;
   }
 
   /* Dark mode text colors */

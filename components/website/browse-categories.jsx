@@ -21,10 +21,10 @@ export function BrowseCategories() {
     : [];
 
   return (
-    <section className="py-12 bg-white dark:bg-black transition-colors duration-300">
+    <section className="py-12 bg-white dark:bg-gray-800 transition-colors duration-300">
       <div className=" mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-white transition-colors duration-300">
-        Szukaj po Marce 
+          Szukaj po Marce
         </h2>
 
         {/* Brand Grid */}
@@ -46,7 +46,9 @@ export function BrowseCategories() {
                   className="object-contain h-full w-auto"
                 />
               </div>
-              <span className="text-md font-medium text-gray-900 dark:text-white transition-colors duration-300">{brand.name}</span>
+              <span className="text-md font-medium text-gray-900 dark:text-white transition-colors duration-300">
+                {brand.name}
+              </span>
               {brand.discount && (
                 <span className="absolute rotate-45 top-6 right-0 text-sm text-green-600 dark:text-green-400 font-semibold transition-colors duration-300">
                   save {brand.discount}

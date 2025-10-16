@@ -201,7 +201,7 @@ export default function AuthTabs() {
     return (
       <div className="min-h-screen flex">
         {/* Left Side - Form Section */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-black transition-colors duration-300">
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-gray-800 transition-colors duration-300">
           <div className="w-full max-w-md">
             <div className="text-center mb-8">
               <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">

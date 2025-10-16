@@ -28,8 +28,10 @@ export default function QuickActions() {
   ];
 
   return (
-    <div className="p-4 bg-white dark:bg-black shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 transition-colors duration-300">
-      <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white transition-colors duration-300">Quick actions</h3>
+    <div className="p-4 bg-white dark:bg-gray-800800800800 shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+      <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white transition-colors duration-300">
+        Quick actions
+      </h3>
       <div className="grid sm:grid-cols-3 gap-3">
         {actions.map((a) => (
           <Link
@@ -47,4 +49,3 @@ export default function QuickActions() {
     </div>
   );
 }
-

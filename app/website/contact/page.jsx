@@ -41,7 +41,7 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="bg-gray-50 dark:bg-black transition-colors duration-300">
+    <div className="bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
       {/* Hero Banner Section with Image */}
       <div className="mt-4 mx-4 text-center rounded-3xl overflow-hidden bg-cover bg-center bg-no-repeat relative">
         <div

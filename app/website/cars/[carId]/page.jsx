@@ -52,10 +52,7 @@ const Page = () => {
     if (typeof imagePath === "string" && /^(https?:)?\/\//i.test(imagePath)) {
       return imagePath;
     }
-    return `${API_BASE}/${imagePath.replace(
-      "\\",
-      "/"
-    )}`;
+    return `${API_BASE}/${imagePath.replace("\\", "/")}`;
   };
 
   const getCityFromCoordinates = async (lat, lon) => {
@@ -216,20 +213,17 @@ const Page = () => {
     }
 
     try {
-      const response = await fetch(
-        `${API_BASE}/api/chat/create`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-clerk-user-id": user?.id,
-          },
-          body: JSON.stringify({
-            carId,
-            ownerId: car?.createdBy,
-          }),
-        }
-      );
+      const response = await fetch(`${API_BASE}/api/chat/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-clerk-user-id": user?.id,
+        },
+        body: JSON.stringify({
+          carId,
+          ownerId: car?.createdBy,
+        }),
+      });
 
       if (!response?.ok) {
         // If chat already exists or backend returns non-OK, still navigate to messages
@@ -353,7 +347,9 @@ const Page = () => {
     if (type === "company") {
       return seller?.companyName || "Company";
     }
-    const fullName = `${seller?.firstName || ""} ${seller?.lastName || ""}`.trim();
+    const fullName = `${seller?.firstName || ""} ${
+      seller?.lastName || ""
+    }`.trim();
     return fullName || seller?.companyName || "Private Seller";
   })();
 
@@ -479,7 +475,9 @@ const Page = () => {
                       <div className="relative overflow-hidden rounded-lg lg:rounded-tl-[10px] lg:rounded-bl-[10px] lg:rounded-tr-none lg:rounded-br-none">
                         <img
                           src={img}
-                          alt={`${car?.make} ${car?.model} - Image ${index + 1}`}
+                          alt={`${car?.make} ${car?.model} - Image ${
+                            index + 1
+                          }`}
                           className="w-full aspect-[5/3] object-cover cursor-pointer rounded-lg lg:rounded-none"
                           onClick={() => setIsFullscreen(true)}
                         />
@@ -572,21 +570,19 @@ const Page = () => {
             </div>
             <div className="col-span-2 bg-white rounded-md mt-5">
               <div className="gap-2 mb-4 grid grid-cols-2 md:grid-cols-4">
-                {["opis", "stan", "lokalizacja", "finanse"].map(
-                  (tab) => (
-                    <button
-                      key={tab}
-                      className={`px-4 py-2 border border-gray-200 ${
-                        activeTab === tab
-                          ? "bg-blue-500 text-white"
-                          : "bg-white text-gray-700"
-                      } rounded-md`}
-                      onClick={() => setActiveTab(tab)}
-                    >
-                      {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                    </button>
-                  )
-                )}
+                {["opis", "stan", "lokalizacja", "finanse"].map((tab) => (
+                  <button
+                    key={tab}
+                    className={`px-4 py-2 border border-gray-200 ${
+                      activeTab === tab
+                        ? "bg-blue-500 text-white"
+                        : "bg-white text-gray-700"
+                    } rounded-md`}
+                    onClick={() => setActiveTab(tab)}
+                  >
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  </button>
+                ))}
               </div>
               {renderContent()}
             </div>
@@ -597,9 +593,11 @@ const Page = () => {
                 <div className="flex flex-col items-start">
                   <h3 className="text-base font-medium mb-2">Cena</h3>
                   <p className="text-4xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">
-                  {car?.financialInfo?.priceNetto
-  ? `${Number(car.financialInfo.priceNetto).toLocaleString("pl-PL")} zł`
-  : "N/A"}
+                    {car?.financialInfo?.priceNetto
+                      ? `${Number(car.financialInfo.priceNetto).toLocaleString(
+                          "pl-PL"
+                        )} zł`
+                      : "N/A"}
 
                     {/* <span className="text-xl text-gray-600">(NETTO)</span> */}
                   </p>
@@ -624,15 +622,15 @@ const Page = () => {
                 </button>
               </div>
               <div className="flex items-center space-x-3 my-5">
-              <div className="relative w-24 h-20 aspect-square overflow-hidden rounded-full">
-  <Image
-    src={formatImageUrl(seller?.image)}
-    alt={sellerName}
-    fill
-    className="object-cover"
-    sizes="96px"
-  />
-</div>
+                <div className="relative w-24 h-20 aspect-square overflow-hidden rounded-full">
+                  <Image
+                    src={formatImageUrl(seller?.image)}
+                    alt={sellerName}
+                    fill
+                    className="object-cover"
+                    sizes="96px"
+                  />
+                </div>
 
                 <div className="w-full">
                   <div className="flex justify-between items-center">
@@ -641,13 +639,12 @@ const Page = () => {
                     </p>
                   </div>
                   <p className="text-base text-gray-500">
-                    {
-                      (() => {
-                        const type = seller?.sellerType || car?.financialInfo?.sellerType;
-                        if (!type) return "Unknown Seller Type";
-                        return type === "company" ? "Company" : "Private Seller";
-                      })()
-                    }
+                    {(() => {
+                      const type =
+                        seller?.sellerType || car?.financialInfo?.sellerType;
+                      if (!type) return "Unknown Seller Type";
+                      return type === "company" ? "Company" : "Private Seller";
+                    })()}
                   </p>
                   <div className="flex justify-start items-center space-x-2">
                     <img

@@ -35,7 +35,7 @@ const Navbar = () => {
   ];
 
   return (
-    <header className="w-full p-4 bg-white dark:bg-black shadow-md flex justify-between items-center text-black dark:text-white transition-colors duration-300">
+    <header className="w-full p-4 bg-white dark:bg-gray-900 shadow-md dark:shadow-gray-600 flex justify-between items-center text-black dark:text-white transition-colors duration-300">
       {/* Logo */}
       <div className="">
         <Link href="/website">
@@ -46,7 +46,7 @@ const Navbar = () => {
       <div className="flex items-center space-x-3 sm:mx-4">
         {/* Theme Toggle */}
         <ThemeToggle size={24} />
-        
+
         {/* <div className="">
           <LanguageSwitcher />
         </div> */}
@@ -54,14 +54,14 @@ const Navbar = () => {
         {isSignedIn ? (
           <button
             onClick={() => router.push("/dashboard/home")}
-            className="hidden md:block bg-white dark:bg-black border border-gray-300 dark:border-white px-4 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-900 text-black dark:text-white transition-colors duration-300"
+            className="hidden md:block bg-white dark:bg-gray-800800800800800800800800800800 border border-gray-300 dark:border-white px-4 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-900 text-black dark:text-white transition-colors duration-300"
           >
             Panel
           </button>
         ) : (
           <Link
             href="/sign-up"
-            className="hidden md:block bg-white dark:bg-black border border-gray-300 dark:border-white px-4 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-900 text-black dark:text-white transition-colors duration-300"
+            className="hidden md:block bg-white dark:bg-gray-800800800800800800800 border border-gray-300 dark:border-white px-4 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-900 text-black dark:text-white transition-colors duration-300"
           >
             {t("navbar.becomeSeller")}
           </Link>

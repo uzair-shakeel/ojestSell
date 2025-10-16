@@ -33,7 +33,7 @@ function HomeContent() {
   }, [searchParams, router]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-white dark:bg-black transition-colors duration-300">
+    <div className="flex flex-col min-h-screen bg-white dark:bg-gray-800 transition-colors duration-300">
       <Navbar />
 
       {/* Hero Section */}
@@ -57,7 +57,7 @@ function HomeContent() {
         <div className="relative  w-full z-10 h-full flex flex-col justify-between py-[90px] md:py-[120px] items-center text-center text-white">
           <div>
             <h1 className="text-xl md:text-5xl font-bold mb-4">
-            Znajdź lub Sprzedaj Swoje Auto
+              Znajdź lub Sprzedaj Swoje Auto
             </h1>
           </div>
           <div className="absolute md:bottom-10 bottom-5 left-5 right-5">

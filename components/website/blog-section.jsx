@@ -43,7 +43,7 @@ export function BlogSection() {
   const { t } = useLanguage();
 
   return (
-    <section className="py-12 bg-white dark:bg-black transition-colors duration-300">
+    <section className="py-12 bg-white dark:bg-gray-800 transition-colors duration-300">
       <div className=" mx-auto px-4">
         <h2 className="text-2xl font-bold mb-8 text-gray-900 dark:text-white transition-colors duration-300">
           {t("homepage.blogSection.title")}

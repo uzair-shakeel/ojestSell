@@ -94,10 +94,10 @@ export function BrowseLocations() {
   };
 
   return (
-    <section className="block py-16 bg-white dark:bg-black transition-colors duration-300">
+    <section className="block py-16 bg-white dark:bg-gray-800 transition-colors duration-300">
       <div className="max-w-[1400px] w-[98%] mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white transition-colors duration-300">
-        Nasze Typy Aut 
+          Nasze Typy Aut
         </h2>
 
         <div className="relative group">

@@ -263,22 +263,21 @@ const VideoSection = () => {
   };
 
   return (
-    <section className="relative py-20 bg-white dark:bg-black transition-colors duration-300">
+    <section className="relative py-20 bg-white dark:bg-gray-800 transition-colors duration-300">
       <div className="container mx-auto px-4 sm:px-6 lg:px-10 max-w-[1920px]">
         <div className="mb-16 grid md:grid-cols-2 gap-8 lg:gap-0">
           {/* Left side - Heading */}
           <div className="flex-1 max-w-3xl lg:max-w-3xl w-full">
             <div className="inline-block mb-6">
               <span className="text-sm font-semibold bg-blue-50 dark:bg-blue-900/30 px-3 py-2 rounded-full shadow-sm text-blue-600 dark:text-blue-400 tracking-wider uppercase transition-colors duration-300">
-              Rewolucyjna platforma
+                Rewolucyjna platforma
               </span>
             </div>
 
             <h1 className="text-2xl md:text-3xl lg:text-5xl xl:text-6xl font-bold text-black dark:text-white leading-[0.9] mb-0 transition-colors duration-300">
-            Poznaj przyszłość 
-
+              Poznaj przyszłość
               <span className="relative inline-block">
-              handlu 
+                handlu
                 <svg
                   className="absolute -bottom-1 left-0 w-full h-4"
                   viewBox="0 0 300 20"
@@ -301,8 +300,8 @@ const VideoSection = () => {
           {/* Right side - Description and Button */}
           <div className="flex-shrink-0 lg:ml-16 max-w-xl w-full lg:w-auto pt-0 xl:pt-16">
             <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-8 transition-colors duration-300">
-            Stworzony przez amatorów, z możliwością negocjacji, wewnętrznych okazji, taniej jak na otodrogo ;) Prosto i bez reklam 
-
+              Stworzony przez amatorów, z możliwością negocjacji, wewnętrznych
+              okazji, taniej jak na otodrogo ;) Prosto i bez reklam
             </p>
 
             <button

@@ -86,7 +86,7 @@ const FAQPage = () => {
               {t("faq.hero.title")}
             </h1>
           </div>
-          <div className="absolute md:bottom-20 bottom-10 left-5 right-5 bg-white/70 dark:bg-black/70 backdrop-blur-sm p-2 rounded-xl shadow-lg max-w-3xl mx-auto transition-colors duration-300">
+          <div className="absolute md:bottom-20 bottom-10 left-5 right-5 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm p-2 rounded-xl shadow-lg max-w-3xl mx-auto transition-colors duration-300">
             <FAQItem question={firstFaq.question} answer={firstFaq.answer} />
           </div>
         </div>

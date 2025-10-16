@@ -9,7 +9,7 @@ export function Footer() {
   const { t } = useLanguage();
 
   return (
-    <footer className="bg-gray-900 dark:bg-black text-white pt-16 pb-8 transition-colors duration-300">
+    <footer className="bg-gray-900 dark:bg-gray-800800800800800800800800800 text-white pt-16 pb-8 transition-colors duration-300">
       <div className="mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           <div>
@@ -31,7 +31,7 @@ export function Footer() {
                   Samochody
                 </Link>
               </li>
-            
+
               <li>
                 <Link
                   href="/website/blog"
@@ -40,10 +40,8 @@ export function Footer() {
                   Blog
                 </Link>
               </li>
-        
             </ul>
           </div>
-
 
           <div>
             <h3 className="font-bold mb-4">Informacje</h3>
@@ -64,7 +62,7 @@ export function Footer() {
                   FAQ
                 </Link>
               </li>
-             
+
               <li>
                 <Link
                   href="/website/privacy"
@@ -89,7 +87,7 @@ export function Footer() {
           <div>
             <h3 className="font-bold mb-4">Newsletter</h3>
             <p className="text-gray-400 mb-4">
-                  Subskrybuj nasz newsletter i otrzymuj najnowsze aktualności.
+              Subskrybuj nasz newsletter i otrzymuj najnowsze aktualności.
             </p>
             <div className="flex gap-2">
               <input
@@ -117,7 +115,8 @@ export function Footer() {
               </div>
             </Link>
             <p className="text-gray-400 text-sm mt-2">
-                Wszelkie prawa zastrzeżone © {new Date().getFullYear()} Ojest. Wszelkie prawa zastrzeżone.
+              Wszelkie prawa zastrzeżone © {new Date().getFullYear()} Ojest.
+              Wszelkie prawa zastrzeżone.
             </p>
           </div>
 

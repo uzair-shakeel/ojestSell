@@ -33,7 +33,7 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
   };
 
   return (
-    <header className="w-full p-4 bg-white dark:bg-black shadow-md flex justify-between items-center z-30 sticky top-0 transition-colors duration-300">
+    <header className="w-full p-4 bg-white dark:bg-gray-800800 shadow-md flex justify-between items-center z-30 sticky top-0 transition-colors duration-300">
       {/* Logo */}
       <div>
         <img src="/whitelogo.png" alt="Ojest Logo" className="h-10" />
@@ -42,11 +42,11 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
       <div className="flex items-center space-x-3 sm:mx-4">
         {/* Theme Toggle */}
         <ThemeToggle size={24} />
-        
+
         {/* Add Listing Button */}
         <button
           onClick={() => router.push("/dashboard/cars/add")}
-          className="hidden md:block bg-white dark:bg-black border border-gray-300 dark:border-gray-700 px-4 py-2 rounded-full shadow hover:bg-gray-100 dark:hover:bg-gray-900 text-black dark:text-white transition-colors duration-300"
+          className="hidden md:block bg-white dark:bg-gray-800800800 border border-gray-300 dark:border-gray-700 px-4 py-2 rounded-full shadow hover:bg-gray-100 dark:hover:bg-gray-900 text-black dark:text-white transition-colors duration-300"
         >
           Add Listing
         </button>
@@ -70,7 +70,9 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
                 <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                   {user?.firstName} {user?.lastName}
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {user?.email}
+                </p>
               </div>
 
               <button
