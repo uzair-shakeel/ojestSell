@@ -2569,7 +2569,7 @@ export default function PhotoEnhancer() {
     );
   };
 
-  // Add function to blur number plate
+  // Add function to blur number plate by calling external API directly (no internal /api route)
   const blurNumberPlate = async () => {
     if (!selectedImage) {
       alert("Please select an image first");
@@ -2580,60 +2580,37 @@ export default function PhotoEnhancer() {
     setPlateBlurError(null);
 
     try {
-      // Create FormData for the API request
-      const apiFormData = new FormData();
-      apiFormData.append("file", selectedImage);
+      const externalUrl = "http://174.138.64.65/detect";
+      const fd = new FormData();
+      fd.append("file", selectedImage);
 
-      console.log("Sending request to blur number plate...");
-      const response = await fetch("/api/blur-plate", {
-        method: "POST",
-        body: apiFormData,
-      });
+      const resp = await fetch(externalUrl, { method: "POST", body: fd });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const data = await resp.json();
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      // Support both response shapes
+      const base64 = data?.image_base64 || (data?.processed_image?.includes(",") ? data?.processed_image.split(",")[1] : data?.processed_image);
+      if (!base64) throw new Error("No image returned by detector");
 
-      const data = await response.json();
-      console.log("Received response:", data);
+      const imageUrl = (data?.processed_image && data.processed_image.startsWith("data:"))
+        ? data.processed_image
+        : `data:image/jpeg;base64,${base64}`;
 
-      if (data.image_base64) {
-        // Add data URL prefix if not present
-        const imageUrl = data.image_base64.startsWith("data:")
-          ? data.image_base64
-          : `data:image/jpeg;base64,${data.image_base64}`;
+      setPreviewUrl(imageUrl);
 
-        // Update the preview with the blurred image
-        setPreviewUrl(imageUrl);
+      // Convert to File for continued editing
+      const byteString = atob(imageUrl.split(",")[1]);
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+      const blob = new Blob([ab], { type: "image/jpeg" });
+      const file = new File([blob], "blurred-plate.jpg", { type: "image/jpeg" });
 
-        // Convert base64 to File object for further processing
-        // Extract the base64 data from the data URL
-        const base64Data = imageUrl.split(",")[1];
-        const byteString = atob(base64Data);
-        const ab = new ArrayBuffer(byteString.length);
-        const ia = new Uint8Array(ab);
-        for (let i = 0; i < byteString.length; i++) {
-          ia[i] = byteString.charCodeAt(i);
-        }
-        const blob = new Blob([ab], { type: "image/jpeg" });
-        const file = new File([blob], "blurred-plate.jpg", {
-          type: "image/jpeg",
-        });
-
-        // Update the selected image with the blurred version
-        setSelectedImage(file);
-        setOriginalImage(file);
-      } else {
-        throw new Error(
-          "No image_base64 received in response. Response: " +
-            JSON.stringify(data)
-        );
-      }
+      setSelectedImage(file);
+      setOriginalImage(file);
     } catch (error) {
-      console.error("Error blurring number plate:", error);
-      setPlateBlurError(
-        error.message || "Failed to blur number plate. Please try again."
-      );
+      console.error("Error blurring number plate (external API):", error);
+      setPlateBlurError(error.message || "Failed to blur number plate. Please try again.");
     } finally {
       setIsBlurringPlate(false);
     }
