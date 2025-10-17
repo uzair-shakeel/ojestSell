@@ -397,12 +397,12 @@ const CarsContent = () => {
   }, [allCars, currentPage, itemsPerPage]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-gray-800">
       {/* Header */}
       <HeroFeaturedCarousel />
 
       {/* Horizontal Filter Navbar */}
-      <div className="w-full">
+      <div className="w-full ">
         <FilterNavbar onApplyFilters={handleApplyFilters} />
       </div>
 
@@ -415,7 +415,7 @@ const CarsContent = () => {
         {/* Main Content */}
         <main className="h-full w-full px-0 sm:px-4">
           {/* Header Cards (View Toggle and Sort Options) */}
-          <div className="bg-white flex flex-col lg:flex-row justify-between items-center py-1 pb-2 px-[10px] sm:px-2 gap-2 lg:gap-4">
+          <div className="bg-white dark:bg-gray-800 flex flex-col lg:flex-row justify-between items-center py-1 pb-2 px-[10px] sm:px-2 gap-2 lg:gap-4">
             {/* Top on Mobile, Right on Desktop - View Toggle Buttons */}
             <div className="hidden lg:flex justify-center lg:justify-end w-full lg:w-auto order-1 lg:order-2">
               <div className="bg-white rounded-lg p-1 shadow-sm border flex gap-1">
@@ -461,7 +461,7 @@ const CarsContent = () => {
             </div>
 
             {/* Bottom on Mobile, Left on Desktop - Sort Inline List */}
-            <div className="order-2 lg:order-1 w-full -mt-[28px] lg:mt-4 lg:w-auto">
+            <div className="order-2  lg:order-1 w-full -mt-[28px] lg:mt-4 lg:w-auto">
               <ul ref={sortListRef} className="filter-sorts flex flex-nowrap items-center overflow-x-scroll scroll-x-touch scrollbar-hide whitespace-nowrap -mx-2 px-2 pr-4 gap-2 lg:gap-4 cursor-grab select-none active:cursor-grabbing">
                 <li className="sort-option pr-3 flex-none">
               <button

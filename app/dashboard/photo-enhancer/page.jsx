@@ -2580,14 +2580,14 @@ export default function PhotoEnhancer() {
     setPlateBlurError(null);
 
     try {
-      // Create FormData and append the image file
-      const formData = new FormData();
-      formData.append("file", selectedImage);
+      // Create FormData for the API request
+      const apiFormData = new FormData();
+      apiFormData.append("file", selectedImage);
 
       console.log("Sending request to blur number plate...");
       const response = await fetch("/api/blur-plate", {
         method: "POST",
-        body: formData,
+        body: apiFormData,
       });
 
       if (!response.ok) {
@@ -2597,9 +2597,11 @@ export default function PhotoEnhancer() {
       const data = await response.json();
       console.log("Received response:", data);
 
-      if (data.processed_image) {
-        // The processed_image is already a complete data URL, no need to add prefix
-        const imageUrl = data.processed_image;
+      if (data.image_base64) {
+        // Add data URL prefix if not present
+        const imageUrl = data.image_base64.startsWith("data:")
+          ? data.image_base64
+          : `data:image/jpeg;base64,${data.image_base64}`;
 
         // Update the preview with the blurred image
         setPreviewUrl(imageUrl);
@@ -2622,7 +2624,10 @@ export default function PhotoEnhancer() {
         setSelectedImage(file);
         setOriginalImage(file);
       } else {
-        throw new Error("No processed image received in response");
+        throw new Error(
+          "No image_base64 received in response. Response: " +
+            JSON.stringify(data)
+        );
       }
     } catch (error) {
       console.error("Error blurring number plate:", error);
@@ -3679,11 +3684,11 @@ export default function PhotoEnhancer() {
         </div>
       </div>
 
-      <div className="mt-8 bg-blue-50 dark:bg-blue-50 p-4 rounded-lg transition-colors duration-300">
-        <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-black transition-colors duration-300">
+      <div className="mt-8 bg-blue-50 dark:bg-blue-50/20 dark:text-white p-4 rounded-lg transition-colors duration-300">
+        <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white transition-colors duration-300">
           How to use Photo Enhancer
         </h3>
-        <ol className="list-decimal pl-5 space-y-2 text-gray-900 dark:text-black transition-colors duration-300">
+        <ol className="list-decimal pl-5 space-y-2 text-gray-900 dark:text-white transition-colors duration-300">
           <li>Upload an image using the Upload button</li>
           <li>
             Try out different car-specific filter presets to quickly enhance

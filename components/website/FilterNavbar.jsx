@@ -209,7 +209,7 @@ export default function FilterNavbar({ onApplyFilters }) {
     <>
     <div 
       ref={filterRef}
-      className={`bg-white z-50 ${
+      className={`bg-white dark:bg-gray-800 z-50 ${
         isSticky 
           ? 'fixed top-0 left-0 right-0 shadow-xl backdrop-blur-sm bg-white/70' 
           : 'relative'

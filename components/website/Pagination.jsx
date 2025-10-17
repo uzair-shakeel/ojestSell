@@ -65,7 +65,7 @@ const Pagination = ({
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   return (
-    <div className={`w-full flex flex-col sm:flex-row justify-center items-center py-6 px-4 bg-white ${className}`}>
+    <div className={`w-full flex flex-col sm:flex-row justify-center items-center py-6 px-4 bg-white dark:bg-gray-800 ${className}`}>
      
 
       {/* Pagination controls */}

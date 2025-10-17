@@ -587,8 +587,8 @@ const Page = () => {
               {renderContent()}
             </div>
           </div>
-          <div className="col-span-1 sm:mt-20">
-            <div className="w-full p-4 bg-white rounded-sm border sticky top-4 shadow">
+          <div className="col-span-1  sm:mt-20">
+            <div className="w-full p-4 bg-white dark:bg-black/10 rounded-sm border sticky top-4 shadow">
               <div className="py-3 flex flex-row">
                 <div className="flex flex-col items-start">
                   <h3 className="text-base font-medium mb-2">Cena</h3>

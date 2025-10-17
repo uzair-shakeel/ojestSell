@@ -182,7 +182,7 @@ export default function FilterSidebar({
   };
 
   return (
-    <div className="w-full lg:sticky lg:top-4 lg:max-w-xs h-full">
+    <div className="w-full lg:sticky dark:bg-gray-800 lg:top-4 lg:max-w-xs h-full">
       <div className="border rounded-md bg-white text-gray-900 flex flex-col h-[100vh] md:h-auto">
         <div className="flex justify-between items-center px-4 py-4 border-b sticky top-0 bg-white z-10">
           <div className="flex gap-6 items-center">

@@ -101,7 +101,7 @@ export default function CarCard({ car, viewMode = 'grid' }) {
   if (viewMode === 'grid') {
     return (
       <div
-        className="group cursor-pointer focus:outline-none"
+        className="group  cursor-pointer focus:outline-none"
         onClick={handleCardClick}
         role="button"
         tabIndex={0}
@@ -178,7 +178,7 @@ export default function CarCard({ car, viewMode = 'grid' }) {
               </div>
             )}
           </div>
-          <div className="p-4 relative bg-white">
+          <div className="p-4 relative bg-white dark:bg-black">
             <div className="mb-1">
               <h3 className="text-base font-bold text-gray-900 dark:text-white mb-1 line-clamp-1 transition-colors duration-300">
                 {car.year} {car.make} {car.model}

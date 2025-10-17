@@ -197,16 +197,25 @@ html:not(.loading-active) body > *:not(.loader-container) {
 
   /* Dark mode background colors */
   .dark .bg-white {
-    @apply bg-black;
+    @apply bg-gray-800;
   }
 
   .dark .bg-gray-50 {
-    @apply bg-black;
+    @apply bg-gray-800;
   }
 
   .dark .bg-gray-100 {
-    @apply bg-gray-900;
+    @apply bg-gray-800;
   }
+
+  /* Normalize any remaining dark surfaces to gray-800 */
+  /* .dark .bg-gray-900 {
+    @apply bg-gray-800;
+  } */
+
+  /* .dark .bg-black {
+    @apply bg-gray-800;
+  } */
 
   /* Dark mode border colors */
   .dark .border-gray-200 {

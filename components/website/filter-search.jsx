@@ -61,7 +61,7 @@ export function FilterSearch() {
   };
 
   return (
-    <div className="w-full  max-w-6xl mx-auto">
+    <div className="w-full   max-w-6xl mx-auto">
       {/* Mobile View */}
       <div className="lg:hidden">
         <div className=" rounded-lg shadow-lg overflow-hidden">

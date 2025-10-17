@@ -447,14 +447,7 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
                     className="w-full h-24 object-cover rounded-md"
                   />
                   <div className="absolute top-1 right-1 flex gap-1">
-                    <button
-                      type="button"
-                      onClick={() => openPhotoEnhancer(index)}
-                      className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
-                      title="Edit image"
-                    >
-                      <FaEdit size={12} />
-                    </button>
+                    
                     <button
                       type="button"
                       onClick={() => removeImage(index)}
