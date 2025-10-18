@@ -22,7 +22,7 @@ import { getPublicUserInfo } from "../../../../services/userService";
 import { useAuth } from "../../../../lib/auth/AuthContext";
 import io from "socket.io-client";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 const socket = io(API_BASE || undefined, {
   autoConnect: false,
 });
@@ -31,7 +31,7 @@ const Page = () => {
   const [activeTab, setActiveTab] = useState("opis");
   const { carId } = useParams();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [car, setCar] = useState(null);
   const [seller, setSeller] = useState(null);
   const [mainImage, setMainImage] = useState("");
@@ -213,11 +213,12 @@ const Page = () => {
     }
 
     try {
+      const authToken = token || (typeof window !== "undefined" ? localStorage.getItem("token") : null);
       const response = await fetch(`${API_BASE}/api/chat/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-clerk-user-id": user?.id,
+          ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
         },
         body: JSON.stringify({
           carId,
@@ -658,11 +659,11 @@ const Page = () => {
                 </div>
               </div>
               <hr className="my-4" />
-              <div className="grid grid-cols-1 gap-2 mt-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4">
                 <h2 className="text-base font-medium mb-2 col-span-2">
                   Kontakt z sprzedawcą
                 </h2>
-                {/* <button
+                <button
                   onClick={startChat}
                   className="w-full bg-white-500 text-blue-600 py-3 border border-blue-600 rounded-md font-semibold flex items-center justify-center space-x-2"
                 >
@@ -672,7 +673,7 @@ const Page = () => {
                     className="w-5 h-5"
                   />
                   <span>Wiadomość</span>
-                </button> */}
+                </button>
                 <button
                   className="w-full border py-3 rounded-md font-semibold bg-blue-500 flex items-center justify-center space-x-2"
                   onClick={() => openWhatsApp("+48669993336")}

@@ -5,9 +5,24 @@ import { FaSearch, FaPaperPlane, FaBars, FaEnvelope } from "react-icons/fa";
 import { useAuth } from "../../../lib/auth/AuthContext";
 import io from "socket.io-client";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
-const socket = io(API_BASE || undefined, {
+// Use empty string (same-origin) if NEXT_PUBLIC_API_BASE_URL is not set
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+const SOCKET_BASE = process.env.NEXT_PUBLIC_SOCKET_URL || API_BASE || undefined;
+const SOCKET_PATH = process.env.NEXT_PUBLIC_SOCKET_PATH || "/socket.io";
+const SOCKET_TRANSPORT = (process.env.NEXT_PUBLIC_SOCKET_TRANSPORT || "websocket,polling")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+const socket = io(SOCKET_BASE, {
+  path: SOCKET_PATH,
   autoConnect: false,
+  withCredentials: true,
+  transports: SOCKET_TRANSPORT,
+  timeout: 20000,
+  reconnection: true,
+  reconnectionAttempts: 10,
+  reconnectionDelay: 1000,
 });
 
 const MessagesPage = () => {
@@ -20,7 +35,7 @@ const MessagesPage = () => {
   const [error, setError] = useState(null);
   const [totalUnread, setTotalUnread] = useState(0);
   const messagesEndRef = useRef(null);
-  const { user } = useAuth();
+  const { user, token } = useAuth();
 
   // Generate temporary ID for optimistic updates
   const generateTempId = () =>
@@ -38,18 +53,27 @@ const MessagesPage = () => {
     console.log("Current user:", user);
     console.log("Using Clerk user ID:", user.id);
 
-    socket.auth = { userId: user.id };
+    const myUserId = user?.id || user?._id;
+    socket.auth = { userId: myUserId };
+    console.log("[Socket] connecting to:", SOCKET_BASE);
     socket.connect();
+    socket.on("connect", () => console.log("[Socket] connected:", socket.id));
+    socket.on("connect_error", (err) => console.error("[Socket] connect_error:", err?.message || err));
+    socket.on("disconnect", (reason) => console.warn("[Socket] disconnected:", reason));
+    // Let backend put this socket into the user's personal room
+    if (myUserId) socket.emit("join", myUserId);
 
     const fetchChats = async () => {
       try {
-        console.log("Fetching chats for user ID:", user.id);
+        const myUserId = user?.id || user?._id;
+        console.log("Fetching chats for user ID:", myUserId);
 
         // Use fetch with explicit error handling
+        const authToken = token || (typeof window !== "undefined" ? localStorage.getItem("token") : null);
         const response = await fetch(`${API_BASE}/api/chat/my-chats`, {
           headers: {
-            "x-clerk-user-id": user.id,
             "Content-Type": "application/json",
+            ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
           },
         });
 
@@ -65,9 +89,12 @@ const MessagesPage = () => {
 
         const data = await response.json();
         console.log("Initial chats data:", data);
-        setChats(data.chats || []);
-        setTotalUnread(data.totalUnread || 0);
-        if (data.chats && data.chats.length > 0) setSelectedChat(data.chats[0]);
+        const chatsArray = Array.isArray(data) ? data : data.chats || [];
+        setChats(chatsArray);
+        // totalUnread may be computed on server or we compute locally
+        const initialUnread = chatsArray.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
+        setTotalUnread(typeof data.totalUnread === "number" ? data.totalUnread : initialUnread);
+        if (chatsArray.length > 0) setSelectedChat(chatsArray[0]);
       } catch (err) {
         console.error("Error fetching chats:", err);
         setError(`Failed to load chats: ${err.message}`);
@@ -86,7 +113,7 @@ const MessagesPage = () => {
       );
     });
 
-    // Listen for chat updates (new messages, read status changes)
+    // Listen for chat updates (if emitted by backend elsewhere)
     socket.on("updatedChats", (updatedChats) => {
       console.log("Received updated chats:", updatedChats);
       setChats(updatedChats || []);
@@ -128,11 +155,14 @@ const MessagesPage = () => {
       socket.off("error");
       socket.off("updatedChats");
       socket.off("totalUnreadCount");
+      socket.off("connect");
+      socket.off("connect_error");
+      socket.off("disconnect");
       clearInterval(unreadInterval);
     };
   }, [user]);
 
-  // Fetch messages and join chat when selectedChat changes
+  // Fetch messages when selectedChat changes
   useEffect(() => {
     if (!selectedChat) return;
 
@@ -140,12 +170,13 @@ const MessagesPage = () => {
       try {
         console.log(`Fetching messages for chat: ${selectedChat._id}`);
 
+        const authToken = token || (typeof window !== "undefined" ? localStorage.getItem("token") : null);
         const response = await fetch(
           `${API_BASE}/api/chat/${selectedChat._id}/messages`,
           {
             headers: {
-              "x-clerk-user-id": user.id,
               "Content-Type": "application/json",
+              ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
             },
           }
         );
@@ -170,11 +201,6 @@ const MessagesPage = () => {
         }));
 
         setMessages(processedData);
-        socket.emit("joinChat", { chatId: selectedChat._id });
-        socket.emit("markMessagesSeen", {
-          chatId: selectedChat._id,
-          userId: user.id,
-        });
       } catch (err) {
         console.error("Error fetching messages:", err);
         setError(`Failed to load messages: ${err.message}`);
@@ -183,40 +209,55 @@ const MessagesPage = () => {
 
     fetchMessages();
 
-    socket.on("chatHistory", (chatMessages) => {
-      // Ensure all messages have text field
-      const processedMessages = chatMessages.map((msg) => ({
-        ...msg,
-        text: msg.text || msg.content,
-      }));
-      setMessages(processedMessages);
-    });
+    socket.on("newMessage", (payload) => {
+      // Backend emits: { chatId, message: { id, content, sender, timestamp } }
+      if (!payload || !payload.message) return;
+      const { chatId, message } = payload;
+      const myUserId = user?.id || user?._id;
 
-    socket.on("newMessage", (message) => {
-      console.log("Received new message:", message);
-      // Ensure message has text field
       const processedMessage = {
-        ...message,
-        text: message.text || message.content,
+        _id: message.id,
+        chatId,
+        sender: message.sender,
+        content: message.content,
+        text: message.content,
+        createdAt: message.timestamp,
       };
 
-      setMessages((prev) => {
-        const tempIndex = prev.findIndex(
-          (m) => m.tempId === processedMessage.tempId
-        );
-        if (tempIndex !== -1) {
-          const newMessages = [...prev];
-          newMessages[tempIndex] = processedMessage;
-          return newMessages;
-        }
-        return [...prev, processedMessage];
+      // Update chat list: lastMessage and unreadCount
+      setChats((prevChats) => {
+        const updated = (prevChats || []).map((c) => {
+          if (c._id !== chatId) return c;
+          const isIncoming = message.sender !== myUserId;
+          return {
+            ...c,
+            lastMessage: {
+              content: message.content,
+              sender: message.sender,
+              timestamp: message.timestamp,
+            },
+            unreadCount:
+              selectedChat && selectedChat._id === chatId
+                ? 0
+                : (c.unreadCount || 0) + (isIncoming ? 1 : 0),
+          };
+        });
+        return updated;
       });
 
-      // If this is the current chat, mark as seen
-      if (selectedChat._id === processedMessage.chatId) {
-        socket.emit("markMessagesSeen", {
-          chatId: selectedChat._id,
-          userId: user.id,
+      // If current chat is open, append/replace in thread
+      if (selectedChat && selectedChat._id === chatId) {
+        setMessages((prev) => {
+          // Try to replace optimistic message by matching text and sender
+          const idx = prev.findIndex(
+            (m) => m.text === processedMessage.text && (m.sender === processedMessage.sender || m.senderId === processedMessage.sender)
+          );
+          if (idx !== -1) {
+            const copy = [...prev];
+            copy[idx] = { ...copy[idx], ...processedMessage };
+            return copy;
+          }
+          return [...prev, processedMessage];
         });
       }
     });
@@ -258,25 +299,26 @@ const MessagesPage = () => {
     if (!newMessage.trim() || !selectedChat || !user) return;
 
     const tempId = generateTempId();
-    const message = {
+    // Emit payload expected by backend: { chatId, content, senderId }
+    const myUserId = user?.id || user?._id;
+    socket.emit("sendMessage", {
       chatId: selectedChat._id,
-      senderId: user.id,
-      text: newMessage,
-      tempId,
-    };
-
-    socket.emit("sendMessage", message);
-    console.log("message sent", message);
+      senderId: myUserId,
+      content: newMessage,
+    });
+    console.log("message sent", { chatId: selectedChat._id, senderId: myUserId, content: newMessage });
     setNewMessage("");
     setMessages((prev) => [
       ...prev,
       {
-        ...message,
         _id: tempId,
-        sender: user.id, // Match the field name from backend
+        sender: myUserId,
+        senderId: myUserId,
         createdAt: new Date(),
         seenBy: [user.id],
-        senderName: `${user.firstName} ${user.lastName}` || "You",
+        senderName: `${user.firstName || ""} ${user.lastName || ""}`.trim() || "You",
+        content: newMessage,
+        text: newMessage,
       },
     ]);
   };
@@ -285,17 +327,29 @@ const MessagesPage = () => {
   const handleTyping = (e) => {
     setNewMessage(e.target.value);
     if (selectedChat && user) {
-      socket.emit("typing", { chatId: selectedChat._id, userId: user.id });
+      const myUserId = user?.id || user?._id;
+      socket.emit("typing", { chatId: selectedChat._id, userId: myUserId });
     }
   };
 
   // Get other participant's name
   const getParticipantName = (chat) => {
-    if (!chat || !chat.participantData) return "Unknown";
-
-    const otherParticipant = chat.participantData.find((p) => !p.isCurrentUser);
-
-    return otherParticipant?.name || "Unknown";
+    if (!chat) return "Unknown";
+    // Prefer participantData if present
+    if (Array.isArray(chat.participantData) && chat.participantData.length > 0) {
+      const other = chat.participantData.find((p) => !p.isCurrentUser);
+      if (other?.name) return other.name;
+    }
+    // Fallback to participants array from backend controller
+    if (Array.isArray(chat.participants)) {
+      const meId = user?.id;
+      const other = chat.participants.find((p) => p.id !== meId);
+      if (other) {
+        const name = `${other.firstName || ""} ${other.lastName || ""}`.trim();
+        return name || other.email || "Unknown";
+      }
+    }
+    return "Unknown";
   };
 
   // Select a chat and mark as read
