@@ -4,10 +4,11 @@ import React, { useState, useEffect, useRef } from "react";
 import { FaSearch, FaPaperPlane, FaBars, FaEnvelope } from "react-icons/fa";
 import { useAuth } from "../../../lib/auth/AuthContext";
 import io from "socket.io-client";
+import Avatar from "../../../components/both/Avatar";
 
 // Use empty string (same-origin) if NEXT_PUBLIC_API_BASE_URL is not set
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
-const SOCKET_BASE = process.env.NEXT_PUBLIC_SOCKET_URL || API_BASE || undefined;
+const SOCKET_BASE = process.env.NEXT_PUBLIC_SOCKET_URL || undefined;
 const SOCKET_PATH = process.env.NEXT_PUBLIC_SOCKET_PATH || "/socket.io";
 const SOCKET_TRANSPORT = (process.env.NEXT_PUBLIC_SOCKET_TRANSPORT || "websocket,polling")
   .split(",")
@@ -352,6 +353,23 @@ const MessagesPage = () => {
     return "Unknown";
   };
 
+  // Resolve other participant's image (supports various backend shapes)
+  const getParticipantImage = (chat) => {
+    if (!chat) return null;
+    // Prefer participantData if present
+    if (Array.isArray(chat.participantData) && chat.participantData.length > 0) {
+      const other = chat.participantData.find((p) => !p.isCurrentUser);
+      return other?.image || other?.profilePicture || null;
+    }
+    // Fallback to participants array
+    if (Array.isArray(chat.participants)) {
+      const meId = user?.id;
+      const other = chat.participants.find((p) => p.id !== meId);
+      return other?.image || other?.profilePicture || null;
+    }
+    return null;
+  };
+
   // Select a chat and mark as read
   const handleSelectChat = (chat) => {
     setSelectedChat(chat);
@@ -433,7 +451,11 @@ const MessagesPage = () => {
                 }`}
                 onClick={() => handleSelectChat(chat)}
               >
-                <div className="w-12 h-12 bg-green-400 rounded-full flex-shrink-0"></div>
+                <Avatar
+                  src={getParticipantImage(chat)}
+                  alt={getParticipantName(chat)}
+                  size={48}
+                />
                 <div className="flex-grow min-w-0">
                   <div className="flex justify-between items-center">
                     <div className="font-medium text-sm truncate">

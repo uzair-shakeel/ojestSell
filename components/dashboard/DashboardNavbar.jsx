@@ -5,11 +5,18 @@ import { useAuth } from "../../lib/auth/AuthContext";
 import { FiMenu, FiX, FiUser, FiLogOut, FiSettings } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import ThemeToggle from "../ThemeToggle";
+import Avatar from "../both/Avatar";
+
+const RAW_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+const buildApiUrl = (path) => {
+  const base = RAW_BASE ? RAW_BASE.replace(/\/$/, "") : "";
+  return `${base}${path}`;
+};
 
 export default function DashboardNavbar({ isOpen, toggleSidebar }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const { user, logout, getToken, userId, updateUserState } = useAuth();
   const router = useRouter();
   const dropdownRef = useRef(null);
 
@@ -27,17 +34,35 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
     };
   }, []);
 
+  // Ensure we have the latest user image (handles stale localStorage)
+  useEffect(() => {
+    const fetchLatestUser = async () => {
+      if (!userId || !user || user.image || user.profilePicture) return;
+      try {
+        const token = await getToken();
+        const res = await fetch(buildApiUrl(`/api/users/${userId}`), {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        if (res.ok) {
+          const fresh = await res.json();
+          updateUserState(fresh);
+        }
+      } catch (e) {
+        console.warn("Navbar: failed to refresh user image", e);
+      }
+    };
+    fetchLatestUser();
+  }, [user, userId, getToken, updateUserState]);
+
   const handleLogout = async () => {
     await logout();
     router.push("/");
   };
 
   return (
-    <header className="w-full p-4 bg-white dark:bg-gray-800800 shadow-md flex justify-between items-center z-30 sticky top-0 transition-colors duration-300">
+    <header className="w-full p-4 bg-white dark:bg-gray-800800 shadow-md flex justify-end items-center z-30 sticky top-0 transition-colors duration-300">
       {/* Logo */}
-      <div>
-        <img src="/whitelogo.png" alt="Ojest Logo" className="h-10" />
-      </div>
+    
 
       <div className="flex items-center space-x-3 sm:mx-4">
         {/* Theme Toggle */}
@@ -57,7 +82,15 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
             onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
             className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors"
           >
-            <IoPersonCircleOutline className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+            {user ? (
+              <Avatar
+                src={user.image || user.profilePicture}
+                alt={user.firstName || user.email || "User"}
+                size={24}
+              />
+            ) : (
+              <IoPersonCircleOutline className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+            )}
             <span className="hidden md:block text-sm font-medium text-gray-700 dark:text-gray-300">
               {user?.firstName || user?.email || "User"}
             </span>

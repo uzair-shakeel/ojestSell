@@ -7,7 +7,7 @@ import "react-phone-input-2/lib/style.css";
 import CustomMap from "../../../components/dashboard/GoogleMapComponent";
 import { motion } from "framer-motion";
 import { getUserById, updateUser } from "../../../services/userService";
-import Image from "next/image";
+import Avatar from "../../../components/both/Avatar";
 import axios from "axios"; // Added axios import
 
 const ProfileComponent = () => {
@@ -272,48 +272,13 @@ const ProfileComponent = () => {
     }
   };
   const formatImageUrl = (imagePath) => {
-    // If no image path, return default image
-    if (!imagePath) return "/placeholder-user.jpg";
-
-    // Check if it's a Cloudinary URL or starts with http/https
-    if (/^(https?:\/\/|blob:|cloudinary\.com)/.test(imagePath)) {
-      return imagePath;
-    }
-
-    // Check if it's a local path from Clerk
-    if (imagePath.startsWith("/")) {
-      return imagePath;
-    }
-
-    try {
-      // Remove leading slash or backslash if present
-      const cleanPath = imagePath.replace(/^[/\\]/, "");
-
-      // Try multiple base URLs
-      const baseUrls = [
-        API_BASE,
-        process.env.NEXT_PUBLIC_CLOUDINARY_BASE_URL || "",
-        process.env.NEXT_PUBLIC_STORAGE_BASE_URL || "",
-      ];
-
-      for (const baseUrl of baseUrls) {
-        if (!baseUrl) continue;
-
-        const fullUrl = `${baseUrl.replace(/\/$/, "")}/${cleanPath}`;
-
-        try {
-          // Validate the constructed URL
-          new URL(fullUrl);
-          return fullUrl;
-        } catch {}
-      }
-
-      // If no valid URL found, return default
-      return "/placeholder-user.jpg";
-    } catch {
-      // Fallback to default image
-      return "/placeholder-user.jpg";
-    }
+    if (!imagePath) return null;
+    if (/^(https?:\/\/|blob:|cloudinary\.com)/.test(imagePath)) return imagePath;
+    if (imagePath.startsWith("/")) return imagePath;
+    const cleanPath = imagePath.replace(/^[/\\]/, "");
+    const preferredBase = (API_BASE || "").replace(/\/$/, "");
+    if (preferredBase) return `${preferredBase}/${cleanPath}`;
+    return `/${cleanPath}`; // same-origin public root as last resort
   };
 
   const handleSubmit = async (e) => {
@@ -430,16 +395,11 @@ const ProfileComponent = () => {
               Profile Picture
             </label>
             <div className="flex flex-col md:flex-row gap-4 items-center space-x-4">
-              <Image
+              <Avatar
                 src={formatImageUrl(user?.image || user?.profilePicture)}
                 alt="Profile"
-                width={80}
-                height={80}
-                unoptimized
-                className="w-20 h-20 rounded-full object-center border border-gray-300"
-                onError={() => {
-                  setUser((prev) => ({ ...prev, image: "/placeholder-user.jpg" }));
-                }}
+                size={80}
+                imgClassName="border border-gray-300"
               />
               <input
                 type="file"

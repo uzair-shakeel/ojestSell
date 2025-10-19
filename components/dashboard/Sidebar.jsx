@@ -10,6 +10,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../lib/auth/AuthContext";
+import Avatar from "../both/Avatar";
 
 // Prefer same-origin proxy (/api) unless a full external base is explicitly provided
 const RAW_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
@@ -18,15 +19,13 @@ const API_BASE = RAW_BASE ? RAW_BASE.replace(/\/$/, "") : "";
 export default function Sidebar({ isOpen, toggleSidebar }) {
   const [chatCount, setChatCount] = useState(0);
   const { userId, getToken, user } = useAuth();
-  const [profileImage, setProfileImage] = useState(
-    "/images/default-seller.png"
-  );
+  const [profileImage, setProfileImage] = useState(null);
   const [userData, setUserData] = useState(null);
   const [sellerType, setSellerType] = useState(null);
 
   // Consistent image URL formatter (aligns with profile page logic)
   const formatImageUrl = (imagePath) => {
-    if (!imagePath) return "/images/default-seller.png";
+    if (!imagePath) return null;
     // Pass through absolute URLs and blob URLs
     if (/^(https?:\/\/|blob:)/.test(imagePath)) return imagePath;
     // Allow already-rooted paths (e.g., /images/foo.png)
@@ -37,7 +36,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
       const clean = imagePath.replace(/^[/\\]/, "");
       return `${base}/${clean}`;
     }
-    return "/images/default-seller.png";
+    return null;
   };
 
   // Use user data from AuthContext and set profile image
@@ -48,7 +47,8 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
       setSellerType(user.sellerType);
       console.log("Setting sellerType to:", user.sellerType);
       const raw = user.profilePicture || user.image;
-      setProfileImage(formatImageUrl(raw));
+      // Pass raw value to Avatar; it will handle URL normalization and fallback
+      setProfileImage(raw || null);
     }
   }, [user]);
 
@@ -176,11 +176,11 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
 
         <AnimatePresence>
           <div className="flex items-center justify-center py-4 px-3 border-y border-gray-700">
-            <motion.img
+            <Avatar
               src={profileImage}
               alt="User Avatar"
-              className="w-12 h-12 rounded-full object-cover border-2 border-blue-500 shadow-lg"
-              onError={() => setProfileImage("/images/default-seller.png")}
+              size={48}
+              imgClassName="border-2 border-blue-500 shadow-lg"
             />
             {isOpen && userData && (
               <motion.div

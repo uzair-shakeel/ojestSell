@@ -1,4 +1,5 @@
 "use client";
+import Avatar from "../both/Avatar";
 
 export default function RecentChats({ chats = [] }) {
   const items = Array.isArray(chats) ? chats.slice(-6) : [];
@@ -24,7 +25,7 @@ export default function RecentChats({ chats = [] }) {
             ? `${other.firstName || ""} ${other.lastName || ""}`.trim() ||
               other.email
             : "Unknown";
-          const avatar = other?.image || "/images/default-seller.png";
+          const avatar = other?.image || other?.profilePicture || null;
           const preview = chat?.lastMessage?.text || "No messages yet";
           const time = new Date(
             chat?.updatedAt || chat?.lastMessage?.timestamp || Date.now()
@@ -34,10 +35,11 @@ export default function RecentChats({ chats = [] }) {
               key={chat?._id || chat?.id || time}
               className="flex items-center gap-3"
             >
-              <img
+              <Avatar
                 src={avatar}
                 alt={name}
-                className="w-10 h-10 rounded-full object-cover ring-1 ring-black/5"
+                size={40}
+                imgClassName="ring-1 ring-black/5"
               />
               <div className="min-w-0 flex-1">
                 <div className="truncate font-medium text-gray-900 dark:text-white transition-colors duration-300">

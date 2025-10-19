@@ -2580,7 +2580,7 @@ export default function PhotoEnhancer() {
     setPlateBlurError(null);
 
     try {
-      const externalUrl = "http://174.138.64.65/detect";
+      const externalUrl = "https://ojest.pl/detect/detect";
       const fd = new FormData();
       fd.append("file", selectedImage);
 
