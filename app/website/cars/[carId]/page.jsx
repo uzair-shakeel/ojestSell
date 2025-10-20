@@ -676,9 +676,9 @@ const Page = () => {
                 </button>
                 <button
                   className="w-full border py-3 rounded-md font-semibold bg-blue-500 flex items-center justify-center space-x-2"
-                  onClick={() => openWhatsApp("+48669993336")}
+                  onClick={callSeller}
                 >
-                  <span className="text-white">WhatsApp</span>
+                  <span className="text-white">Call</span>
                 </button>
               </div>
               {socialMediaLinks.length > 0 && (

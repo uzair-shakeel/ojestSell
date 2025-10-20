@@ -54,13 +54,15 @@ export default function RecentCars({ cars = [] }) {
                   {car?.year || ""} {car?.trim || ""}
                 </div>
               </div>
-              <span
-                className={`text-xs px-2 py-1 rounded-md ring-1 ${getStatusClasses(
-                  status
-                )}`}
-              >
-                {status}
-              </span>
+              {String(status).toLowerCase() !== "pending" && (
+                <span
+                  className={`text-xs px-2 py-1 rounded-md ring-1 ${getStatusClasses(
+                    status
+                  )}`}
+                >
+                  {status}
+                </span>
+              )}
             </div>
           );
         })}

@@ -17,31 +17,31 @@ const ConditionTab = ({ carCondition }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-20 gap-y-5 text-gray-700">
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full ">
           <p className="text-xs uppercase">Lakier i karoseria</p>{" "}
-          <p className=" text-base font-meduim text-black ">
+          <p className=" text-base font-meduim text-black dark:text-white ">
             {translateCondition(carCondition?.paintandBody)}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Wnętrze</p>{" "}
-          <p className=" font-meduim text-black ">
+          <p className=" font-meduim text-black dark:text-white ">
             {translateCondition(carCondition?.interior)}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Podwozie I rama </p>{" "}
-          <p className=" font-meduim text-black ">
+          <p className="text-xs uppercase">Podwozie I rama</p>{" "}
+          <p className=" font-meduim text-black dark:text-white ">
             {translateCondition(carCondition?.frameandUnderbody)}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Mechaniczny</p>{" "}
-          <p className=" font-meduim text-black ">
+          <p className=" font-meduim text-black dark:text-white ">
             {translateCondition(carCondition?.mechanical)}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Ogólny</p>{" "}
-          <p className=" font-meduim text-black ">
+          <p className=" font-meduim text-black dark:text-white ">
           {translateCondition(carCondition?.overall)}
 
           </p>

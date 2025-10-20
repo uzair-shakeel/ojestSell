@@ -102,12 +102,13 @@ export default function DashboardCharts({
   );
 
   const statusCounts = useMemo(() => {
-    const counts = { Approved: 0, Pending: 0, Rejected: 0 };
+    // Only count non-pending statuses for the dashboard mix
+    const counts = { Approved: 0, Rejected: 0 };
     (recentCars || []).forEach((c) => {
-      const s = (c?.status || "Pending").toLowerCase();
+      const s = (c?.status || "").toLowerCase();
       if (s === "approved") counts.Approved += 1;
       else if (s === "rejected") counts.Rejected += 1;
-      else counts.Pending += 1;
+      // ignore pending and unknown
     });
     return counts;
   }, [recentCars]);
@@ -115,18 +116,18 @@ export default function DashboardCharts({
   const doughnutData = useMemo(() => {
     const labels = Object.keys(statusCounts);
     const values = labels.map((k) => statusCounts[k]);
+    const palette = {
+      Approved: { bg: "rgba(16, 185, 129, 0.9)", border: "#10b981" },
+      Rejected: { bg: "rgba(244, 63, 94, 0.9)", border: "#f43f5e" },
+    };
     return {
       labels,
       datasets: [
         {
           label: "Status",
           data: values,
-          backgroundColor: [
-            "rgba(16, 185, 129, 0.9)",
-            "rgba(245, 158, 11, 0.9)",
-            "rgba(244, 63, 94, 0.9)",
-          ],
-          borderColor: ["#10b981", "#f59e0b", "#f43f5e"],
+          backgroundColor: labels.map((l) => palette[l]?.bg || "#ddd"),
+          borderColor: labels.map((l) => palette[l]?.border || "#ccc"),
           borderWidth: 1,
         },
       ],
@@ -149,7 +150,16 @@ export default function DashboardCharts({
   const commonOptions = {
     responsive: true,
     plugins: {
-      legend: { position: "bottom" },
+      legend: {
+        position: "bottom",
+        labels: {
+          boxWidth: 10,
+          boxHeight: 10,
+          padding: 8,
+          usePointStyle: false,
+          font: { size: 11 },
+        },
+      },
       title: { display: false },
       tooltip: { mode: "index", intersect: false },
     },
@@ -160,7 +170,7 @@ export default function DashboardCharts({
 
   return (
     <div className="grid gap-4 lg:grid-cols-3">
-      <div className="p-4 bg-white dark:bg-gray-800 shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 h-80 lg:col-span-2 transition-colors duration-300">
+      <div className="p-4 pb-8 bg-white dark:bg-gray-800 shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 h-80 lg:col-span-2 transition-colors duration-300">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white transition-colors duration-300">
             Cars activity
@@ -168,7 +178,7 @@ export default function DashboardCharts({
         </div>
         <Line data={lineData} options={commonOptions} />
       </div>
-      <div className="p-4 bg-white dark:bg-gray-800 shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 h-80 transition-colors duration-300">
+      <div className="p-4 pb-8 bg-white dark:bg-gray-800 shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 h-80 transition-colors duration-300">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white transition-colors duration-300">
             Status mix
@@ -184,7 +194,7 @@ export default function DashboardCharts({
           }}
         />
       </div>
-      <div className="p-4 bg-white dark:bg-gray-800 shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 h-80 lg:col-span-3 transition-colors duration-300">
+      <div className="p-4 pb-8 bg-white dark:bg-gray-800 shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 h-80 lg:col-span-3 transition-colors duration-300">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white transition-colors duration-300">
             Chats last 7 days
