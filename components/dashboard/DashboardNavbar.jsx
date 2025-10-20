@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import { useAuth } from "../../lib/auth/AuthContext";
-import { FiMenu, FiX, FiUser, FiLogOut, FiSettings } from "react-icons/fi";
+import { FiMenu, FiX } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import ThemeToggle from "../ThemeToggle";
 import Avatar from "../both/Avatar";
@@ -15,24 +15,10 @@ const buildApiUrl = (path) => {
 
 export default function DashboardNavbar({ isOpen, toggleSidebar }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
-  const { user, logout, getToken, userId, updateUserState } = useAuth();
+  const { user, getToken, userId, updateUserState } = useAuth();
   const router = useRouter();
-  const dropdownRef = useRef(null);
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsProfileDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  // No dropdown anymore
 
   // Ensure we have the latest user image (handles stale localStorage)
   useEffect(() => {
@@ -54,10 +40,7 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
     fetchLatestUser();
   }, [user, userId, getToken, updateUserState]);
 
-  const handleLogout = async () => {
-    await logout();
-    router.push("/");
-  };
+  // Logout moved to Sidebar
 
   return (
     <header className="w-full p-4 bg-white dark:bg-gray-800800 shadow-md flex justify-end items-center z-30 sticky top-0 transition-colors duration-300">
@@ -76,69 +59,20 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
           Add Listing
         </button>
 
-        {/* Custom User Profile Dropdown */}
-        <div className="relative" ref={dropdownRef}>
-          <button
-            onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-            className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors"
-          >
-            {user ? (
-              <Avatar
-                src={user.image || user.profilePicture}
-                alt={user.firstName || user.email || "User"}
-                size={24}
-              />
-            ) : (
-              <IoPersonCircleOutline className="w-6 h-6 text-gray-700 dark:text-gray-300" />
-            )}
-            <span className="hidden md:block text-sm font-medium text-gray-700 dark:text-gray-300">
-              {user?.firstName || user?.email || "User"}
-            </span>
-          </button>
-
-          {/* Profile Dropdown Menu */}
-          {isProfileDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-lg rounded-lg py-2 z-50">
-              <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-800">
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  {user?.firstName} {user?.lastName}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {user?.email}
-                </p>
-              </div>
-
-              <button
-                onClick={() => {
-                  router.push("/dashboard/profile");
-                  setIsProfileDropdownOpen(false);
-                }}
-                className="w-full flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-              >
-                <FiUser className="w-4 h-4 mr-2" />
-                Profile
-              </button>
-
-              <button
-                onClick={() => {
-                  router.push("/dashboard/settings");
-                  setIsProfileDropdownOpen(false);
-                }}
-                className="w-full flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-              >
-                <FiSettings className="w-4 h-4 mr-2" />
-                Settings
-              </button>
-
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30"
-              >
-                <FiLogOut className="w-4 h-4 mr-2" />
-                Logout
-              </button>
-            </div>
+        {/* Static user chip (no dropdown) */}
+        <div className="flex items-center space-x-2 p-2 rounded-full">
+          {user ? (
+            <Avatar
+              src={user.image || user.profilePicture}
+              alt={user.firstName || user.email || "User"}
+              size={24}
+            />
+          ) : (
+            <IoPersonCircleOutline className="w-6 h-6 text-gray-700 dark:text-gray-300" />
           )}
+          <span className="hidden md:block text-sm font-medium text-gray-700 dark:text-gray-300">
+            {user?.firstName || user?.email || "User"}
+          </span>
         </div>
 
         {/* Mobile Menu Button */}

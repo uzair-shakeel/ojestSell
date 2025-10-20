@@ -4,12 +4,13 @@ import { FaCar } from "react-icons/fa";
 import { BiAddToQueue } from "react-icons/bi";
 import { BsChatLeftDots, BsPersonGear } from "react-icons/bs";
 import { RiDashboardHorizontalLine } from "react-icons/ri";
-import { FiMenu, FiX, FiShoppingBag, FiClipboard } from "react-icons/fi";
+import { FiMenu, FiX, FiShoppingBag, FiClipboard, FiLogOut } from "react-icons/fi";
 import { MdPhotoFilter } from "react-icons/md";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../lib/auth/AuthContext";
+import { useRouter } from "next/navigation";
 import Avatar from "../both/Avatar";
 
 // Prefer same-origin proxy (/api) unless a full external base is explicitly provided
@@ -18,7 +19,8 @@ const API_BASE = RAW_BASE ? RAW_BASE.replace(/\/$/, "") : "";
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
   const [chatCount, setChatCount] = useState(0);
-  const { userId, getToken, user } = useAuth();
+  const { userId, getToken, user, logout } = useAuth();
+  const router = useRouter();
   const [profileImage, setProfileImage] = useState(null);
   const [userData, setUserData] = useState(null);
   const [sellerType, setSellerType] = useState(null);
@@ -144,6 +146,17 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
       href: "/dashboard/profile",
       icon: <BsPersonGear className="w-6 h-6" />,
     },
+    {
+      label: "Logout",
+      icon: <FiLogOut className="w-6 h-6" />,
+      action: async () => {
+        try {
+          await logout();
+        } finally {
+          router.push("/");
+        }
+      },
+    },
   ];
 
   return (
@@ -208,31 +221,46 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
             >
-              <Link
-                href={item.href}
-                className="flex flex-row items-center p-3 rounded-md hover:bg-blue-500 transition-all m-2 justify-normal"
-                onClick={() => {
-                  if (window.innerWidth < 768) {
-                    toggleSidebar();
-                  }
-                }}
-              >
-                {item.icon}
-                {isOpen && (
-                  <span className="ml-3 text-white text-sm">{item.label}</span>
-                )}
-                {item.label === "Messages" && chatCount > 0 && (
-                  <motion.span
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    exit={{ scale: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="absolute right-5 w-5 h-5 flex items-center justify-center bg-red-500 text-xs text-white rounded-full"
-                  >
-                    {chatCount}
-                  </motion.span>
-                )}
-              </Link>
+              {item.action ? (
+                <button
+                  className="w-full text-left flex flex-row items-center p-3 rounded-md hover:bg-blue-500 transition-all m-2 justify-normal"
+                  onClick={async () => {
+                    await item.action();
+                    if (window.innerWidth < 768) toggleSidebar();
+                  }}
+                >
+                  {item.icon}
+                  {isOpen && (
+                    <span className="ml-3 text-white text-sm">{item.label}</span>
+                  )}
+                </button>
+              ) : (
+                <Link
+                  href={item.href}
+                  className="flex flex-row items-center p-3 rounded-md hover:bg-blue-500 transition-all m-2 justify-normal"
+                  onClick={() => {
+                    if (window.innerWidth < 768) {
+                      toggleSidebar();
+                    }
+                  }}
+                >
+                  {item.icon}
+                  {isOpen && (
+                    <span className="ml-3 text-white text-sm">{item.label}</span>
+                  )}
+                  {item.label === "Messages" && chatCount > 0 && (
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      exit={{ scale: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="absolute right-5 w-5 h-5 flex items-center justify-center bg-red-500 text-xs text-white rounded-full"
+                    >
+                      {chatCount}
+                    </motion.span>
+                  )}
+                </Link>
+              )}
             </motion.div>
           ))}
         </nav>

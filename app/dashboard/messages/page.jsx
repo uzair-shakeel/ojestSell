@@ -444,9 +444,9 @@ const MessagesPage = () => {
             chats.map((chat) => (
               <div
                 key={chat._id}
-                className={`flex items-center gap-2 p-3 hover:bg-gray-100 rounded-lg cursor-pointer ${
+                className={`flex items-center gap-2 p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg cursor-pointer ${
                   selectedChat && selectedChat._id === chat._id
-                    ? "bg-blue-50"
+                    ? "bg-blue-50 dark:bg-gray-900"
                     : ""
                 }`}
                 onClick={() => handleSelectChat(chat)}
@@ -550,8 +550,8 @@ const MessagesPage = () => {
                       className={`max-w-[60%] px-4 py-2 rounded-lg text-sm whitespace-pre-line ${
                         message.sender === user.id ||
                         message.senderId === user.id
-                          ? "bg-blue-100 text-gray-800"
-                          : "bg-white border border-gray-300"
+                          ? "bg-blue-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200"
+                          : "bg-white border border-gray-300 dark:border-gray-600"
                       }`}
                     >
                       {!message.sender === user.id &&

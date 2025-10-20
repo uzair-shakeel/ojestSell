@@ -73,17 +73,18 @@ const ProfileComponent = () => {
               flex flex-col items-center p-2 rounded-lg cursor-pointer transition-all duration-300
               ${
                 selectedBrands.includes(brand.name)
-                  ? "bg-blue-100 border-2 border-blue-500"
-                  : "bg-gray-100 border-2 border-transparent hover:bg-gray-200"
+                  ? "bg-blue-100 border-2 border-blue-500 dark:bg-gray-900"
+                  : "bg-gray-100 border-2 border-transparent hover:bg-gray-200 dark:hover:bg-gray-700"
               }
             `}
             onClick={() => onBrandChange(brand.name)}
           >
-            <Image
+            <img
               src={brand.logo}
               alt={brand.name}
               width={50}
               height={50}
+              loading="lazy"
               className="mb-2 object-contain"
             />
             <span className="text-xs font-medium">{brand.name}</span>
