@@ -659,10 +659,10 @@ const Page = () => {
                 </div>
               </div>
               <hr className="my-4" />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4">
                 <h2 className="text-base font-medium mb-2 col-span-2">
                   Kontakt z sprzedawcą
                 </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4">
                 <button
                   onClick={startChat}
                   className="w-full bg-white-500 text-blue-600 py-3 border border-blue-600 rounded-md font-semibold flex items-center justify-center space-x-2"
