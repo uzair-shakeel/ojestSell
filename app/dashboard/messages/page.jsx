@@ -225,6 +225,28 @@ const MessagesPage = () => {
         createdAt: message.timestamp,
       };
 
+      // Add a readable senderName for display
+      try {
+        if (String(message.sender) === String(myUserId)) {
+          processedMessage.senderName = "You";
+        } else if (selectedChat) {
+          // Try to resolve other participant name from selectedChat
+          let name = null;
+          if (Array.isArray(selectedChat.participantData) && selectedChat.participantData.length > 0) {
+            const other = selectedChat.participantData.find((p) => !p.isCurrentUser);
+            name = other?.name || `${other?.firstName || ""} ${other?.lastName || ""}`.trim();
+          }
+          if (!name && Array.isArray(selectedChat.participants)) {
+            const meId = myUserId;
+            const other = selectedChat.participants.find((p) => String(p.id) !== String(meId));
+            name = `${other?.firstName || ""} ${other?.lastName || ""}`.trim() || other?.email;
+          }
+          processedMessage.senderName = name || "Unknown";
+        }
+      } catch (_) {
+        processedMessage.senderName = processedMessage.senderName || "Unknown";
+      }
+
       // Update chat list: lastMessage and unreadCount
       setChats((prevChats) => {
         const updated = (prevChats || []).map((c) => {
@@ -243,6 +265,9 @@ const MessagesPage = () => {
                 : (c.unreadCount || 0) + (isIncoming ? 1 : 0),
           };
         });
+        // Recompute total unread from updated list
+        const total = updated.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
+        setTotalUnread(total);
         return updated;
       });
 
@@ -263,6 +288,22 @@ const MessagesPage = () => {
           }
           return [...prev, processedMessage];
         });
+
+        // If an incoming message arrives while chat is open, mark it read now
+        if (String(message.sender) !== String(myUserId)) {
+          socket.emit("markAsRead", { chatId, userId: myUserId });
+          // Also ensure its unreadCount is 0 locally
+          setChats((prev) =>
+            (prev || []).map((c) => (c._id === chatId ? { ...c, unreadCount: 0 } : c))
+          );
+          // Recompute total unread
+          setTotalUnread((prev) => {
+            const list = (chats || []).map((c) =>
+              c._id === chatId ? { ...c, unreadCount: 0 } : c
+            );
+            return list.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
+          });
+        }
       }
     });
 
@@ -378,7 +419,7 @@ const MessagesPage = () => {
 
     // Mark messages as seen when selecting a chat
     if (chat && chat._id) {
-      socket.emit("markMessagesSeen", {
+      socket.emit("markAsRead", {
         chatId: chat._id,
         userId: myUserId,
       });
@@ -432,9 +473,9 @@ const MessagesPage = () => {
         {/* Sidebar Header */}
         <div className="p-4 border-b border-gray-300 flex justify-between items-center shrink-0">
           <h2 className="font-semibold text-lg">Messages</h2>
-          {chatCount > 0 && (
+          {totalUnread > 0 && (
             <div className="bg-red-500 text-white rounded-full h-6 w-6 flex items-center justify-center text-xs">
-              {chatCount}
+              {totalUnread}
             </div>
           )}
         </div>
@@ -459,7 +500,7 @@ const MessagesPage = () => {
                 />
                 <div className="flex-grow min-w-0">
                   <div className="flex justify-between items-center">
-                    <div className="font-medium text-sm truncate">
+                    <div className={`${chat.unreadCount > 0 ? "font-semibold" : "font-medium"} text-sm truncate`}>
                       {getParticipantName(chat)}
                     </div>
                     {chat.unreadCount > 0 && (
@@ -468,7 +509,7 @@ const MessagesPage = () => {
                       </div>
                     )}
                   </div>
-                  <div className="text-xs text-gray-500 truncate w-full">
+                  <div className={`truncate w-full ${chat.unreadCount > 0 ? "text-gray-800 font-medium" : "text-xs text-gray-500"}`}>
                     {chat.lastMessage ? (
                       <>
                         <span className="font-medium">
