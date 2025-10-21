@@ -9,7 +9,7 @@ import Avatar from "../../../components/both/Avatar";
 // Use empty string (same-origin) if NEXT_PUBLIC_API_BASE_URL is not set
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 const SOCKET_BASE = process.env.NEXT_PUBLIC_SOCKET_URL || undefined;
-const SOCKET_PATH = process.env.NEXT_PUBLIC_SOCKET_PATH || "/socket.io";
+const SOCKET_PATH = process.env.NEXT_PUBLIC_SOCKET_PATH || "/socket.io/";
 const SOCKET_TRANSPORT = (process.env.NEXT_PUBLIC_SOCKET_TRANSPORT || "websocket,polling")
   .split(",")
   .map((s) => s.trim())
@@ -38,6 +38,9 @@ const MessagesPage = () => {
   const messagesEndRef = useRef(null);
   const { user, token } = useAuth();
 
+  // Helper: current user ID across backends (_id or id)
+  const myUserId = user?.id || user?._id;
+
   // Generate temporary ID for optimistic updates
   const generateTempId = () =>
     `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -52,9 +55,7 @@ const MessagesPage = () => {
     if (!user) return;
 
     console.log("Current user:", user);
-    console.log("Using Clerk user ID:", user.id);
-
-    const myUserId = user?.id || user?._id;
+    console.log("Resolved user ID:", myUserId);
     socket.auth = { userId: myUserId };
     console.log("[Socket] connecting to:", SOCKET_BASE);
     socket.connect();
@@ -66,7 +67,6 @@ const MessagesPage = () => {
 
     const fetchChats = async () => {
       try {
-        const myUserId = user?.id || user?._id;
         console.log("Fetching chats for user ID:", myUserId);
 
         // Use fetch with explicit error handling
@@ -229,7 +229,7 @@ const MessagesPage = () => {
       setChats((prevChats) => {
         const updated = (prevChats || []).map((c) => {
           if (c._id !== chatId) return c;
-          const isIncoming = message.sender !== myUserId;
+          const isIncoming = String(message.sender) !== String(myUserId);
           return {
             ...c,
             lastMessage: {
@@ -251,7 +251,10 @@ const MessagesPage = () => {
         setMessages((prev) => {
           // Try to replace optimistic message by matching text and sender
           const idx = prev.findIndex(
-            (m) => m.text === processedMessage.text && (m.sender === processedMessage.sender || m.senderId === processedMessage.sender)
+            (m) =>
+              m.text === processedMessage.text &&
+              (String(m.sender) === String(processedMessage.sender) ||
+                String(m.senderId) === String(processedMessage.sender))
           );
           if (idx !== -1) {
             const copy = [...prev];
@@ -281,7 +284,7 @@ const MessagesPage = () => {
     });
 
     socket.on("typing", ({ userId, chatId }) => {
-      if (chatId === selectedChat._id && userId !== user.id) {
+      if (chatId === selectedChat._id && String(userId) !== String(myUserId)) {
         setTyping(true);
         setTimeout(() => setTyping(false), 3000);
       }
@@ -301,7 +304,6 @@ const MessagesPage = () => {
 
     const tempId = generateTempId();
     // Emit payload expected by backend: { chatId, content, senderId }
-    const myUserId = user?.id || user?._id;
     socket.emit("sendMessage", {
       chatId: selectedChat._id,
       senderId: myUserId,
@@ -316,7 +318,7 @@ const MessagesPage = () => {
         sender: myUserId,
         senderId: myUserId,
         createdAt: new Date(),
-        seenBy: [user.id],
+        seenBy: [myUserId],
         senderName: `${user.firstName || ""} ${user.lastName || ""}`.trim() || "You",
         content: newMessage,
         text: newMessage,
@@ -328,7 +330,6 @@ const MessagesPage = () => {
   const handleTyping = (e) => {
     setNewMessage(e.target.value);
     if (selectedChat && user) {
-      const myUserId = user?.id || user?._id;
       socket.emit("typing", { chatId: selectedChat._id, userId: myUserId });
     }
   };
@@ -343,8 +344,8 @@ const MessagesPage = () => {
     }
     // Fallback to participants array from backend controller
     if (Array.isArray(chat.participants)) {
-      const meId = user?.id;
-      const other = chat.participants.find((p) => p.id !== meId);
+      const meId = myUserId;
+      const other = chat.participants.find((p) => String(p.id) !== String(meId));
       if (other) {
         const name = `${other.firstName || ""} ${other.lastName || ""}`.trim();
         return name || other.email || "Unknown";
@@ -363,8 +364,8 @@ const MessagesPage = () => {
     }
     // Fallback to participants array
     if (Array.isArray(chat.participants)) {
-      const meId = user?.id;
-      const other = chat.participants.find((p) => p.id !== meId);
+      const meId = myUserId;
+      const other = chat.participants.find((p) => String(p.id) !== String(meId));
       return other?.image || other?.profilePicture || null;
     }
     return null;
@@ -379,7 +380,7 @@ const MessagesPage = () => {
     if (chat && chat._id) {
       socket.emit("markMessagesSeen", {
         chatId: chat._id,
-        userId: user.id,
+        userId: myUserId,
       });
 
       // Update local unread count immediately for better UX
@@ -471,7 +472,7 @@ const MessagesPage = () => {
                     {chat.lastMessage ? (
                       <>
                         <span className="font-medium">
-                          {chat.lastMessage.sender === user.id ? "You: " : ""}
+                          {String(chat.lastMessage.sender) === String(myUserId) ? "You: " : ""}
                         </span>
                         {chat.lastMessage.content || "No message content"}
                       </>
@@ -541,21 +542,21 @@ const MessagesPage = () => {
                   <div
                     key={message._id}
                     className={`flex ${
-                      message.sender === user.id || message.senderId === user.id
+                      String(message.sender) === String(myUserId) || String(message.senderId) === String(myUserId)
                         ? "justify-end"
                         : "justify-start"
                     }`}
                   >
                     <div
                       className={`max-w-[60%] px-4 py-2 rounded-lg text-sm whitespace-pre-line ${
-                        message.sender === user.id ||
-                        message.senderId === user.id
+                        String(message.sender) === String(myUserId) ||
+                        String(message.senderId) === String(myUserId)
                           ? "bg-blue-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200"
                           : "bg-white border border-gray-300 dark:border-gray-600"
                       }`}
                     >
-                      {!message.sender === user.id &&
-                        !message.senderId === user.id && (
+                      {String(message.sender) !== String(myUserId) &&
+                        String(message.senderId) !== String(myUserId) && (
                           <div className="font-medium text-xs text-gray-600 mb-1">
                             {message.senderName || "Unknown"}
                           </div>
@@ -566,12 +567,10 @@ const MessagesPage = () => {
                           hour: "2-digit",
                           minute: "2-digit",
                         })}
-                        {(message.sender === user.id ||
-                          message.senderId === user.id) && (
+                        {(String(message.sender) === String(myUserId) ||
+                          String(message.senderId) === String(myUserId)) && (
                           <span className="ml-2">
-                            {message.seenBy && message.seenBy.length > 1
-                              ? "Seen"
-                              : "Sent"}
+                            {message.seenBy && message.seenBy.length > 1 ? "Seen" : "Sent"}
                           </span>
                         )}
                       </div>
