@@ -43,8 +43,9 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
   // Logout moved to Sidebar
 
   return (
-    <header className="w-full p-4 bg-white dark:bg-gray-800800 shadow-md flex justify-end items-center z-30 sticky top-0 transition-colors duration-300">
+    <header className="w-full p-4 bg-white dark:bg-gray-800800 shadow-md flex justify-between md:justify-end items-center z-30 sticky top-0 transition-colors duration-300">
       {/* Logo */}
+      <img src="/logo.png" alt="" className="w-24 h-auto md:hidden" />
     
 
       <div className="flex items-center space-x-3 sm:mx-4">
@@ -60,7 +61,7 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
         </button>
 
         {/* Static user chip (no dropdown) */}
-        <div className="flex items-center space-x-2 p-2 rounded-full">
+        <div className="hidden md:flex items-center space-x-2 p-2 rounded-full">
           {user ? (
             <Avatar
               src={user.image || user.profilePicture}
@@ -83,7 +84,15 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
           {isOpen ? (
             <FiX className="w-6 h-6" />
           ) : (
-            <FiMenu className="w-6 h-6" />
+            <>
+            <FiMenu className="w-6 h-6 hidden md:block" />
+            <Avatar
+              src={user.image || user.profilePicture}
+              alt={user.firstName || user.email || "User"}
+              size={24}
+              className="md:hidden"
+            />
+            </>
           )}
         </button>
       </div>

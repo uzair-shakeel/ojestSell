@@ -41,6 +41,55 @@ interface ImageEditStepProps {
   };
 }
 
+// Compress an image file to stay under a target size using canvas
+async function compressImage(
+  file: File,
+  targetBytes = 1000 * 1000, // 1 MB
+  maxDimension = 1920,
+  minQuality = 0.5
+): Promise<File> {
+  try {
+    if (file.size <= targetBytes) return file;
+
+    const bitmap = await createImageBitmap(file);
+    // Compute scale to limit longest dimension
+    const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height));
+    const w = Math.max(1, Math.round(bitmap.width * scale));
+    const h = Math.max(1, Math.round(bitmap.height * scale));
+
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return file;
+    ctx.drawImage(bitmap, 0, 0, w, h);
+
+    // Binary search-like quality reduction
+    let quality = 0.9;
+    let blob: Blob | null = null;
+    // Try a few steps to get under target
+    for (let i = 0; i < 6; i++) {
+      // eslint-disable-next-line no-await-in-loop
+      blob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob((b) => resolve(b), file.type || "image/jpeg", quality)
+      );
+      if (!blob) break;
+      if (blob.size <= targetBytes || quality <= minQuality) break;
+      quality -= 0.1;
+    }
+    if (blob && blob.size < file.size) {
+      return new File([blob], file.name.replace(/\.(png|jpg|jpeg|webp)$/i, ".jpg"), {
+        type: "image/jpeg",
+        lastModified: Date.now(),
+      });
+    }
+    return file;
+  } catch (e) {
+    console.warn("Compression failed, using original file", e);
+    return file;
+  }
+}
+
 export default function ImageEditStep({
   nextStep,
   prevStep,
@@ -299,7 +348,9 @@ export default function ImageEditStep({
     try {
       const externalUrl = "https://ojest.pl/detect/detect";
       const fd = new FormData();
-      fd.append("file", activeImage);
+      // Ensure under 1MB before sending
+      const optimized = await compressImage(activeImage, 1000 * 1000, 1920, 0.5);
+      fd.append("file", optimized);
 
       const resp = await fetch(externalUrl, { method: "POST", body: fd });
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
