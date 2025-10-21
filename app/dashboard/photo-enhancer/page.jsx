@@ -2569,6 +2569,37 @@ export default function PhotoEnhancer() {
     );
   };
 
+  // Compress image to be under target bytes using canvas
+  const compressImage = async (file, targetBytes = 1000 * 1000, maxDimension = 1920, minQuality = 0.5) => {
+    try {
+      if (!file || file.size <= targetBytes) return file;
+      const bitmap = await createImageBitmap(file);
+      const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height));
+      const w = Math.max(1, Math.round(bitmap.width * scale));
+      const h = Math.max(1, Math.round(bitmap.height * scale));
+      const canvas = document.createElement("canvas");
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return file;
+      ctx.drawImage(bitmap, 0, 0, w, h);
+      let quality = 0.9; let blob = null;
+      for (let i = 0; i < 6; i++) {
+        // eslint-disable-next-line no-await-in-loop
+        blob = await new Promise((resolve) => canvas.toBlob((b) => resolve(b), file.type || "image/jpeg", quality));
+        if (!blob) break;
+        if (blob.size <= targetBytes || quality <= minQuality) break;
+        quality -= 0.1;
+      }
+      if (blob && blob.size < file.size) {
+        return new File([blob], file.name.replace(/\.(png|jpg|jpeg|webp)$/i, ".jpg"), { type: "image/jpeg", lastModified: Date.now() });
+      }
+      return file;
+    } catch (e) {
+      console.warn("Compression failed, sending original file", e);
+      return file;
+    }
+  };
+
   // Add function to blur number plate by calling external API directly (no internal /api route)
   const blurNumberPlate = async () => {
     if (!selectedImage) {
@@ -2582,7 +2613,8 @@ export default function PhotoEnhancer() {
     try {
       const externalUrl = "https://ojest.pl/detect/detect";
       const fd = new FormData();
-      fd.append("file", selectedImage);
+      const optimized = await compressImage(selectedImage, 1000 * 1000, 1920, 0.5);
+      fd.append("file", optimized);
 
       const resp = await fetch(externalUrl, { method: "POST", body: fd });
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
