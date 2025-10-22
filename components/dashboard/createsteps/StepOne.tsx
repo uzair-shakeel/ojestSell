@@ -16,6 +16,7 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
   const { getToken } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
+  const ENABLE_STEP1_IMAGES = false;
   const [localData, setLocalData] = useState({
     title: formData.title || "",
     description: formData.description || "",
@@ -415,56 +416,57 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
           </div>
         </div>
 
-        <div className="col-span-2">
-          <label className="block text-gray-700 mb-1">
-            Upload Images (1-10)
-          </label>
-          <input
-            type="file"
-            multiple
-            accept="image/*"
-            onChange={handleImageUpload}
-            className="text-base text-gray-500 file:mr-4 file:py-2 file:px-7 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gray-700 file:text-white hover:file:bg-gray-600 file:duration-300 border border-gray-300 p-1 w-auto rounded-md"
-          />
-          {formData.imagePreviews?.length > 0 && (
-            <div className="grid grid-cols-5 gap-2 mt-2">
-              {formData.imagePreviews.map((preview, index) => (
-                <div
-                  key={index}
-                  className={`relative border-2 rounded-md ${
-                    dragOverIndex === index ? "border-blue-400" : "border-transparent"
-                  }`}
-                  draggable
-                  onDragStart={handleDragStart(index)}
-                  onDragOver={handleDragOver(index)}
-                  onDrop={handleDrop(index)}
-                  onDragEnd={handleDragEnd}
-                  title="Drag to reorder"
-                >
-                  <img
-                    src={preview}
-                    alt={`Preview ${index + 1}`}
-                    className="w-full h-24 object-cover rounded-md"
-                  />
-                  <div className="absolute top-1 right-1 flex gap-1">
-                    
-                    <button
-                      type="button"
-                      onClick={() => removeImage(index)}
-                      className="bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
-                      title="Remove image"
-                    >
-                      ×
-                    </button>
+        {ENABLE_STEP1_IMAGES && (
+          <div className="col-span-2">
+            <label className="block text-gray-700 mb-1">
+              Upload Images (1-10)
+            </label>
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="text-base text-gray-500 file:mr-4 file:py-2 file:px-7 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gray-700 file:text-white hover:file:bg-gray-600 file:duration-300 border border-gray-300 p-1 w-auto rounded-md"
+            />
+            {formData.imagePreviews?.length > 0 && (
+              <div className="grid grid-cols-5 gap-2 mt-2">
+                {formData.imagePreviews.map((preview, index) => (
+                  <div
+                    key={index}
+                    className={`relative border-2 rounded-md ${
+                      dragOverIndex === index ? "border-blue-400" : "border-transparent"
+                    }`}
+                    draggable
+                    onDragStart={handleDragStart(index)}
+                    onDragOver={handleDragOver(index)}
+                    onDrop={handleDrop(index)}
+                    onDragEnd={handleDragEnd}
+                    title="Drag to reorder"
+                  >
+                    <img
+                      src={preview}
+                      alt={`Preview ${index + 1}`}
+                      className="w-full h-24 object-cover rounded-md"
+                    />
+                    <div className="absolute top-1 right-1 flex gap-1">
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className="bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                        title="Remove image"
+                      >
+                        ×
+                      </button>
+                    </div>
+                    <div className="absolute bottom-1 left-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded">
+                      {index + 1}
+                    </div>
                   </div>
-                  <div className="absolute bottom-1 left-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded">
-                    {index + 1}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="col-span-2">
           <button

@@ -134,6 +134,63 @@ export default function ImageEditStep({
     tint: 0,
   });
 
+  // Upload images directly in this step
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const selectedFiles = Array.from(e.target.files);
+    const currentCount = formData.images?.length || 0;
+    if (currentCount + selectedFiles.length > 10) {
+      alert("You can upload a maximum of 10 images.");
+      return;
+    }
+
+    const newPreviews = selectedFiles.map((file) => URL.createObjectURL(file));
+    const images = [...(formData.images || []), ...selectedFiles];
+    const previews = [...(formData.imagePreviews || []), ...newPreviews];
+    updateFormData({ ...formData, images, imagePreviews: previews });
+
+    if (currentCount === 0 && selectedFiles.length > 0) {
+      setActiveImage(selectedFiles[0]);
+      setActiveImageIndex(0);
+      setPreviewUrl(newPreviews[0]);
+    }
+
+    // reset input so same filename can be selected again
+    (e.currentTarget as HTMLInputElement).value = "";
+  };
+
+  // Drag & drop reorder state
+  const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+  // Helper to reorder arrays immutably
+  const reorder = <T,>(list: T[], startIndex: number, endIndex: number): T[] => {
+    const result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+    return result;
+  };
+
+  // Drag handlers
+  const handleThumbDragStart = (index: number) => () => setDraggingIndex(index);
+  const handleThumbDragOver = (index: number) => (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (dragOverIndex !== index) setDragOverIndex(index);
+  };
+  const handleThumbDragEnd = () => {
+    setDraggingIndex(null);
+    setDragOverIndex(null);
+  };
+  const handleThumbDrop = (index: number) => (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (draggingIndex === null || draggingIndex === index) return handleThumbDragEnd();
+    const newImages = reorder(formData.images, draggingIndex, index);
+    const newPreviews = reorder(formData.imagePreviews, draggingIndex, index);
+    updateFormData({ ...formData, images: newImages, imagePreviews: newPreviews });
+    setActiveImageIndex(index);
+    handleThumbDragEnd();
+  };
+
   // Load the first image when component mounts
   useEffect(() => {
     if (formData.images && formData.images.length > 0) {
@@ -677,32 +734,53 @@ export default function ImageEditStep({
         </p>
 
         {formData.images.length === 0 ? (
-          <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6">
-            <p className="text-yellow-700">
-              No images uploaded yet. Please go back and upload images first.
-            </p>
-            <button
-              onClick={prevStep}
-              className="mt-2 bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition-colors"
-            >
-              Go Back to Upload Images
-            </button>
+          <div className="mb-6">
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50">
+              <p className="text-gray-700 font-medium mb-2">Upload Images (1-10)</p>
+              <p className="text-sm text-gray-500 mb-4">Add your car photos here. You can edit them right after uploading.</p>
+              <label className="inline-block cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+                Select Images
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+              </label>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Image Thumbnails */}
             <div className="bg-gray-50 p-4 rounded-lg">
               <h3 className="font-semibold mb-3">Your Images</h3>
+              <div className="mb-3">
+                <label className="inline-flex items-center gap-2 cursor-pointer text-sm text-blue-600 hover:text-blue-700">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M12 5v14m-7-7h14"/></svg>
+                  Add Images
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                </label>
+              </div>
               <div className="grid grid-cols-2 gap-2 max-h-[400px] overflow-y-auto">
                 {formData.imagePreviews.map((preview, index) => (
                   <div
                     key={index}
                     className={`relative cursor-pointer border-2 ${
-                      activeImageIndex === index
-                        ? "border-blue-500"
-                        : "border-transparent"
-                    } rounded-md overflow-hidden`}
+                      activeImageIndex === index ? "border-blue-500" : "border-transparent"
+                    } ${dragOverIndex === index ? "border-blue-400" : ""} rounded-md overflow-hidden`}
                     onClick={() => selectImage(index)}
+                    draggable
+                    onDragStart={handleThumbDragStart(index)}
+                    onDragOver={handleThumbDragOver(index)}
+                    onDrop={handleThumbDrop(index)}
+                    onDragEnd={handleThumbDragEnd}
                   >
                     <img
                       src={preview || "/placeholder.svg?height=96&width=96"}
@@ -712,10 +790,9 @@ export default function ImageEditStep({
                     />
                     <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 text-center">
                       Image {index + 1}
-                      {formData.imageAdjustments &&
-                        formData.imageAdjustments[index] && (
-                          <span className="ml-1 text-green-300">✓</span>
-                        )}
+                      {formData.imageAdjustments && formData.imageAdjustments[index] && (
+                        <span className="ml-1 text-green-300">✓</span>
+                      )}
                     </div>
                   </div>
                 ))}
