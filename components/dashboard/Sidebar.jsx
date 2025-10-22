@@ -163,12 +163,21 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
     <>
       {/* Sidebar */}
       <motion.div
-        initial={{ x: "-100%" }}
-        animate={{ x: isOpen ? 0 : "-100%" }}
+        initial={{ x: "100%" }}
+        animate={{ x: isOpen ? 0 : "100%" }}
         transition={{ duration: 0.3 }}
-        className={`fixed inset-y-0 left-0 h-screen bg-[#181818] text-white shadow-lg z-40 w-64
+        className={`fixed inset-y-0 right-0 md:left-0 md:right-auto h-screen bg-[#181818] text-white shadow-lg z-40 w-64
           ${isOpen ? "block" : "hidden"} md:block w-64 md:transition-none`}
       >
+        {/* Mobile Close Button */}
+        <button
+          type="button"
+          aria-label="Close sidebar"
+          onClick={toggleSidebar}
+          className="md:hidden absolute top-4 right-4 p-2 rounded-full hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <FiX className="w-6 h-6" />
+        </button>
         <div className="flex items-center justify-between px-4 py-5">
           <AnimatePresence mode="wait">
             {isOpen && (
