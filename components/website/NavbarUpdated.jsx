@@ -6,13 +6,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../lib/auth/AuthContext";
 
+import Avatar from "../both/Avatar";
+
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 const NavbarUpdated = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [chatCount, setChatCount] = useState(0);
   const router = useRouter();
-  const { isSignedIn, userId } = useAuth(); // Check if the user is signed in
+  const { isSignedIn, userId, user } = useAuth(); // Check if the user is signed in
 
   // Fetch chat count when user is signed in
   useEffect(() => {
@@ -98,7 +100,15 @@ const NavbarUpdated = () => {
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="text-gray-700"
         >
-          <IoPersonCircleOutline size={30} />
+          { user ? (
+            <Avatar
+              src={user.image || user.profilePicture}
+              alt={user.firstName || user.email || "User"}
+              size={28}
+            />
+          ) : (
+            <IoPersonCircleOutline size={30} />
+          )}
         </button>
       </div>
 

@@ -6,6 +6,7 @@ import { FiMenu, FiX } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import ThemeToggle from "../ThemeToggle";
 import Avatar from "../both/Avatar";
+import Link from "next/link";
 
 const RAW_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 const buildApiUrl = (path) => {
@@ -45,7 +46,9 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
   return (
     <header className="w-full p-4 bg-white dark:bg-gray-800800 shadow-md flex justify-between md:justify-end items-center z-30 sticky top-0 transition-colors duration-300">
       {/* Logo */}
+      <Link href="/">
       <img src="/logo.png" alt="" className="w-24 h-auto md:hidden" />
+      </Link>
     
 
       <div className="flex items-center space-x-3 sm:mx-4">

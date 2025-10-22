@@ -8,13 +8,14 @@ import LanguageSwitcher from "../LanguageSwitcher";
 import ThemeToggle from "../ThemeToggle";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
 import { useAuth } from "../../lib/auth/AuthContext";
+import Avatar from "../both/Avatar";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [chatCount, setChatCount] = useState(0);
   const router = useRouter();
   const { t } = useLanguage();
-  const { isSignedIn, logout } = useAuth();
+  const { isSignedIn, logout, user } = useAuth();
 
   const handleSignIn = () => {
     setIsMenuOpen(false);
@@ -72,7 +73,15 @@ const Navbar = () => {
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-300"
         >
-          <IoPersonCircleOutline size={30} />
+           { user ? (
+            <Avatar
+              src={user.image || user.profilePicture}
+              alt={user.firstName || user.email || "User"}
+              size={28}
+            />
+          ) : (
+            <IoPersonCircleOutline size={30} />
+          )}
         </button>
       </div>
 
