@@ -83,8 +83,10 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
         }
 
         const data = await response.json();
-        // Set the chat count to the number of chats
-        setChatCount(data.chats?.length || 0);
+        const chatsArray = Array.isArray(data) ? data : data.chats || [];
+        // Set the chat count to the total unread messages across chats
+        const unreadTotal = chatsArray.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
+        setChatCount(unreadTotal);
       } catch (err) {
         console.error("Error fetching chats:", err);
       }
@@ -246,7 +248,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
               ) : (
                 <Link
                   href={item.href}
-                  className="flex flex-row items-center p-3 rounded-md hover:bg-blue-500 transition-all m-2 justify-normal"
+                  className="relative flex flex-row items-center p-3 rounded-md hover:bg-blue-500 transition-all m-2 justify-normal"
                   onClick={() => {
                     if (window.innerWidth < 768) {
                       toggleSidebar();

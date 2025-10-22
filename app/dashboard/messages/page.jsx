@@ -559,7 +559,7 @@ const MessagesPage = () => {
             )}
           </div>
           <button
-            className="md:hidden fixed top-24 right-4 z-10 p-2 px-5 bg-white border rounded-md shadow flex items-center gap-2"
+            className="hidden md:flex p-2 px-5 bg-white border rounded-md shadow items-center gap-2"
             onClick={() => setShowSidebar(!showSidebar)}
           >
             <div className="relative">
