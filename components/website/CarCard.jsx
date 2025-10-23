@@ -231,12 +231,57 @@ export default function CarCard({ car, viewMode = 'grid' }) {
       }}
     >
       <div className="bg-white rounded-b-2xl overflow-hidden backdrop-blur-sm relative flex flex-row">
-        <div className="relative w-32 md:w-80 h-24 md:h-48 lg:h-[182px] flex-shrink-0 overflow-hidden rounded-lg lg:rounded-none mx-[10px] md:mx-0">
-          <img 
-            src={firstImage} 
-            alt={`${car.year} ${car.make} ${car.model}`}
-            className="w-full h-full object-cover rounded-lg lg:rounded-none"
-          />
+        <div className="relative w-32 md:w-1/3 h-24 md:h-48 lg:h-[182px] flex-shrink-0 overflow-hidden rounded-lg lg:rounded-none mx-[10px] md:mx-0">
+          {car?.isFeatured && (car?.images?.length ?? 0) >= 3 ? (
+            <div className="flex h-full w-full gap-0.5">
+              {/* Left column tall (image 1 spans full height) */}
+              <div className="relative w-2/3">
+                <img
+                  src={formatCarImage(car.images[0])}
+                  alt={`${car.year} ${car.make} ${car.model} - 1`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              {/* Right column: two fixed rows (top: img2, bottom: img3 or img3+4) */}
+              <div className="w-1/3 grid grid-rows-2 gap-0.5 h-full">
+                <div className="relative row-span-1 h-full">
+                  <img
+                    src={formatCarImage(car.images[1])}
+                    alt={`${car.year} ${car.make} ${car.model} - 2`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="relative row-span-1 h-full">
+                  {(car?.images?.length ?? 0) >= 4 ? (
+                    <div className="grid grid-cols-2 gap-0.5 h-full w-full">
+                      <img
+                        src={formatCarImage(car.images[2])}
+                        alt={`${car.year} ${car.make} ${car.model} - 3`}
+                        className="w-full h-full object-cover"
+                      />
+                      <img
+                        src={formatCarImage(car.images[3])}
+                        alt={`${car.year} ${car.make} ${car.model} - 4`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <img
+                      src={formatCarImage(car.images[2])}
+                      alt={`${car.year} ${car.make} ${car.model} - 3`}
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <img 
+              src={firstImage} 
+              alt={`${car.year} ${car.make} ${car.model}`}
+              className="w-full h-full object-cover rounded-lg lg:rounded-none"
+            />
+          )}
           <div className="absolute bottom-2 left-2 bg-gray-900/90 px-2 py-1 rounded-md shadow-lg">
             <div className="text-xs font-bold text-white">
               {car.financialInfo?.priceNetto ? 

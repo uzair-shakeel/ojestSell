@@ -1,5 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "next/navigation";
+
 import { useMakesModels } from "../../hooks/useMakesModels";
 import { createPortal } from "react-dom";
 
@@ -24,7 +26,9 @@ export default function FilterNavbar({ onApplyFilters }) {
     accidentHistory: "",
     priceFrom: "",
     priceTo: "",
+    origin: "",
   });
+  const searchParams = useSearchParams();
 
   const [showMoreFilters, setShowMoreFilters] = useState(false);
   const [showYearDropdown, setShowYearDropdown] = useState(false);
@@ -41,6 +45,16 @@ export default function FilterNavbar({ onApplyFilters }) {
   const filterRef = useRef(null);
   useEffect(() => {
     setIsMounted(true);
+  }, []);
+
+  // Initialize origin from URL (?origin=...)
+  useEffect(() => {
+    const qpOrigin = searchParams?.get?.("origin");
+    if (qpOrigin) {
+      setFilters((prev) => ({ ...prev, origin: qpOrigin }));
+      onApplyFilters({ ...filters, origin: qpOrigin });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleInputChange = (e) => {
@@ -76,8 +90,10 @@ export default function FilterNavbar({ onApplyFilters }) {
       accidentHistory: "",
       priceFrom: "",
       priceTo: "",
+      origin: "",
     };
     setFilters(resetFilters);
+
     setShowYearDropdown(false);
     setShowMileageDropdown(false);
     setShowPriceDropdown(false);
@@ -194,7 +210,6 @@ export default function FilterNavbar({ onApplyFilters }) {
     return "Przebieg";
   };
 
-
   const getPriceDisplayText = () => {
     if (filters.priceFrom && filters.priceTo) {
       return `${filters.priceFrom} - ${filters.priceTo}`;
@@ -244,15 +259,16 @@ export default function FilterNavbar({ onApplyFilters }) {
                   <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
                 </svg>
               </button>
-        </div>
+            </div>
           </div>
         )}
         
         <div className="space-y-1">
         {/* Desktop Layout: First Line - Make Model Type Year */}
         <div className="hidden md:block lg:w-full">
-          {/* First row: Make, Model, Type, Year */}
+          {/* First row: Make, Model, Type, Country, Year */}
           <div className="flex items-center justify-between w-full gap-3 overflow-visible relative">
+
             {/* Make Filter */}
             <div className="relative flex-1">
               <select
@@ -319,6 +335,33 @@ export default function FilterNavbar({ onApplyFilters }) {
               </div>
             </div>
 
+            {/* Country of Origin */}
+            <div className="relative flex-1">
+              <select
+                name="origin"
+                value={filters.origin}
+                onChange={handleInputChange}
+                className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+              >
+                <option value="">Kraj</option>
+                <option value="germany">Germany</option>
+                <option value="japan">Japan</option>
+                <option value="united-states">United States</option>
+                <option value="united-kingdom">United Kingdom</option>
+                <option value="italy">Italy</option>
+                <option value="france">France</option>
+                <option value="south-korea">South Korea</option>
+                <option value="sweden">Sweden</option>
+                <option value="china">China</option>
+                <option value="poland">Poland</option>
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+
             {/* Year Button with Dropdown */}
             <div className="relative flex-1 overflow-visible" ref={yearDropdownRef}>
               <button
@@ -345,7 +388,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                         name="yearFrom"
                         value={filters.yearFrom}
                         onChange={handleInputChange}
-                        className="w-full px-3 h-10 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 leading-[17px]"
+                        className="w-full px-3 h-10 text-sm border border-gray-200 rounded-md focus:outline-none"
                       >
                         <option value="">Rok od</option>
                         <option value="2025">2025</option>
@@ -382,7 +425,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                         name="yearTo"
                         value={filters.yearTo}
                         onChange={handleInputChange}
-                        className="w-full px-3 h-10 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 leading-[17px]"
+                        className="w-full px-3 h-10 text-sm border border-gray-200 rounded-md focus:outline-none"
                       >
                         <option value="">Roku Do </option>
                         <option value="2025">2025</option>
@@ -559,7 +602,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                     </div>
                   </div>
                 </div>
-                {/* Type + Year */}
+                {/* Type + Country + Year */}
                 <div className="flex items-center justify-between w-full gap-2">
                   <div className="relative flex-1">
                     <select name="type" value={filters.type} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
@@ -572,6 +615,22 @@ export default function FilterNavbar({ onApplyFilters }) {
                       <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                     </div>
                   </div>
+                  <div className="relative flex-1">
+                    <select name="origin" value={filters.origin} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                      <option value="">Kraj</option>
+                      <option value="germany">Germany</option>
+                      <option value="japan">Japan</option>
+                      <option value="united-states">United States</option>
+                      <option value="united-kingdom">United Kingdom</option>
+                      <option value="italy">Italy</option>
+                      <option value="france">France</option>
+                      <option value="south-korea">South Korea</option>
+                      <option value="sweden">Sweden</option>
+                      <option value="china">China</option>
+                      <option value="poland">Poland</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
+                  </div>
                   <div className="relative flex-1 overflow-visible" ref={yearDropdownRef}>
                     <button onClick={() => { setShowYearDropdown(!showYearDropdown); setShowMileageDropdown(false); setShowPriceDropdown(false); }} className={`w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none shadow-sm text-left ${showYearDropdown || filters.yearFrom || filters.yearTo ? 'text-black bg-white border-blue-300' : 'text-gray-700 bg-white'}`}>{getYearDisplayText()}</button>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className={`w-3 h-3 text-gray-400 transition-transform ${showYearDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
@@ -580,6 +639,12 @@ export default function FilterNavbar({ onApplyFilters }) {
                         <div className="grid grid-cols-1 gap-2">
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Rok od</label>
+                            <select
+                              name="yearFrom"
+                              value={filters.yearFrom}
+                              onChange={handleInputChange}
+                              className="w-full px-3 h-10 text-sm border border-gray-200 rounded-md focus:outline-none"
+                            />
                             <select name="yearFrom" value={filters.yearFrom} onChange={handleInputChange} className="w-full px-3 h-10 text-sm border border-gray-200 rounded-md focus:outline-none">
                               <option value="">Rok od</option>
                               <option value="2025">2025</option>

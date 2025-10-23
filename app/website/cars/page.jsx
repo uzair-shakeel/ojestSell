@@ -26,6 +26,18 @@ const CarsContent = () => {
   const searchParams = useSearchParams();
   const sortListRef = useRef(null);
 
+  // Normalize country names to slug for comparisons
+  const slugifyCountry = (str) => {
+    if (!str) return "";
+    const s = String(str).toLowerCase().trim();
+    if (s === "usa" || s === "u.s.a" || s === "united states" || s === "united-states") return "united-states";
+    if (s === "uk" || s === "u.k" || s === "united kingdom" || s === "united-kingdom") return "united-kingdom";
+    return s
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
+  };
+
   // Handle responsive view toggle (list/grid) based on screen size
   useEffect(() => {
     const handleResize = () => {
@@ -130,6 +142,7 @@ const CarsContent = () => {
         const fuel = searchParams.get("fuel");
         const transmission = searchParams.get("transmission");
         const location = searchParams.get("location");
+        const origin = searchParams.get("origin");
 
         let carsData;
 
@@ -167,6 +180,15 @@ const CarsContent = () => {
         } else {
           // Use getAllCars for initial load
           carsData = await getAllCars();
+        }
+
+        // Apply frontend filter for origin (country of origin)
+        if (origin) {
+          const want = slugifyCountry(origin);
+          carsData = (Array.isArray(carsData) ? carsData : []).filter((car) => {
+            const carCountrySlug = slugifyCountry(car?.country);
+            return carCountrySlug === want;
+          });
         }
 
         setAllCars(carsData);
@@ -290,6 +312,13 @@ const CarsContent = () => {
       });
 
       let carsData = await searchCars(searchParams_obj);
+
+      // If page was opened with an origin param, keep honoring it during UI filter apply
+      const origin = searchParams.get("origin");
+      if (origin) {
+        const want = slugifyCountry(origin);
+        carsData = (Array.isArray(carsData) ? carsData : []).filter((car) => slugifyCountry(car?.country) === want);
+      }
 
       // Ensure carsData is an array
       if (!Array.isArray(carsData)) {

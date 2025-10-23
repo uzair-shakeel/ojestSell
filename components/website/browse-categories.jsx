@@ -180,7 +180,7 @@ export function BrowseCategories() {
             ))}
           </div>
           {/* Mobile chevrons overlay */}
-          <button
+          {/* <button
             aria-label="Scroll left"
             onClick={() => scroll("left")}
             className="absolute left-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full border border-gray-300 dark:border-gray-700 flex items-center justify-center bg-white/70 dark:bg-gray-900/60 backdrop-blur text-gray-700 dark:text-gray-200"
@@ -193,7 +193,7 @@ export function BrowseCategories() {
             className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full border border-gray-300 dark:border-gray-700 flex items-center justify-center bg-white/70 dark:bg-gray-900/60 backdrop-blur text-gray-700 dark:text-gray-200"
           >
             <ChevronRight className="h-5 w-5" />
-          </button>
+          </button> */}
         </div>
 
         <div className="hidden md:grid grid-cols-3 lg:grid-cols-4 gap-5">
@@ -249,14 +249,14 @@ function CountryCard({ country, className = "" }) {
         </div>
 
         {/* Title + tagline + CTA */}
-        <div className="absolute bottom-0 left-0 right-0 p-4">
-          <div className="text-white">
+        <div className="absolute bottom-0  right-0 p-4">
+          {/* <div className="text-white">
             <div className="text-xl md:text-2xl font-bold drop-shadow-sm">{name}</div>
             {tagline && <div className="text-sm opacity-90">{tagline}</div>}
-          </div>
+          </div> */}
 
-          <div className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/95 text-gray-900 font-medium shadow group-hover:translate-y-[-2px] transition-transform">
-            Explore cars
+          <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 text-gray-900 font-medium shadow group-hover:translate-y-[-2px] transition-transform">
+            Explore
             <span aria-hidden>→</span>
           </div>
         </div>
@@ -264,8 +264,3 @@ function CountryCard({ country, className = "" }) {
     </Link>
   );
 }
-
-// Hide scrollbar utility (Tailwind not required; class used above)
-// You can place this globally in CSS if preferred.
-// .scrollbar-hide::-webkit-scrollbar { display: none; }
-// .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
