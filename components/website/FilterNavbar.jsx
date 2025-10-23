@@ -583,6 +583,51 @@ export default function FilterNavbar({ onApplyFilters }) {
                 <button onClick={() => setShowMoreFilters(false)} className="text-sm text-gray-600 border border-gray-200 rounded-md px-2 py-1">Zamknij</button>
               </div>
               <div className="space-y-3">
+                {/* Make + Model */}
+                <div className="flex items-center justify-between w-full gap-2">
+                  <div className="relative flex-1">
+                    <select
+                      name="make"
+                      value={filters.make}
+                      onChange={handleInputChange}
+                      className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
+                      disabled={loading}
+                    >
+                      <option value="">Marka</option>
+                      {getMakes().map((make) => (
+                        <option key={make} value={make}>
+                          {make}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                      <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="relative flex-1">
+                    <select
+                      name="model"
+                      value={filters.model}
+                      onChange={handleInputChange}
+                      className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
+                      disabled={loading || !filters.make}
+                    >
+                      <option value="">Model</option>
+                      {filters.make && getModelsForMake(filters.make).map((model) => (
+                        <option key={model} value={model}>
+                          {model}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                      <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
                 {/* Location + Distance */}
                 <div className="flex items-center justify-between w-full gap-2">
                   <div className="relative flex-1">
