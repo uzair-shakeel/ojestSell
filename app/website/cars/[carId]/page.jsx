@@ -15,7 +15,7 @@ import DetailTab from "../../../../components/website/DetailTab";
 import LocationTab from "../../../../components/website/LocationTab";
 import FinancialTab from "../../../../components/website/FinancialTab";
 import SimilarVehicles from "../../../../components/website/SimilarVehicles";
-import { FaInstagram, FaFacebook, FaTwitter } from "react-icons/fa";
+import { FaInstagram, FaFacebook, FaGlobe } from "react-icons/fa";
 import { useParams, useRouter } from "next/navigation";
 import { getCarById } from "../../../../services/carService";
 import { getPublicUserInfo } from "../../../../services/userService";
@@ -53,6 +53,14 @@ const Page = () => {
       return imagePath;
     }
     return `${API_BASE}/${imagePath.replace("\\", "/")}`;
+  };
+
+  // Ensure links open correctly even if user saved without protocol
+  const normalizeUrl = (url) => {
+    if (!url || typeof url !== "string") return "";
+    const trimmed = url.trim();
+    if (/^https?:\/\//i.test(trimmed)) return trimmed;
+    return `https://${trimmed}`;
   };
 
   const getCityFromCoordinates = async (lat, lon) => {
@@ -360,17 +368,17 @@ const Page = () => {
     {
       platform: "instagram",
       icon: <FaInstagram />,
-      url: seller?.socialMedia?.instagram,
+      url: normalizeUrl(seller?.socialMedia?.instagram),
     },
     {
       platform: "facebook",
       icon: <FaFacebook />,
-      url: seller?.socialMedia?.facebook,
+      url: normalizeUrl(seller?.socialMedia?.facebook),
     },
     {
-      platform: "twitter",
-      icon: <FaTwitter />,
-      url: seller?.socialMedia?.twitter,
+      platform: "website",
+      icon: <FaGlobe />,
+      url: normalizeUrl(seller?.socialMedia?.website),
     },
   ].filter((link) => link.url && link.url.trim() !== "");
 
