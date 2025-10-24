@@ -58,6 +58,12 @@ export default function DashboardCarsPage() {
         </a>
       </div>
 
+      {cars && cars.length > 0 && cars.some((c) => c.status !== "Approved") && (
+        <div className="mb-4 rounded-md border border-yellow-300 bg-yellow-50 p-3 text-yellow-900">
+          Some of your listings are pending review and are not visible on the public website until approved.
+        </div>
+      )}
+
       {isLoading ? (
         <div className="flex items-center justify-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -95,9 +101,27 @@ export default function DashboardCarsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          
           {cars.map((car) => (
-            <CarCard key={car._id} car={car} onDelete={handleDelete} />
+            <div key={car._id} className="space-y-2">
+              <CarCard car={car} onDelete={handleDelete} />
+              <div className="flex items-center justify-between text-sm">
+                <div>
+                  {car.status === "Approved" ? (
+                    <span className="inline-flex items-center px-2 py-1 rounded-md border border-green-200 bg-green-50 text-green-700">Approved • Visible</span>
+                  ) : car.status === "Pending" ? (
+                    <span className="inline-flex items-center px-2 py-1 rounded-md border border-yellow-200 bg-yellow-50 text-yellow-700">Pending approval • Not visible</span>
+                  ) : (
+                    <span className="inline-flex items-center px-2 py-1 rounded-md border border-red-200 bg-red-50 text-red-700">Rejected • Not visible</span>
+                  )}
+                </div>
+                <button
+                  onClick={() => handleDelete(car._id)}
+                  className="text-red-600 hover:text-red-700"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
           ))}
         </div>
       )}

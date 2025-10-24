@@ -398,7 +398,8 @@ export default function MultiStepForm() {
               Car created successfully
             </h3>
             <p className="text-gray-600 mb-6">
-              Your listing has been submitted and will appear in your dashboard.
+              Your listing has been submitted for review and is currently <span className="font-semibold">Pending approval</span>.
+              It will not appear on the public website until an admin approves it. You can track its status in your dashboard.
             </p>
             <div className="flex justify-end gap-3">
               <button
