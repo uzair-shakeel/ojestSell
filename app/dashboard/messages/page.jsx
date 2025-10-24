@@ -459,12 +459,20 @@ const MessagesPage = () => {
     );
   }
 
+  useEffect(() => {
+  document.body.style.overflow = "hidden";
+  return () => {
+    document.body.style.overflow = "auto";
+  };
+}, []);
+
+
   // Calculate the chat count
   const chatCount = chats.length;
 
   return (
-    <div className="flex h-full min-h-0 bg-white font-sans relative overflow-hidden">
-      {/* Sidebar */}
+<div className="mt-[50px] flex h-[calc(100vh-70px)] bg-white font-sans overflow-hidden">
+  {/* Sidebar */}
       <div
         className={`absolute md:relative inset-y-0 left-0 z-20 bg-white h-full min-h-0 w-full sm:w-[320px] md:w-[320px] border-r border-gray-300 flex flex-col transform transition-transform duration-300 ${
           showSidebar ? "translate-x-0" : "-translate-x-full"
@@ -543,7 +551,7 @@ const MessagesPage = () => {
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden">
+      <div className="flex-1 grid grid-rows-[auto_1fr_auto] h-full min-h-0 overflow-hidden bg-white">
         {/* Chat Header - Fixed */}
         <div className="border-b border-gray-300 p-4 flex items-center justify-between shrink-0">
           <div>
@@ -561,7 +569,7 @@ const MessagesPage = () => {
         </div>
 
         {/* Messages Container - Scrollable */}
-        <div className="flex-1 overflow-y-auto overscroll-contain p-6 space-y-4 bg-gray-50">
+        <div className="min-h-0 overflow-y-auto overscroll-contain px-6 py-3 space-y-4 bg-white">
           {selectedChat ? (
             messages.length > 0 ? (
               <>
@@ -609,7 +617,7 @@ const MessagesPage = () => {
                     {getParticipantName(selectedChat)} is typing...
                   </div>
                 )}
-                <div ref={messagesEndRef} />
+                <div ref={messagesEndRef} className="h-0" />
               </>
             ) : (
               <p className="text-center text-gray-500">No messages yet</p>
@@ -623,7 +631,7 @@ const MessagesPage = () => {
 
         {/* Message Input - Fixed at bottom */}
         {selectedChat && (
-          <div className="p-4 border-t border-gray-300 flex items-center gap-2 shrink-0 bg-white">
+          <div className="px-3 py-2 flex items-center gap-2 bg-white">
             <input
               type="text"
               value={newMessage}
