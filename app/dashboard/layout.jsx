@@ -70,14 +70,14 @@ export default function DashboardLayout({ children }) {
   }
 
   return (
-    <div className="absolute w-full h-auto min-h-screen top-0">
-      <div className="flex justify-center items-center min-h-screen h-auto bg-white dark:bg-gray-800 transition-all duration-300">
+    <div className="absolute w-full h-screen top-0 overflow-hidden">
+      <div className="flex justify-center items-center h-screen bg-white dark:bg-gray-800 transition-all duration-300 overflow-hidden">
         <Sidebar
           isOpen={isSidebarOpen}
           toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
         />
         <main
-          className={`flex-1 flex flex-col transition-all duration-300 ${
+          className={`flex-1 flex flex-col h-full min-h-0 overflow-hidden transition-all duration-300 ${
             isSidebarOpen ? "ml-0 md:ml-64" : " md:ml-64"
           }`}
         >
@@ -85,7 +85,7 @@ export default function DashboardLayout({ children }) {
             isOpen={isSidebarOpen}
             toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
           />
-          <div className="p-4 min-h-screen">{children}</div>
+          <div className="p-4 flex-1 min-h-0 overflow-hidden">{children}</div>
         </main>
       </div>
     </div>

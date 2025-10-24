@@ -36,11 +36,11 @@ const Navbar = () => {
   ];
 
   return (
-    <header className="w-full p-4 bg-white dark:bg-gray-900 shadow-md dark:shadow-gray-600 flex justify-between items-center text-black dark:text-white transition-colors duration-300">
+    <header className="w-full h-16 px-4 bg-white dark:bg-gray-900 shadow-md flex justify-between items-center text-black dark:text-white transition-colors duration-300">
       {/* Logo */}
       <div className="">
         <Link href="/website">
-          <img src="/whitelogo.png" alt="Ojest Logo" className="h-10" />
+          <img src="/whitelogo.png" alt="Ojest Logo" className="h-10 w-auto" />
         </Link>
       </div>
 

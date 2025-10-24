@@ -463,10 +463,10 @@ const MessagesPage = () => {
   const chatCount = chats.length;
 
   return (
-    <div className="flex h-[calc(100vh-80px)] bg-white font-sans relative">
+    <div className="flex h-full min-h-0 bg-white font-sans relative overflow-hidden">
       {/* Sidebar */}
       <div
-        className={`fixed md:relative top-0 z-20 bg-white h-full md:h-full w-full sm:w-[320px] border-r border-gray-300 flex flex-col transition-transform duration-300 ${
+        className={`absolute md:relative inset-y-0 left-0 z-20 bg-white h-full min-h-0 w-full sm:w-[320px] md:w-[320px] border-r border-gray-300 flex flex-col transform transition-transform duration-300 ${
           showSidebar ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0`}
       >
@@ -543,7 +543,7 @@ const MessagesPage = () => {
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col h-full">
+      <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden">
         {/* Chat Header - Fixed */}
         <div className="border-b border-gray-300 p-4 flex items-center justify-between shrink-0">
           <div>
@@ -558,24 +558,10 @@ const MessagesPage = () => {
               </div>
             )}
           </div>
-          <button
-            className="hidden md:flex p-2 px-5 bg-white border rounded-md shadow items-center gap-2"
-            onClick={() => setShowSidebar(!showSidebar)}
-          >
-            <div className="relative">
-              <FaEnvelope className="text-blue-500" size={20} />
-              {chatCount > 0 && (
-                <div className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs">
-                  {chatCount}
-                </div>
-              )}
-            </div>
-            <span className="font-medium">Inbox</span>
-          </button>
         </div>
 
         {/* Messages Container - Scrollable */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50">
+        <div className="flex-1 overflow-y-auto overscroll-contain p-6 space-y-4 bg-gray-50">
           {selectedChat ? (
             messages.length > 0 ? (
               <>

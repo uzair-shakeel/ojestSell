@@ -44,10 +44,10 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
   // Logout moved to Sidebar
 
   return (
-    <header className="w-full p-4 bg-white dark:bg-gray-800800 shadow-md flex justify-between md:justify-end items-center z-30 sticky top-0 transition-colors duration-300">
+    <header className="w-full h-16 px-4 bg-white dark:bg-gray-900 shadow-md flex justify-between md:justify-end items-center z-30 sticky top-0 transition-colors duration-300">
       {/* Logo */}
       <Link href="/">
-      <img src="/logo.png" alt="" className="w-24 h-auto md:hidden" />
+        <img src="/logo.png" alt="Ojest Logo" className="h-10 w-auto md:hidden" />
       </Link>
     
 
@@ -58,7 +58,7 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
         {/* Add Listing Button */}
         <button
           onClick={() => router.push("/dashboard/cars/add")}
-          className="hidden md:block bg-white dark:bg-gray-800800800 border border-gray-300 dark:border-gray-700 px-4 py-2 rounded-full shadow hover:bg-gray-100 dark:hover:bg-gray-900 text-black dark:text-white transition-colors duration-300"
+          className="hidden md:block bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 px-4 py-2 rounded-full shadow hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white transition-colors duration-300"
         >
           Add Listing
         </button>
