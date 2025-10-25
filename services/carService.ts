@@ -8,6 +8,12 @@ const API_BASE_URL = API_BASE ? `${API_BASE}/api` : "/api";
 // Log the API URL being used
 console.log("Using API URL:", API_BASE_URL);
 
+// Backend base for admin endpoints (bypass Next API if no proxies exist)
+const BACKEND_BASE =
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
+  process.env.BACKEND_URL ||
+  "https://ojest-ap-is.vercel.app";
+
 // Interface for the Car data as returned by the backend
 interface CarData {
   _id: string;
@@ -374,6 +380,69 @@ export const getFeaturedCars = async (): Promise<CarData[]> => {
     throw new Error(
       error?.response?.data?.message || "Failed to fetch featured cars"
     );
+  }
+};
+
+// =================== Admin helpers ===================
+export const getAdminCars = async (params: {
+  page?: number;
+  limit?: number;
+  make?: string;
+  model?: string;
+  status?: string;
+  search?: string;
+} = {}): Promise<{
+  cars: any[];
+  currentPage: number;
+  totalPages: number;
+  totalCars: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+}> => {
+  try {
+    const res = await axios.get(`${BACKEND_BASE}/cars/admin/all`, { params });
+    return res.data;
+  } catch (error: any) {
+    throw new Error(error?.response?.data?.message || "Failed to load admin cars");
+  }
+};
+
+export const setAdminCarStatus = async (
+  carId: string,
+  status: "Pending" | "Approved" | "Rejected",
+  getToken?: () => Promise<string | null>
+): Promise<any> => {
+  try {
+    const headers: any = {};
+    if (getToken) {
+      const token = await getToken();
+      if (token) headers.Authorization = `Bearer ${token}`;
+    }
+    const res = await axios.patch(
+      `${BACKEND_BASE}/cars/admin/${carId}/status`,
+      { status },
+      { headers }
+    );
+    return res.data;
+  } catch (error: any) {
+    throw new Error(error?.response?.data?.message || "Failed to update car status");
+  }
+};
+
+export const deleteAdminCar = async (
+  carId: string,
+  getToken?: () => Promise<string | null>
+): Promise<any> => {
+  try {
+    const headers: any = {};
+    if (getToken) {
+      const token = await getToken();
+      if (token) headers.Authorization = `Bearer ${token}`;
+    }
+    const res = await axios.delete(`${BACKEND_BASE}/cars/admin/${carId}`, { headers });
+    return res.data;
+  } catch (error: any) {
+    throw new Error(error?.response?.data?.message || "Failed to delete car");
   }
 };
 

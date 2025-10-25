@@ -148,6 +148,16 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
       href: "/dashboard/profile",
       icon: <BsPersonGear className="w-6 h-6" />,
     },
+    // Admin-only items
+    ...(userData?.role === "admin"
+      ? [
+          {
+            label: "Admin • Cars",
+            href: "/dashboard/admin/cars",
+            icon: <FaCar className="w-6 h-6" />,
+          },
+        ]
+      : []),
     {
       label: "Logout",
       icon: <FiLogOut className="w-6 h-6" />,
