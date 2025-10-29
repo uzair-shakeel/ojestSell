@@ -5,6 +5,61 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "../../../lib/auth/AuthContext";
 import { getUserById, updateUserCustom } from "../../../services/userService";
 
+// Simple client-side image compression using Canvas
+// Converts any image to a resized JPEG to reduce payload size before upload
+const compressImage = (file, {
+  maxWidth = 1000,
+  maxHeight = 1000,
+  quality = 0.7,
+  outputType = "image/jpeg",
+} = {}) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let { width, height } = img;
+
+          // Maintain aspect ratio
+          if (width > maxWidth || height > maxHeight) {
+            const ratio = Math.min(maxWidth / width, maxHeight / height);
+            width = Math.round(width * ratio);
+            height = Math.round(height * ratio);
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(
+            (blob) => {
+              if (!blob) return reject(new Error("Image compression failed"));
+              const ext = outputType === "image/jpeg" ? "jpg" : outputType.split("/")[1] || "jpg";
+              const compressedFile = new File(
+                [blob],
+                `${file.name.replace(/\.[^.]+$/, "")}-compressed.${ext}`,
+                { type: outputType, lastModified: Date.now() }
+              );
+              resolve(compressedFile);
+            },
+            outputType,
+            quality
+          );
+        };
+        img.onerror = () => reject(new Error("Failed to load image for compression"));
+        img.src = reader.result;
+      };
+      reader.onerror = () => reject(new Error("Failed to read file for compression"));
+      reader.readAsDataURL(file);
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
 const SellerDetailsPage = () => {
   const router = useRouter();
   const { userId, getToken, updateUserState } = useAuth();
@@ -145,6 +200,23 @@ const SellerDetailsPage = () => {
           .map((p) => (typeof p === "string" ? p : p.phone))
           .filter(Boolean),
       };
+
+      // Compress profile image (if any) before sending to API
+      if (formData.image instanceof File) {
+        try {
+          const compressed = await compressImage(formData.image, {
+            maxWidth: 1000,
+            maxHeight: 1000,
+            quality: 0.7,
+            outputType: "image/jpeg",
+          });
+          dataToSend.image = compressed;
+        } catch (compressionErr) {
+          // If compression fails, fall back to original file
+          console.warn("Image compression failed, using original file:", compressionErr);
+          dataToSend.image = formData.image;
+        }
+      }
 
       const updatedUser = await updateUserCustom(dataToSend, getToken);
       if (updatedUser) {
@@ -426,9 +498,9 @@ const SellerDetailsPage = () => {
               type="button"
               onClick={back}
               disabled={stepIndex === 0}
-              className={`px-4 py-2 rounded-md border text-gray-700 transition-colors duration-300 ${
+              className={`px-4 py-2 rounded-md border text-black transition-colors duration-300 ${
                 stepIndex === 0
-                  ? "opacity-40 cursor-not-allowed text-gray-900 dark:!text-black"
+                  ? "opacity-40 cursor-not-allowed text-black"
                   : "hover:bg-gray-50 dark:hover:bg-gray-800"
               }`}
             >
