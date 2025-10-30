@@ -21,6 +21,7 @@ export default function AuthTabs() {
     password: "",
     confirmPassword: "",
   });
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const router = useRouter();
   const { signUp, verifyOTP, resendOTP, loading } = useAuth();
 
@@ -125,11 +126,18 @@ export default function AuthTabs() {
       return;
     }
 
+    if (!termsAccepted) {
+      toast.error("You must accept the Terms & Conditions");
+      return;
+    }
+
     try {
       const payload = {
         firstName: formData.firstName,
         lastName: formData.lastName,
         password: formData.password,
+        termsAccepted: true,
+        termsVersion: "v1",
       };
 
       // Add email or phone based on active tab
@@ -463,6 +471,23 @@ export default function AuthTabs() {
                 placeholder="Confirm your password"
                 minLength="6"
               />
+            </div>
+
+            <div className="flex items-start">
+              <input
+                id="terms"
+                type="checkbox"
+                checked={termsAccepted}
+                onChange={(e) => setTermsAccepted(e.target.checked)}
+                className="mt-1 mr-3 h-4 w-4 text-blue-600 border-gray-300 rounded"
+              />
+              <label htmlFor="terms" className="text-sm text-gray-700">
+                I agree to the
+                {" "}
+                <a href="/terms" className="text-blue-600 hover:underline">Terms & Conditions</a>
+                {" "}and {" "}
+                <a href="/privacy" className="text-blue-600 hover:underline">Privacy Policy</a>
+              </label>
             </div>
 
             <button

@@ -9,9 +9,10 @@ import { motion } from "framer-motion";
 import { getUserById, updateUser } from "../../../services/userService";
 import Avatar from "../../../components/both/Avatar";
 import axios from "axios"; // Added axios import
+import { toast } from "react-hot-toast";
 
 const ProfileComponent = () => {
-  const { userId, updateUserState } = useAuth();
+  const { userId, updateUserState, changePassword } = useAuth();
   console.log("userId", userId);
   const [user, setUser] = useState(null);
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
@@ -95,6 +96,35 @@ const ProfileComponent = () => {
   };
 
   const [imageFile, setImageFile] = useState(null);
+  const [cpCurrent, setCpCurrent] = useState("");
+  const [cpNew, setCpNew] = useState("");
+  const [cpConfirm, setCpConfirm] = useState("");
+  const [cpLoading, setCpLoading] = useState(false);
+  const [isCpOpen, setIsCpOpen] = useState(false);
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    if (!cpCurrent || !cpNew || !cpConfirm) return;
+    if (cpNew !== cpConfirm) {
+      alert("New passwords do not match");
+      return;
+    }
+    setCpLoading(true);
+    try {
+      const res = await changePassword(cpCurrent, cpNew);
+      if (res?.success) {
+        setCpCurrent("");
+        setCpNew("");
+        setCpConfirm("");
+        setIsCpOpen(false);
+        toast.success("Password changed successfully");
+      } else {
+        toast.error(res?.error || "Failed to change password");
+      }
+    } finally {
+      setCpLoading(false);
+    }
+  };
 
   useEffect(() => {
     const loadUser = async () => {
@@ -376,12 +406,23 @@ const ProfileComponent = () => {
   if (!user) return <div>Loading...</div>;
 
   return (
+    <>
+    
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.2 }}
     >
-      <h1 className="text-3xl font-bold mb-4">Profile</h1>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-3xl font-bold">Profile</h1>
+        <button
+          type="button"
+          onClick={() => setIsCpOpen(true)}
+          className="bg-gray-800 text-white rounded-md px-4 py-2 hover:bg-gray-700"
+        >
+          Change Password
+        </button>
+      </div>
       <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
         {/* Left part */}
         <motion.div
@@ -660,7 +701,7 @@ const ProfileComponent = () => {
           />
         </motion.div>
 
-        {/* Submit and Delete Buttons */}
+        {/* Submit Button */}
         <div className="flex gap-4">
           <button
             type="submit"
@@ -671,6 +712,76 @@ const ProfileComponent = () => {
         </div>
       </form>
     </motion.div>
+
+    {/* Change Password Modal (outside main form) */}
+    {isCpOpen && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/50" onClick={() => setIsCpOpen(false)} />
+        <div className="relative z-10 w-full max-w-lg bg-white rounded-lg shadow-lg p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-semibold text-gray-800">Change Password</h3>
+            <button
+              type="button"
+              onClick={() => setIsCpOpen(false)}
+              className="text-gray-600 hover:text-gray-900"
+            >
+              ✕
+            </button>
+          </div>
+          <form onSubmit={handleChangePassword} className="grid grid-cols-1 gap-4">
+            <div>
+              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">Current Password</label>
+              <input
+                type="password"
+                value={cpCurrent}
+                onChange={(e) => setCpCurrent(e.target.value)}
+                className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">New Password</label>
+              <input
+                type="password"
+                value={cpNew}
+                onChange={(e) => setCpNew(e.target.value)}
+                minLength={6}
+                className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">Confirm New Password</label>
+              <input
+                type="password"
+                value={cpConfirm}
+                onChange={(e) => setCpConfirm(e.target.value)}
+                minLength={6}
+                className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
+                required
+              />
+            </div>
+            <div className="flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setIsCpOpen(false)}
+                className="px-4 py-2 rounded-md border border-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={cpLoading}
+                className="px-5 py-2 rounded-md bg-gray-800 text-white hover:bg-gray-700"
+              >
+                {cpLoading ? "Changing..." : "Update Password"}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    )}
+    </>
   );
 };
 
