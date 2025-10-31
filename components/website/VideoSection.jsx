@@ -275,11 +275,11 @@ const VideoSection = () => {
             </div>
 
             <h1 className="text-2xl md:text-3xl lg:text-5xl xl:text-6xl font-bold text-black dark:text-white leading-[0.9] mb-0 transition-colors duration-300">
-              Poznaj przyszłość
-              <span className="relative inline-block">
-                handlu
+              Poznaj 
+              <span className="relative ml-3 inline-block">
+                Nas
                 <svg
-                  className="absolute -bottom-1 left-0 w-full h-4"
+                  className="absolute -bottom-2 left-0 w-full h-4"
                   viewBox="0 0 300 20"
                   preserveAspectRatio="none"
                 >
@@ -293,15 +293,14 @@ const VideoSection = () => {
                 </svg>
               </span>
               <br />
-              autami na Ojest
+              i handluj z Nami
             </h1>
           </div>
 
           {/* Right side - Description and Button */}
           <div className="flex-shrink-0 lg:ml-16 max-w-xl w-full lg:w-auto pt-0 xl:pt-16">
             <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-8 transition-colors duration-300">
-              Stworzony przez amatorów, z możliwością negocjacji, wewnętrznych
-              okazji, taniej jak na otodrogo ;) Prosto i bez reklam
+              Stworzony dla profesjonalnego handlu, negocjacji, wewnętrznych ofert i wygodnego przewijania ;)
             </p>
 
             <button
@@ -466,7 +465,7 @@ const VideoSection = () => {
                   {activeCard !== card.id && (
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="bg-blue-600/80 text-white px-4 py-2 rounded-full text-sm font-medium backdrop-blur-sm">
-                        Click to explore
+                        Sprawdź
                       </div>
                     </div>
                   )}

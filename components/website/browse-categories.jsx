@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useState, useMemo } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, LogIn, MousePointerClick } from "lucide-react";
 
 // Premium Countries of Origin browser
 export function BrowseCategories() {
@@ -145,10 +145,10 @@ export function BrowseCategories() {
         <div className="flex items-end justify-between mb-6">
           <div>
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">
-              Browse by Country of Origin
+              Przeglądaj auta po krajach Producentów
             </h2>
             <p className="text-gray-500 dark:text-gray-400 mt-1">
-              Discover cars by heritage and engineering culture.
+              Odkryj samochody według dziedzictwa i kultury.
             </p>
           </div>
           <div className="hidden md:flex gap-2">
@@ -255,9 +255,9 @@ function CountryCard({ country, className = "" }) {
             {tagline && <div className="text-sm opacity-90">{tagline}</div>}
           </div> */}
 
-          <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 text-gray-900 font-medium shadow group-hover:translate-y-[-2px] transition-transform">
-            Explore
-            <span aria-hidden>→</span>
+          <div className="mt-3 hidden md:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 text-gray-900 font-medium shadow translate-x-[200px] group-hover:translate-x-[-12px] transition-transform">
+            <span className="hidden ">Explore</span>
+            <MousePointerClick className="w-5 h-5" />
           </div>
         </div>
       </div>

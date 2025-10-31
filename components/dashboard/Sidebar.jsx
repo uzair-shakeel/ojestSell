@@ -101,24 +101,24 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
 
   const menuItems = [
     {
-      label: "Dashboard",
+      label: "Panel",
       href: "/dashboard/home",
       icon: <RiDashboardHorizontalLine className="w-6 h-6" />,
     },
     {
-      label: "Create Car",
+      label: "Wystaw Auto",
       href: "/dashboard/cars/add",
       icon: <BiAddToQueue className="w-6 h-6" />,
     },
     {
-      label: "My Cars",
+      label: "Moje Auta",
       href: "/dashboard/cars",
       icon: <FaCar className="w-6 h-6" />,
     },
     ...(sellerType === "private"
       ? [
           {
-            label: "Buyer Requests",
+            label: "Zapytania Kupujących",
             href: "/dashboard/buyer-requests",
             icon: <FiShoppingBag className="w-6 h-6" />,
           },
@@ -127,24 +127,24 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
     ...(sellerType === "company"
       ? [
           {
-            label: "Seller Opportunities",
+            label: "Możliwości Dla Sprzedawców",
             href: "/dashboard/seller-opportunities",
             icon: <FiClipboard className="w-6 h-6" />,
           },
         ]
       : []),
     {
-      label: "Photo Enhancer",
+      label: "Ulepszacz Zdjęć",
       href: "/dashboard/photo-enhancer",
       icon: <MdPhotoFilter className="w-6 h-6" />,
     },
     {
-      label: "Messages",
+      label: "Wiadomości",
       href: "/dashboard/messages",
       icon: <BsChatLeftDots className="w-6 h-6" />,
     },
     {
-      label: "Profile",
+      label: "Profil",
       href: "/dashboard/profile",
       icon: <BsPersonGear className="w-6 h-6" />,
     },
@@ -159,7 +159,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
         ]
       : []),
     {
-      label: "Logout",
+      label: "Wyloguj",
       icon: <FiLogOut className="w-6 h-6" />,
       action: async () => {
         try {

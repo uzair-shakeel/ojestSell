@@ -97,37 +97,38 @@
         "sedan": "SEDAN",
         "kombi": "KOMBI",
         "coupe": "COUPE",
-        "sports": "SPORTS",
-        "limousine": "LIMOUSINE",
+        "sports": "SPORTOWE",
+        "limousine": "LIMUZYNA",
         "suv": "SUV",
-        "convertible": "CONVERTIBLE",
+        "convertible": "KABRIOLET",
         "pickup": "PICKUP",
-        "offroad": "OFF-ROAD",
+        "offroad": "TERENOWE",
         "bus": "BUS",
-        "classic": "CLASSIC",
-        "campers": "CAMPERS"
+        "classic": "KLASYK",
+        "campers": "KAMPER"
       }
     },
+    
     "browseByMake": {
-      "title": "Browse by Make",
-      "viewAll": "View All",
+      "title": "Przeglądaj według Marki",
+      "viewAll": "Zobacz Wszystkie",
       "makes": {
         "toyota": "Toyota",
-        "toyotaDesc": "Reliable Japanese engineering with innovative technology",
+        "toyotaDesc": "Niezawodna japońska inżynieria z innowacyjną technologią",
         "bmw": "BMW",
-        "bmwDesc": "The ultimate driving machines with luxury and performance",
+        "bmwDesc": "Najlepsze maszyny do jazdy z luksusem i wydajnością",
         "mercedes": "Mercedes",
-        "mercedesDesc": "Luxury vehicles with cutting-edge technology and comfort",
+        "mercedesDesc": "Luksusowe pojazdy z najnowocześniejszą technologią i komfortem",
         "audi": "Audi",
-        "audiDesc": "Sophisticated design with advanced technology and performance",
+        "audiDesc": "Wyrafinowany design z zaawansowaną technologią i wydajnością",
         "porsche": "Porsche",
-        "porscheDesc": "Precision German sports cars with unmatched performance",
+        "porscheDesc": "Precyzyjne niemieckie samochody sportowe o niezrównanej wydajności",
         "tesla": "Tesla",
-        "teslaDesc": "Revolutionary electric vehicles redefining the automotive industry",
+        "teslaDesc": "Rewolucyjne pojazdy elektryczne zmieniające branżę motoryzacyjną",
         "ford": "Ford",
-        "fordDesc": "American-made vehicles with a legacy of innovation and performance",
+        "fordDesc": "Amerykańskie pojazdy z dziedzictwem innowacji i wydajności",
         "honda": "Honda",
-        "hondaDesc": "Reliable and efficient vehicles with excellent resale value"
+        "hondaDesc": "Niezawodne i wydajne pojazdy o doskonałej wartości odsprzedaży"
       }
     },
     "blogSection": {

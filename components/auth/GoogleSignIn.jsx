@@ -18,7 +18,7 @@ const GoogleSignIn = ({
         });
 
         if (result.success) {
-          toast.success("Google sign in successful!");
+          toast.success("Google Zalogowano pomyślnie!");
           onSuccess?.(result);
         } else {
           toast.error(result.error || "Google sign in failed");

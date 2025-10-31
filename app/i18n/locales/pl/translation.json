@@ -97,14 +97,14 @@
         "sedan": "SEDAN",
         "kombi": "KOMBI",
         "coupe": "COUPE",
-        "sports": "SPORTOWY",
+        "sports": "SPORTOWE",
         "limousine": "LIMUZYNA",
         "suv": "SUV",
         "convertible": "KABRIOLET",
         "pickup": "PICKUP",
-        "offroad": "TERENOWY",
+        "offroad": "TERENOWE",
         "bus": "AUTOBUS",
-        "classic": "KLASYCZNY",
+        "classic": "KLASYK",
         "campers": "KAMPER"
       }
     },

@@ -75,10 +75,10 @@ const page = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-300">
-            Welcome back{user?.firstName ? ", " + user.firstName : ""}
+            Witaj z Powrotem{user?.firstName ? ", " + user.firstName : ""}
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">
-            Here's a quick overview of your activity
+            Oto krótki przegląd Twojej aktywności
           </p>
         </div>
       </div>

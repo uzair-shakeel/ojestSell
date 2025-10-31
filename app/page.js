@@ -54,10 +54,13 @@ function HomeContent() {
             priority
           />
         </div>
-        <div className="relative  w-full z-10 h-full flex flex-col justify-between py-[90px] md:py-[120px] items-center text-center text-white">
+        <div className="relative  w-full z-10 h-full flex flex-col justify-between py-[70px]  items-center text-center text-white">
           <div>
-            <h1 className="text-xl md:text-5xl font-bold mb-4">
-              Znajdź lub Sprzedaj Swoje Auto
+            <h1 className="text-xl md:text-5xl  font-bold mb-4">
+              Znajdź lub sprzedaj swoje auto
+            </h1>
+            <h1 className="text-xl md:text-4xl  font-bold mb-4">
+              Nowy portal handlu autami
             </h1>
           </div>
           <div className="absolute md:bottom-10 bottom-5 left-5 right-5">

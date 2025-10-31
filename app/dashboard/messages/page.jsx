@@ -544,7 +544,7 @@ const MessagesPage = () => {
             ))
           ) : (
             <p className="text-center text-gray-500 text-sm mt-4">
-              No chats yet
+              Brak Wiadomości
             </p>
           )}
         </div>

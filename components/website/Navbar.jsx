@@ -135,7 +135,7 @@ const Navbar = () => {
               onClick={handleSignOut}
               className="block w-full text-left hover:bg-gray-100 dark:hover:bg-gray-800 px-2 py-2 duration-300 text-black dark:text-white"
             >
-              Wyloguj się
+              Wylogowano
             </button>
           </>
         ) : (
@@ -143,7 +143,7 @@ const Navbar = () => {
             onClick={handleSignIn}
             className="block w-full text-left hover:bg-gray-100 dark:hover:bg-gray-800 px-2 py-2 duration-300 text-black dark:text-white"
           >
-            Zalogować się
+            Zaloguj się
           </button>
         )}
       </div>

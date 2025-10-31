@@ -76,19 +76,19 @@ export default function DashboardStats({ user: userProp }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <KPICard
-        title="Total Cars"
+        title="Wszystkie Auta"
         value={loading ? "-" : carsCount}
         icon={<FaCar className="w-6 h-6" />}
         gradient="from-sky-500 to-blue-600"
       />
       <KPICard
-        title="Chats"
+        title="Wiadomości"
         value={loading ? "-" : chatsCount}
         icon={<BsChatLeftDots className="w-6 h-6" />}
         gradient="from-emerald-500 to-teal-600"
       />
       <KPICard
-        title="Welcome"
+        title="Witaj"
         value={user?.firstName || "User"}
         icon={<HiOutlineUser className="w-6 h-6" />}
         gradient="from-fuchsia-500 to-pink-600"
