@@ -1,6 +1,7 @@
 // frontend/app/messages/page.jsx
 "use client";
 import React, { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import { FaSearch, FaPaperPlane, FaBars, FaEnvelope } from "react-icons/fa";
 import { useAuth } from "../../../lib/auth/AuthContext";
 import io from "socket.io-client";
@@ -37,6 +38,7 @@ const MessagesPage = () => {
   const [totalUnread, setTotalUnread] = useState(0);
   const messagesEndRef = useRef(null);
   const { user, token } = useAuth();
+  const searchParams = useSearchParams();
 
   // Helper: current user ID across backends (_id or id)
   const myUserId = user?.id || user?._id;
@@ -95,7 +97,15 @@ const MessagesPage = () => {
         // totalUnread may be computed on server or we compute locally
         const initialUnread = chatsArray.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
         setTotalUnread(typeof data.totalUnread === "number" ? data.totalUnread : initialUnread);
-        if (chatsArray.length > 0) setSelectedChat(chatsArray[0]);
+        if (chatsArray.length > 0) {
+          const targetId = searchParams?.get("chatId");
+          if (targetId) {
+            const match = chatsArray.find((c) => String(c._id) === String(targetId));
+            setSelectedChat(match || chatsArray[0]);
+          } else {
+            setSelectedChat(chatsArray[0]);
+          }
+        }
       } catch (err) {
         console.error("Error fetching chats:", err);
         setError(`Failed to load chats: ${err.message}`);
@@ -132,8 +142,9 @@ const MessagesPage = () => {
         const updatedSelectedChat = updatedChats.find(
           (chat) => chat._id === selectedChat._id
         );
-        if (updatedSelectedChat) {
-          setSelectedChat(updatedSelectedChat);
+        // Only update if something meaningful changed to avoid effect re-runs
+        if (updatedSelectedChat && JSON.stringify(updatedSelectedChat) !== JSON.stringify(selectedChat)) {
+          setSelectedChat((prev) => (prev && prev._id === updatedSelectedChat._id ? { ...prev, ...updatedSelectedChat } : prev));
         }
       }
     });
@@ -161,11 +172,11 @@ const MessagesPage = () => {
       socket.off("disconnect");
       clearInterval(unreadInterval);
     };
-  }, [user]);
+  }, [user, searchParams]);
 
-  // Fetch messages when selectedChat changes
+  // Fetch messages when selected chat ID changes
   useEffect(() => {
-    if (!selectedChat) return;
+    if (!selectedChat?._id) return;
 
     const fetchMessages = async () => {
       try {
@@ -337,7 +348,7 @@ const MessagesPage = () => {
       socket.off("messagesSeen");
       socket.off("typing");
     };
-  }, [selectedChat, user]);
+  }, [selectedChat?._id, user]);
 
   // Handle sending a message
   const handleSendMessage = () => {
@@ -459,19 +470,12 @@ const MessagesPage = () => {
     );
   }
 
-  useEffect(() => {
-  document.body.style.overflow = "hidden";
-  return () => {
-    document.body.style.overflow = "auto";
-  };
-}, []);
-
 
   // Calculate the chat count
   const chatCount = chats.length;
 
   return (
-<div className="mt-[50px] flex h-[calc(100vh-70px)] bg-white font-sans overflow-hidden">
+<div className="flex h-[calc(100vh-100px)] bg-white font-sans overflow-hidden">
   {/* Sidebar */}
       <div
         className={`absolute md:relative inset-y-0 left-0 z-20 bg-white h-full min-h-0 w-full sm:w-[320px] md:w-[320px] border-r border-gray-300 flex flex-col transform transition-transform duration-300 ${

@@ -85,7 +85,7 @@ export default function DashboardLayout({ children }) {
             isOpen={isSidebarOpen}
             toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
           />
-          <div className="p-4 min-h-screen">{children}</div>
+          <div className="p-4 min-h-[calc(100vh-75px)]">{children}</div>
         </main>
       </div>
     </div>

@@ -107,7 +107,7 @@ const CookieConsent = () => {
                       <Cookie />
                     </motion.div>
                     <h3 className="text-xl font-bold text-gray-900">
-                      Cookie Time!
+                      Czas Ciasteczek!
                     </h3>
                   </div>
 
@@ -120,9 +120,9 @@ const CookieConsent = () => {
                   </p>
 
                   <p className="text-gray-600 text-sm mb-4">
-                    We use cookies to enhance your browsing experience, analyze
-                    site traffic, and serve personalized content. By clicking
-                    "Accept All", you consent to our use of cookies.
+                   Do tych ciasteczek nie potrzebne jest mleko!
+Używamy ciasteczek aby wzmocnić twoje doświadczenia podczas przeglądania, analizować ruch i dostarczać spersonalizowane treści. Klikając "Akceptuj Wszystkie", pozwalasz nam na swoje ciasteczka 
+
                   </p>
                 </div>
 
@@ -133,7 +133,8 @@ const CookieConsent = () => {
                     onClick={acceptCookies}
                     className="flex-1 py-2 px-4 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
                   >
-                    <BsEmojiLaughing /> Accept All
+                    <BsEmojiLaughing /> Akceptuj Wszystkie                        
+
                   </motion.button>
 
                   <motion.button
@@ -142,7 +143,7 @@ const CookieConsent = () => {
                     onClick={declineCookies}
                     className="flex-1 py-2 px-4 bg-white border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-100 transition-colors flex items-center justify-center gap-2"
                   >
-                    Decline <BsEmojiFrown />
+                    Odrzuć <BsEmojiFrown />
                   </motion.button>
                 </div>
 
@@ -151,13 +152,13 @@ const CookieConsent = () => {
                     onClick={() => window.open("/website/terms", "_blank")}
                     className="text-blue-600 text-sm font-medium hover:underline mr-4"
                   >
-                    Terms & Conditions
+                    Warunki i Zasady
                   </button>
                   <button
                     onClick={() => window.open("/website/privacy", "_blank")}
                     className="text-blue-600 text-sm font-medium hover:underline"
                   >
-                    Privacy Policy
+                    Polityka Prywatności 
                   </button>
                 </div>
               </>

@@ -239,8 +239,20 @@ const Page = () => {
         console.warn("Chat create returned non-OK status", response.status);
       }
 
-      const chat = await response?.json();
-      router.push(`/dashboard/messages`);
+      let targetChatId = null;
+      try {
+        const data = await response.json();
+        const chat = Array.isArray(data) ? data[0] : data?.chat || data;
+        targetChatId = chat?._id || chat?.id || null;
+      } catch (_) {
+        // ignore parse error, fallback to plain navigation
+      }
+
+      if (targetChatId) {
+        router.push(`/dashboard/messages?chatId=${encodeURIComponent(targetChatId)}`);
+      } else {
+        router.push(`/dashboard/messages`);
+      }
     } catch (err) {
       console.error("Error creating chat:", err);
       alert("Failed to start chat. Please try again.");
