@@ -470,7 +470,7 @@ export default function ImageEditStep({
   // Professional filter presets
   const filterPresets = {
     none: {
-      name: "None",
+      name: "Brak",
       adjustments: {
         brightness: 100,
         contrast: 100,
@@ -492,7 +492,7 @@ export default function ImageEditStep({
       },
     },
     showroom: {
-      name: "Showroom",
+      name: "Salon Samochodowy",
       adjustments: {
         brightness: 105,
         contrast: 115,
@@ -514,7 +514,7 @@ export default function ImageEditStep({
       },
     },
     sportsCar: {
-      name: "Sports Car",
+      name: "Auto Sportowe",
       adjustments: {
         brightness: 102,
         contrast: 125,
@@ -536,7 +536,7 @@ export default function ImageEditStep({
       },
     },
     vintage: {
-      name: "Vintage",
+      name: "Klasyk",
       adjustments: {
         brightness: 98,
         contrast: 105,
@@ -558,7 +558,7 @@ export default function ImageEditStep({
       },
     },
     luxury: {
-      name: "Luxury",
+      name: "Luksusowe",
       adjustments: {
         brightness: 102,
         contrast: 110,
@@ -580,7 +580,7 @@ export default function ImageEditStep({
       },
     },
     dramatic: {
-      name: "Dramatic",
+      name: "Dramatyczne",
       adjustments: {
         brightness: 95,
         contrast: 140,
@@ -602,7 +602,7 @@ export default function ImageEditStep({
       },
     },
     neon: {
-      name: "Neon Night",
+      name: "Noc Neonowa",
       adjustments: {
         brightness: 95,
         contrast: 120,
@@ -646,7 +646,7 @@ export default function ImageEditStep({
       },
     },
     blackWhite: {
-      name: "Classic B&W",
+      name: "Czarno Białe",
       adjustments: {
         brightness: 105,
         contrast: 125,
@@ -690,7 +690,7 @@ export default function ImageEditStep({
       },
     },
     sunset: {
-      name: "Sunset Drive",
+      name: "Zachód Słońca ",
       adjustments: {
         brightness: 100,
         contrast: 110,
@@ -728,18 +728,18 @@ export default function ImageEditStep({
   return (
     <>
       <div className="bg-white rounded-lg w-full">
-        <h2 className="text-xl font-bold mb-4">Step 2: Edit Your Images</h2>
+        <h2 className="text-xl font-bold mb-4">Krok 2: Edytuj Swoje Zdjęcia</h2>
         <p className="text-gray-600 mb-6">
-          Enhance your car photos before listing. Select an image to edit.
+         Popraw zdjęcia auta przed wystawieniem go na sprzedaż. Wybierz zdjęcia, które chcesz edytować.
         </p>
 
         {formData.images.length === 0 ? (
           <div className="mb-6">
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50">
-              <p className="text-gray-700 font-medium mb-2">Upload Images (1-10)</p>
-              <p className="text-sm text-gray-500 mb-4">Add your car photos here. You can edit them right after uploading.</p>
+              <p className="text-gray-700 font-medium mb-2">Załaduj zdjęcia (1-10)</p>
+              <p className="text-sm text-gray-500 mb-4">Dodaj zdjęcia auta tutaj. Możesz je edytować od razu po załadowaniu.</p>
               <label className="inline-block cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
-                Select Images
+                Wybierz zdjęcia
                 <input
                   type="file"
                   accept="image/*"
@@ -754,11 +754,11 @@ export default function ImageEditStep({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Image Thumbnails */}
             <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="font-semibold mb-3">Your Images</h3>
+              <h3 className="font-semibold mb-3">Dodane zdjęcia</h3>
               <div className="mb-3">
                 <label className="inline-flex items-center gap-2 cursor-pointer text-sm text-blue-600 hover:text-blue-700">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M12 5v14m-7-7h14"/></svg>
-                  Add Images
+                  Dodaj zdjęcia
                   <input
                     type="file"
                     accept="image/*"
@@ -789,7 +789,7 @@ export default function ImageEditStep({
                       style={{ filter: getFilterStyleForImage(index) }}
                     />
                     <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 text-center">
-                      Image {index + 1}
+                      Zdjecie {index + 1}
                       {formData.imageAdjustments && formData.imageAdjustments[index] && (
                         <span className="ml-1 text-green-300">✓</span>
                       )}
@@ -802,7 +802,7 @@ export default function ImageEditStep({
             {/* Image Preview & Edit Area */}
             <div className="md:col-span-2">
               <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="font-semibold mb-3">Edit Image</h3>
+                <h3 className="font-semibold mb-3">Edytuj Zdjęcie</h3>
 
                 {/* Image Preview */}
                 <div
@@ -846,7 +846,7 @@ export default function ImageEditStep({
                       )}
                     </div>
                   ) : (
-                    <div className="text-gray-400">Select an image to edit</div>
+                    <div className="text-gray-400">Wybierz zdjęcie do edycji</div>
                   )}
                 </div>
 
@@ -859,7 +859,7 @@ export default function ImageEditStep({
                       className="flex items-center gap-2 bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 transition-colors"
                       disabled={!activeImage}
                     >
-                      <Wand2 className="w-4 h-4" /> Auto Enhance
+                      <Wand2 className="w-4 h-4" /> Auto Poprawianie
                     </button>
 
                     <button
@@ -868,7 +868,7 @@ export default function ImageEditStep({
                       disabled={!activeImage || isBlurringPlate}
                     >
                       <Blur className="w-4 h-4" />
-                      {isBlurringPlate ? "Processing..." : "Auto-Blur Plate"}
+                      {isBlurringPlate ? "Ładowanie..." : "Zamaż Tablice Rejestracyjną"}
                     </button>
                     <button
                       onClick={() => setShowCrop(!showCrop)}
@@ -877,14 +877,14 @@ export default function ImageEditStep({
                       } text-white px-3 py-2 rounded-md hover:bg-opacity-90 transition-colors`}
                     >
                       <CropIcon className="w-4 h-4" />{" "}
-                      {showCrop ? "Cancel Crop" : "Crop Image"}
+                      {showCrop ? "Cofnij Przycinanie" : "Przytnij"}
                     </button>
                     {showCrop && completedCrop && (
                       <button
                         onClick={applyCrop}
                         className="flex items-center gap-1 bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700 transition-colors"
                       >
-                        Apply Crop
+                        Zastosuj Przytnięcie
                       </button>
                     )}
                     <button
@@ -901,7 +901,7 @@ export default function ImageEditStep({
                     className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors"
                     disabled={!activeImage}
                   >
-                    Save Changes
+                    Zapisz zmiany
                   </button>
                 </div>
               </div>
@@ -914,13 +914,13 @@ export default function ImageEditStep({
             onClick={prevStep}
             className="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition-colors"
           >
-            Back
+            Cofnij
           </button>
           <button
             onClick={nextStep}
             className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
           >
-            Next: Car Details
+            Następne: Dane Auta
           </button>
         </div>
       </div>
@@ -930,7 +930,7 @@ export default function ImageEditStep({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b p-4">
-              <h3 className="text-lg font-semibold">Car Photo Presets</h3>
+              <h3 className="text-lg font-semibold">Ustawienia Zdjęć</h3>
               <button
                 onClick={() => setShowPresetsModal(false)}
                 className="text-gray-500 hover:text-gray-700"

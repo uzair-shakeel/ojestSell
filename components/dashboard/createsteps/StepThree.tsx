@@ -10,7 +10,7 @@ export default function StepThree({ nextStep, prevStep, updateFormData, formData
     overall: formData.condition.overall,
   });
 
-  const conditionOptions = ["New", "Very Good", "Good", "Normal", "Bad"];
+  const conditionOptions = ["Nowy", "Bardzo Dobry", "Dobry", "Normalny", "Zły"];
 
   const handleNext = () => {
     updateFormData({ condition: localData });
@@ -19,17 +19,17 @@ export default function StepThree({ nextStep, prevStep, updateFormData, formData
 
   return (
     <div className="bg-white rounded-lg">
-      <h2 className="text-xl font-bold mb-4">Step 3: Car Condition</h2>
+      <h2 className="text-xl font-bold mb-4">Krok 4: Stan Auta</h2>
       <div className="grid grid-cols-2 gap-4">
         {/* Condition Interior */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Interior Condition</label>
+          <label className="block text-gray-700 mb-1">Stan Wnętrza</label>
           <select
             className="border p-3 w-full rounded h-12"
             value={localData.interior}
             onChange={(e) => setLocalData({ ...localData, interior: e.target.value })}
           >
-            <option value="">Select Condition</option>
+            <option value="">Wybierz Stan Wnętrza</option>
             {conditionOptions.map((option, index) => (
               <option key={index} value={option}>
                 {option}
@@ -40,13 +40,13 @@ export default function StepThree({ nextStep, prevStep, updateFormData, formData
 
         {/* Condition Mechanical */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Mechanical Condition</label>
+          <label className="block text-gray-700 mb-1">Stan Mechaniczny</label>
           <select
             className="border p-3 w-full rounded h-12"
             value={localData.mechanical}
             onChange={(e) => setLocalData({ ...localData, mechanical: e.target.value })}
           >
-            <option value="">Select Condition</option>
+            <option value="">Wybierz Stan Mechaniczny</option>
             {conditionOptions.map((option, index) => (
               <option key={index} value={option}>
                 {option}
@@ -57,7 +57,7 @@ export default function StepThree({ nextStep, prevStep, updateFormData, formData
 
         {/* Condition Paint & Body */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Paint and Body Condition</label>
+          <label className="block text-gray-700 mb-1">Stan Lakieru i Karoserii</label>
           <select
             className="border p-3 w-full rounded h-12"
             value={localData.paintandBody}
@@ -74,7 +74,7 @@ export default function StepThree({ nextStep, prevStep, updateFormData, formData
 
         {/* Condition Frame & Underbody */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Frame and Underbody Condition</label>
+          <label className="block text-gray-700 mb-1">Stan Ramy i Podwozia</label>
           <select
             className="border p-3 w-full rounded h-12"
             value={localData.frameandUnderbody}
@@ -91,7 +91,7 @@ export default function StepThree({ nextStep, prevStep, updateFormData, formData
 
         {/* Condition Overall */}
         <div className="col-span-2">
-          <label className="block text-gray-700 mb-1">Overall Condition</label>
+          <label className="block text-gray-700 mb-1">Stan Ogólny</label>
           <select
             className="border p-3 w-full rounded h-12"
             value={localData.overall}

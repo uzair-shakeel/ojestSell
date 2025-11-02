@@ -291,11 +291,11 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
 
   const handleNext = () => {
     if (!localData.title.trim()) {
-      alert("Title is required.");
+      alert("Tytuł jest wymagany.");
       return;
     }
     if (!localData.description.trim()) {
-      alert("Description is required.");
+      alert("Opis jest wymagany.");
       return;
     }
     updateFormData({
@@ -307,12 +307,12 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
 
   return (
     <div className="bg-white rounded-lg w-full">
-      <h2 className="text-xl font-bold mb-4">Step 1: Basic Information</h2>
+      <h2 className="text-xl font-bold mb-4">Krok 1: Podstawowe Informacje </h2>
       <div className="grid grid-cols-2 gap-4 w-full">
         {/* VIN Input */}
         <div className="col-span-2">
           <label className="block text-gray-700 mb-1">
-            VIN (Vehicle Identification Number)
+            Wpisz VIN aby automatycznie dodać dane auta 
           </label>
           <div className="flex">
             <input
@@ -338,16 +338,16 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
             </button>
           </div>
           <p className="text-xs text-gray-500 mt-1">
-            Enter VIN to automatically fill all car details or enter manually
-            below
+            
+            Dane mogą zostać znalezione automatycznie lub też można je wpisać/poprawić ręcznie
           </p>
         </div>
 
         <div className="col-span-2">
-          <label className="block text-gray-700 mb-1">Title</label>
+          <label className="block text-gray-700 mb-1">Tytuł</label>
           <input
             type="text"
-            placeholder="Enter title"
+            placeholder="Wpisz tytuł"
             className="border p-3 w-full rounded h-12"
             value={localData.title}
             onChange={(e) =>
@@ -357,9 +357,9 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
         </div>
 
         <div className="col-span-2">
-          <label className="block text-gray-700 mb-1">Description</label>
+          <label className="block text-gray-700 mb-1">Opis</label>
           <textarea
-            placeholder="Enter description"
+            placeholder="Wpisz Opis"
             className="border p-3 w-full rounded h-32"
             value={localData.description}
             onChange={(e) =>
@@ -381,9 +381,9 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
                   <FaMapMarkerAlt className="text-white" size={16} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-800 dark:text-black transition-colors duration-300">Car Location</h3>
+                  <h3 className="font-semibold text-gray-800 dark:text-black transition-colors duration-300">Lokalizacja Auta</h3>
                   <p className="text-xs text-gray-500">
-                    Set the location where the car is available
+                    Ustaw lokalizacje gdzie auto się znajduje
                   </p>
                 </div>
               </div>
@@ -473,7 +473,7 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
             onClick={handleNext}
             className="bg-blue-500 text-white px-4 py-2 rounded"
           >
-            Next
+            Następna
           </button>
         </div>
       </div>

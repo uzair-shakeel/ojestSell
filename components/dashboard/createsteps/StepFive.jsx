@@ -39,22 +39,22 @@ export default function StepFive({
   }, [formData.location, isLoaded, getGeocodingData]);
 
   return (
-    <div className="bg-white dark:bg-gray-800800800800800800800 rounded-lg transition-colors duration-300">
+    <div className="bg-white dark:bg-gray-800 rounded-lg transition-colors duration-300">
       <h2 className="text-xl font-bold mb-6 text-gray-900 dark:text-white transition-colors duration-300">
-        Step 5: Review & Submit
+        Krok 5: Przejrzyj i Potwierdź
       </h2>
 
       {/* Grid Layout */}
       <div className="sm:grid sm:grid-cols-2 space-y-5 gap-y-5 text-gray-700 dark:text-gray-300 transition-colors duration-300">
         {/* Title & Description */}
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Title</p>
+          <p className="text-xs uppercase">Tytuł</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.title}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Description</p>
+          <p className="text-xs uppercase">Opis</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.description}
           </p>
@@ -62,7 +62,7 @@ export default function StepFive({
 
         {/* Car Details */}
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Make</p>
+          <p className="text-xs uppercase">Marka</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.make}
           </p>
@@ -74,67 +74,67 @@ export default function StepFive({
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Trim</p>
+          <p className="text-xs uppercase">Wersja</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.trim || "N/A"}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Type</p>
+          <p className="text-xs uppercase">Typ</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.type}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Year</p>
+          <p className="text-xs uppercase">Rok</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.year || "N/A"}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Mileage</p>
+          <p className="text-xs uppercase">Przebieg</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.mileage ? `${formData.mileage} km` : "N/A"}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Drivetrain</p>
+          <p className="text-xs uppercase">Napęd</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.drivetrain || "N/A"}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Transmission</p>
+          <p className="text-xs uppercase">Skrzynia Biegów</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.transmission || "N/A"}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Fuel</p>
+          <p className="text-xs uppercase">Paliwo</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.fuel || "N/A"}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Engine</p>
+          <p className="text-xs uppercase">Silnik</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.engine ? `${formData.engine}L` : "N/A"}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Horsepower</p>
+          <p className="text-xs uppercase">Konie Mechaniczne</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.horsepower ? `${formData.horsepower} HP` : "N/A"}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Accident History</p>
+          <p className="text-xs uppercase">Historia Bezwypadkowość</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.accidentHistory || "N/A"}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Service History</p>
+          <p className="text-xs uppercase">Historia Serwisowa</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.serviceHistory || "N/A"}
           </p>
@@ -146,7 +146,7 @@ export default function StepFive({
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Country of Origin</p>
+          <p className="text-xs uppercase">Kraj pochodzenia</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.country || "N/A"}
           </p>
@@ -254,14 +254,14 @@ export default function StepFive({
           className="bg-gray-500 text-white px-4 py-2 rounded"
           disabled={loading}
         >
-          Back
+          Cofnij
         </button>
         <button
           onClick={handleSubmit}
           className="bg-green-500 text-white px-4 py-2 rounded"
           disabled={loading}
         >
-          {loading ? "Submitting..." : "Finish"}
+          {loading ? "Przesyłanie..." : "Zatwierdź"}
         </button>
       </div>
     </div>

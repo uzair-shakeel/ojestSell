@@ -10,8 +10,8 @@ export default function StepFour({ nextStep, prevStep, updateFormData, formData 
     isFeatured: formData.isFeatured || false,
   });
 
-  const sellOptionsList = ["Long term rental", "Lease", "Financing", "Cash"];
-  const invoiceOptionsList = ["Invoice", "Invoice VAT", "Selling Agreement"];
+  const sellOptionsList = ["Wynajem długoterminowy", "Leasing", "Finansowanie/Kredyt", "Gotówka", "Crypto"];
+  const invoiceOptionsList = ["Faktura", "Faktura Vat Marża", "Umowa Kupna Sprzedaży"];
 
   const handleCheckboxChange = (category: "sellOptions" | "invoiceOptions", value: string) => {
     setLocalData((prev) => {
@@ -47,11 +47,11 @@ export default function StepFour({ nextStep, prevStep, updateFormData, formData 
 
   return (
     <div className="bg-white rounded-lg">
-      <h2 className="text-xl font-bold mb-4">Step 4: Financial Information</h2>
+      <h2 className="text-xl font-bold mb-4">Krok 4: Finansowe Informacje</h2>
 
       <div className="mb-4">
         <label className="block text-gray-700 font-semibold mb-1">
-          Sell Options (Select at least one)
+          Opcje Sprzedaży (Wybierz przynajmniej jedną)
         </label>
         <div className="grid grid-cols-2 gap-2">
           {sellOptionsList.map((option, index) => (
@@ -70,7 +70,7 @@ export default function StepFour({ nextStep, prevStep, updateFormData, formData 
 
       <div className="mb-4">
         <label className="block text-gray-700 font-semibold mb-1">
-          Invoice Options (Select at least one)
+          Sposób Sprzedaży (Wybierz przynajmniej jedną)
         </label>
         <div className="grid grid-cols-2 gap-2">
           {invoiceOptionsList.map((option, index) => (
@@ -88,13 +88,13 @@ export default function StepFour({ nextStep, prevStep, updateFormData, formData 
       </div>
 
       <div className="mb-4">
-        {localData.invoiceOptions.includes("Invoice VAT") ? (
+        {localData.invoiceOptions.includes("Faktura Vat Marża") ? (
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700 font-semibold mb-1">Price (Netto)</label>
+              <label className="block text-gray-700 font-semibold mb-1">Cena (Netto)</label>
               <input
                 type="number"
-                placeholder="Enter Netto Price"
+                placeholder="Wprowadź cenę netto"
                 className="border p-3 w-full rounded h-12"
                 value={localData.priceNetto}
                 onChange={(e) =>
@@ -105,10 +105,10 @@ export default function StepFour({ nextStep, prevStep, updateFormData, formData 
           </div>
         ) : (
           <div>
-            <label className="block text-gray-700 font-semibold mb-1">Price</label>
+            <label className="block text-gray-700 font-semibold mb-1">Cena</label>
             <input
               type="number"
-              placeholder="Enter Price"
+              placeholder="Wprowadź cenę"
               className="border p-3 w-full rounded h-12"
               value={localData.priceNetto}
               onChange={(e) =>
@@ -130,12 +130,11 @@ export default function StepFour({ nextStep, prevStep, updateFormData, formData 
             onChange={(e) => setLocalData({ ...localData, isFeatured: e.target.checked })}
           />
           <label htmlFor="isFeatured" className="text-gray-700 font-medium">
-            Mark as Featured Car
+            Oznacz jako polecany samochód
           </label>
         </div>
         <p className="text-xs text-gray-500 mt-1">
-          Featured cars will be highlighted and shown prominently on the website
-        </p>
+Polecane samochody zostaną wyróżnione i wyeksponowane na stronie internetowej        </p>
       </div>
 
       <div className="flex justify-between mt-6">
@@ -143,13 +142,13 @@ export default function StepFour({ nextStep, prevStep, updateFormData, formData 
           onClick={prevStep}
           className="bg-gray-500 text-white px-4 py-2 rounded"
         >
-          Back
+          Cofnij
         </button>
         <button
           onClick={handleNext}
           className="bg-blue-500 text-white px-4 py-2 rounded"
         >
-          Next
+          Następna
         </button>
       </div>
     </div>

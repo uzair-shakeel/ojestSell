@@ -502,11 +502,11 @@ export default function StepTwo({
 
   return (
     <div className="bg-white rounded-lg">
-      <h2 className="text-xl font-bold mb-4">Step 2: Car Details</h2>
+      <h2 className="text-xl font-bold mb-4">Krok 3: Dane Auta</h2>
       <div className="grid grid-cols-2 gap-4">
         {/* Make */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Make</label>
+          <label className="block text-gray-700 mb-1">Marka</label>
           <select
             className="border p-3 w-full rounded h-12"
             value={localData.make}
@@ -515,7 +515,7 @@ export default function StepTwo({
             }
             disabled={makesModelsData?.loading}
           >
-            <option value="">Select Make</option>
+            <option value="">Wybierz Marka</option>
             {makes.map((make, index) => (
               <option key={index} value={make}>
                 {make}
@@ -535,7 +535,7 @@ export default function StepTwo({
             }
             disabled={makesModelsData?.loading || !localData.make}
           >
-            <option value="">Select Model</option>
+            <option value="">Wybierz Model</option>
             {models.map((model, index) => (
               <option key={index} value={model}>
                 {model}
@@ -546,10 +546,10 @@ export default function StepTwo({
 
         {/* Trim */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Trim</label>
+          <label className="block text-gray-700 mb-1">Wersja</label>
           <input
             type="text"
-            placeholder="Trim (Daraja Kroz, Normal, etc.)"
+            placeholder="Wersja (Daraja Kroz, Normal, etc.)"
             className="border p-3 w-full rounded h-12"
             value={localData.trim}
             onChange={(e) =>
@@ -560,7 +560,7 @@ export default function StepTwo({
 
         {/* Type */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Type</label>
+          <label className="block text-gray-700 mb-1">Typ </label>
           <select
             className="border p-3 w-full rounded h-12"
             value={localData.type}
@@ -568,7 +568,7 @@ export default function StepTwo({
               setLocalData({ ...localData, type: e.target.value })
             }
           >
-            <option value="">Select Type</option>
+            <option value="">Wybierz Typ</option>
             <option value="Sedan">Sedan</option>
             <option value="SUV">SUV</option>
             <option value="Coupe">Coupe</option>
@@ -578,7 +578,7 @@ export default function StepTwo({
 
         {/* Year */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Year</label>
+          <label className="block text-gray-700 mb-1">Rok</label>
           <select
             className="border p-3 w-full rounded h-12"
             value={localData.year}
@@ -586,7 +586,7 @@ export default function StepTwo({
               setLocalData({ ...localData, year: e.target.value })
             }
           >
-            <option value="">Select Year</option>
+            <option value="">Wybierz Rok</option>
             {years.map((year, index) => (
               <option key={index} value={year}>
                 {year}
@@ -597,10 +597,10 @@ export default function StepTwo({
 
         {/* Color */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Color</label>
+          <label className="block text-gray-700 mb-1">Kolor</label>
           <input
             type="text"
-            placeholder="Color"
+            placeholder="Kolor"
             className="border p-3 w-full rounded h-12"
             value={localData.color}
             onChange={(e) =>
@@ -611,10 +611,10 @@ export default function StepTwo({
 
         {/* Mileage */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Mileage (KM)</label>
+          <label className="block text-gray-700 mb-1">Przebieg (KM)</label>
           <input
             type="number"
-            placeholder="Mileage"
+            placeholder="Przebieg"
             className="border p-3 w-full rounded h-12"
             value={localData.mileage}
             onChange={(e) =>
@@ -625,7 +625,7 @@ export default function StepTwo({
 
         {/* Drivetrain */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Drivetrain</label>
+          <label className="block text-gray-700 mb-1">Napęd</label>
           <select
             className="border p-3 w-full rounded h-12"
             value={localData.drivetrain}
@@ -633,18 +633,16 @@ export default function StepTwo({
               setLocalData({ ...localData, drivetrain: e.target.value })
             }
           >
-            <option value="">Select Drivetrain</option>
-            <option value="FWD">FWD</option>
-            <option value="RWD">RWD</option>
-            <option value="AWD">AWD</option>
-            <option value="4WD">4WD</option>
-            <option value="2WD">2WD</option>
+            <option value="">Wybierz Napęd</option>
+            <option value="FWD">Przód</option>
+            <option value="RWD">Tył</option>
+            <option value="4WD">4x4</option>
           </select>
         </div>
 
         {/* Transmission */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Transmission</label>
+          <label className="block text-gray-700 mb-1">Skrzynia Biegów</label>
           <select
             className="border p-3 w-full rounded h-12"
             value={localData.transmission}
@@ -652,16 +650,15 @@ export default function StepTwo({
               setLocalData({ ...localData, transmission: e.target.value })
             }
           >
-            <option value="">Select Transmission</option>
-            <option value="Manual">Manual</option>
-            <option value="Automatic">Automatic</option>
-            <option value="Semi-Automatic">Semi-Automatic</option>
+            <option value="">Wybierz Skrzynia Biegów</option>
+            <option value="Manual">Manualna</option>
+            <option value="Automatic">Automatyczna</option>
           </select>
         </div>
 
         {/* Fuel */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Fuel Type</label>
+          <label className="block text-gray-700 mb-1">Paliwo</label>
           <select
             className="border p-3 w-full rounded h-12"
             value={localData.fuel}
@@ -669,20 +666,21 @@ export default function StepTwo({
               setLocalData({ ...localData, fuel: e.target.value })
             }
           >
-            <option value="">Select Fuel Type</option>
-            <option value="Petrol">Petrol</option>
+            <option value="">Wybierz Paliwo</option>
+            <option value="Petrol">Benzyna</option>
             <option value="Diesel">Diesel</option>
-            <option value="Hybrid">Hybrid</option>
-            <option value="Electric">Electric</option>
+            <option value="Hybrid">Hybryda</option>
+            <option value="Electric">Elektryk</option>
+            <option value="LPG">LPG</option>
           </select>
         </div>
 
         {/* Horsepower */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Horsepower</label>
+          <label className="block text-gray-700 mb-1">Konie Mechaniczne</label>
           <input
             type="number"
-            placeholder="Horsepower"
+            placeholder="Konie Mechaniczne"
             className="border p-3 w-full rounded h-12"
             value={localData.horsepower}
             onChange={(e) =>
@@ -694,12 +692,12 @@ export default function StepTwo({
         {/* Engine Displacement */}
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">
-            Engine Displacement
+            Pojemność
           </label>
           <input
             list="engines"
             type="text"
-            placeholder="Engine Displacement"
+            placeholder="Pojemność"
             className="border p-3 w-full rounded h-12"
             value={localData.engine}
             onChange={(e) =>
@@ -715,7 +713,7 @@ export default function StepTwo({
 
         {/* Service History */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Service History</label>
+          <label className="block text-gray-700 mb-1">Historia Serwisowa</label>
           <select
             className="border p-3 w-full rounded h-12"
             value={localData.serviceHistory}
@@ -723,15 +721,15 @@ export default function StepTwo({
               setLocalData({ ...localData, serviceHistory: e.target.value })
             }
           >
-            <option value="">Select Service History</option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
+            <option value="">Wybierz Historię Serwisową</option>
+            <option value="Yes">Tak</option>
+            <option value="No">Nie</option>
           </select>
         </div>
 
         {/* Accident History */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Accident History</label>
+          <label className="block text-gray-700 mb-1">Bezwypadkowość</label>
           <select
             className="border p-3 w-full rounded h-12"
             value={localData.accidentHistory}
@@ -739,9 +737,9 @@ export default function StepTwo({
               setLocalData({ ...localData, accidentHistory: e.target.value })
             }
           >
-            <option value="">Select Accident History</option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
+            <option value="">Wybierz Bezwypadkowość</option>
+            <option value="Yes">Tak</option>
+            <option value="No">Nie</option>
           </select>
         </div>
 
@@ -772,13 +770,13 @@ export default function StepTwo({
             </button>
           </div>
           <p className="text-xs text-gray-500 mt-1">
-            Enter VIN to auto-fill car details from CEPiK database
+            Wprowadź numer VIN, aby automatycznie uzupełnić dane samochodu z bazy CEPiK
           </p>
         </div>
 
         {/* Country of Origin */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Country of Origin</label>
+          <label className="block text-gray-700 mb-1"> Kraj Pochodzenia</label>
           <input
             type="text"
             placeholder="Poland"
