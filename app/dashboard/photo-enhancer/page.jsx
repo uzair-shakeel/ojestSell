@@ -2614,9 +2614,9 @@ export default function PhotoEnhancer() {
       const externalUrl = "https://ojest.pl/detect/detect";
       const fd = new FormData();
       const optimized = await compressImage(selectedImage, 1000 * 1000, 1920, 0.5);
-      fd.append("file", optimized);
+      fd.append("file", optimized, (optimized && optimized.name) || "upload.jpg");
 
-      const resp = await fetch(externalUrl, { method: "POST", body: fd });
+      const resp = await fetch(externalUrl, { method: "POST", mode: "cors", headers: { Accept: "application/json" }, body: fd });
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const data = await resp.json();
 
@@ -2669,7 +2669,7 @@ export default function PhotoEnhancer() {
           <div className="flex flex-col items-center">
             <div
               ref={containerRef}
-              className="relative w-full h-[400px] border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-white flex items-center justify-center"
+              className="relative w-full h-[300px] md:h-[580px] border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-white flex items-center justify-center"
             >
               {selectedImage ? (
                 <div className="relative w-full h-full flex items-center justify-center">

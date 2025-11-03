@@ -407,9 +407,9 @@ export default function ImageEditStep({
       const fd = new FormData();
       // Ensure under 1MB before sending
       const optimized = await compressImage(activeImage, 1000 * 1000, 1920, 0.5);
-      fd.append("file", optimized);
+      fd.append("file", optimized as File, (optimized as File).name || "upload.jpg");
 
-      const resp = await fetch(externalUrl, { method: "POST", body: fd });
+      const resp = await fetch(externalUrl, { method: "POST", mode: "cors", headers: { Accept: "application/json" }, body: fd });
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const data = await resp.json();
 
