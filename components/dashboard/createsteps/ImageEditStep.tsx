@@ -405,9 +405,9 @@ export default function ImageEditStep({
     try {
       const externalUrl = "https://ojest.pl/detect/detect";
       const fd = new FormData();
-      // Ensure under ~600KB before sending for Safari/mac compatibility
-      const optimized = await compressImage(activeImage, 600 * 1000, 1600, 0.4);
-      fd.append("file", optimized as File, (optimized as File).name || "upload.jpg");
+      // Send original file without compression
+      const toSend = activeImage;
+      fd.append("file", toSend as File, (toSend as File).name || "upload.jpg");
 
       const resp = await fetch(externalUrl, { method: "POST", mode: "cors", headers: { Accept: "application/json" }, body: fd });
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
