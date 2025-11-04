@@ -176,7 +176,7 @@ const MyOffersPage = () => {
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">My Offers</h1>
+          <h1 className="text-3xl font-bold text-gray-800">Moje Oferty</h1>
           <p className="text-gray-500 mt-1">
             Track the status of all offers you've made to buyers
           </p>

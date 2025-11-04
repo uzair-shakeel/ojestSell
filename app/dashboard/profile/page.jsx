@@ -106,7 +106,7 @@ const ProfileComponent = () => {
     e.preventDefault();
     if (!cpCurrent || !cpNew || !cpConfirm) return;
     if (cpNew !== cpConfirm) {
-      alert("New passwords do not match");
+      toast.success("Nowe hasła nie pasują");
       return;
     }
     setCpLoading(true);
@@ -117,9 +117,9 @@ const ProfileComponent = () => {
         setCpNew("");
         setCpConfirm("");
         setIsCpOpen(false);
-        toast.success("Password changed successfully");
+        toast.success("Hasło Zmienione Poprawnie");
       } else {
-        toast.error(res?.error || "Failed to change password");
+        toast.error(res?.error || "Nie Udało się Zmienić Hasła");
       }
     } finally {
       setCpLoading(false);
@@ -183,7 +183,7 @@ const ProfileComponent = () => {
         console.error("Error fetching user:", err);
 
         // Show error to user
-        alert(`Failed to load profile: ${err.message || "Unknown error"}`);
+        alert(`Nie Udało się załadować Użytkownika: ${err.message || "Unknown error"}`);
 
         // Set default state
         setUser({
@@ -250,7 +250,7 @@ const ProfileComponent = () => {
       ];
       if (!allowedTypes.includes(file.type)) {
         alert(
-          "Invalid file type. Please upload JPEG, PNG, WebP, or GIF images."
+          "Nieprawidłowy typ pliku. Prześlij obrazy JPG, PNG, WebP lub GIF."
         );
         return;
       }
@@ -258,7 +258,7 @@ const ProfileComponent = () => {
       // Validate file size (5MB limit)
       const maxSize = 5 * 1024 * 1024; // 5MB
       if (file.size > maxSize) {
-        alert("Image file is too large. Maximum size is 5MB.");
+        toast.success("Plik obrazu jest za duży. Maksymalny rozmiar to 5 MB.");
         return;
       }
 
@@ -320,7 +320,7 @@ const ProfileComponent = () => {
         formData.sellerType === "company" &&
         (!formData.brands || formData.brands.length === 0)
       ) {
-        alert("Please select at least one brand for company sellers");
+        toast.success("Proszę wybrać co najmniej jedną markę dla sprzedawców firmowych");
         return;
       }
 
@@ -355,7 +355,7 @@ const ProfileComponent = () => {
         );
       }
 
-      alert("Profile updated successfully!");
+      toast.success("Profil zaktualizowany pomyślnie!");
     } catch (error) {
       console.error("Error updating user:", error);
 
@@ -420,7 +420,7 @@ const ProfileComponent = () => {
           onClick={() => setIsCpOpen(true)}
           className="bg-gray-800 text-white rounded-md px-4 py-2 hover:bg-gray-700"
         >
-          Change Password
+          Zmień Hasło
         </button>
       </div>
       <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
@@ -434,12 +434,12 @@ const ProfileComponent = () => {
           {/* Profile Picture */}
           <div className="mb-6">
             <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-              Profile Picture
+              Zdjęcie Profilowe
             </label>
             <div className="flex flex-col md:flex-row gap-4 items-center space-x-4">
               <Avatar
                 src={formatImageUrl(user?.image || user?.profilePicture)}
-                alt="Profile"
+                alt="Profil"
                 size={80}
                 imgClassName="border border-gray-300"
               />
@@ -456,7 +456,7 @@ const ProfileComponent = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
               <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-                First Name
+                Imię
               </label>
               <input
                 type="text"
@@ -469,7 +469,7 @@ const ProfileComponent = () => {
             </div>
             <div>
               <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-                Last Name
+                Nazwisko
               </label>
               <input
                 type="text"
@@ -485,7 +485,7 @@ const ProfileComponent = () => {
           {/* Description */}
           <div className="mb-6">
             <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-              Description
+              Opis
             </label>
             <textarea
               name="description"
@@ -508,7 +508,7 @@ const ProfileComponent = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
               <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-                Company Name
+                Nazwa Firmy
               </label>
               <input
                 type="text"
@@ -537,7 +537,7 @@ const ProfileComponent = () => {
           {/* Seller Type */}
           <div className="mb-6">
             <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-              Seller Type
+              Typ Sprzedawcy
             </label>
             <select
               name="sellerType"
@@ -545,8 +545,8 @@ const ProfileComponent = () => {
               onChange={handleInputChange}
               className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
             >
-              <option value="private">Private</option>
-              <option value="company">Company</option>
+              <option value="private">Prywatny</option>
+              <option value="company">Firma</option>
             </select>
           </div>
 
@@ -602,7 +602,7 @@ const ProfileComponent = () => {
             </div>
             <div>
               <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-                LinkedIn Link
+                Strona WWW firmowa Link
               </label>
               <input
                 type="url"
@@ -617,7 +617,7 @@ const ProfileComponent = () => {
           {/* Phone Numbers */}
           <div className="mb-6">
             <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-              Phone Numbers
+              Numer Telefonu
             </label>
             {formData.phoneNumbers.map((phone, index) => (
               <div key={index} className="flex items-center space-x-2 mb-2">
@@ -636,7 +636,7 @@ const ProfileComponent = () => {
                     onClick={() => removePhoneNumber(index)}
                     className="p-2 bg-gray-800 text-white rounded-md px-5"
                   >
-                    Remove
+                    Usuń
                   </button>
                 )}
               </div>
@@ -647,7 +647,7 @@ const ProfileComponent = () => {
                 onClick={addPhoneNumber}
                 className="mt-2 p-2 bg-blue-500 text-white rounded-md px-5 hover:bg-blue-600"
               >
-                Add Phone Number
+                Dodaj Numer Telefonu
               </button>
             )}
           </div>
@@ -662,7 +662,7 @@ const ProfileComponent = () => {
             className="col-span-2 bg-white p-6 rounded-lg shadow-md"
           >
             <h3 className="text-xl font-semibold mb-4 text-gray-800">
-              Brands You Deal With
+              Marki z którymi współpracujesz
             </h3>
 
             <BrandSelector
@@ -686,7 +686,7 @@ const ProfileComponent = () => {
             {formData.sellerType === "company" &&
               (!formData.brands || formData.brands.length === 0) && (
                 <p className="text-red-500 text-sm mt-4">
-                  Please select at least one brand you deal with
+                  Proszę wybrać co najmniej jedną markę, z którą współpracujesz
                 </p>
               )}
           </motion.div>
@@ -707,7 +707,7 @@ const ProfileComponent = () => {
             type="submit"
             className="bg-blue-500 text-white rounded-md px-5 py-2 hover:bg-blue-600"
           >
-            Save Changes
+             Zapisz Zmiany
           </button>
         </div>
       </form>
@@ -719,7 +719,7 @@ const ProfileComponent = () => {
         <div className="absolute inset-0 bg-black/50" onClick={() => setIsCpOpen(false)} />
         <div className="relative z-10 w-full max-w-lg bg-white rounded-lg shadow-lg p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-semibold text-gray-800">Change Password</h3>
+            <h3 className="text-xl font-semibold text-gray-800">Zmień Hasło</h3>
             <button
               type="button"
               onClick={() => setIsCpOpen(false)}
@@ -730,7 +730,7 @@ const ProfileComponent = () => {
           </div>
           <form onSubmit={handleChangePassword} className="grid grid-cols-1 gap-4">
             <div>
-              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">Current Password</label>
+              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">Aktualne Hasło</label>
               <input
                 type="password"
                 value={cpCurrent}
@@ -740,7 +740,7 @@ const ProfileComponent = () => {
               />
             </div>
             <div>
-              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">New Password</label>
+              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">Nowe Hasło</label>
               <input
                 type="password"
                 value={cpNew}
@@ -751,7 +751,7 @@ const ProfileComponent = () => {
               />
             </div>
             <div>
-              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">Confirm New Password</label>
+              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">Potwierdź Nowe Hasło</label>
               <input
                 type="password"
                 value={cpConfirm}
@@ -767,14 +767,14 @@ const ProfileComponent = () => {
                 onClick={() => setIsCpOpen(false)}
                 className="px-4 py-2 rounded-md border border-gray-300"
               >
-                Cancel
+                Anuluj
               </button>
               <button
                 type="submit"
                 disabled={cpLoading}
                 className="px-5 py-2 rounded-md bg-gray-800 text-white hover:bg-gray-700"
               >
-                {cpLoading ? "Changing..." : "Update Password"}
+                {cpLoading ? "Changing..." : "Aktualizuj Hasło"}
               </button>
             </div>
           </form>

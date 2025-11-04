@@ -85,7 +85,7 @@ const BuyerRequestsDashboard = () => {
         console.error("Response data:", error.response.data);
         console.error("Response status:", error.response.status);
       }
-      toast.error("Failed to load your requests");
+      toast.error("Nie udało się załadować Twojego zapytania");
     } finally {
       setLoading(false);
     }
@@ -111,7 +111,7 @@ const BuyerRequestsDashboard = () => {
       setOffers(offersData.offers || offersData);
     } catch (error) {
       console.error("Error fetching offers:", error);
-      toast.error("Failed to load offers");
+      toast.error("Nie udało się załadować ofert");
     } finally {
       setOffersLoading(false);
     }
@@ -162,7 +162,7 @@ const BuyerRequestsDashboard = () => {
       setAllOffers(allOffersData);
     } catch (error) {
       console.error("Error fetching all offers:", error);
-      toast.error("Failed to load offers");
+      toast.error("Nie udało się załadować ofert");
     } finally {
       setAllOffersLoading(false);
     }
@@ -211,12 +211,12 @@ const BuyerRequestsDashboard = () => {
       }));
     } catch (error) {
       console.error(`Error fetching offers for request ${requestId}:`, error);
-      toast.error("Failed to load offers for this request");
+      toast.error("Nie udało się załadować ofert dla tego zapytania");
     }
   };
 
   const handleDeleteRequest = async (requestId) => {
-    if (window.confirm("Are you sure you want to cancel this request?")) {
+    if (window.confirm("Czy na pewno chcesz anulować to zapytanie?")) {
       try {
         // Create a proper getToken function
         const getTokenFn = async () => {
@@ -230,11 +230,11 @@ const BuyerRequestsDashboard = () => {
         };
 
         await deleteBuyerRequest(requestId, getTokenFn);
-        toast.success("Request cancelled successfully");
+        toast.success("Zapytanie zostało anulowane");
         fetchRequests(activeTab);
       } catch (error) {
         console.error("Error deleting request:", error);
-        toast.error("Failed to cancel request");
+        toast.error("Nie udało się anulować zapytania");
       }
     }
   };
@@ -242,7 +242,7 @@ const BuyerRequestsDashboard = () => {
   const handleAcceptOffer = async (offerId) => {
     if (
       window.confirm(
-        "Are you sure you want to accept this offer? This will close your request and reject all other offers."
+        "Czy na pewno chcesz zaakceptować tę ofertę? Spowoduje to zamknięcie Twojego zapytania i odrzucenie wszystkich pozostałych ofert."
       )
     ) {
       try {
@@ -258,19 +258,19 @@ const BuyerRequestsDashboard = () => {
         };
 
         await acceptOffer(offerId, getTokenFn);
-        toast.success("Offer accepted successfully");
+        toast.success("Oferta została zaakceptowana");
         fetchRequests(activeTab);
         setShowOffersModal(false);
         setSelectedRequest(null);
       } catch (error) {
         console.error("Error accepting offer:", error);
-        toast.error("Failed to accept offer");
+        toast.error("Nie udało się zaakceptować oferty");
       }
     }
   };
 
   const handleRejectOffer = async (offerId) => {
-    if (window.confirm("Are you sure you want to reject this offer?")) {
+    if (window.confirm("Czy na pewno chcesz odrzucić tę ofertę?")) {
       try {
         // Create a proper getToken function
         const getTokenFn = async () => {
@@ -284,13 +284,13 @@ const BuyerRequestsDashboard = () => {
         };
 
         await rejectOffer(offerId, getTokenFn);
-        toast.success("Offer rejected successfully");
+        toast.success("Oferta została odrzucona");
         fetchRequests(activeTab);
         setShowOffersModal(false);
         setSelectedRequest(null);
       } catch (error) {
         console.error("Error rejecting offer:", error);
-        toast.error("Failed to reject offer");
+        toast.error("Nie udało się odrzucić oferty");
       }
     }
   };
@@ -340,17 +340,17 @@ const BuyerRequestsDashboard = () => {
         <div className="flex justify-between items-center mb-8">
         <div>
             <h1 className="text-3xl font-bold text-gray-900">
-              Buyer Requests Dashboard
+              Panel Zapytań Kupującego
             </h1>
             <p className="text-gray-600 mt-2">
-              Manage your car requests and view offers from sellers
+              Zarządzaj prośbami o samochody i przeglądaj oferty od sprzedawców
           </p>
         </div>
         <Link
           href="/dashboard/buyer-requests/add"
           className="flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md"
         >
-          <FiPlus className="mr-2" /> Create New Request
+          <FiPlus className="mr-2" /> Utwórz nowe zapytanie
         </Link>
       </div>
 
@@ -364,7 +364,7 @@ const BuyerRequestsDashboard = () => {
           }`}
           onClick={() => setActiveTab("active")}
         >
-          Active Requests
+          Aktywne
         </button>
         <button
           className={`py-3 px-6 font-medium transition-colors ${
@@ -374,7 +374,7 @@ const BuyerRequestsDashboard = () => {
           }`}
           onClick={() => setActiveTab("fulfilled")}
         >
-          Fulfilled
+          Zrealizowane
         </button>
         <button
           className={`py-3 px-6 font-medium transition-colors ${
@@ -384,7 +384,7 @@ const BuyerRequestsDashboard = () => {
           }`}
           onClick={() => setActiveTab("cancelled")}
         >
-          Cancelled
+          Anulowane
         </button>
         <button
           className={`py-3 px-6 font-medium transition-colors ${
@@ -394,7 +394,7 @@ const BuyerRequestsDashboard = () => {
           }`}
           onClick={() => setActiveTab("expired")}
         >
-          Expired
+          Wygasłe
         </button>
           <button
             className={`py-3 px-6 font-medium transition-colors ${
@@ -404,7 +404,7 @@ const BuyerRequestsDashboard = () => {
             }`}
             onClick={() => setActiveTab("received-offers")}
           >
-            Received Offers
+            Otrzymane oferty
         </button>
       </div>
 
@@ -425,17 +425,17 @@ const BuyerRequestsDashboard = () => {
                     </div>
                   </div>
                   <h3 className="text-xl font-medium text-gray-800 mb-2">
-                    No offers received yet
+                    Brak ofert
                   </h3>
                   <p className="text-gray-500 mb-6">
-                    Create a buyer request to start receiving offers from
-                    sellers
+                    Utwórz prośbę o samochód, aby rozpocząć otrzymywanie ofert od
+                    sprzedawców
                   </p>
                   <Link
                     href="/dashboard/buyer-requests/add"
                     className="inline-flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                   >
-                    <FiPlus className="mr-2" /> Create New Request
+                    <FiPlus className="mr-2" /> Utwórz nowe zapytanie
                   </Link>
                 </div>
               ) : (
@@ -534,7 +534,7 @@ const BuyerRequestsDashboard = () => {
                       {offer.carInfo && (
                         <div className="mb-3 p-2 bg-blue-50 rounded-lg">
                           <div className="text-sm text-gray-700">
-                            <span className="font-medium">Car:</span>{" "}
+                            <span className="font-medium">Auto:</span>{" "}
                             {offer.carInfo.make} {offer.carInfo.model}{" "}
                             {offer.carInfo.year}
                           </div>
@@ -546,7 +546,7 @@ const BuyerRequestsDashboard = () => {
                         <div className="mb-3 p-2 bg-gray-50 rounded-lg">
                           <div className="flex items-center justify-between text-sm">
                             <div className="text-gray-700">
-                              <span className="font-medium">Seller:</span>{" "}
+                              <span className="font-medium">Sprzedawca:</span>{" "}
                               {offer.sellerInfo.firstName}{" "}
                               {offer.sellerInfo.lastName}
                               {offer.sellerInfo.companyName && (
@@ -563,8 +563,8 @@ const BuyerRequestsDashboard = () => {
                               }`}
                             >
                               {offer.sellerInfo.sellerType === "company"
-                                ? "Company"
-                                : "Private"}
+                                ? "Firma"
+                                : "Osoba prywatna"}
                             </span>
                           </div>
                         </div>
@@ -584,13 +584,13 @@ const BuyerRequestsDashboard = () => {
                           onClick={() => handleAcceptOffer(offer._id)}
                           className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
                         >
-                          Accept
+                          Potwierdź
                         </button>
                         <button
                           onClick={() => handleRejectOffer(offer._id)}
                           className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
                         >
-                          Reject
+                          Odrzuć
                         </button>
                       </div>
                     </div>
@@ -614,16 +614,18 @@ const BuyerRequestsDashboard = () => {
                 </div>
               </div>
               <h3 className="text-xl font-medium text-gray-800 mb-2">
-                No {activeTab} requests found
+                Brak {activeTab} znalezionych zapytań
+
               </h3>
               <p className="text-gray-500 mb-6">
-                Create a new request to start receiving offers from sellers
+Utwórz nowe zapytanie, aby zacząć otrzymywać oferty od sprzedawców
               </p>
               <Link
                 href="/dashboard/buyer-requests/add"
                 className="inline-flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
               >
-                <FiPlus className="mr-2" /> Create New Request
+                <FiPlus className="mr-2" /> Utwórz nowe zapytanie
+
               </Link>
             </div>
           ) : (
@@ -650,7 +652,7 @@ const BuyerRequestsDashboard = () => {
                       <div className="flex items-center">
                         <FiClock className="mr-1 text-gray-400" />
                         <span>
-                          {calculateDaysLeft(request.expiryDate)} days left
+                          {calculateDaysLeft(request.expiryDate)} dni do końca
                         </span>
                       </div>
                     )}
@@ -660,7 +662,7 @@ const BuyerRequestsDashboard = () => {
                     {(request.make || request.model) && (
                       <div className="flex items-center text-sm">
                         <TbCar className="mr-2 text-gray-400" />
-                        <span className="font-medium">Car:</span>
+                        <span className="font-medium">Auto:</span>
                         <span className="ml-1 text-gray-700">
                           {request.make} {request.model}
                         </span>
@@ -669,11 +671,11 @@ const BuyerRequestsDashboard = () => {
 
                     <div className="flex items-center text-sm">
                       <FiDollarSign className="mr-2 text-gray-400" />
-                      <span className="font-medium">Budget:</span>
+                      <span className="font-medium">Budżet:</span>
                       <span className="ml-1 text-gray-700">
                         {request.budgetMin
                           ? `$${request.budgetMin.toLocaleString()} - $${request.budgetMax.toLocaleString()}`
-                          : `Up to $${request.budgetMax.toLocaleString()}`}
+                          : `Do $${request.budgetMax.toLocaleString()}`}
                       </span>
                     </div>
                   </div>
@@ -682,7 +684,7 @@ const BuyerRequestsDashboard = () => {
                     <Link
                       href={`/dashboard/buyer-requests/${request._id}`}
                       className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
-                      title="View Details"
+                      title="Pokaż Szczegóły"
                     >
                       <FiEye size={18} />
                     </Link>
@@ -691,26 +693,26 @@ const BuyerRequestsDashboard = () => {
                       className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
                         title={
                           expandedRequests.has(request._id)
-                            ? "Hide Offers"
-                            : "Show Offers"
+                            ? "Ukryj oferty"
+                            : "Pokaż oferty"
                         }
                     >
                       <FiDollarSign size={18} />
                         <span className="ml-1 text-xs">
-                          {expandedRequests.has(request._id) ? "Hide" : "Show"}
+                          {expandedRequests.has(request._id) ? "Ukryj" : "Pokaż"}
                         </span>
                     </button>
                     <Link
                       href={`/dashboard/buyer-requests/${request._id}/edit`}
                       className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
-                      title="Edit Request"
+                      title="Edytuj Zapytanie"
                     >
                       <FiEdit size={18} />
                     </Link>
                     <button
                       onClick={() => handleDeleteRequest(request._id)}
                       className="p-2 text-red-600 hover:bg-red-50 rounded-md transition-colors"
-                      title="Delete Request"
+                      title="Usuń Zapytanie"
                     >
                       <FiTrash2 size={18} />
                     </button>
@@ -721,13 +723,13 @@ const BuyerRequestsDashboard = () => {
                       <div className="mt-4 pt-4 border-t border-gray-200">
                         <div className="flex items-center justify-between mb-3">
                           <h4 className="text-lg font-semibold text-gray-800">
-                            Offers ({requestOffers[request._id]?.length || 0})
+                            Oferty ({requestOffers[request._id]?.length || 0})
                           </h4>
                           <button
                             onClick={() => handleViewOffers(request)}
                             className="text-sm text-blue-600 hover:text-blue-700 font-medium"
                           >
-                            View All Details →
+                            Pokaż Wszystkie Szczegóły →
                           </button>
                         </div>
 
@@ -735,14 +737,14 @@ const BuyerRequestsDashboard = () => {
                           <div className="text-center py-4">
                             <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500 mx-auto mb-2"></div>
                             <p className="text-gray-500 text-sm">
-                              Loading offers...
+                              Ładowanie Ofert...
                             </p>
                           </div>
                         ) : requestOffers[request._id].length === 0 ? (
                           <div className="text-center py-4 bg-gray-50 rounded-lg">
                             <FiDollarSign className="h-8 w-8 text-gray-400 mx-auto mb-2" />
                             <p className="text-gray-500 text-sm">
-                              No offers received yet
+                              Brak ofert
                             </p>
                           </div>
                         ) : (
@@ -872,7 +874,7 @@ const BuyerRequestsDashboard = () => {
                                       }
                                       className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 transition-colors"
                                     >
-                                      Accept
+                                      Akceptuj
                                     </button>
                                     <button
                                       onClick={() =>
@@ -880,7 +882,7 @@ const BuyerRequestsDashboard = () => {
                                       }
                                       className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700 transition-colors"
                                     >
-                                      Reject
+                                      Odrzuć
                                     </button>
                                   </div>
                                 </div>
@@ -892,8 +894,8 @@ const BuyerRequestsDashboard = () => {
                                   onClick={() => handleViewOffers(request)}
                                   className="text-sm text-blue-600 hover:text-blue-700 font-medium"
                                 >
-                                  View all {requestOffers[request._id].length}{" "}
-                                  offers →
+                                  Pokaż Wszystkie  {requestOffers[request._id].length}{" "}
+                                  Oferty →
                                 </button>
                               </div>
                             )}
@@ -915,7 +917,7 @@ const BuyerRequestsDashboard = () => {
             <div className="flex justify-between items-center p-6 border-b">
               <div>
                 <h2 className="text-2xl font-bold text-gray-800">
-                  Offers for: {selectedRequest.title}
+                  Oferty dla: {selectedRequest.title}
                 </h2>
                 <p className="text-gray-500 mt-1">
                   {selectedRequest.make} {selectedRequest.model}
@@ -943,10 +945,10 @@ const BuyerRequestsDashboard = () => {
                       <FiInfo className="h-8 w-8 text-gray-400" />
                       </div>
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      No offers yet
+                      Brak ofert
                     </h3>
                     <p className="text-gray-500">
-                      Sellers haven't made any offers for this request yet.
+                      Sprzedawcy nie zrobili żadnych ofert dla tego zapytania.
                     </p>
                   </div>
                 ) : (
@@ -999,7 +1001,7 @@ const BuyerRequestsDashboard = () => {
                               <div className="mb-2 p-2 bg-gray-50 rounded-lg">
                                 <div className="flex items-center justify-between text-sm">
                                   <div className="text-gray-700">
-                                    <span className="font-medium">Seller:</span>{" "}
+                                    <span className="font-medium">Sprzedawca:</span>{" "}
                                     {offer.sellerInfo.firstName}{" "}
                                     {offer.sellerInfo.lastName}
                                     {offer.sellerInfo.companyName && (
@@ -1016,8 +1018,8 @@ const BuyerRequestsDashboard = () => {
                                     }`}
                                   >
                                     {offer.sellerInfo.sellerType === "company"
-                                      ? "Company"
-                                      : "Private"}
+                                      ? "Firma"
+                                      : "Osoba prywatna"}
                                   </span>
                   </div>
                     </div>
@@ -1048,13 +1050,13 @@ const BuyerRequestsDashboard = () => {
                             onClick={() => handleAcceptOffer(offer._id)}
                             className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
                         >
-                            Accept
+                            Akceptuj
                         </button>
                         <button
                             onClick={() => handleRejectOffer(offer._id)}
                             className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
                         >
-                            Reject
+                            Odrzuć
                         </button>
                       </div>
                   </div>

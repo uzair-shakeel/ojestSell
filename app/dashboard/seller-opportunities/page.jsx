@@ -65,7 +65,7 @@ const SellerOpportunitiesPage = () => {
           if (userData.sellerType === "private") {
             router.push("/dashboard");
             toast.error(
-              "Seller opportunities are only available for company sellers"
+              "Możliwości sprzedaży są dostępne tylko dla sprzedawców firmowych"
             );
             return;
           }
@@ -75,7 +75,7 @@ const SellerOpportunitiesPage = () => {
           fetchMyOffers();
         } catch (error) {
           console.error("Error fetching user data:", error);
-          toast.error("Failed to load user information");
+          toast.error("Nie udało się załadować informacji o użytkowniku");
         }
       }
     };
@@ -114,7 +114,7 @@ const SellerOpportunitiesPage = () => {
         console.error("Response data:", error.response.data);
         console.error("Response status:", error.response.status);
       }
-      toast.error("Failed to load buyer requests");
+      toast.error("Nie udało się załadować zapytań kupującego");
     } finally {
       setLoading(false);
     }
@@ -138,7 +138,7 @@ const SellerOpportunitiesPage = () => {
       setMyOffers(response.offers);
     } catch (error) {
       console.error("Error fetching my offers:", error);
-      toast.error("Failed to load your offers");
+      toast.error("Nie udało się załadować Twoich ofert");
     } finally {
       setOffersLoading(false);
     }
@@ -245,12 +245,13 @@ const SellerOpportunitiesPage = () => {
       {/* My Offers Section */}
       <div className="mb-12">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-          <h2 className="text-2xl font-bold text-gray-800">My Offers</h2>
+          <h2 className="text-2xl font-bold text-gray-800">Moje Oferty</h2>
           <Link
             href="/dashboard/seller-opportunities/my-offers"
             className="flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
           >
-            <FiList className="mr-2" /> View All Offers
+            <FiList className="mr-2" /> Pokaż Wszystkie Oferty
+
           </Link>
         </div>
 
@@ -266,11 +267,10 @@ const SellerOpportunitiesPage = () => {
               </div>
             </div>
             <h3 className="text-xl font-medium text-gray-800 mb-2">
-              No offers made yet
+              Nie ma żadnych ofert
             </h3>
             <p className="text-gray-500 mb-6">
-              Browse buyer requests below and make your first offer.
-            </p>
+Przeglądnij zapytania kupujących poniżej i wystaw swoją ofertę.            </p>
           </div>
         ) : (
           <div className="bg-white rounded-xl shadow-md overflow-hidden border">
@@ -279,19 +279,19 @@ const SellerOpportunitiesPage = () => {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Offer
+                      Oferta
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Price
+                      Cena
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Date
+                      Data
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Status
                     </th>
                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Action
+                      Opcje
                     </th>
                   </tr>
                 </thead>
@@ -321,7 +321,8 @@ const SellerOpportunitiesPage = () => {
                           href={`/dashboard/seller-opportunities/my-offers/${offer._id}`}
                           className="text-blue-600 hover:text-blue-900"
                         >
-                          View Details
+                          Pokaż Szczegóły
+
                         </Link>
                       </td>
                     </tr>
@@ -334,7 +335,7 @@ const SellerOpportunitiesPage = () => {
                 href="/dashboard/seller-opportunities/my-offers"
                 className="text-blue-600 hover:text-blue-800 font-medium text-sm"
               >
-                View all offers <FiArrowRight className="inline ml-1" />
+                Pokaż Wszystkie Oferty <FiArrowRight className="inline ml-1" />
               </Link>
             </div>
           </div>
@@ -343,9 +344,9 @@ const SellerOpportunitiesPage = () => {
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">Buyer Requests</h1>
+          <h1 className="text-3xl font-bold text-gray-800">Zapytania Kupujących</h1>
           <p className="text-gray-500 mt-1">
-            Find and respond to buyer requests matching your inventory
+            Znajdź i odpowiedz na prośby kupujących, które odpowiadają Twoim zasobom
           </p>
         </div>
         <button
@@ -353,14 +354,14 @@ const SellerOpportunitiesPage = () => {
           className="flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md"
         >
           <FiFilter className="mr-2" />{" "}
-          {showFilters ? "Hide Filters" : "Show Filters"}
+          {showFilters ? "Ukryj Filtry" : "Pokaż Filtry"}
         </button>
       </div>
 
       {showFilters && (
         <div className="bg-white rounded-xl shadow-md p-6 mb-8 border">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">
-            Filter Requests
+            Filtruj
           </h2>
           <form
             onSubmit={handleFilterSubmit}
@@ -371,7 +372,7 @@ const SellerOpportunitiesPage = () => {
                 htmlFor="make"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Make
+                Marka    
               </label>
               <input
                 id="make"
@@ -380,7 +381,7 @@ const SellerOpportunitiesPage = () => {
                 value={filters.make}
                 onChange={handleFilterChange}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                placeholder="Any make"
+                placeholder="Dowolna marka"
               />
             </div>
 
@@ -398,7 +399,7 @@ const SellerOpportunitiesPage = () => {
                 value={filters.model}
                 onChange={handleFilterChange}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                placeholder="Any model"
+                placeholder="Dowolny model"
               />
             </div>
 
@@ -407,14 +408,14 @@ const SellerOpportunitiesPage = () => {
                 type="submit"
                 className="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
               >
-                <FiSearch className="inline mr-1" /> Search
+                <FiSearch className="inline mr-1" /> Szukaj
               </button>
               <button
                 type="button"
                 onClick={clearFilters}
                 className="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
               >
-                <FiX className="inline mr-1" /> Clear
+                <FiX className="inline mr-1" /> Wyczyść
               </button>
             </div>
           </form>
@@ -433,17 +434,18 @@ const SellerOpportunitiesPage = () => {
             </div>
           </div>
           <h2 className="text-xl font-semibold mb-2">
-            No buyer requests found
+            Nie znaleziono żadnych próśb kupujących
+
           </h2>
           <p className="text-gray-500 mb-4">
-            There are currently no active buyer requests matching your filters.
+            Obecnie nie ma aktywnych zapytań kupujących, które spełniałyby wybrane przez Ciebie filtry..
           </p>
           {Object.values(filters).some(Boolean) && (
             <button
               onClick={clearFilters}
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
             >
-              Clear Filters
+              Wyczyść Filtry
             </button>
           )}
         </div>
@@ -463,7 +465,7 @@ const SellerOpportunitiesPage = () => {
                     </span>
                   </div>
                   <span className="bg-green-100 text-green-800 text-xs px-3 py-1 rounded-full border border-green-200 font-medium">
-                    {calculateDaysLeft(request.expiryDate)} days left
+                    {calculateDaysLeft(request.expiryDate)} pozostało dni
                   </span>
                 </div>
 
@@ -481,13 +483,13 @@ const SellerOpportunitiesPage = () => {
                       <div className="flex items-start">
                         <FiCalendar className="mr-2 mt-0.5 text-gray-400" />
                         <div>
-                          <p className="text-xs text-gray-500">Year Range</p>
+                          <p className="text-xs text-gray-500">Rok</p>
                           <p className="text-sm font-medium">
                             {request.yearFrom && request.yearTo
                               ? `${request.yearFrom} - ${request.yearTo}`
                               : request.yearFrom
-                              ? `From ${request.yearFrom}`
-                              : `Until ${request.yearTo}`}
+                              ? `Od ${request.yearFrom}`
+                              : `Do ${request.yearTo}`}
                           </p>
                         </div>
                       </div>
@@ -496,11 +498,11 @@ const SellerOpportunitiesPage = () => {
                     <div className="flex items-start">
                       <FiDollarSign className="mr-2 mt-0.5 text-gray-400" />
                       <div>
-                        <p className="text-xs text-gray-500">Budget</p>
+                        <p className="text-xs text-gray-500">Budżet</p>
                         <p className="text-sm font-medium text-green-700">
                           {request.budgetMin
                             ? `$${request.budgetMin.toLocaleString()} - $${request.budgetMax.toLocaleString()}`
-                            : `Up to $${request.budgetMax.toLocaleString()}`}
+                            : `Do $${request.budgetMax.toLocaleString()}`}
                         </p>
                       </div>
                     </div>
@@ -509,7 +511,7 @@ const SellerOpportunitiesPage = () => {
                       <div className="flex items-start">
                         <FiTag className="mr-2 mt-0.5 text-gray-400" />
                         <div>
-                          <p className="text-xs text-gray-500">Condition</p>
+                          <p className="text-xs text-gray-500">Stan</p>
                           <p className="text-sm font-medium">
                             {request.preferredCondition}
                           </p>
@@ -520,7 +522,7 @@ const SellerOpportunitiesPage = () => {
                     <div className="flex items-start">
                       <FiCalendar className="mr-2 mt-0.5 text-gray-400" />
                       <div>
-                        <p className="text-xs text-gray-500">Posted</p>
+                        <p className="text-xs text-gray-500">Opublikowany</p>
                         <p className="text-sm font-medium">
                           {formatDate(request.createdAt)}
                         </p>
@@ -533,13 +535,15 @@ const SellerOpportunitiesPage = () => {
                       href={`/dashboard/buyer-requests/${request._id}`}
                       className="flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 transition-colors"
                     >
-                      <FiEye className="mr-2" /> View Details
+                      <FiEye className="mr-2" /> Pokaż Szczegóły
+
                     </Link>
                     <Link
                       href={`/dashboard/seller-opportunities/${request._id}`}
                       className="flex items-center px-4 py-2 bg-green-50 text-green-700 rounded-md hover:bg-green-100 transition-colors"
                     >
-                      <FiPlus className="mr-2" /> Make Offer
+                      <FiPlus className="mr-2" /> Zrób Oferte
+
                     </Link>
                   </div>
                 </div>
@@ -556,10 +560,10 @@ const SellerOpportunitiesPage = () => {
                   disabled={page === 1}
                   className="px-4 py-2 border rounded-lg disabled:opacity-50 hover:bg-gray-50 transition-colors"
                 >
-                  Previous
+                  Cofnij
                 </button>
                 <span className="px-4 py-2 border rounded-lg bg-gray-50">
-                  Page {page} of {totalPages}
+                  Strona {page} z {totalPages}
                 </span>
                 <button
                   onClick={() =>
@@ -568,7 +572,7 @@ const SellerOpportunitiesPage = () => {
                   disabled={page === totalPages}
                   className="px-4 py-2 border rounded-lg disabled:opacity-50 hover:bg-gray-50 transition-colors"
                 >
-                  Next
+                  Następna
                 </button>
               </div>
             </div>
@@ -580,13 +584,13 @@ const SellerOpportunitiesPage = () => {
       <div className="mt-12">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
           <h2 className="text-2xl font-bold text-gray-800">
-            Your Cars Available for Offers
+            Twoje Auta Wystawione na Sprzedaż
           </h2>
           <Link
             href="/dashboard/cars/add"
             className="flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
           >
-            <FiPlus className="mr-2" /> Add a Car
+            <FiPlus className="mr-2" /> Dodaj Nowe
           </Link>
         </div>
 
@@ -602,16 +606,17 @@ const SellerOpportunitiesPage = () => {
               </div>
             </div>
             <h3 className="text-xl font-medium text-gray-800 mb-2">
-              No cars listed yet
+              Brak wystawionych samochodów
             </h3>
             <p className="text-gray-500 mb-6">
-              Add cars to your inventory to quickly make offers to buyers.
+              Dodaj samochody do swojego asortymentu, aby szybko składać oferty kupującym.
             </p>
             <Link
               href="/dashboard/cars/add"
               className="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors inline-block font-medium"
             >
-              Add Your First Car
+              Dodaj swój pierwszy samochód
+
             </Link>
           </div>
         ) : (
@@ -646,7 +651,7 @@ const SellerOpportunitiesPage = () => {
                     href={`/dashboard/cars/${car._id}`}
                     className="mt-1 text-blue-600 hover:text-blue-800 text-sm flex items-center font-medium"
                   >
-                    View details <FiArrowRight className="ml-1" />
+                    Pokaż Szczegóły <FiArrowRight className="ml-1" />
                   </Link>
                 </div>
               </div>
@@ -658,7 +663,7 @@ const SellerOpportunitiesPage = () => {
                   href="/dashboard/cars"
                   className="text-blue-600 hover:text-blue-800 font-medium flex items-center"
                 >
-                  View all {userCars.length} cars{" "}
+                  Pokaż Wszystko {userCars.length} Aut
                   <FiArrowRight className="ml-1" />
                 </Link>
               </div>

@@ -173,7 +173,7 @@ export default function CarCard({ car, viewMode = 'grid' }) {
             {car?.isFeatured && (
               <div className="absolute top-2 right-2">
                 <div className="inline-flex items-center gap-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] font-bold px-2 py-1 rounded-md shadow-lg">
-                  <FaTags className="w-3 h-3" /> FEATURED
+                  <FaTags className="w-3 h-3" /> Promowany
                 </div>
               </div>
             )}

@@ -766,7 +766,7 @@ export default function StepTwo({
               disabled={isLoading}
               className="bg-blue-500 text-white px-4 rounded-r h-12 hover:bg-blue-600 transition-colors"
             >
-              {isLoading ? "Loading..." : "Lookup"}
+              {isLoading ? "Ładowanie..." : "Sprawdź"}
             </button>
           </div>
           <p className="text-xs text-gray-500 mt-1">
@@ -797,13 +797,13 @@ export default function StepTwo({
           onClick={prevStep}
           className="bg-gray-500 text-white px-4 py-2 rounded"
         >
-          Back
+          Cofnij
         </button>
         <button
           onClick={handleNext}
           className="bg-blue-500 text-white px-4 py-2 rounded"
         >
-          Next
+          Następna
         </button>
       </div>
     </div>

@@ -49,18 +49,18 @@ export default function DashboardCarsPage() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">My Cars</h1>
+        <h1 className="text-3xl font-bold">Moje Auta</h1>
         <a
           href="/dashboard/cars/add"
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
         >
-          Add New Car
+          Dodaj Nowe
         </a>
       </div>
 
       {cars && cars.length > 0 && cars.some((c) => c.status !== "Approved") && (
         <div className="mb-4 rounded-md border border-yellow-300 bg-yellow-50 p-3 text-yellow-900">
-          Some of your listings are pending review and are not visible on the public website until approved.
+          Niektóre z Twoich ofert oczekują na sprawdzenie i nie będą widoczne  publicznie do momentu zatwierdzenia.
         </div>
       )}
 
@@ -87,16 +87,17 @@ export default function DashboardCarsPage() {
             </svg>
           </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">
-            No cars found
+            Brak wystawionych auta
           </h3>
           <p className="text-gray-500 mb-6">
-            Get started by adding your first car listing.
+            Zacznij od dodania swojego pierwszego ogłoszenia.
           </p>
           <a
             href="/dashboard/cars/add"
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
-            Create Your First Car Listing
+            Utwórz swoje pierwsze ogłoszenie
+
           </a>
         </div>
       ) : (
@@ -107,18 +108,19 @@ export default function DashboardCarsPage() {
               <div className="flex items-center justify-between text-sm">
                 <div>
                   {car.status === "Approved" ? (
-                    <span className="inline-flex items-center px-2 py-1 rounded-md border border-green-200 bg-green-50 text-green-700">Approved • Visible</span>
+                    <span className="inline-flex items-center px-2 py-1 rounded-md border border-green-200 bg-green-50 text-green-700">Zaakceptowany • Widoczny</span>
                   ) : car.status === "Pending" ? (
-                    <span className="inline-flex items-center px-2 py-1 rounded-md border border-yellow-200 bg-yellow-50 text-yellow-700">Pending approval • Not visible</span>
+                    <span className="inline-flex items-center px-2 py-1 rounded-md border border-yellow-200 bg-yellow-50 text-yellow-700">Oczekuje • Niewidoczny</span>
                   ) : (
-                    <span className="inline-flex items-center px-2 py-1 rounded-md border border-red-200 bg-red-50 text-red-700">Rejected • Not visible</span>
+                    <span className="inline-flex items-center px-2 py-1 rounded-md border border-red-200 bg-red-50 text-red-700">Odrzucony • Niewidoczny</span>
                   )}
                 </div>
                 <button
                   onClick={() => handleDelete(car._id)}
                   className="text-red-600 hover:text-red-700"
                 >
-                  Delete
+                  Usuń
+                  {/* Edytuj */}
                 </button>
               </div>
             </div>

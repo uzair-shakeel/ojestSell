@@ -484,7 +484,7 @@ const MessagesPage = () => {
       >
         {/* Sidebar Header */}
         <div className="p-4 border-b border-gray-300 flex justify-between items-center shrink-0">
-          <h2 className="font-semibold text-lg">Messages</h2>
+          <h2 className="font-semibold text-lg">Wiadomości</h2>
           {totalUnread > 0 && (
             <div className="bg-red-500 text-white rounded-full h-6 w-6 flex items-center justify-center text-xs">
               {totalUnread}
@@ -525,12 +525,12 @@ const MessagesPage = () => {
                     {chat.lastMessage ? (
                       <>
                         <span className="font-medium">
-                          {String(chat.lastMessage.sender) === String(myUserId) ? "You: " : ""}
+                          {String(chat.lastMessage.sender) === String(myUserId) ? "Ty: " : ""}
                         </span>
                         {chat.lastMessage.content || "No message content"}
                       </>
                     ) : (
-                      "No messages yet"
+                      "Brak Wiadomości"
                     )}
                   </div>
                   {chat.lastMessage && (
@@ -566,7 +566,7 @@ const MessagesPage = () => {
             </div>
             {selectedChat && selectedChat.carId && (
               <div className="text-xs text-gray-500">
-                Car: {selectedChat.carId.title || "Unknown Car"}
+                Auto: {selectedChat.carId.title || "Brak Auta"}
               </div>
             )}
           </div>
@@ -609,7 +609,7 @@ const MessagesPage = () => {
                         {(String(message.sender) === String(myUserId) ||
                           String(message.senderId) === String(myUserId)) && (
                           <span className="ml-2">
-                            {message.seenBy && message.seenBy.length > 1 ? "Seen" : "Sent"}
+                            {message.seenBy && message.seenBy.length > 1 ? "Przeczytane" : "Wysłane"}
                           </span>
                         )}
                       </div>
@@ -618,17 +618,17 @@ const MessagesPage = () => {
                 ))}
                 {typing && (
                   <div className="text-sm text-gray-500 italic">
-                    {getParticipantName(selectedChat)} is typing...
+                    {getParticipantName(selectedChat)} pisze...
                   </div>
                 )}
                 <div ref={messagesEndRef} className="h-0" />
               </>
             ) : (
-              <p className="text-center text-gray-500">No messages yet</p>
+              <p className="text-center text-gray-500">Brak Wiadomości</p>
             )
           ) : (
             <p className="text-center text-gray-500">
-              Select a chat to start messaging
+              Wybierz czat aby rozpocząć rozmowę
             </p>
           )}
         </div>
@@ -641,7 +641,7 @@ const MessagesPage = () => {
               value={newMessage}
               onChange={handleTyping}
               className="flex-1 p-2 border border-gray-300 rounded-full px-4 text-sm"
-              placeholder="Enter message..."
+              placeholder="Wpisz wiadomość..."
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   handleSendMessage();

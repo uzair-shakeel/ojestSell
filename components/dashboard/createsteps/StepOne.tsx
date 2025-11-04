@@ -87,7 +87,7 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
       }));
     } catch (error) {
       console.error("Error updating image:", error);
-      alert("Failed to update the edited image. Please try again.");
+      alert("Nie udało się załadować edytowanego zdjęcia. Spróbuj ponownie.");
     }
   };
 
@@ -145,7 +145,7 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
     if (e.target.files) {
       const selectedFiles = Array.from(e.target.files);
       if (selectedFiles.length + localData.images.length > 10) {
-        alert("You can upload a maximum of 10 images.");
+        alert("Możesz maksymalnie dodać 10 zdjęć.");
         return;
       }
       setLocalData((prev) => ({
@@ -190,7 +190,7 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
 
   const handleVinLookup = async () => {
     if (!localData.vin || localData.vin.length < 17) {
-      alert("Please enter a valid VIN (17 characters)");
+      alert("Wpisz proszę poprawny VIN (17 znaków)");
       return;
     }
 
@@ -260,9 +260,9 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
 
       // Show success message
       alert(
-        `Car details found!\n\nTitle and description have been generated based on:\n${descriptionParts.join(
+        `Znaleziono dane auta!\n\nTytuł I opis zostały wygenerowane w oparciu o:\n${descriptionParts.join(
           "\n"
-        )}\n\nYou can edit these details if needed.`
+        )}\n\nMożesz zmienić dane jeśli potrzeba.`
       );
     } catch (error: any) {
       console.error("Error fetching car details:", error);
@@ -317,7 +317,7 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
           <div className="flex">
             <input
               type="text"
-              placeholder="Enter VIN to auto-fill all car details"
+              placeholder="Wpisz VIN"
               className="border p-3 w-full rounded-l h-12"
               value={localData.vin}
               onChange={(e) =>
@@ -334,7 +334,7 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
               disabled={isLoading}
               className="bg-blue-500 text-white px-4 rounded-r h-12 hover:bg-blue-600 transition-colors disabled:bg-blue-300"
             >
-              {isLoading ? "Loading..." : "Lookup"}
+              {isLoading ? "Ładowanie..." : "Sprawdź"}
             </button>
           </div>
           <p className="text-xs text-gray-500 mt-1">
