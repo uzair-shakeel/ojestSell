@@ -1,4 +1,13 @@
 "use client";
+const handlePreviewError = () => {
+    try {
+      if (selectedImage) {
+        const fallback = URL.createObjectURL(selectedImage);
+        setPreviewUrl(fallback);
+      }
+    } catch (_) {}
+  };
+
 
 import { useState, useRef, useEffect } from "react";
 import {
@@ -573,25 +582,61 @@ export default function PhotoEnhancer() {
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
-      // Store original image and URL
-      setOriginalImage(file);
+      let working = file;
+      const isHeic = file.type === "image/heic" || file.type === "image/heif" || /\.(heic|heif)$/i.test(file.name);
+      if (isHeic) {
+        try {
+          const bitmap = await createImageBitmap(file);
+          const canvas = document.createElement("canvas");
+          canvas.width = bitmap.width;
+          canvas.height = bitmap.height;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.drawImage(bitmap, 0, 0);
+            const blob = await new Promise((resolve) => canvas.toBlob((b) => resolve(b), "image/jpeg", 0.9));
+            if (blob) {
+              working = new File([blob], file.name.replace(/\.(heic|heif)$/i, ".jpg") || "image.jpg", { type: "image/jpeg", lastModified: Date.now() });
+            }
+          }
+        } catch (_) {
+          try {
+            const g = globalThis;
+            if (!g.heic2any) {
+              await new Promise((resolve, reject) => {
+                const s = document.createElement("script");
+                s.src = "https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js";
+                s.onload = resolve;
+                s.onerror = () => reject(new Error("heic2any load failed"));
+                document.head.appendChild(s);
+              });
+            }
+            if (g.heic2any) {
+              const res = await g.heic2any({ blob: file, toType: "image/jpeg", quality: 0.9 });
+              const out = Array.isArray(res) ? res[0] : res;
+              if (out) {
+                working = new File([out], file.name.replace(/\.(heic|heif)$/i, ".jpg") || "image.jpg", { type: "image/jpeg", lastModified: Date.now() });
+              }
+            }
+          } catch (__) {}
+        }
+      }
 
-      // Set loading state
-      setSelectedImage(file);
+      setOriginalImage(working);
+      setSelectedImage(working);
 
-      // Create and set URL
-      const objectUrl = URL.createObjectURL(file);
-      setOriginalImageUrl(objectUrl);
-      setPreviewUrl(objectUrl);
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ""));
+        reader.onerror = (err) => reject(err);
+        reader.readAsDataURL(working);
+      });
+      setOriginalImageUrl(dataUrl);
+      setPreviewUrl(dataUrl);
 
-      // Check if the uploaded image has transparency
       try {
-        console.log("Checking if uploaded image has transparency...");
-        const hasTransparency = await checkImageTransparency(objectUrl);
-        console.log("Image has transparency:", hasTransparency);
+        const hasTransparency = await checkImageTransparency(dataUrl);
         setImageHasTransparency(hasTransparency);
       } catch (error) {
-        console.error("Error checking image transparency:", error);
         setImageHasTransparency(false);
       }
     }
@@ -2613,7 +2658,45 @@ export default function PhotoEnhancer() {
     try {
       const externalUrl = "https://ojest.pl/detect/detect";
       const fd = new FormData();
-      const optimized = await compressImage(selectedImage, 1000 * 1000, 1920, 0.5);
+      let baseFile = selectedImage;
+      const isHeic = baseFile && (baseFile.type === "image/heic" || baseFile.type === "image/heif" || /\.(heic|heif)$/i.test(baseFile.name));
+      if (isHeic) {
+        try {
+          const bitmap = await createImageBitmap(baseFile);
+          const canvas = document.createElement("canvas");
+          canvas.width = bitmap.width;
+          canvas.height = bitmap.height;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.drawImage(bitmap, 0, 0);
+            const blob = await new Promise((resolve) => canvas.toBlob((b) => resolve(b), "image/jpeg", 0.9));
+            if (blob) {
+              baseFile = new File([blob], baseFile.name.replace(/\.(heic|heif)$/i, ".jpg") || "image.jpg", { type: "image/jpeg", lastModified: Date.now() });
+            }
+          }
+        } catch (_) {
+          try {
+            const g = globalThis;
+            if (!g.heic2any) {
+              await new Promise((resolve, reject) => {
+                const s = document.createElement("script");
+                s.src = "https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js";
+                s.onload = resolve;
+                s.onerror = () => reject(new Error("heic2any load failed"));
+                document.head.appendChild(s);
+              });
+            }
+            if (g.heic2any) {
+              const res = await g.heic2any({ blob: baseFile, toType: "image/jpeg", quality: 0.9 });
+              const out = Array.isArray(res) ? res[0] : res;
+              if (out) {
+                baseFile = new File([out], baseFile.name.replace(/\.(heic|heif)$/i, ".jpg") || "image.jpg", { type: "image/jpeg", lastModified: Date.now() });
+              }
+            }
+          } catch (__) {}
+        }
+      }
+      const optimized = await compressImage(baseFile, 1000 * 1000, 1920, 0.5);
       fd.append("file", optimized, (optimized && optimized.name) || "upload.jpg");
 
       const resp = await fetch(externalUrl, { method: "POST", mode: "cors", headers: { Accept: "application/json" }, body: fd });
@@ -2680,6 +2763,7 @@ export default function PhotoEnhancer() {
                       alt="Preview"
                       className="max-w-full max-h-full object-contain"
                       style={getFilterStyle()}
+                      onError={handlePreviewError}
                     />
                     {/* Vignette effect overlay */}
                     <div

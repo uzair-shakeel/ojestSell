@@ -90,6 +90,69 @@ async function compressImage(
   }
 }
 
+function isHeicFile(file: File) {
+  return (
+    file.type === "image/heic" ||
+    file.type === "image/heif" ||
+    /\.(heic|heif)$/i.test(file.name)
+  );
+}
+
+async function convertHeicToJpeg(file: File): Promise<File> {
+  try {
+    const bitmap = await createImageBitmap(file);
+    const canvas = document.createElement("canvas");
+    canvas.width = bitmap.width;
+    canvas.height = bitmap.height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return file;
+    ctx.drawImage(bitmap, 0, 0);
+    const blob: Blob | null = await new Promise((resolve) =>
+      canvas.toBlob((b) => resolve(b), "image/jpeg", 0.9)
+    );
+    if (!blob) return file;
+    return new File(
+      [blob],
+      file.name.replace(/\.(heic|heif)$/i, ".jpg") || "image.jpg",
+      { type: "image/jpeg", lastModified: Date.now() }
+    );
+  } catch (_) {
+    try {
+      const anyGlobal: any = globalThis as any;
+      if (!anyGlobal.heic2any) {
+        await new Promise<void>((resolve, reject) => {
+          const s = document.createElement("script");
+          s.src = "https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js";
+          s.onload = () => resolve();
+          s.onerror = () => reject(new Error("heic2any failed to load"));
+          document.head.appendChild(s);
+        });
+      }
+      if (anyGlobal.heic2any) {
+        const result: Blob | Blob[] = await anyGlobal.heic2any({ blob: file, toType: "image/jpeg", quality: 0.9 });
+        const outBlob = Array.isArray(result) ? result[0] : result;
+        if (outBlob) {
+          return new File(
+            [outBlob],
+            file.name.replace(/\.(heic|heif)$/i, ".jpg") || "image.jpg",
+            { type: "image/jpeg", lastModified: Date.now() }
+          );
+        }
+      }
+    } catch (_) {}
+    return file;
+  }
+}
+
+function fileToDataURL(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = (e) => reject(e);
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function ImageEditStep({
   nextStep,
   prevStep,
@@ -144,19 +207,28 @@ export default function ImageEditStep({
       return;
     }
 
-    const newPreviews = selectedFiles.map((file) => URL.createObjectURL(file));
-    const images = [...(formData.images || []), ...selectedFiles];
-    const previews = [...(formData.imagePreviews || []), ...newPreviews];
-    updateFormData({ ...formData, images, imagePreviews: previews });
-
-    if (currentCount === 0 && selectedFiles.length > 0) {
-      setActiveImage(selectedFiles[0]);
-      setActiveImageIndex(0);
-      setPreviewUrl(newPreviews[0]);
-    }
-
-    // reset input so same filename can be selected again
-    (e.currentTarget as HTMLInputElement).value = "";
+    const images: File[] = [...(formData.images || [])];
+    const newPreviews: string[] = [...(formData.imagePreviews || [])];
+    const process = async () => {
+      for (const f of selectedFiles) {
+        const converted = isHeicFile(f) ? await convertHeicToJpeg(f) : f;
+        images.push(converted);
+        try {
+          const dataUrl = await fileToDataURL(converted);
+          newPreviews.push(dataUrl);
+        } catch (_) {
+          newPreviews.push("");
+        }
+      }
+      updateFormData({ ...formData, images, imagePreviews: newPreviews });
+      if (currentCount === 0 && images.length > 0) {
+        setActiveImage(images[0]);
+        setActiveImageIndex(0);
+        setPreviewUrl(newPreviews[0]);
+      }
+      (e.currentTarget as HTMLInputElement).value = "";
+    };
+    process();
   };
 
   // Drag & drop reorder state
@@ -405,9 +477,9 @@ export default function ImageEditStep({
     try {
       const externalUrl = "https://ojest.pl/detect/detect";
       const fd = new FormData();
-      // Send original file without compression
-      const toSend = activeImage;
-      fd.append("file", toSend as File, (toSend as File).name || "upload.jpg");
+      const baseFile = isHeicFile(activeImage) ? await convertHeicToJpeg(activeImage) : activeImage;
+      const optimized = await compressImage(baseFile, 600 * 1000, 1600, 0.4);
+      fd.append("file", optimized as File, (optimized as File).name || "upload.jpg");
 
       const resp = await fetch(externalUrl, { method: "POST", mode: "cors", headers: { Accept: "application/json" }, body: fd });
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
@@ -828,7 +900,6 @@ export default function ImageEditStep({
                             alt="Preview"
                             className="max-w-full max-h-full object-contain"
                             style={{ filter: getFilterStyle() }}
-                            crossOrigin="anonymous"
                           />
                         </ReactCrop>
                       ) : (
@@ -841,7 +912,6 @@ export default function ImageEditStep({
                           alt="Preview"
                           className="max-w-full max-h-full object-contain"
                           style={{ filter: getFilterStyle() }}
-                          crossOrigin="anonymous"
                         />
                       )}
                     </div>
