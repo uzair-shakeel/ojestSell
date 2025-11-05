@@ -46,6 +46,61 @@ export default function StepTwo({
     (_, i) => currentYear - i
   );
   const engines = ["0.5", "1.0", "1.5", "2.0", "3.0", "4.0", "5.0", "7.3"];
+  const countries = [
+    "Poland",
+    "Germany",
+    "France",
+    "Italy",
+    "Spain",
+    "United Kingdom",
+    "United States",
+    "Canada",
+    "Japan",
+    "South Korea",
+    "China",
+    "Czech Republic",
+    "Slovakia",
+    "Sweden",
+    "Norway",
+    "Netherlands",
+    "Belgium",
+    "Austria",
+    "Switzerland",
+    "Denmark",
+    "Portugal",
+    "Greece",
+    "Turkey",
+    "Ukraine",
+    "Russia",
+    "Romania",
+    "Hungary",
+    "Bulgaria",
+    "Croatia",
+    "Serbia",
+    "Slovenia",
+    "Lithuania",
+    "Latvia",
+    "Estonia",
+    "Finland",
+    "Ireland",
+    "Iceland",
+    "Australia",
+    "New Zealand",
+    "Mexico",
+    "Brazil",
+    "Argentina",
+    "South Africa",
+    "India",
+    "Thailand",
+    "Malaysia",
+    "Indonesia",
+    "United Arab Emirates",
+    "Saudi Arabia",
+    "Israel",
+    "Egypt",
+    "Morocco",
+    "Tunisia",
+  ];
 
   // Get makes from the hook data
   const makes = makesModelsData?.getMakes() || [];
@@ -560,7 +615,7 @@ export default function StepTwo({
 
         {/* Type */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Typ </label>
+          <label className="block text-gray-700 mb-1">Typ</label>
           <select
             className="border p-3 w-full rounded h-12"
             value={localData.type}
@@ -569,10 +624,20 @@ export default function StepTwo({
             }
           >
             <option value="">Wybierz Typ</option>
-            <option value="Sedan">Sedan</option>
-            <option value="SUV">SUV</option>
-            <option value="Coupe">Coupe</option>
-            <option value="Truck">Truck</option>
+            <option value="Hatchback">hatchback</option>
+            <option value="Sedan">sedan</option>
+            <option value="Kombi">kombi</option>
+            <option value="Coupe">coupe</option>
+            <option value="Sports">sports</option>
+            <option value="Limousine">limousine</option>
+            <option value="SUV">suv</option>
+            <option value="Convertible">convertible</option>
+            <option value="Pickup">pickup</option>
+            <option value="Offroad">offroad</option>
+            <option value="Bus">bus</option>
+            <option value="Classic">classic</option>
+            <option value="Campers">campers</option>
+            <option value="Crossover">Crossover</option>
           </select>
         </div>
 
@@ -777,15 +842,20 @@ export default function StepTwo({
         {/* Country of Origin */}
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1"> Kraj Pochodzenia</label>
-          <input
-            type="text"
-            placeholder="Poland"
+          <select
             className="border p-3 w-full rounded h-12"
             value={localData.country}
             onChange={(e) =>
               setLocalData({ ...localData, country: e.target.value })
             }
-          />
+          >
+            <option value="">Wybierz Kraj</option>
+            {countries.map((country, index) => (
+              <option key={index} value={country}>
+                {country}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Featured Car moved to Step 4 */}
