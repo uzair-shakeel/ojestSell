@@ -98,16 +98,17 @@ export default function SignInTabs() {
             </div>
             <div className="absolute bottom-5 left-5 right-5 w-full max-w-lg">
               {/* Main Quote */}
-              <h2 className="text-6xl font-bold mb-8 leading-tight">
-                Find Your
+              <h2 className="text-5xl font-bold mb-8 leading-tight">
+                Znajdź Swój
+
                 <br />
-                Dream Car
+                Samochód Marzeń
               </h2>
 
               {/* Sub Text */}
               <p className="text-xl font-light opacity-95 leading-relaxed">
-                Join thousands of satisfied customers who found their perfect
-                vehicle on OjestSell. Your trusted marketplace for premium cars.
+                Dołącz do tysięcy zadowolonych użytkowników na najnowszej i najlepszej platformie Ojest. Życzymy udanych handlów
+
               </p>
             </div>
           </div>
@@ -119,11 +120,10 @@ export default function SignInTabs() {
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">
-              Welcome Back
+              Witamy ponownie
             </h1>
             <p className="text-lg text-gray-600">
-              Sign in to access your account and continue your car journey
-            </p>
+Zaloguj się, aby uzyskać dostęp do swojego konta i kontynuować podróż razem z Nami            </p>
           </div>
 
           {/* Tab Navigation */}
@@ -170,7 +170,7 @@ export default function SignInTabs() {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white"
                 placeholder={
                   activeTab === "email"
-                    ? "Enter your email"
+                    ? "Wpisz Swój Email"
                     : "Enter your phone number"
                 }
               />
@@ -181,7 +181,7 @@ export default function SignInTabs() {
                 htmlFor="password"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
-                Password
+                Hasło
               </label>
               <input
                 type="password"
@@ -191,7 +191,7 @@ export default function SignInTabs() {
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white"
-                placeholder="Enter your password"
+                placeholder="Wpisz Swoje Hasło"
               />
             </div>
 
@@ -200,7 +200,7 @@ export default function SignInTabs() {
               disabled={isLoading}
               className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 transition-colors font-medium"
             >
-              {isLoading ? "Signing in..." : "Sign In"}
+              {isLoading ? "Logowanie..." : "Zaloguj"}
             </button>
           </form>
 
@@ -209,7 +209,7 @@ export default function SignInTabs() {
               href="/forgot-password"
               className="text-sm font-medium tracking-wide text-blue-600 hover:text-blue-700 hover:underline"
             >
-              Forgot password?
+              Zapomniałeś Hasła?
             </Link>
           </div>
 
@@ -232,12 +232,12 @@ export default function SignInTabs() {
 
           <div className="mt-8 text-center">
             <p className="text-gray-600">
-              Don't have an account?{" "}
+              Nie masz konta? 
               <Link
                 href="/sign-up"
-                className="text-blue-600 hover:text-blue-700 font-medium"
+                className="text-blue-600 ml-2 hover:text-blue-700 font-medium"
               >
-                Sign up
+                Zarejestruj się
               </Link>
             </p>
           </div>

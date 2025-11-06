@@ -12,19 +12,19 @@ const CATEGORIES = [
     id: 1,
     titleKey: "Luksusowe",
     image: "/luxury.jpg",
-    descriptionKey: "luxuryCarsDesc",
+    descriptionKey: "Doświadcz najwyższego komfortu i stylu",
   },
   {
     id: 2,
     titleKey: "Sportowe",
     image: "/sports.jpg",
-    descriptionKey: "sportsCarsDesc",
+    descriptionKey: "Poczuj dreszcz emocji",
   },
   {
     id: 3,
     titleKey: "Kompakty",
     image: "/classic.jpg",
-    descriptionKey: "classicCarsDesc",
+    descriptionKey: "Ponadczasowa elegancja na kołach",
   },
 ];
 

@@ -337,11 +337,10 @@ export default function AuthTabs() {
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">
-              Join OjestSell
+              Dołącz do Ojest
             </h1>
             <p className="text-lg text-gray-600">
-              Create your account and start your journey with premium vehicles
-            </p>
+Załóż konto i rozpocznij podróż z handlem premium            </p>
           </div>
 
           {/* Tab Navigation */}
@@ -375,7 +374,7 @@ export default function AuthTabs() {
                   htmlFor="firstName"
                   className="block text-sm font-medium text-gray-700 mb-2"
                 >
-                  First Name
+                  Imię
                 </label>
                 <input
                   type="text"
@@ -385,7 +384,7 @@ export default function AuthTabs() {
                   onChange={handleInputChange}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white"
-                  placeholder="First name"
+                  placeholder="Imię"
                 />
               </div>
               <div>
@@ -393,7 +392,7 @@ export default function AuthTabs() {
                   htmlFor="lastName"
                   className="block text-sm font-medium text-gray-700 mb-2"
                 >
-                  Last Name
+                  Nazwisko
                 </label>
                 <input
                   type="text"
@@ -403,7 +402,7 @@ export default function AuthTabs() {
                   onChange={handleInputChange}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white"
-                  placeholder="Last name"
+                  placeholder="Nazwisko"
                 />
               </div>
             </div>
@@ -427,7 +426,7 @@ export default function AuthTabs() {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white"
                 placeholder={
                   activeTab === "email"
-                    ? "Enter your email"
+                    ? "Wpisz Swój Email"
                     : "Enter your phone number"
                 }
               />
@@ -438,7 +437,7 @@ export default function AuthTabs() {
                 htmlFor="password"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
-                Password
+                Hasło
               </label>
               <input
                 type="password"
@@ -448,7 +447,7 @@ export default function AuthTabs() {
                 onChange={handleInputChange}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white"
-                placeholder="Enter your password"
+                placeholder="Wpisz Swoje Hasło"
                 minLength="6"
               />
             </div>
@@ -458,7 +457,7 @@ export default function AuthTabs() {
                 htmlFor="confirmPassword"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
-                Confirm Password
+                Potwierdź Hasło
               </label>
               <input
                 type="password"
@@ -468,7 +467,7 @@ export default function AuthTabs() {
                 onChange={handleInputChange}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white"
-                placeholder="Confirm your password"
+                placeholder="Potwierdź Hasło"
                 minLength="6"
               />
             </div>
@@ -482,11 +481,11 @@ export default function AuthTabs() {
                 className="mt-1 mr-3 h-4 w-4 text-blue-600 border-gray-300 rounded"
               />
               <label htmlFor="terms" className="text-sm text-gray-700">
-                I agree to the
+                Zgadzam  
                 {" "}
-                <a href="/terms" className="text-blue-600 hover:underline">Terms & Conditions</a>
-                {" "}and {" "}
-                <a href="/privacy" className="text-blue-600 hover:underline">Privacy Policy</a>
+                <a href="/terms" className="text-blue-600 hover:underline">się z Regulaminem </a>
+                {" "}i  {" "}
+                <a href="/privacy" className="text-blue-600 hover:underline">Polityką Prywatności</a>
               </label>
             </div>
 
@@ -495,7 +494,7 @@ export default function AuthTabs() {
               disabled={loading}
               className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 transition-colors font-medium"
             >
-              {loading ? "Creating account..." : "Sign Up"}
+              {loading ? "Ładowanie..." : "Zarejestruj"}
             </button>
           </form>
 
@@ -518,12 +517,12 @@ export default function AuthTabs() {
 
           <div className="mt-8 text-center">
             <p className="text-gray-600">
-              Already have an account?{" "}
+              Masz już konto? {" "}
               <Link
                 href="/sign-in"
                 className="text-blue-600 hover:text-blue-700 font-medium"
               >
-                Sign in
+                Zaloguj się
               </Link>
             </p>
           </div>
@@ -559,16 +558,16 @@ export default function AuthTabs() {
                 </div>
               </div>
             </div>
-            <div className="absolute bottom-5 left-5 right-5 w-full max-w-lg">
+            <div className="absolute bottom-5 left-5 right-5 w-full max-w-xl">
               {/* Main Quote */}
-              <h2 className="text-6xl font-bold mb-8 leading-tight">
-                Ready to Find Your Perfect Car?
+              <h2 className="text-5xl font-bold mb-8 leading-tight">
+                Gotowy do profesjonalnego handlu?
               </h2>
 
               {/* Sub Text */}
               <p className="text-xl font-light opacity-95 leading-relaxed">
-                Sign up now and unlock exclusive access to premium vehicles.
-                Fast, simple, and secure.
+                Zarejestruj się już teraz i odblokuj ekskluzywny dostęp do profesjonalnych narzędzi i najlepszych ofert
+
               </p>
             </div>
           </div>

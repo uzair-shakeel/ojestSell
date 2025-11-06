@@ -339,7 +339,7 @@ const BuyerRequestsDashboard = () => {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
         <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl dark:text-white font-bold text-gray-900">
               Panel Zapytań Kupującego
             </h1>
             <p className="text-gray-600 mt-2">

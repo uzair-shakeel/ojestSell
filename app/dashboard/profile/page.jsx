@@ -520,7 +520,7 @@ const ProfileComponent = () => {
             </div>
             <div>
               <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-                Email Address
+                Email
               </label>
               <input
                 type="email"
@@ -590,7 +590,7 @@ const ProfileComponent = () => {
             </div>
             <div>
               <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-                Website Link
+                Strona WWW firmowa Link
               </label>
               <input
                 type="url"
@@ -602,7 +602,7 @@ const ProfileComponent = () => {
             </div>
             <div>
               <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-                Strona WWW firmowa Link
+                LinkedIn Link
               </label>
               <input
                 type="url"

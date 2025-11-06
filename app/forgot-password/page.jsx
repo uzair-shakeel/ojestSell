@@ -35,10 +35,10 @@ export default function ForgotPasswordPage() {
                 </div>
               </div>
             </div>
-            <div className="absolute bottom-5 left-5 right-5 w-full max-w-lg">
-              <h2 className="text-6xl font-bold mb-8 leading-tight">Reset Access</h2>
+            <div className="absolute bottom-5 left-5 right-5 w-full max-w-xl">
+              <h2 className="text-5xl font-bold mb-8 leading-tight">Resetowanie dostępu</h2>
               <p className="text-xl font-light opacity-95 leading-relaxed">
-                Enter your email and we’ll send you a secure link to reset your password.
+                Podaj swój adres e-mail, a wyślemy Ci bezpieczny link do zresetowania hasła.
               </p>
             </div>
           </div>
@@ -49,14 +49,14 @@ export default function ForgotPasswordPage() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">Forgot password</h1>
-            <p className="text-base text-gray-600">We’ll email you a password reset link</p>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">Zapomniałeś hasła</h1>
+            <p className="text-base text-gray-600">Wyślemy Ci link do zresetowania hasła</p>
           </div>
 
           <form onSubmit={onSubmit} className="space-y-5">
             <div>
               <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2 tracking-wide">
-                Email address
+                Email
               </label>
               <input
                 id="email"
@@ -73,7 +73,7 @@ export default function ForgotPasswordPage() {
               disabled={loading}
               className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 font-medium tracking-wide"
             >
-              {loading ? "Sending..." : "Send reset link"}
+              {loading ? "Ładowanie..." : "Wyślij Link"}
             </button>
           </form>
         </div>
