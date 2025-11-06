@@ -14,7 +14,7 @@ export function BrowseCategories() {
     () => [
       {
         id: "de",
-        name: "Germany",
+        name: "Niemcy",
         flag: "https://flagcdn.com/w80/de.png",
         bg: "https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?q=80&w=1600&auto=format&fit=crop",
         carImgs: [
@@ -26,7 +26,7 @@ export function BrowseCategories() {
       },
       {
         id: "jp",
-        name: "Japan",
+        name: "Japonia",
         flag: "https://flagcdn.com/w80/jp.png",
         bg: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1600&auto=format&fit=crop",
         carImgs: [
@@ -38,31 +38,31 @@ export function BrowseCategories() {
       },
       {
         id: "us",
-        name: "United States",
+        name: "USA",
         flag: "https://flagcdn.com/w80/us.png",
         bg: "https://images.unsplash.com/photo-1523986371872-9d3ba2e2f642?q=80&w=1600&auto=format&fit=crop",
         carImgs: [
           "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?q=80&w=1600&auto=format&fit=crop",
           "https://images.unsplash.com/photo-1517940310602-18534a36f706?q=80&w=1600&auto=format&fit=crop",
         ],
-        query: { origin: "usa" },
+        query: { origin: "united-states" },
         tagline: "Power & Presence",
       },
       {
         id: "gb",
-        name: "United Kingdom",
+        name: "Wielka Brytania",
         flag: "https://flagcdn.com/w80/gb.png",
         bg: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1600&auto=format&fit=crop",
         carImgs: [
           "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?q=80&w=1600&auto=format&fit=crop",
           "https://images.unsplash.com/photo-1517940310602-18534a36f706?q=80&w=1600&auto=format&fit=crop",
         ],
-        query: { origin: "uk" },
+        query: { origin: "united-kingdom" },
         tagline: "Luxury Heritage",
       },
       {
         id: "it",
-        name: "Italy",
+        name: "Włochy",
         flag: "https://flagcdn.com/w80/it.png",
         bg: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?q=80&w=1600&auto=format&fit=crop",
         carImgs: [
@@ -73,7 +73,7 @@ export function BrowseCategories() {
       },
       {
         id: "fr",
-        name: "France",
+        name: "Francja",
         flag: "https://flagcdn.com/w80/fr.png",
         bg: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1600&auto=format&fit=crop",
         carImgs: [
@@ -84,7 +84,7 @@ export function BrowseCategories() {
       },
       {
         id: "kr",
-        name: "South Korea",
+        name: "Korea Południowa",
         flag: "https://flagcdn.com/w80/kr.png",
         bg: "https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?q=80&w=1600&auto=format&fit=crop",
         carImgs: [
@@ -95,7 +95,7 @@ export function BrowseCategories() {
       },
       {
         id: "se",
-        name: "Sweden",
+        name: "Szwecja",
         flag: "https://flagcdn.com/w80/se.png",
         bg: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=1600&auto=format&fit=crop",
         carImgs: [
@@ -106,7 +106,7 @@ export function BrowseCategories() {
       },
       {
         id: "cn",
-        name: "China",
+        name: "Chiny",
         flag: "https://flagcdn.com/w80/cn.png",
         bg: "https://images.unsplash.com/photo-1549924231-f129b911e442?q=80&w=1600&auto=format&fit=crop",
         carImgs: [
@@ -118,7 +118,7 @@ export function BrowseCategories() {
       },
       {
         id: "pl",
-        name: "Poland",
+        name: "Polska",
         flag: "https://flagcdn.com/w80/pl.png",
         bg: "https://images.unsplash.com/photo-1523986371872-9d3ba2e2f642?q=80&w=1600&auto=format&fit=crop",
         carImgs: [

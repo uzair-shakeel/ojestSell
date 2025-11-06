@@ -102,6 +102,61 @@ export default function StepTwo({
     "Tunisia",
   ];
 
+  // Map English country names to Polish display labels
+  const countryLabels: Record<string, string> = {
+    Poland: "Polska",
+    Germany: "Niemcy",
+    France: "Francja",
+    Italy: "Włochy",
+    Sweden: "Szwecja",
+    "United Kingdom": "Wielka Brytania",
+    China: "Chiny",
+    "South Korea": "Korea Południowa",
+    Japan: "Japonia",
+    Russia: "Rosja",
+    "Czech Republic": "Czechy",
+    Netherlands: "Holandia",
+    Spain: "Hiszpania",
+    Canada: "Kanada",
+    Norway: "Norwegia",
+    Austria: "Austria",
+    Switzerland: "Szwajcaria",
+    Denmark: "Dania",
+    Portugal: "Portugalia",
+    Greece: "Grecja",
+    Turkey: "Turcja",
+    Ukraine: "Ukraina",
+    Romania: "Rumunia",
+    Hungary: "Węgry",
+    Bulgaria: "Bułgaria",
+    Croatia: "Chorwacja",
+    Serbia: "Serbia",
+    Slovenia: "Słowenia",
+    Lithuania: "Litwa",
+    Latvia: "Łotwa",
+    Estonia: "Estonia",
+    Finland: "Finlandia",
+    Ireland: "Irlandia",
+    Iceland: "Islandia",
+    Australia: "Australia",
+    "New Zealand": "Nowa Zelandia",
+    Mexico: "Meksyk",
+    Brazil: "Brazylia",
+    Argentina: "Argentyna",
+    "South Africa": "Republika Południowej Afryki",
+    India: "Indie",
+    Thailand: "Tajlandia",
+    Malaysia: "Malezja",
+    Indonesia: "Indonezja",
+    "United Arab Emirates": "Zjednoczone Emiraty Arabskie",
+    "Saudi Arabia": "Arabia Saudyjska",
+    Israel: "Izrael",
+    Egypt: "Egipt",
+    Morocco: "Maroko",
+    Tunisia: "Tunezja",
+    "United States": "USA",
+  };
+
   // Get makes from the hook data
   const makes = makesModelsData?.getMakes() || [];
 
@@ -852,7 +907,7 @@ export default function StepTwo({
             <option value="">Wybierz Kraj</option>
             {countries.map((country, index) => (
               <option key={index} value={country}>
-                {country}
+                {countryLabels[country] || country}
               </option>
             ))}
           </select>
