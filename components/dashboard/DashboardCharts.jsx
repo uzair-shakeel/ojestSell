@@ -31,11 +31,17 @@ export default function DashboardCharts({
   recentCars = [],
   chatsCountByDay = [],
 }) {
+  const fmt = (d) => {
+    const date = new Date(d);
+    const dd = String(date.getDate()).padStart(2, "0");
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const yy = String(date.getFullYear()).slice(-2);
+    return `${dd}/${mm}/${yy}`;
+  };
+
   const carLabels = useMemo(() => {
     const items = recentCars.slice(-7);
-    return items.map((c) =>
-      new Date(c.createdAt || c.updatedAt).toLocaleDateString()
-    );
+    return items.map((c) => fmt(c.createdAt || c.updatedAt));
   }, [recentCars]);
 
   const carCounts = useMemo(() => {
@@ -69,7 +75,7 @@ export default function DashboardCharts({
   }, [carLabels, carCounts]);
 
   const barLabels = useMemo(
-    () => chatsCountByDay.map((d) => d.label),
+    () => chatsCountByDay.map((d) => fmt(d.label || d.date || d)),
     [chatsCountByDay]
   );
   const barCounts = useMemo(
@@ -120,8 +126,9 @@ export default function DashboardCharts({
       Approved: { bg: "rgba(16, 185, 129, 0.9)", border: "#10b981" },
       Rejected: { bg: "rgba(244, 63, 94, 0.9)", border: "#f43f5e" },
     };
+    const pl = { Approved: "Zatwierdzone", Rejected: "Odrzucone" };
     return {
-      labels,
+      labels: labels.map((k) => pl[k] || k),
       datasets: [
         {
           label: "Status",

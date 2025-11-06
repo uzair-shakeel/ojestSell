@@ -2,7 +2,25 @@
 import Avatar from "../both/Avatar";
 
 export default function RecentChats({ chats = [] }) {
-  const items = Array.isArray(chats) ? chats.slice(-6) : [];
+  const fmt = (d) => {
+    const date = new Date(d);
+    const dd = String(date.getDate()).padStart(2, "0");
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const yy = String(date.getFullYear()).slice(-2);
+    const hh = String(date.getHours()).padStart(2, "0");
+    const mi = String(date.getMinutes()).padStart(2, "0");
+    return `${dd}/${mm}/${yy} ${hh}:${mi}`;
+  };
+
+  const items = Array.isArray(chats)
+    ? [...chats]
+        .sort((a, b) => {
+          const ta = new Date(a?.lastMessage?.timestamp || a?.updatedAt || 0).getTime();
+          const tb = new Date(b?.lastMessage?.timestamp || b?.updatedAt || 0).getTime();
+          return tb - ta;
+        })
+        .slice(0, 6)
+    : [];
 
   return (
     <div className="p-4 bg-white dark:bg-gray-800800800800800 shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 transition-colors duration-300">
@@ -27,10 +45,11 @@ export default function RecentChats({ chats = [] }) {
               other.email
             : "Unknown";
           const avatar = other?.image || other?.profilePicture || null;
-          const preview = chat?.lastMessage?.text || "No messages yet";
-          const time = new Date(
-            chat?.updatedAt || chat?.lastMessage?.timestamp || Date.now()
-          ).toLocaleString();
+          const preview =
+            chat?.lastMessage?.text || chat?.lastMessage?.content || "No messages yet";
+          const time = fmt(
+            chat?.lastMessage?.timestamp || chat?.updatedAt || Date.now()
+          );
           return (
             <div
               key={chat?._id || chat?.id || time}

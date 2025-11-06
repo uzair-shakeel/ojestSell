@@ -13,10 +13,23 @@ export default function Providers({ children }) {
           {children}
 
           <Toaster
-            position="top-right"
-            containerClassName="pointer-events-none fixed inset-0 z-0"
+            position="top-center"
+            containerClassName="pointer-events-none fixed inset-0 z-[9999]"
             toastOptions={{
-              className: "pointer-events-auto",
+              // Base style
+              className:
+                "pointer-events-auto rounded-xl shadow-lg ring-1 ring-black/10 dark:ring-white/10 bg-white/95 dark:bg-gray-900/95 text-gray-900 dark:text-gray-100 backdrop-blur px-4 py-3",
+              duration: 3500,
+              success: {
+                className:
+                  "pointer-events-auto rounded-xl shadow-lg ring-1 ring-emerald-200/60 dark:ring-emerald-400/30 bg-emerald-50/90 dark:bg-emerald-900/30 text-emerald-900 dark:text-emerald-100",
+                iconTheme: { primary: "#10b981", secondary: "#ffffff" },
+              },
+              error: {
+                className:
+                  "pointer-events-auto rounded-xl shadow-lg ring-1 ring-rose-200/60 dark:ring-rose-400/30 bg-rose-50/90 dark:bg-rose-900/30 text-rose-900 dark:text-rose-100",
+                iconTheme: { primary: "#f43f5e", secondary: "#ffffff" },
+              },
             }}
           />
 
@@ -24,7 +37,7 @@ export default function Providers({ children }) {
           <style jsx global>{`
             #_rht_toaster {
               pointer-events: none !important;
-              z-index: 0 !important;
+              z-index: 9999 !important;
             }
             #_rht_toaster > * {
               pointer-events: auto !important;

@@ -43,6 +43,23 @@ const MessagesPage = () => {
   // Helper: current user ID across backends (_id or id)
   const myUserId = user?.id || user?._id;
 
+  // Date/Time formatters: DD/MM/YY and 24-hour HH:mm
+  const fmtDateTime = (d) => {
+    const date = new Date(d);
+    const dd = String(date.getDate()).padStart(2, "0");
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const yy = String(date.getFullYear()).slice(-2);
+    const hh = String(date.getHours()).padStart(2, "0");
+    const mi = String(date.getMinutes()).padStart(2, "0");
+    return `${dd}/${mm}/${yy} ${hh}:${mi}`;
+  };
+  const fmtTime = (d) => {
+    const date = new Date(d);
+    const hh = String(date.getHours()).padStart(2, "0");
+    const mi = String(date.getMinutes()).padStart(2, "0");
+    return `${hh}:${mi}`;
+  };
+
   // Generate temporary ID for optimistic updates
   const generateTempId = () =>
     `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -93,17 +110,22 @@ const MessagesPage = () => {
         const data = await response.json();
         console.log("Initial chats data:", data);
         const chatsArray = Array.isArray(data) ? data : data.chats || [];
-        setChats(chatsArray);
+        const sortedChats = [...chatsArray].sort((a, b) => {
+          const ta = new Date(a?.lastMessage?.timestamp || a?.updatedAt || 0).getTime();
+          const tb = new Date(b?.lastMessage?.timestamp || b?.updatedAt || 0).getTime();
+          return tb - ta;
+        });
+        setChats(sortedChats);
         // totalUnread may be computed on server or we compute locally
-        const initialUnread = chatsArray.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
+        const initialUnread = sortedChats.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
         setTotalUnread(typeof data.totalUnread === "number" ? data.totalUnread : initialUnread);
-        if (chatsArray.length > 0) {
+        if (sortedChats.length > 0) {
           const targetId = searchParams?.get("chatId");
           if (targetId) {
-            const match = chatsArray.find((c) => String(c._id) === String(targetId));
-            setSelectedChat(match || chatsArray[0]);
+            const match = sortedChats.find((c) => String(c._id) === String(targetId));
+            setSelectedChat(match || sortedChats[0]);
           } else {
-            setSelectedChat(chatsArray[0]);
+            setSelectedChat(sortedChats[0]);
           }
         }
       } catch (err) {
@@ -127,7 +149,12 @@ const MessagesPage = () => {
     // Listen for chat updates (if emitted by backend elsewhere)
     socket.on("updatedChats", (updatedChats) => {
       console.log("Received updated chats:", updatedChats);
-      setChats(updatedChats || []);
+      const sorted = [...(updatedChats || [])].sort((a, b) => {
+        const ta = new Date(a?.lastMessage?.timestamp || a?.updatedAt || 0).getTime();
+        const tb = new Date(b?.lastMessage?.timestamp || b?.updatedAt || 0).getTime();
+        return tb - ta;
+      });
+      setChats(sorted);
 
       // Calculate total unread manually from chat data
       const newTotalUnread = (updatedChats || []).reduce((sum, chat) => {
@@ -535,12 +562,7 @@ const MessagesPage = () => {
                   </div>
                   {chat.lastMessage && (
                     <div className="text-xs text-gray-400">
-                      {new Date(chat.lastMessage.timestamp).toLocaleString([], {
-                        month: "short",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      {fmtDateTime(chat.lastMessage.timestamp)}
                     </div>
                   )}
                 </div>
@@ -602,10 +624,7 @@ const MessagesPage = () => {
                         )}
                       {message.text || message.content}
                       <div className="text-right text-[10px] text-gray-500 mt-1">
-                        {new Date(message.createdAt).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
+                        {fmtTime(message.createdAt)}
                         {(String(message.sender) === String(myUserId) ||
                           String(message.senderId) === String(myUserId)) && (
                           <span className="ml-2">
