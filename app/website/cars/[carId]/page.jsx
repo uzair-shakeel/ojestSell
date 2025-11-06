@@ -664,7 +664,7 @@ const Page = () => {
                       const type =
                         seller?.sellerType || car?.financialInfo?.sellerType;
                       if (!type) return "Unknown Seller Type";
-                      return type === "company" ? "Company" : "Private Seller";
+                      return type === "company" ? "Firma" : "Sprzedawca prywatny";
                     })()}
                   </p>
                   <div className="flex justify-start items-center space-x-2">
@@ -698,7 +698,7 @@ const Page = () => {
                   className="w-full border py-3 rounded-md font-semibold bg-blue-500 flex items-center justify-center space-x-2"
                   onClick={callSeller}
                 >
-                  <span className="text-white">Call</span>
+                  <span className="text-white">Zadzwoń</span>
                 </button>
               </div>
               {socialMediaLinks.length > 0 && (

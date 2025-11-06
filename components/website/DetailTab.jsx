@@ -81,7 +81,7 @@ const DetailTab = ({ cardetails }) => {
   return (
     <div>
       <div>
-        <p className="font-medium text-black dark:text-white uppercase transition-colors duration-300">Description</p>
+        <p className="font-medium text-black dark:text-white uppercase transition-colors duration-300">Opis</p>
         <p className="text-gray-700 dark:text-gray-300 transition-colors duration-300">
           {showMore ? fullText : previewText}
           {shouldTruncate && (
@@ -89,7 +89,7 @@ const DetailTab = ({ cardetails }) => {
               className="text-blue-500 dark:text-blue-400 ml-2 underline transition-colors duration-300"
               onClick={() => setShowMore(!showMore)}
             >
-              {showMore ? "Show Less" : "Show More"}
+              {showMore ? "Pokaż mniej" : "Pokaż więcej"}
             </button>
           )}
         </p>
@@ -102,6 +102,10 @@ const DetailTab = ({ cardetails }) => {
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Model</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">{cardetails.model}</p>
+        </div>
+        <div className="grid sm:grid-cols-1 w-full">
+          <p className="text-xs uppercase">Typ</p>{" "}
+          <p className="font-medium text-black dark:text-white transition-colors duration-300">{cardetails.type}</p>
         </div>
         <div className="grid sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Rok</p>{" "}
