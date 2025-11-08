@@ -4,12 +4,14 @@ import { LanguageProvider } from "../lib/i18n/LanguageContext";
 import { AuthProvider } from "../lib/auth/AuthContext";
 import { ThemeProvider } from "../lib/theme/ThemeContext";
 import { Toaster } from "react-hot-toast";
+import { NotificationsProvider } from "../lib/notifications/NotificationsContext";
 
 export default function Providers({ children }) {
   return (
     <ThemeProvider>
       <LanguageProvider>
         <AuthProvider>
+          <NotificationsProvider>
           {children}
 
           <Toaster
@@ -43,6 +45,7 @@ export default function Providers({ children }) {
               pointer-events: auto !important;
             }
           `}</style>
+          </NotificationsProvider>
         </AuthProvider>
       </LanguageProvider>
     </ThemeProvider>

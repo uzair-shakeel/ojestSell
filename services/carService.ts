@@ -110,16 +110,50 @@ export const addCar = async (
     if (!token) {
       throw new Error("No authentication token found");
     }
-
-    const response = await axios.post(`${API_BASE_URL}/cars`, carData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return response.data;
+    // Primary attempt: Next proxy or same-origin API
+    try {
+      const response = await axios.post(`${API_BASE_URL}/cars`, carData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+    } catch (primaryError: any) {
+      // Log details and try backend fallback
+      console.error("addCar primary endpoint failed", {
+        url: `${API_BASE_URL}/cars`,
+        status: primaryError?.response?.status,
+        data: primaryError?.response?.data,
+        message: primaryError?.message,
+      });
+      try {
+        const fb = await axios.post(`${BACKEND_BASE}/cars`, carData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        return fb.data;
+      } catch (fallbackError: any) {
+        console.error("addCar backend fallback failed", {
+          url: `${BACKEND_BASE}/cars`,
+          status: fallbackError?.response?.status,
+          data: fallbackError?.response?.data,
+          message: fallbackError?.message,
+        });
+        // Prefer server message if provided
+        const serverMsg =
+          fallbackError?.response?.data?.message ||
+          primaryError?.response?.data?.message;
+        throw new Error(serverMsg || "Server error");
+      }
+    }
   } catch (error: any) {
-    throw new Error(error?.response?.data?.message || "Failed to add car");
+    // Last resort error path
+    throw new Error(
+      error?.response?.data?.message || error?.message || "Failed to add car"
+    );
   }
 };
 

@@ -205,6 +205,23 @@ export default function MultiStepForm() {
     });
 
     try {
+      // Ensure car condition enums are sent in English
+      const plToEn: Record<string, string> = {
+        "Nowy": "New",
+        "Bardzo Dobry": "Very Good",
+        "Dobry": "Good",
+        "Normalny": "Normal",
+        "Zły": "Bad",
+      };
+      const norm = (v: any) => (typeof v === "string" && plToEn[v] ? plToEn[v] : v || "");
+      const normalizedCondition = {
+        interior: norm(formData.condition?.interior),
+        mechanical: norm(formData.condition?.mechanical),
+        paintandBody: norm(formData.condition?.paintandBody),
+        frameandUnderbody: norm(formData.condition?.frameandUnderbody),
+        overall: norm(formData.condition?.overall),
+      };
+
       const carData = {
         title: formData.title,
         description: formData.description,
@@ -226,7 +243,7 @@ export default function MultiStepForm() {
         vin: formData.vin,
         country: formData.country,
         isFeatured: formData.isFeatured,
-        carCondition: formData.condition,
+        carCondition: normalizedCondition,
         location: formData.location,
         financialInfo: {
           sellOptions: Array.isArray(formData.financialInfo.sellOptions)
@@ -239,6 +256,7 @@ export default function MultiStepForm() {
           priceNetto: parseFloat(formData.financialInfo.priceNetto),
         },
         images: formData.images,
+        createdBy: formData.createdBy || userId || "",
       };
 
       const formDataToSend = new FormData();
@@ -251,27 +269,23 @@ export default function MultiStepForm() {
           formDataToSend.append("location", JSON.stringify(carData[key]));
         } else if (key === "financialInfo") {
           for (const financialKey in carData[key]) {
-            if (
-              financialKey === "sellOptions" ||
-              financialKey === "invoiceOptions"
-            ) {
-              // Append arrays as comma-separated strings or empty string if empty
-              formDataToSend.append(
-                `financialInfo[${financialKey}]`,
-                Array.isArray(carData[key][financialKey])
-                  ? carData[key][financialKey].join(",")
-                  : ""
-              );
+            if (financialKey === "sellOptions" || financialKey === "invoiceOptions") {
+              const arr = Array.isArray(carData[key][financialKey]) ? carData[key][financialKey] : [];
+              arr.forEach((val: string) => {
+                formDataToSend.append(`financialInfo[${financialKey}][]`, val);
+              });
             } else {
               formDataToSend.append(
                 `financialInfo[${financialKey}]`,
-                carData[key][financialKey] || ""
+                carData[key][financialKey] ?? ""
               );
             }
           }
         } else if (key === "isFeatured") {
           // Ensure boolean is sent as string
           formDataToSend.append("isFeatured", String(carData[key]));
+        } else if (key === "createdBy") {
+          formDataToSend.append("createdBy", String(carData[key] || ""));
         } else if (key === "carCondition") {
           for (const conditionKey in carData[key]) {
             formDataToSend.append(
@@ -313,6 +327,18 @@ export default function MultiStepForm() {
         );
       }
       await addCar(formDataToSend, getToken);
+      try {
+        window.dispatchEvent(
+          new CustomEvent("ojest:notify", {
+            detail: {
+              type: "car",
+              title: "Car created",
+              body: formData.title || "New listing submitted",
+              meta: { createdAt: Date.now() },
+            },
+          })
+        );
+      } catch {}
       setShowSuccessModal(true);
     } catch (err) {
       setError(err.message || "Failed to create car. Please try again.");

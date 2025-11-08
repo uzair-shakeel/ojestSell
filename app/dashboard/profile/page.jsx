@@ -13,7 +13,7 @@ import { toast } from "react-hot-toast";
 
 const ProfileComponent = () => {
   const { userId, updateUserState, changePassword } = useAuth();
-  console.log("userId", userId);
+  // console.log("userId", userId);
   const [user, setUser] = useState(null);
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 

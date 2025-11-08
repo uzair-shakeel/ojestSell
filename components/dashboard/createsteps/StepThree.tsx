@@ -2,15 +2,32 @@
 import { useState } from "react";
 
 export default function StepThree({ nextStep, prevStep, updateFormData, formData }) {
-  const [localData, setLocalData] = useState({
-    interior: formData.condition.interior,
-    mechanical: formData.condition.mechanical,
-    paintandBody: formData.condition.paintandBody,
-    frameandUnderbody: formData.condition.frameandUnderbody,
-    overall: formData.condition.overall,
-  });
+  // Polish label -> English enum value mapping expected by backend
+  const CONDITION_OPTS = [
+    { label: "Nowy", value: "New" },
+    { label: "Bardzo Dobry", value: "Very Good" },
+    { label: "Dobry", value: "Good" },
+    { label: "Normalny", value: "Normal" },
+    { label: "Zły", value: "Bad" },
+  ];
+  const plToEn: Record<string, string> = {
+    "Nowy": "New",
+    "Bardzo Dobry": "Very Good",
+    "Dobry": "Good",
+    "Normalny": "Normal",
+    "Zły": "Bad",
+  };
 
-  const conditionOptions = ["Nowy", "Bardzo Dobry", "Dobry", "Normalny", "Zły"];
+  const normalize = (v: string) => (plToEn[v] ? plToEn[v] : v || "");
+
+  const [localData, setLocalData] = useState({
+    // Ensure ENGLISH values are stored
+    interior: normalize(formData.condition.interior),
+    mechanical: normalize(formData.condition.mechanical),
+    paintandBody: normalize(formData.condition.paintandBody),
+    frameandUnderbody: normalize(formData.condition.frameandUnderbody),
+    overall: normalize(formData.condition.overall),
+  });
 
   const handleNext = () => {
     updateFormData({ condition: localData });
@@ -30,9 +47,9 @@ export default function StepThree({ nextStep, prevStep, updateFormData, formData
             onChange={(e) => setLocalData({ ...localData, interior: e.target.value })}
           >
             <option value="">Wybierz Stan Wnętrza</option>
-            {conditionOptions.map((option, index) => (
-              <option key={index} value={option}>
-                {option}
+            {CONDITION_OPTS.map((opt, index) => (
+              <option key={index} value={opt.value}>
+                {opt.label}
               </option>
             ))}
           </select>
@@ -47,9 +64,9 @@ export default function StepThree({ nextStep, prevStep, updateFormData, formData
             onChange={(e) => setLocalData({ ...localData, mechanical: e.target.value })}
           >
             <option value="">Wybierz Stan Mechaniczny</option>
-            {conditionOptions.map((option, index) => (
-              <option key={index} value={option}>
-                {option}
+            {CONDITION_OPTS.map((opt, index) => (
+              <option key={index} value={opt.value}>
+                {opt.label}
               </option>
             ))}
           </select>
@@ -63,10 +80,10 @@ export default function StepThree({ nextStep, prevStep, updateFormData, formData
             value={localData.paintandBody}
             onChange={(e) => setLocalData({ ...localData, paintandBody: e.target.value })}
           >
-            <option value="">Select Condition</option>
-            {conditionOptions.map((option, index) => (
-              <option key={index} value={option}>
-                {option}
+            <option value="">Wybierz Stan Lakieru i Karoserii</option>
+            {CONDITION_OPTS.map((opt, index) => (
+              <option key={index} value={opt.value}>
+                {opt.label}
               </option>
             ))}
           </select>
@@ -80,10 +97,10 @@ export default function StepThree({ nextStep, prevStep, updateFormData, formData
             value={localData.frameandUnderbody}
             onChange={(e) => setLocalData({ ...localData, frameandUnderbody: e.target.value })}
           >
-            <option value="">Select Condition</option>
-            {conditionOptions.map((option, index) => (
-              <option key={index} value={option}>
-                {option}
+            <option value="">Wybierz Stan Ramy i Podwozia</option>
+            {CONDITION_OPTS.map((opt, index) => (
+              <option key={index} value={opt.value}>
+                {opt.label}
               </option>
             ))}
           </select>
@@ -97,10 +114,10 @@ export default function StepThree({ nextStep, prevStep, updateFormData, formData
             value={localData.overall}
             onChange={(e) => setLocalData({ ...localData, overall: e.target.value })}
           >
-            <option value="">Select Condition</option>
-            {conditionOptions.map((option, index) => (
-              <option key={index} value={option}>
-                {option}
+            <option value="">Wybierz Stan Ogólny</option>
+            {CONDITION_OPTS.map((opt, index) => (
+              <option key={index} value={opt.value}>
+                {opt.label}
               </option>
             ))}
           </select>

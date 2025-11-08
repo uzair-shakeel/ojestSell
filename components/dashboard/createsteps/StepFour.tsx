@@ -2,16 +2,50 @@
 import { useState } from "react";
 
 export default function StepFour({ nextStep, prevStep, updateFormData, formData }) {
+  // Polish label -> English value mappings expected by backend
+  const SELL_OPTIONS = [
+    { label: "Wynajem długoterminowy", value: "Long term rental" },
+    { label: "Leasing", value: "Lease" },
+    { label: "Finansowanie/Kredyt", value: "Financing" },
+    { label: "Gotówka", value: "Cash" },
+  ];
+  const INVOICE_OPTIONS = [
+    { label: "Faktura", value: "Invoice" },
+    { label: "Faktura VAT", value: "Invoice VAT" },
+    { label: "Umowa Kupna Sprzedaży", value: "Selling Agreement" },
+  ];
+
+  const polishToEnglishSell: Record<string, string> = {
+    "Wynajem długoterminowy": "Long term rental",
+    Leasing: "Lease",
+    "Finansowanie/Kredyt": "Financing",
+    "Gotówka": "Cash",
+    // Remove unsupported: Crypto (no mapping)
+  };
+  const polishToEnglishInvoice: Record<string, string> = {
+    "Faktura": "Invoice",
+    "Faktura Vat Marża": "Invoice VAT",
+    "Faktura VAT": "Invoice VAT",
+    "Umowa Kupna Sprzedaży": "Selling Agreement",
+  };
+
+  const normalizeValues = (arr: any[], map: Record<string, string>) =>
+    (Array.isArray(arr) ? arr : [])
+      .map((v) => (map[v] ? map[v] : v))
+      .filter((v) => typeof v === "string");
+
   const [localData, setLocalData] = useState({
-    sellOptions: Array.isArray(formData.financialInfo.sellOptions) ? formData.financialInfo.sellOptions : [],
-    invoiceOptions: Array.isArray(formData.financialInfo.invoiceOptions) ? formData.financialInfo.invoiceOptions : [],
+    // Ensure we store ENGLISH values
+    sellOptions: normalizeValues(formData.financialInfo.sellOptions, polishToEnglishSell),
+    invoiceOptions: normalizeValues(formData.financialInfo.invoiceOptions, polishToEnglishInvoice),
     sellerType: formData.financialInfo.sellerType || "private",
     priceNetto: formData.financialInfo.priceNetto || "",
     isFeatured: formData.isFeatured || false,
   });
 
-  const sellOptionsList = ["Wynajem długoterminowy", "Leasing", "Finansowanie/Kredyt", "Gotówka", "Crypto"];
-  const invoiceOptionsList = ["Faktura", "Faktura Vat Marża", "Umowa Kupna Sprzedaży"];
+  // UI lists: show Polish labels but toggle English values in state
+  const sellOptionsList = SELL_OPTIONS;
+  const invoiceOptionsList = INVOICE_OPTIONS;
 
   const handleCheckboxChange = (category: "sellOptions" | "invoiceOptions", value: string) => {
     setLocalData((prev) => {
@@ -35,7 +69,7 @@ export default function StepFour({ nextStep, prevStep, updateFormData, formData 
       alert("Please enter the price.");
       return;
     }
-    console.log("Updating formData with:", localData);
+    console.log("Updating formData with (english values):", localData);
     // Persist financial info and isFeatured into parent formData
     const { isFeatured, ...financialLocal } = localData as any;
     updateFormData({ 
@@ -58,11 +92,11 @@ export default function StepFour({ nextStep, prevStep, updateFormData, formData 
             <label key={index} className="flex items-center space-x-2">
               <input
                 type="checkbox"
-                checked={localData.sellOptions.includes(option)}
-                onChange={() => handleCheckboxChange("sellOptions", option)}
+                checked={localData.sellOptions.includes(option.value)}
+                onChange={() => handleCheckboxChange("sellOptions", option.value)}
                 className="h-5 w-5"
               />
-              <span>{option}</span>
+              <span>{option.label}</span>
             </label>
           ))}
         </div>
@@ -77,18 +111,18 @@ export default function StepFour({ nextStep, prevStep, updateFormData, formData 
             <label key={index} className="flex items-center space-x-2">
               <input
                 type="checkbox"
-                checked={localData.invoiceOptions.includes(option)}
-                onChange={() => handleCheckboxChange("invoiceOptions", option)}
+                checked={localData.invoiceOptions.includes(option.value)}
+                onChange={() => handleCheckboxChange("invoiceOptions", option.value)}
                 className="h-5 w-5"
               />
-              <span>{option}</span>
+              <span>{option.label}</span>
             </label>
           ))}
         </div>
       </div>
 
       <div className="mb-4">
-        {localData.invoiceOptions.includes("Faktura Vat Marża") ? (
+        {localData.invoiceOptions.includes("Invoice VAT") ? (
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-gray-700 font-semibold mb-1">Cena (Netto)</label>

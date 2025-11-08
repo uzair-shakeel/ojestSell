@@ -2,11 +2,12 @@
 import { useState, useEffect, useRef } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import { useAuth } from "../../lib/auth/AuthContext";
-import { FiMenu, FiX } from "react-icons/fi";
+import { FiMenu, FiX, FiBell } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import ThemeToggle from "../ThemeToggle";
 import Avatar from "../both/Avatar";
 import Link from "next/link";
+import { useNotifications } from "../../lib/notifications/NotificationsContext";
 
 const RAW_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 const buildApiUrl = (path) => {
@@ -18,6 +19,9 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, getToken, userId, updateUserState } = useAuth();
   const router = useRouter();
+  const { notifications, unreadCount, markRead, markAll, add } = useNotifications();
+  const [openNotif, setOpenNotif] = useState(false);
+  const notifRef = useRef(null);
 
   // No dropdown anymore
 
@@ -54,6 +58,69 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
       <div className="flex items-center space-x-3 sm:mx-4">
         {/* Theme Toggle */}
         <ThemeToggle size={24} />
+
+        {/* Notifications */}
+        <div className="relative" ref={notifRef}>
+          <button
+            onClick={() => setOpenNotif((v) => !v)}
+            className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
+          >
+            <FiBell className="w-5 h-5" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-red-600 text-white text-[10px] flex items-center justify-center">
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </span>
+            )}
+          </button>
+          {openNotif && (
+            <div className="absolute right-0 mt-2 w-80 max-w-[90vw] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden">
+              <div className="flex items-center justify-between px-3 py-2 border-b border-gray-100 dark:border-gray-700">
+                <div className="text-sm font-semibold text-gray-900 dark:text-white">Notifications</div>
+                <button onClick={markAll} className="text-xs text-blue-600 hover:underline">Mark all as read</button>
+              </div>
+              <div className="max-h-96 overflow-auto">
+                {(notifications || []).length === 0 ? (
+                  <div className="px-3 py-4 text-sm text-gray-500">No notifications</div>
+                ) : (
+                  <ul className="divide-y divide-gray-100 dark:divide-gray-700">
+                    {(notifications || []).slice(0, 8).map((n) => (
+                      <li key={n.id} className={`px-3 py-2 flex items-start gap-3 ${n.read ? "opacity-80" : ""}`}>
+                        <div className={`mt-1 w-2 h-2 rounded-full ${n.read ? "bg-gray-300" : "bg-blue-500"}`} />
+                        <div className="min-w-0 flex-1">
+                          <div className="text-sm font-medium text-gray-900 dark:text-white truncate">{n.title}</div>
+                          {n.body && <div className="text-xs text-gray-600 dark:text-gray-300 truncate">{n.body}</div>}
+                          <div className="text-[10px] text-gray-400 mt-1">{new Date(n.createdAt).toLocaleString()}</div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {n.read ? (
+                            <button
+                              onClick={() => add({ ...n, id: n.id + "-dup", read: false, createdAt: Date.now() })}
+                              className="text-xs text-gray-500 hover:underline"
+                            >
+                              Unread
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => markRead(n.id)}
+                              className="text-xs text-blue-600 hover:underline"
+                            >
+                              Mark read
+                            </button>
+                          )}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <div className="px-3 py-2 border-t border-gray-100 dark:border-gray-700 text-right">
+                <Link href="/dashboard/notifications" onClick={() => setOpenNotif(false)} className="text-sm text-blue-600 hover:underline">
+                  See all
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Add Listing Button */}
         <button

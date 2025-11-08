@@ -3,6 +3,7 @@ import DashboardStats from "../../../components/dashboard/DashboardStats";
 import DashboardCharts from "../../../components/dashboard/DashboardCharts";
 import RecentCars from "../../../components/dashboard/RecentCars";
 import RecentChats from "../../../components/dashboard/RecentChats";
+import NotificationsWidget from "../../../components/dashboard/NotificationsWidget";
 import QuickActions from "../../../components/dashboard/QuickActions";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -96,6 +97,7 @@ const page = () => {
         </div>
         <div className="space-y-4">
           <RecentChats chats={recentChats} />
+          <NotificationsWidget />
           <QuickActions />
         </div>
       </div>
