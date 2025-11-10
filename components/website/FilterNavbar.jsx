@@ -275,7 +275,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 name="make"
                 value={filters.make}
                 onChange={handleInputChange}
-                className="px-2 py-1.5 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                className="px-2 py-1.5 pr-6 text-sm lg:px-3 lg:py-3 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                 disabled={loading}
               >
                 <option value="">Marka</option>
@@ -298,7 +298,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 name="model"
                 value={filters.model}
                 onChange={handleInputChange}
-                className="px-2 py-1.5 pr-6 text-sm lg:px-3 lg:py-2 lg:pr-8 lg:text-sm font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                 disabled={loading || !filters.make}
               >
               <option value="">Model</option>
