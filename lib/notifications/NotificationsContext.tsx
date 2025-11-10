@@ -33,7 +33,7 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
 
   const refresh = useCallback(async () => {
     const list = await fetchNotifications();
-    // sort desc by createdAt
+    // sort desc by createdAt  
     const sorted = [...list].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     setNotifications(sorted);
   }, []);
