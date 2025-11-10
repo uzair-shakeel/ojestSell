@@ -9,7 +9,7 @@ import Avatar from "../../../components/both/Avatar";
 
 // Use empty string (same-origin) if NEXT_PUBLIC_API_BASE_URL is not set
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
-const SOCKET_BASE = process.env.NEXT_PUBLIC_SOCKET_URL || undefined;
+const SOCKET_BASE = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5000";
 const SOCKET_PATH = process.env.NEXT_PUBLIC_SOCKET_PATH || "/socket.io/";
 const SOCKET_TRANSPORT = (process.env.NEXT_PUBLIC_SOCKET_TRANSPORT || "websocket,polling")
   .split(",")
@@ -37,11 +37,26 @@ const MessagesPage = () => {
   const [error, setError] = useState(null);
   const [totalUnread, setTotalUnread] = useState(0);
   const messagesEndRef = useRef(null);
-  const { user, token } = useAuth();
+  const { user, token, userId: authUserId } = useAuth();
   const searchParams = useSearchParams();
 
+  useEffect(() => {
+  if (!socket.connected) {
+    socket.connect(); // important
+  }
+
+  if (authUserId) {
+    socket.emit("join", authUserId);
+  }
+
+  // return () => {
+  //   socket.disconnect();
+  // };
+}, [authUserId]);
+
   // Helper: current user ID across backends (_id or id)
-  const myUserId = user?.id || user?._id;
+  // Try multiple sources to get the user ID
+  const myUserId = user?.id || user?._id || authUserId;
 
   // Date/Time formatters: DD/MM/YY and 24-hour HH:mm
   const fmtDateTime = (d) => {
@@ -71,18 +86,81 @@ const MessagesPage = () => {
 
   // Connect to Socket.IO and fetch chats
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      console.warn("⚠️ No user, skipping socket connection");
+      return;
+    }
 
-    console.log("Current user:", user);
-    console.log("Resolved user ID:", myUserId);
+    console.log("👤 Current user:", user);
+    console.log("🆔 Resolved user ID:", myUserId);
+    console.log("🔑 User ID type:", typeof myUserId, "Value:", myUserId);
+    
+    if (!myUserId) {
+      console.error("❌ No valid user ID found! Cannot connect socket.");
+      return;
+    }
+    
+
+    
+    // Remove all old listeners to prevent duplicates
+    socket.removeAllListeners();
+    
+    // Set new auth for this user
     socket.auth = { userId: myUserId };
-    console.log("[Socket] connecting to:", SOCKET_BASE);
+    console.log("[Socket] connecting to:", SOCKET_BASE, "with auth:", socket.auth);
+    console.log("🔧 Socket options:", {
+      path: SOCKET_PATH,
+      transports: SOCKET_TRANSPORT,
+      withCredentials: true,
+      timeout: 20000
+    });
+    
     socket.connect();
-    socket.on("connect", () => console.log("[Socket] connected:", socket.id));
-    socket.on("connect_error", (err) => console.error("[Socket] connect_error:", err?.message || err));
-    socket.on("disconnect", (reason) => console.warn("[Socket] disconnected:", reason));
-    // Let backend put this socket into the user's personal room
-    if (myUserId) socket.emit("join", myUserId);
+    
+    // Add timeout to detect if connection is hanging
+    const connectionTimeout = setTimeout(() => {
+      if (!socket.connected) {
+        console.error("⏰ Socket connection TIMEOUT after 5 seconds!");
+        console.error("Socket is still trying to connect but hasn't succeeded");
+        console.error("This usually means:");
+        console.error("1. Server is not running");
+        console.error("2. Wrong URL/port");
+        console.error("3. CORS blocking the connection");
+        console.error("4. Firewall blocking the connection");
+      }
+    }, 5000);
+    
+    socket.on("connect", () => {
+      clearTimeout(connectionTimeout);
+      console.log("✅✅✅ [Socket] CONNECTED SUCCESSFULLY! ✅✅✅");
+      console.log("Socket ID:", socket.id);
+      console.log("🔌 Transport:", socket.io.engine.transport.name);
+      console.log("⚡ Socket.connected:", socket.connected);
+      console.log("🔐 Auth used:", socket.auth);
+      
+      // Join room after connection is established
+      if (myUserId) {
+        socket.emit("join", myUserId);
+        console.log("🚪 Emitted join event for room:", myUserId);
+      } else {
+        console.error("❌ Cannot join room - myUserId is undefined!");
+      }
+    });
+    
+    socket.on("connect_error", (err) => {
+      console.error("❌❌❌ [Socket] CONNECT ERROR! ❌❌❌");
+      console.error("Error:", err);
+      console.error("Error message:", err?.message);
+      console.error("🔍 Auth being used:", socket.auth);
+      console.error("🔍 Socket URL:", SOCKET_BASE);
+      console.error("🔍 Socket path:", SOCKET_PATH);
+    });
+    
+    socket.on("disconnect", (reason) => {
+      console.warn("⚠️⚠️⚠️ [Socket] DISCONNECTED! ⚠️⚠️⚠️");
+      console.warn("Reason:", reason);
+      console.warn("Socket.connected:", socket.connected);
+    });
 
     const fetchChats = async () => {
       try {
@@ -190,7 +268,8 @@ const MessagesPage = () => {
     }, 30000); // Check every 30 seconds
 
     return () => {
-      socket.disconnect();
+      clearTimeout(connectionTimeout);
+      // socket.disconnect();
       socket.off("error");
       socket.off("updatedChats");
       socket.off("totalUnreadCount");
@@ -207,7 +286,7 @@ const MessagesPage = () => {
 
     const fetchMessages = async () => {
       try {
-        console.log(`Fetching messages for chat: ${selectedChat._id}`);
+        console.log(`🔄 Fetching messages for chat: ${selectedChat._id}`);
 
         const authToken = token || (typeof window !== "undefined" ? localStorage.getItem("token") : null);
         const response = await fetch(
@@ -239,7 +318,11 @@ const MessagesPage = () => {
           text: msg.text || msg.content, // Use text if available, otherwise use content
         }));
 
-        setMessages(processedData);
+        // Preserve any pending messages when loading chat history
+        setMessages((prev) => {
+          const pendingMessages = prev.filter((m) => m.pending && m.chatId === selectedChat._id);
+          return [...processedData, ...pendingMessages];
+        });
       } catch (err) {
         console.error("Error fetching messages:", err);
         setError(`Failed to load messages: ${err.message}`);
@@ -254,6 +337,8 @@ const MessagesPage = () => {
       const { chatId, message } = payload;
       const myUserId = user?.id || user?._id;
 
+      console.log("🔔 Raw socket payload:", { chatId, message, myUserId });
+
       const processedMessage = {
         _id: message.id,
         chatId,
@@ -262,6 +347,8 @@ const MessagesPage = () => {
         text: message.content,
         createdAt: message.timestamp,
       };
+      
+      console.log("📦 Processed message:", processedMessage);
 
       // Add a readable senderName for display
       try {
@@ -312,18 +399,54 @@ const MessagesPage = () => {
       // If current chat is open, append/replace in thread
       if (selectedChat && selectedChat._id === chatId) {
         setMessages((prev) => {
-          // Try to replace optimistic message by matching text and sender
-          const idx = prev.findIndex(
-            (m) =>
-              m.text === processedMessage.text &&
-              (String(m.sender) === String(processedMessage.sender) ||
-                String(m.senderId) === String(processedMessage.sender))
-          );
-          if (idx !== -1) {
-            const copy = [...prev];
-            copy[idx] = { ...copy[idx], ...processedMessage };
-            return copy;
+          console.log("📨 Received newMessage event", { chatId, message, currentMessages: prev.length });
+          
+          // Check if this is our own message by matching sender
+          const isOwnMessage = String(message.sender) === String(myUserId);
+          
+          if (isOwnMessage) {
+            // Find the most recent pending message with matching content
+            // Search from end to start to get the latest one
+            let pendingIdx = -1;
+            const searchText = (processedMessage.text || "").trim();
+            
+            for (let i = prev.length - 1; i >= 0; i--) {
+              const pendingText = (prev[i].text || "").trim();
+              if (prev[i].pending && pendingText === searchText) {
+                pendingIdx = i;
+                break;
+              }
+            }
+            
+            if (pendingIdx !== -1) {
+              // Replace the optimistic message with the real one
+              console.log("✅ Replacing pending message", { 
+                index: pendingIdx, 
+                tempId: prev[pendingIdx]._id, 
+                realId: processedMessage._id,
+                content: processedMessage.text 
+              });
+              const copy = [...prev];
+              copy[pendingIdx] = { ...processedMessage, pending: false };
+              return copy;
+            } else {
+              console.log("⚠️ No pending message found", { 
+                pendingCount: prev.filter(m => m.pending).length,
+                searchingFor: processedMessage.text,
+                allPending: prev.filter(m => m.pending).map(m => ({ id: m._id, text: m.text }))
+              });
+            }
           }
+          
+          // Check if message already exists (avoid duplicates)
+          const exists = prev.some((m) => m._id === processedMessage._id);
+          if (exists) {
+            console.log("ℹ️ Message already exists, skipping", processedMessage._id);
+            return prev;
+          }
+          
+          // Add new message
+          console.log("➕ Adding new message", { id: processedMessage._id, text: processedMessage.text });
           return [...prev, processedMessage];
         });
 
@@ -378,31 +501,76 @@ const MessagesPage = () => {
   }, [selectedChat?._id, user]);
 
   // Handle sending a message
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!newMessage.trim() || !selectedChat || !user) return;
 
     const tempId = generateTempId();
-    // Emit payload expected by backend: { chatId, content, senderId }
+    const messageContent = newMessage;
+    const timestamp = new Date();
+    
+    // Add optimistic message immediately
+    const optimisticMessage = {
+      _id: tempId,
+      chatId: selectedChat._id, // Add chatId for filtering
+      sender: myUserId,
+      senderId: myUserId,
+      createdAt: timestamp,
+      seenBy: [myUserId],
+      senderName: `${user.firstName || ""} ${user.lastName || ""}`.trim() || "You",
+      content: messageContent,
+      text: messageContent,
+      pending: true, // Mark as pending
+      tempId: tempId, // Store temp ID for matching
+    };
+    
+    setMessages((prev) => {
+      console.log("📤 Adding optimistic message", optimisticMessage);
+      return [...prev, optimisticMessage];
+    });
+    setNewMessage("");
+    
+    // Check socket connection before sending
+    console.log("🔍 Socket state before sending:", {
+      connected: socket.connected,
+      disconnected: socket.disconnected,
+      id: socket.id,
+      auth: socket.auth
+    });
+    
+    if (!socket.connected) {
+      console.error("❌❌❌ Socket NOT connected! Attempting to reconnect...");
+      console.error("Socket state:", {
+        connected: socket.connected,
+        disconnected: socket.disconnected,
+        id: socket.id
+      });
+      socket.connect();
+      
+      // Wait a bit for connection
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      if (!socket.connected) {
+        console.error("❌ Still not connected after reconnect attempt!");
+        alert("Cannot send message - socket connection failed. Please refresh the page.");
+        return;
+      }
+    }
+    
+    // Emit to backend
+    console.log("🚀 Emitting message to server...", { 
+      socketConnected: socket.connected, 
+      chatId: selectedChat._id, 
+      senderId: myUserId, 
+      content: messageContent, 
+      tempId 
+    });
+    
     socket.emit("sendMessage", {
       chatId: selectedChat._id,
       senderId: myUserId,
-      content: newMessage,
+      content: messageContent,
+      tempId: tempId, // Send temp ID to backend for matching
     });
-    console.log("message sent", { chatId: selectedChat._id, senderId: myUserId, content: newMessage });
-    setNewMessage("");
-    setMessages((prev) => [
-      ...prev,
-      {
-        _id: tempId,
-        sender: myUserId,
-        senderId: myUserId,
-        createdAt: new Date(),
-        seenBy: [myUserId],
-        senderName: `${user.firstName || ""} ${user.lastName || ""}`.trim() || "You",
-        content: newMessage,
-        text: newMessage,
-      },
-    ]);
   };
 
   // Handle typing
@@ -614,7 +782,7 @@ const MessagesPage = () => {
                         String(message.senderId) === String(myUserId)
                           ? "bg-blue-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200"
                           : "bg-white border border-gray-300 dark:border-gray-600"
-                      }`}
+                      } ${message.pending ? "opacity-70" : "opacity-100"}`}
                     >
                       {String(message.sender) !== String(myUserId) &&
                         String(message.senderId) !== String(myUserId) && (
@@ -628,7 +796,13 @@ const MessagesPage = () => {
                         {(String(message.sender) === String(myUserId) ||
                           String(message.senderId) === String(myUserId)) && (
                           <span className="ml-2">
-                            {message.seenBy && message.seenBy.length > 1 ? "Przeczytane" : "Wysłane"}
+                            {message.pending ? (
+                              <span className="text-gray-400 italic">Wysyłanie...</span>
+                            ) : message.seenBy && message.seenBy.length > 1 ? (
+                              "Przeczytane"
+                            ) : (
+                              "Wysłane"
+                            )}
                           </span>
                         )}
                       </div>
