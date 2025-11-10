@@ -73,10 +73,27 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
   // Optional: Socket listeners for backend events
   useEffect(() => {
     if (!user) return;
-    const socket = io(API_BASE || undefined, { autoConnect: true });
+    const token = getToken();
+    const socket = io(API_BASE || undefined, { 
+      autoConnect: true,
+      auth: { 
+        token,
+        userId: user.id || user._id 
+      }
+    });
 
     socket.on("connect", () => {
-      socket.emit("auth", { userId: user.id || user._id });
+      console.log("[Notifications] Socket connected, joining room:", user.id || user._id);
+      socket.emit("auth", { userId: user.id || user._id, token });
+      socket.emit("join", user.id || user._id);
+    });
+
+    socket.on("connect_error", (err: any) => {
+      console.error("[Notifications] Socket connection error:", err?.message || err);
+    });
+
+    socket.on("disconnect", (reason: string) => {
+      console.warn("[Notifications] Socket disconnected:", reason);
     });
 
     socket.on("chat:message:received", (payload: any) => {
@@ -91,6 +108,24 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
       add({ type: "status", title: "Status ogłoszenia", body: `${data?.status || "Zaktualizowano"}`, meta: data });
     });
 
+    // Global message listener - works on ALL pages
+    socket.on("newMessage", (payload: any) => {
+      if (!payload || !payload.message) return;
+      const { chatId, message } = payload;
+      const myUserId = user?.id || user?._id;
+      
+      // Only notify if message is from someone else
+      if (String(message.sender) !== String(myUserId)) {
+        console.log("[Notifications] New message received:", { chatId, sender: message.sender, content: message.content });
+        add({ 
+          type: "message", 
+          title: "New message", 
+          body: message.content || "You have a new message", 
+          meta: { chatId, messageId: message.id } 
+        });
+      }
+    });
+
     return () => {
       socket.disconnect();
     };
@@ -100,49 +135,60 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
   useEffect(() => {
     if (!userId) return;
     let cancelled = false;
+    let isFirstRun = true;
+
     const poll = async () => {
       try {
         const cars = await getCarsByUserId(String(userId), getToken);
         if (cancelled || !Array.isArray(cars)) return;
+
         const map: Record<string, any> = {};
         cars.forEach((c: any) => {
           map[c._id] = { status: c.status, title: c.title, make: c.make, model: c.model };
         });
 
-        // Detect creations
-        Object.keys(map).forEach((id) => {
-          if (!prevCarsRef.current[id]) {
-            add({
-              type: "car",
-              title: "Car created",
-              body: `${map[id].make || "Car"} ${map[id].model || ""}`.trim() || map[id].title,
-              meta: { carId: id },
-            });
-          }
-        });
+        // Skip creation/status detection on first run (just set baseline)
+        if (!isFirstRun) {
+          // Detect creations
+          Object.keys(map).forEach((id) => {
+            if (!prevCarsRef.current[id]) {
+              console.log("[Notifications] New car detected:", id, map[id]);
+              add({
+                type: "car",
+                title: "Car created",
+                body: `${map[id].make || "Car"} ${map[id].model || ""}`.trim() || map[id].title,
+                meta: { carId: id },
+              });
+            }
+          });
 
-        // Detect status changes
-        Object.keys(map).forEach((id) => {
-          const prev = prevCarsRef.current[id];
-          if (prev && prev.status !== map[id].status) {
-            add({
-              type: "status",
-              title: "Listing status updated",
-              body: `${map[id].status}`,
-              meta: { carId: id, status: map[id].status },
-            });
-          }
-        });
+          // Detect status changes
+          Object.keys(map).forEach((id) => {
+            const prev = prevCarsRef.current[id];
+            if (prev && prev.status !== map[id].status) {
+              console.log("[Notifications] Status changed:", id, prev.status, "->", map[id].status);
+              add({
+                type: "status",
+                title: "Listing status updated",
+                body: `${map[id].title || map[id].make || "Your car"} is now ${map[id].status}`,
+                meta: { carId: id, status: map[id].status },
+              });
+            }
+          });
+        } else {
+          console.log("[Notifications] First run - setting baseline with", Object.keys(map).length, "cars");
+          isFirstRun = false;
+        }
 
         prevCarsRef.current = map;
       } catch (e) {
-        // silent
+        console.error("[Notifications] Poll error:", e);
       }
     };
 
     // initial and interval
     poll();
-    const t = setInterval(poll, 45000);
+    const t = setInterval(poll, 30000); // Check every 30 seconds
     return () => {
       cancelled = true;
       clearInterval(t);

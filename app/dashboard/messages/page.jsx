@@ -350,6 +350,24 @@ const MessagesPage = () => {
       
       console.log("📦 Processed message:", processedMessage);
 
+      // Emit notification if message is from someone else
+      if (String(message.sender) !== String(myUserId)) {
+        try {
+          window.dispatchEvent(
+            new CustomEvent("ojest:notify", {
+              detail: {
+                type: "message",
+                title: "New message",
+                body: message.content || "You have a new message",
+                meta: { chatId, messageId: message.id },
+              },
+            })
+          );
+        } catch (e) {
+          console.error("Failed to dispatch notification:", e);
+        }
+      }
+      
       // Add a readable senderName for display
       try {
         if (String(message.sender) === String(myUserId)) {
