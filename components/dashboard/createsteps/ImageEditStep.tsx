@@ -263,14 +263,15 @@ export default function ImageEditStep({
     handleThumbDragEnd();
   };
 
-  // Load the first image when component mounts
+  // Load the first image when component mounts (only run once)
   useEffect(() => {
-    if (formData.images && formData.images.length > 0) {
+    if (formData.images && formData.images.length > 0 && activeImage === null) {
       setActiveImage(formData.images[0]);
       setActiveImageIndex(0);
       setPreviewUrl(formData.imagePreviews[0]);
     }
-  }, [formData.images, formData.imagePreviews]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Load saved adjustments when switching images
   useEffect(() => {
