@@ -70,7 +70,7 @@ export default function NotificationsPage() {
         ) : (
           <ul className="divide-y divide-gray-100 dark:divide-gray-700">
             {items.map((n) => (
-              <li key={n.id} className="py-3 flex items-start gap-3">
+              <li key={n.id} className={` flex items-start gap-3 ${n.read ? "opacity-50 p-3" : "p-3 "}`}>
                 <span
                   className={`mt-1 text-[10px] px-2 py-0.5 rounded-full border ${
                     n.type === "message"
@@ -87,7 +87,7 @@ export default function NotificationsPage() {
                 <div className="min-w-0 flex-1">
                   <div className="font-medium text-gray-900 dark:text-white truncate">{n.title}</div>
                   {n.body && (
-                    <div className="text-sm text-gray-600 dark:text-gray-300 truncate">{n.body}</div>
+                    <div className="text-sm line-clamp-2 text-gray-600 dark:text-gray-300 ">{n.body}</div>
                   )}
                   <div className="text-[10px] text-gray-400 mt-1">{fmt(n.createdAt)}</div>
                 </div>

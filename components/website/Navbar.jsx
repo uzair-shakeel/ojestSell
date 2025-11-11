@@ -2,12 +2,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import { BsChatLeftDots } from "react-icons/bs";
+import { BsBell } from "react-icons/bs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import LanguageSwitcher from "../LanguageSwitcher";
 import ThemeToggle from "../ThemeToggle";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
 import { useAuth } from "../../lib/auth/AuthContext";
+import { useNotifications } from "../../lib/notifications/NotificationsContext";
 import Avatar from "../both/Avatar";
 
 const Navbar = () => {
@@ -16,6 +18,17 @@ const Navbar = () => {
   const router = useRouter();
   const { t } = useLanguage();
   const { isSignedIn, logout, user } = useAuth();
+
+  // Get notifications (hook must be called unconditionally)
+  let notifications = null;
+  let unreadCount = 0;
+  try {
+    notifications = useNotifications();
+    unreadCount = notifications?.unreadCount || 0;
+  } catch (e) {
+    // NotificationsProvider not available (user not signed in or error)
+    // This is expected for non-authenticated users
+  }
 
   const handleSignIn = () => {
     setIsMenuOpen(false);
@@ -62,6 +75,21 @@ const Navbar = () => {
       <div className="flex items-center space-x-3 sm:mx-4">
         {/* Theme Toggle */}
         <ThemeToggle size={24} />
+
+        {/* Notification Bell - Only for signed-in users */}
+        {isSignedIn && (
+          <button
+            onClick={() => router.push("/dashboard/notifications")}
+            className="relative text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-300"
+          >
+            <BsBell size={24} />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </span>
+            )}
+          </button>
+        )}
 
         {/* <div className="">
           <LanguageSwitcher />

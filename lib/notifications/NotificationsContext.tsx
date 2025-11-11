@@ -28,6 +28,7 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
   const { user, getToken, userId } = useAuth();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const prevCarsRef = useRef<Record<string, any>>({});
+  const recentNotificationsRef = useRef<Set<string>>(new Set());
 
   const unreadCount = useMemo(() => notifications.filter((n) => !n.read).length, [notifications]);
 
@@ -39,6 +40,19 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
   }, []);
 
   const add = useCallback(async (n: Omit<NotificationItem, "id" | "createdAt" | "read">) => {
+    // Create a unique key for this notification to prevent duplicates
+    const key = `${n.type}-${n.title}-${n.body}-${n.meta?.carId || ''}`;
+    
+    // Skip if we just added this notification recently (within 5 seconds)
+    if (recentNotificationsRef.current.has(key)) {
+      console.log('[Notifications] Skipping duplicate notification:', key);
+      return;
+    }
+    
+    // Mark as recent
+    recentNotificationsRef.current.add(key);
+    setTimeout(() => recentNotificationsRef.current.delete(key), 5000);
+    
     const saved = await createNotification(n);
     setNotifications((prev) => [saved, ...prev]);
   }, []);
