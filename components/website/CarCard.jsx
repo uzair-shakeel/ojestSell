@@ -79,14 +79,14 @@ export default function CarCard({ car, viewMode = 'grid' }) {
     const type = seller?.sellerType || car?.financialInfo?.sellerType;
     if (type === "company") return seller?.companyName || `${seller?.firstName || ""} ${seller?.lastName || ""}`.trim() || "Company";
     const full = `${seller?.firstName || ""} ${seller?.lastName || ""}`.trim();
-    return full || seller?.companyName || "Private Seller";
+    return full || seller?.companyName || "Sprzedawca prywatny";
   };
 
   const getSellerType = () => {
     if (!seller) return "Seller";
     const type = seller?.sellerType || car?.financialInfo?.sellerType;
-    if (type === "company") return "Company";
-    return "Private Seller";
+    if (type === "company") return "Firma";
+    return "Sprzedawca prywatny";
   };
 
   const getSellerImage = () => {

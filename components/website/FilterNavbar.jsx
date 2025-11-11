@@ -9,30 +9,29 @@ export default function FilterNavbar({ onApplyFilters }) {
   const { getMakes, getModelsForMake, loading } = useMakesModels();
   const [filters, setFilters] = useState({
     location: "",
-    maxDistance: "",
+    distance: "",
     make: "",
     model: "",
-    type: "",
+    bodyType: "",
     yearFrom: "",
     yearTo: "",
-    condition: "",
-    minMileage: "",
-    maxMileage: "",
+    stan: "",
+    mileage: "",
     drivetrain: "",
     transmission: "",
     fuel: "",
-    engine: "",
+    engineCapacity: "",
+    krajProducenta: "",
+    krajPochodzenia: "",
     serviceHistory: "",
     accidentHistory: "",
     priceFrom: "",
     priceTo: "",
-    origin: "",
   });
   const searchParams = useSearchParams();
 
   const [showMoreFilters, setShowMoreFilters] = useState(false);
   const [showYearDropdown, setShowYearDropdown] = useState(false);
-  const [showMileageDropdown, setShowMileageDropdown] = useState(false);
   const [showPriceDropdown, setShowPriceDropdown] = useState(false);
   const [mobileViewMode, setMobileViewMode] = useState('grid');
   const [isSticky, setIsSticky] = useState(false);
@@ -40,7 +39,6 @@ export default function FilterNavbar({ onApplyFilters }) {
   const [isMounted, setIsMounted] = useState(false);
   const dropdownRef = useRef(null);
   const yearDropdownRef = useRef(null);
-  const mileageDropdownRef = useRef(null);
   const priceDropdownRef = useRef(null);
   const filterRef = useRef(null);
   useEffect(() => {
@@ -51,8 +49,8 @@ export default function FilterNavbar({ onApplyFilters }) {
   useEffect(() => {
     const qpOrigin = searchParams?.get?.("origin");
     if (qpOrigin) {
-      setFilters((prev) => ({ ...prev, origin: qpOrigin }));
-      onApplyFilters({ ...filters, origin: qpOrigin });
+      setFilters((prev) => ({ ...prev, krajPochodzenia: qpOrigin }));
+      onApplyFilters({ ...filters, krajPochodzenia: qpOrigin });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -73,29 +71,28 @@ export default function FilterNavbar({ onApplyFilters }) {
   const handleReset = () => {
     const resetFilters = {
       location: "",
-      maxDistance: "",
+      distance: "",
       make: "",
       model: "",
-      type: "",
+      bodyType: "",
       yearFrom: "",
       yearTo: "",
-      condition: "",
-      minMileage: "",
-      maxMileage: "",
+      stan: "",
+      mileage: "",
       drivetrain: "",
       transmission: "",
       fuel: "",
-      engine: "",
+      engineCapacity: "",
+      krajProducenta: "",
+      krajPochodzenia: "",
       serviceHistory: "",
       accidentHistory: "",
       priceFrom: "",
       priceTo: "",
-      origin: "",
     };
     setFilters(resetFilters);
 
     setShowYearDropdown(false);
-    setShowMileageDropdown(false);
     setShowPriceDropdown(false);
     onApplyFilters(resetFilters);
   };
@@ -107,9 +104,6 @@ export default function FilterNavbar({ onApplyFilters }) {
       }
       if (yearDropdownRef.current && !yearDropdownRef.current.contains(event.target)) {
         setShowYearDropdown(false);
-      }
-      if (mileageDropdownRef.current && !mileageDropdownRef.current.contains(event.target)) {
-        setShowMileageDropdown(false);
       }
       if (priceDropdownRef.current && !priceDropdownRef.current.contains(event.target)) {
         setShowPriceDropdown(false);
@@ -200,12 +194,17 @@ export default function FilterNavbar({ onApplyFilters }) {
   };
 
   const getMileageDisplayText = () => {
-    if (filters.minMileage && filters.maxMileage) {
-      return `${filters.minMileage} - ${filters.maxMileage}`;
-    } else if (filters.minMileage) {
-      return `Od ${filters.minMileage}`;
-    } else if (filters.maxMileage) {
-      return `Do ${filters.maxMileage}`;
+    if (filters.mileage) {
+      const mileageOptions = {
+        "0": "0 km",
+        "0-30000": "do 30 000 km",
+        "30000-50000": "od 30 000 km do 50 000 km",
+        "50000-100000": "od 50 000 km do 100 000 km",
+        "100000+": "powyżej 100 000 km",
+        "100000-200000": "od 100 000 km do 200 000 km",
+        "200000+": "powyżej 200 000 km"
+      };
+      return mileageOptions[filters.mileage] || "Przebieg";
     }
     return "Przebieg";
   };
@@ -315,18 +314,30 @@ export default function FilterNavbar({ onApplyFilters }) {
               </div>
             </div>
 
-            {/* Type Filter */}
+            {/* Body Type Filter */}
             <div className="relative flex-1">
               <select
-                name="type"
-                value={filters.type}
+                name="bodyType"
+                value={filters.bodyType}
                 onChange={handleInputChange}
                 className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
               >
-              <option value="">Typ</option>
-              <option value="New">New</option>
-              <option value="Used">Used</option>
-              <option value="Certified">Certified</option>
+              <option value="">Typ nadwozia</option>
+              <option value="Bus I Van">Bus I Van</option>
+              <option value="Coupe">Coupe</option>
+              <option value="Crossover">Crossover</option>
+              <option value="Hatchback">Hatchback</option>
+              <option value="Kabriolet">Kabriolet</option>
+              <option value="Kamper">Kamper</option>
+              <option value="Klasyk">Klasyk</option>
+              <option value="Kombi">Kombi</option>
+              <option value="Kompakt">Kompakt</option>
+              <option value="Limuzyna">Limuzyna</option>
+              <option value="Pickup">Pickup</option>
+              <option value="Sedan">Sedan</option>
+              <option value="Sportowe">Sportowe</option>
+              <option value="SUV">SUV</option>
+              <option value="Terenowe">Terenowe</option>
               </select>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
                 <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -335,28 +346,28 @@ export default function FilterNavbar({ onApplyFilters }) {
               </div>
             </div>
 
-            {/* Country of Origin */}
+            {/* Manufacturer Country (Kraj Producenta) */}
             <div className="relative flex-1">
               <select
-                name="origin"
-                value={filters.origin}
+                name="krajProducenta"
+                value={filters.krajProducenta}
                 onChange={handleInputChange}
                 className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
               >
-                <option value="">Kraj</option>
-                <option value="germany">Niemcy</option>
+                <option value="">Kraj Producenta</option>
+                <option value="czech">Czechy</option>
+                <option value="china">Chiny</option>
+                <option value="france">Francja</option>
+                <option value="holland">Holandia</option>
                 <option value="japan">Japonia</option>
+                <option value="south-korea">Korea Południowa</option>
+                <option value="germany">Niemcy</option>
+                <option value="poland">Polska</option>
+                <option value="russia">Rosja</option>
+                <option value="sweden">Szwecja</option>
                 <option value="united-states">USA</option>
                 <option value="united-kingdom">Wielka Brytania</option>
                 <option value="italy">Włochy</option>
-                <option value="russia">Rosja</option>
-                <option value="france">Francja</option>
-                <option value="south-korea">Korea Południowa</option>
-                <option value="sweden">Szwecja</option>
-                <option value="china">Chiny</option>
-                <option value="poland">Polska</option>
-                <option value="czech">Czechy</option>
-                <option value="holland">Holandia</option>
               </select>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
                 <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -368,7 +379,7 @@ export default function FilterNavbar({ onApplyFilters }) {
             {/* Year Button with Dropdown */}
             <div className="relative flex-1 overflow-visible" ref={yearDropdownRef}>
               <button
-                onClick={() => { setShowYearDropdown(!showYearDropdown); setShowMileageDropdown(false); setShowPriceDropdown(false); }}
+                onClick={() => { setShowYearDropdown(!showYearDropdown); setShowPriceDropdown(false); }}
                 className={`w-full px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm text-left ${
                   showYearDropdown || filters.yearFrom || filters.yearTo
                     ? 'text-black bg-white border-blue-300' 
@@ -683,7 +694,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
                   </div>
                   <div className="relative flex-1 overflow-visible" ref={yearDropdownRef}>
-                    <button onClick={() => { setShowYearDropdown(!showYearDropdown); setShowMileageDropdown(false); setShowPriceDropdown(false); }} className={`w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none shadow-sm text-left ${showYearDropdown || filters.yearFrom || filters.yearTo ? 'text-black bg-white border-blue-300' : 'text-gray-700 bg-white'}`}>{getYearDisplayText()}</button>
+                    <button onClick={() => { setShowYearDropdown(!showYearDropdown); setShowPriceDropdown(false); }} className={`w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none shadow-sm text-left ${showYearDropdown || filters.yearFrom || filters.yearTo ? 'text-black bg-white border-blue-300' : 'text-gray-700 bg-white'}`}>{getYearDisplayText()}</button>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className={`w-3 h-3 text-gray-400 transition-transform ${showYearDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
                     {showYearDropdown && (
                       <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-3 w-full z-50 pointer-events-auto">
@@ -766,64 +777,51 @@ export default function FilterNavbar({ onApplyFilters }) {
                 {/* Condition + Mileage */}
                 <div className="flex items-center justify-between w-full gap-2">
                   <div className="relative flex-1">
-                    <select name="condition" value={filters.condition} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                    <select name="stan" value={filters.stan} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
                       <option value="">Stan</option>
-                      <option value="Excellent">Excellent</option>
-                      <option value="Very Good">Very Good</option>
-                      <option value="Good">Good</option>
-                      <option value="Fair">Fair</option>
-                      <option value="Poor">Poor</option>
+                      <option value="Demo">Demo</option>
+                      <option value="New">Nowy</option>
+                      <option value="Used">Używany</option>
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                       <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                     </div>
                   </div>
-                  <div className="relative flex-1 overflow-visible" ref={mileageDropdownRef}>
-                    <button onClick={() => { setShowMileageDropdown(!showMileageDropdown); setShowYearDropdown(false); setShowPriceDropdown(false); }} className={`w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none shadow-sm text-left ${showMileageDropdown || filters.minMileage || filters.maxMileage ? 'text-black bg-white border-blue-300' : 'text-gray-700 bg-white'}`}>{getMileageDisplayText()}</button>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className={`w-3 h-3 text-gray-400 transition-transform ${showMileageDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
-                    {showMileageDropdown && (
-                      <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-3 max-h-72 overflow-y-auto pointer-events-auto z-50">
-                        <div className="grid grid-cols-2 gap-2">
-                          <input type="number" name="minMileage" value={filters.minMileage} onChange={handleInputChange} placeholder="Min" className="w-full px-3 h-10 text-sm border border-gray-200 rounded-md focus:outline-none" />
-                          <input type="number" name="maxMileage" value={filters.maxMileage} onChange={handleInputChange} placeholder="Max" className="w-full px-3 h-10 text-sm border border-gray-200 rounded-md focus:outline-none" />
-                        </div>
-                      </div>
-                    )}
+                  <div className="relative flex-1">
+                    <select name="mileage" value={filters.mileage} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                      <option value="">Przebieg</option>
+                      <option value="0">0 km</option>
+                      <option value="0-30000">do 30 000 km</option>
+                      <option value="30000-50000">od 30 000 km do 50 000 km</option>
+                      <option value="50000-100000">od 50 000 km do 100 000 km</option>
+                      <option value="100000+">powyżej 100 000 km</option>
+                      <option value="100000-200000">od 100 000 km do 200 000 km</option>
+                      <option value="200000+">powyżej 200 000 km</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
                   </div>
                 </div>
                 {/* Fuel + Engine */}
                 <div className="flex items-center justify-between w-full gap-2">
                   <div className="relative flex-1">
                     <select name="fuel" value={filters.fuel} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                      <option value="">Paliwo Typ</option>
-                      <option value="Gasoline">Gasoline</option>
+                      <option value="">Typ Paliwa</option>
+                      <option value="Benzyna">Benzyna</option>
                       <option value="Diesel">Diesel</option>
-                      <option value="Hybrid">Hybrid</option>
-                      <option value="Electric">Electric</option>
-                      <option value="Plug-in Hybrid">Plug-in Hybrid</option>
-                      <option value="CNG">CNG</option>
+                      <option value="Elektryk">Elektryk</option>
+                      <option value="Hybryda">Hybryda</option>
                       <option value="LPG">LPG</option>
+                      <option value="Wodór">Wodór</option>
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
                   </div>
                   <div className="relative flex-1">
-                    <select name="engine" value={filters.engine} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                      <option value="">Silnik</option>
-                      <option value="1.0L">1.0L</option>
-                      <option value="1.2L">1.2L</option>
-                      <option value="1.4L">1.4L</option>
-                      <option value="1.6L">1.6L</option>
-                      <option value="1.8L">1.8L</option>
-                      <option value="2.0L">2.0L</option>
-                      <option value="2.2L">2.2L</option>
-                      <option value="2.4L">2.4L</option>
-                      <option value="2.5L">2.5L</option>
-                      <option value="3.0L">3.0L</option>
-                      <option value="3.5L">3.5L</option>
-                      <option value="4.0L">4.0L</option>
-                      <option value="4.5L">4.5L</option>
-                      <option value="5.0L">5.0L</option>
-                      <option value="6.0L">6.0L</option>
+                    <select name="engineCapacity" value={filters.engineCapacity} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                      <option value="">Pojemność</option>
+                      <option value="0-1000">do 1000 cm³</option>
+                      <option value="0-2000">do 2000 cm³</option>
+                      <option value="2000-3000">od 2000 cm³ do 3000 cm³</option>
+                      <option value="2900+">powyżej 2900 cm³</option>
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
                   </div>
@@ -842,11 +840,10 @@ export default function FilterNavbar({ onApplyFilters }) {
                   </div>
                   <div className="relative flex-1">
                     <select name="drivetrain" value={filters.drivetrain} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                      <option value="">Przewodnik</option>
-                      <option value="FWD">FWD</option>
-                      <option value="RWD">RWD</option>
-                      <option value="AWD">AWD</option>
-                      <option value="4WD">4WD</option>
+                      <option value="">Napęd</option>
+                      <option value="Przód">Przód</option>
+                      <option value="Tył">Tył</option>
+                      <option value="4x4/AWD">4x4/AWD</option>
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
                   </div>
@@ -864,8 +861,8 @@ export default function FilterNavbar({ onApplyFilters }) {
                   <div className="relative flex-1">
                     <select name="accidentHistory" value={filters.accidentHistory} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
                       <option value="">Bezwypadkowość</option>
-                      <option value="Yes">Yes</option>
-                      <option value="No">No</option>
+                      <option value="Yes">Tak</option>
+                      <option value="No">Nie</option>
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
                   </div>
@@ -873,13 +870,19 @@ export default function FilterNavbar({ onApplyFilters }) {
                 {/* Price */}
                 <div className="w-full">
                   <div className="relative overflow-visible" ref={priceDropdownRef}>
-                    <button onClick={() => { setShowPriceDropdown(!showPriceDropdown); setShowYearDropdown(false); setShowMileageDropdown(false); }} className={`w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none shadow-sm text-left ${showPriceDropdown || filters.priceFrom || filters.priceTo ? 'text-black bg-white border-blue-300' : 'text-gray-700 bg-white'}`}>{getPriceDisplayText()}</button>
+                    <button onClick={() => { setShowPriceDropdown(!showPriceDropdown); setShowYearDropdown(false); }} className={`w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none shadow-sm text-left ${showPriceDropdown || filters.priceFrom || filters.priceTo ? 'text-black bg-white border-blue-300' : 'text-gray-700 bg-white'}`}>{getPriceDisplayText()}</button>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className={`w-3 h-3 text-gray-400 transition-transform ${showPriceDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
                     {showPriceDropdown && (
                       <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-3 max-h-72 overflow-y-auto pointer-events-auto z-50">
                         <div className="grid grid-cols-2 gap-2">
-                          <input type="number" name="priceFrom" value={filters.priceFrom} onChange={handleInputChange} placeholder="Min" className="w-full px-3 h-10 text-sm border border-gray-200 rounded-md focus:outline-none" />
-                          <input type="number" name="priceTo" value={filters.priceTo} onChange={handleInputChange} placeholder="Max" className="w-full px-3 h-10 text-sm border border-gray-200 rounded-md focus:outline-none" />
+                          <div>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">Od</label>
+                            <input type="number" name="priceFrom" value={filters.priceFrom} onChange={handleInputChange} placeholder="Min Cena" className="w-full px-3 h-10 text-sm border border-gray-200 rounded-md focus:outline-none" />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">Do</label>
+                            <input type="number" name="priceTo" value={filters.priceTo} onChange={handleInputChange} placeholder="Max Cena" className="w-full px-3 h-10 text-sm border border-gray-200 rounded-md focus:outline-none" />
+                          </div>
                         </div>
                       </div>
                     )}
@@ -918,17 +921,17 @@ export default function FilterNavbar({ onApplyFilters }) {
               {/* Distance Filter */}
               <div className="relative flex-1 mx-0.5 my-0.5">
                 <select
-                  name="maxDistance"
-                  value={filters.maxDistance}
+                  name="distance"
+                  value={filters.distance}
                   onChange={handleInputChange}
                       className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                 >
                     <option value="">Dystans</option>
-                <option value="10">Within 10 miles</option>
-                <option value="25">Within 25 miles</option>
-                <option value="50">Within 50 miles</option>
-                <option value="100">Within 100 miles</option>
-                <option value="200">Within 200 miles</option>
+                <option value="100">Do 100 km</option>
+                <option value="200">Do 200 km</option>
+                <option value="300">Do 300 km</option>
+                <option value="500">Do 500 km</option>
+                <option value="nationwide">Cały Kraj</option>
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
                   <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -943,17 +946,15 @@ export default function FilterNavbar({ onApplyFilters }) {
               {/* Condition Filter */}
               <div className="relative flex-1 mx-0.5 my-0.5">
                 <select
-                  name="condition"
-                  value={filters.condition}
+                  name="stan"
+                  value={filters.stan}
                   onChange={handleInputChange}
                       className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                 >
                     <option value="">Stan</option>
-                <option value="Excellent">Excellent</option>
-                <option value="Very Good">Very Good</option>
-                <option value="Good">Good</option>
-                <option value="Fair">Fair</option>
-                <option value="Poor">Poor</option>
+                <option value="Demo">Demo</option>
+                <option value="New">Nowy</option>
+                <option value="Used">Używany</option>
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
                   <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -962,54 +963,29 @@ export default function FilterNavbar({ onApplyFilters }) {
                 </div>
               </div>
 
-              {/* Mileage Button with Dropdown */}
-              <div className="relative flex-1 mx-0.5 my-0.5" ref={mileageDropdownRef}>
-                <button
-                  onClick={() => { setShowMileageDropdown(!showMileageDropdown); setShowYearDropdown(false); setShowPriceDropdown(false); }}
-                  className={`w-full px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none transition-all duration-200 shadow-sm hover:shadow-md text-left ${
-                    showMileageDropdown || filters.minMileage || filters.maxMileage
-                      ? 'text-black bg-white border-blue-300' 
-                      : 'text-gray-700 bg-white hover:bg-gray-50'
-                  }`}
+              {/* Mileage Filter */}
+              <div className="relative flex-1 mx-0.5 my-0.5">
+                <select
+                  name="mileage"
+                  value={filters.mileage}
+                  onChange={handleInputChange}
+                      className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                 >
-                  {getMileageDisplayText()}
-                </button>
+                    <option value="">Przebieg</option>
+                <option value="0">0 km</option>
+                <option value="0-30000">do 30 000 km</option>
+                <option value="30000-50000">od 30 000 km do 50 000 km</option>
+                <option value="50000-100000">od 50 000 km do 100 000 km</option>
+                <option value="100000+">powyżej 100 000 km</option>
+                <option value="100000-200000">od 100 000 km do 200 000 km</option>
+                <option value="200000+">powyżej 200 000 km</option>
+                </select>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                  <svg className={`w-4 h-4 text-gray-400 transition-transform ${showMileageDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
-
-                {/* Mileage Dropdown */}
-                {showMileageDropdown && (
-                      <div className="absolute top-full left-0 right-auto mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-4 w-64">
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">From</label>
-                        <input
-                          type="number"
-                          name="minMileage"
-                          value={filters.minMileage}
-                          onChange={handleInputChange}
-                          placeholder="Min Mileage"
-                              className="w-full px-3 py-3 lg:px-3 lg:py-2 text-sm lg:text-sm border border-gray-200 rounded-md lg:rounded-lg focus:outline-none focus:border-blue-500"
-                        />
-                      </div>
-                      <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">To</label>
-                        <input
-                          type="number"
-                          name="maxMileage"
-                          value={filters.maxMileage}
-                          onChange={handleInputChange}
-                          placeholder="Max Mileage"
-                              className="w-full px-3 py-3 lg:px-3 lg:py-2 text-sm lg:text-sm border border-gray-200 rounded-md lg:rounded-lg focus:outline-none focus:border-blue-500"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-                  </div>
+              </div>
                 </div>
               </div>
             </div>
@@ -1028,14 +1004,13 @@ export default function FilterNavbar({ onApplyFilters }) {
                   onChange={handleInputChange}
                       className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                 >
-                    <option value="">Paliwo Typ</option>
-                <option value="Gasoline">Gasoline</option>
+                    <option value="">Typ Paliwa</option>
+                <option value="Benzyna">Benzyna</option>
                 <option value="Diesel">Diesel</option>
-                <option value="Hybrid">Hybrid</option>
-                <option value="Electric">Electric</option>
-                <option value="Plug-in Hybrid">Plug-in Hybrid</option>
-                <option value="CNG">CNG</option>
+                <option value="Elektryk">Elektryk</option>
+                <option value="Hybryda">Hybryda</option>
                 <option value="LPG">LPG</option>
+                <option value="Wodór">Wodór</option>
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
                   <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1044,30 +1019,19 @@ export default function FilterNavbar({ onApplyFilters }) {
                 </div>
               </div>
 
-              {/* Engine Filter */}
+              {/* Engine Capacity Filter (Pojemność) */}
               <div className="relative flex-1 mx-0.5 my-0.5">
                 <select
-                  name="engine"
-                  value={filters.engine}
+                  name="engineCapacity"
+                  value={filters.engineCapacity}
                   onChange={handleInputChange}
                       className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                 >
-                    <option value="">Silnik</option>
-                <option value="1.0L">1.0L</option>
-                <option value="1.2L">1.2L</option>
-                <option value="1.4L">1.4L</option>
-                <option value="1.6L">1.6L</option>
-                <option value="1.8L">1.8L</option>
-                <option value="2.0L">2.0L</option>
-                <option value="2.2L">2.2L</option>
-                <option value="2.4L">2.4L</option>
-                <option value="2.5L">2.5L</option>
-                <option value="3.0L">3.0L</option>
-                <option value="3.5L">3.5L</option>
-                <option value="4.0L">4.0L</option>
-                <option value="4.5L">4.5L</option>
-                <option value="5.0L">5.0L</option>
-                <option value="6.0L">6.0L</option>
+                    <option value="">Pojemność</option>
+                <option value="0-1000">do 1000 cm³</option>
+                <option value="0-2000">do 2000 cm³</option>
+                <option value="2000-3000">od 2000 cm³ do 3000 cm³</option>
+                <option value="2900+">powyżej 2900 cm³</option>
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
                   <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1108,11 +1072,10 @@ export default function FilterNavbar({ onApplyFilters }) {
                   onChange={handleInputChange}
                       className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                 >
-                    <option value="">Przewodnik</option>
-                <option value="FWD">FWD</option>
-                <option value="RWD">RWD</option>
-                <option value="AWD">AWD</option>
-                <option value="4WD">4WD</option>
+                    <option value="">Napęd</option>
+                <option value="Przód">Przód</option>
+                <option value="Tył">Tył</option>
+                <option value="4x4/AWD">4x4/AWD</option>
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
                   <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1120,6 +1083,43 @@ export default function FilterNavbar({ onApplyFilters }) {
                   </svg>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* New Line: Kraj Pochodzenia (Origin Country) */}
+            <div className="space-y-2 md:space-y-0">
+              <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-between w-full gap-2">
+                <div className="flex items-center justify-between w-full gap-2 md:gap-0">
+              {/* Kraj Pochodzenia Filter */}
+              <div className="relative flex-1 mx-0.5 my-0.5">
+                <select
+                  name="krajPochodzenia"
+                  value={filters.krajPochodzenia}
+                  onChange={handleInputChange}
+                      className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                >
+                    <option value="">Kraj Pochodzenia</option>
+                <option value="czech">Czechy</option>
+                <option value="china">Chiny</option>
+                <option value="france">Francja</option>
+                <option value="holland">Holandia</option>
+                <option value="japan">Japonia</option>
+                <option value="south-korea">Korea Południowa</option>
+                <option value="germany">Niemcy</option>
+                <option value="poland">Polska</option>
+                <option value="russia">Rosja</option>
+                <option value="sweden">Szwecja</option>
+                <option value="united-states">USA</option>
+                <option value="united-kingdom">Wielka Brytania</option>
+                <option value="italy">Włochy</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                  <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
                 </div>
               </div>
             </div>
@@ -1158,8 +1158,8 @@ export default function FilterNavbar({ onApplyFilters }) {
                       className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                 >
                     <option value="">Bezwypadkowość</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
+                <option value="Yes">Tak</option>
+                <option value="No">Nie</option>
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
                   <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1174,7 +1174,7 @@ export default function FilterNavbar({ onApplyFilters }) {
               {/* Price Button with Dropdown */}
               <div className="relative flex-1 mx-0.5 my-0.5" ref={priceDropdownRef}>
                 <button
-                  onClick={() => { setShowPriceDropdown(!showPriceDropdown); setShowYearDropdown(false); setShowMileageDropdown(false); }}
+                  onClick={() => { setShowPriceDropdown(!showPriceDropdown); setShowYearDropdown(false); }}
                   className={`w-full px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none transition-all duration-200 shadow-sm hover:shadow-md text-left ${
                     showPriceDropdown || filters.priceFrom || filters.priceTo
                       ? 'text-black bg-white border-blue-300' 
@@ -1194,24 +1194,24 @@ export default function FilterNavbar({ onApplyFilters }) {
                       <div className="absolute top-full left-0 right-auto mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-3 max-h-72 overflow-y-auto pointer-events-auto">
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">From</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Od</label>
                         <input
                           type="number"
                           name="priceFrom"
                           value={filters.priceFrom}
                           onChange={handleInputChange}
-                          placeholder="Min Price"
+                          placeholder="Min Cena"
                           className="w-full px-3 py-3 lg:px-3 lg:py-2 text-sm lg:text-sm border border-gray-200 rounded-md lg:rounded-lg focus:outline-none focus:border-blue-500"
                         />
                       </div>
                       <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">To</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Do</label>
                         <input
                           type="number"
                           name="priceTo"
                           value={filters.priceTo}
                           onChange={handleInputChange}
-                          placeholder="Max Price"
+                          placeholder="Max Cena"
                           className="w-full px-3 py-3 lg:px-3 lg:py-2 text-sm lg:text-sm border border-gray-200 rounded-md lg:rounded-lg focus:outline-none focus:border-blue-500"
                         />
                       </div>
