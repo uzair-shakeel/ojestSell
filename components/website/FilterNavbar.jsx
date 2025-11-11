@@ -31,15 +31,11 @@ export default function FilterNavbar({ onApplyFilters }) {
   const searchParams = useSearchParams();
 
   const [showMoreFilters, setShowMoreFilters] = useState(false);
-  const [showYearDropdown, setShowYearDropdown] = useState(false);
-  const [showPriceDropdown, setShowPriceDropdown] = useState(false);
   const [mobileViewMode, setMobileViewMode] = useState('grid');
   const [isSticky, setIsSticky] = useState(false);
   const [navbarHeight, setNavbarHeight] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
   const dropdownRef = useRef(null);
-  const yearDropdownRef = useRef(null);
-  const priceDropdownRef = useRef(null);
   const filterRef = useRef(null);
   useEffect(() => {
     setIsMounted(true);
@@ -91,9 +87,6 @@ export default function FilterNavbar({ onApplyFilters }) {
       priceTo: "",
     };
     setFilters(resetFilters);
-
-    setShowYearDropdown(false);
-    setShowPriceDropdown(false);
     onApplyFilters(resetFilters);
   };
 
@@ -101,12 +94,6 @@ export default function FilterNavbar({ onApplyFilters }) {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowMoreFilters(false);
-      }
-      if (yearDropdownRef.current && !yearDropdownRef.current.contains(event.target)) {
-        setShowYearDropdown(false);
-      }
-      if (priceDropdownRef.current && !priceDropdownRef.current.contains(event.target)) {
-        setShowPriceDropdown(false);
       }
     };
 
@@ -376,103 +363,120 @@ export default function FilterNavbar({ onApplyFilters }) {
               </div>
             </div>
 
-            {/* Year Button with Dropdown */}
-            <div className="relative flex-1 overflow-visible" ref={yearDropdownRef}>
-              <button
-                onClick={() => { setShowYearDropdown(!showYearDropdown); setShowPriceDropdown(false); }}
-                className={`w-full px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm text-left ${
-                  showYearDropdown || filters.yearFrom || filters.yearTo
-                    ? 'text-black bg-white border-blue-300' 
-                    : 'text-gray-700 bg-white'
-                }`}
+            {/* Origin Country (Kraj Pochodzenia) */}
+            <div className="relative flex-1">
+              <select
+                name="krajPochodzenia"
+                value={filters.krajPochodzenia}
+                onChange={handleInputChange}
+                className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
               >
-                {getYearDisplayText()}
-              </button>
+                <option value="">Kraj Pochodzenia</option>
+                <option value="czech">Czechy</option>
+                <option value="china">Chiny</option>
+                <option value="france">Francja</option>
+                <option value="holland">Holandia</option>
+                <option value="japan">Japonia</option>
+                <option value="south-korea">Korea Południowa</option>
+                <option value="germany">Niemcy</option>
+                <option value="poland">Polska</option>
+                <option value="russia">Rosja</option>
+                <option value="sweden">Szwecja</option>
+                <option value="united-states">USA</option>
+                <option value="united-kingdom">Wielka Brytania</option>
+                <option value="italy">Włochy</option>
+              </select>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                <svg className={`w-3 h-3 lg:w-4 lg:h-4 text-gray-400 transition-transform ${showYearDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </div>
-              {showYearDropdown && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-3 max-h-72 overflow-y-auto pointer-events-auto">
-                  <div className="grid grid-cols-1 gap-2">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Rok od</label>
-                      <select
-                        name="yearFrom"
-                        value={filters.yearFrom}
-                        onChange={handleInputChange}
-                        className="w-full px-3 h-10 text-sm border border-gray-200 rounded-md focus:outline-none"
-                      >
-                        <option value="">Rok od</option>
-                        <option value="2025">2025</option>
-                        <option value="2024">2024</option>
-                        <option value="2023">2023</option>
-                        <option value="2022">2022</option>
-                        <option value="2021">2021</option>
-                        <option value="2020">2020</option>
-                        <option value="2019">2019</option>
-                        <option value="2018">2018</option>
-                        <option value="2017">2017</option>
-                        <option value="2016">2016</option>
-                        <option value="2015">2015</option>
-                        <option value="2014">2014</option>
-                        <option value="2013">2013</option>
-                        <option value="2012">2012</option>
-                        <option value="2011">2011</option>
-                        <option value="2010">2010</option>
-                        <option value="2009">2009</option>
-                        <option value="2008">2008</option>
-                        <option value="2007">2007</option>
-                        <option value="2006">2006</option>
-                        <option value="2005">2005</option>
-                        <option value="2004">2004</option>
-                        <option value="2003">2003</option>
-                        <option value="2002">2002</option>
-                        <option value="2001">2001</option>
-                        <option value="2000">2000</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Roku do</label>
-                      <select
-                        name="yearTo"
-                        value={filters.yearTo}
-                        onChange={handleInputChange}
-                        className="w-full px-3 h-10 text-sm border border-gray-200 rounded-md focus:outline-none"
-                      >
-                        <option value="">Roku Do </option>
-                        <option value="2025">2025</option>
-                        <option value="2024">2024</option>
-                        <option value="2023">2023</option>
-                        <option value="2022">2022</option>
-                        <option value="2021">2021</option>
-                        <option value="2020">2020</option>
-                        <option value="2019">2019</option>
-                        <option value="2018">2018</option>
-                        <option value="2017">2017</option>
-                        <option value="2016">2016</option>
-                        <option value="2015">2015</option>
-                        <option value="2014">2014</option>
-                        <option value="2013">2013</option>
-                        <option value="2012">2012</option>
-                        <option value="2011">2011</option>
-                        <option value="2010">2010</option>
-                        <option value="2009">2009</option>
-                        <option value="2008">2008</option>
-                        <option value="2007">2007</option>
-                        <option value="2006">2006</option>
-                        <option value="2005">2005</option>
-                        <option value="2004">2004</option>
-                        <option value="2003">2003</option>
-                        <option value="2002">2002</option>
-                        <option value="2001">2001</option>
-                        <option value="2000">2000</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              )}
+            </div>
+
+            {/* Year From */}
+            <div className="relative flex-1">
+              <select
+                name="yearFrom"
+                value={filters.yearFrom}
+                onChange={handleInputChange}
+                className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+              >
+                <option value="">Rok od</option>
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+                <option value="2021">2021</option>
+                <option value="2020">2020</option>
+                <option value="2019">2019</option>
+                <option value="2018">2018</option>
+                <option value="2017">2017</option>
+                <option value="2016">2016</option>
+                <option value="2015">2015</option>
+                <option value="2014">2014</option>
+                <option value="2013">2013</option>
+                <option value="2012">2012</option>
+                <option value="2011">2011</option>
+                <option value="2010">2010</option>
+                <option value="2009">2009</option>
+                <option value="2008">2008</option>
+                <option value="2007">2007</option>
+                <option value="2006">2006</option>
+                <option value="2005">2005</option>
+                <option value="2004">2004</option>
+                <option value="2003">2003</option>
+                <option value="2002">2002</option>
+                <option value="2001">2001</option>
+                <option value="2000">2000</option>
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Year To */}
+            <div className="relative flex-1">
+              <select
+                name="yearTo"
+                value={filters.yearTo}
+                onChange={handleInputChange}
+                className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+              >
+                <option value="">Rok do</option>
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+                <option value="2021">2021</option>
+                <option value="2020">2020</option>
+                <option value="2019">2019</option>
+                <option value="2018">2018</option>
+                <option value="2017">2017</option>
+                <option value="2016">2016</option>
+                <option value="2015">2015</option>
+                <option value="2014">2014</option>
+                <option value="2013">2013</option>
+                <option value="2012">2012</option>
+                <option value="2011">2011</option>
+                <option value="2010">2010</option>
+                <option value="2009">2009</option>
+                <option value="2008">2008</option>
+                <option value="2007">2007</option>
+                <option value="2006">2006</option>
+                <option value="2005">2005</option>
+                <option value="2004">2004</option>
+                <option value="2003">2003</option>
+                <option value="2002">2002</option>
+                <option value="2001">2001</option>
+                <option value="2000">2000</option>
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
             </div>
           </div>
             </div>
@@ -657,121 +661,125 @@ export default function FilterNavbar({ onApplyFilters }) {
                       <option value="200">Within 200 miles</option>
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                      <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                      <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
                     </div>
                   </div>
                 </div>
-                {/* Type + Country + Year */}
+                {/* Body Type + Manufacturer Country */}
                 <div className="flex items-center justify-between w-full gap-2">
                   <div className="relative flex-1">
-                    <select name="type" value={filters.type} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                      <option value="">Typ</option>
-                      <option value="New">New</option>
-                      <option value="Used">Used</option>
-                      <option value="Certified">Certified</option>
+                    <select name="bodyType" value={filters.bodyType} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                      <option value="">Typ nadwozia</option>
+                      <option value="Bus I Van">Bus I Van</option>
+                      <option value="Coupe">Coupe</option>
+                      <option value="Crossover">Crossover</option>
+                      <option value="Hatchback">Hatchback</option>
+                      <option value="Kabriolet">Kabriolet</option>
+                      <option value="Kamper">Kamper</option>
+                      <option value="Klasyk">Klasyk</option>
+                      <option value="Kombi">Kombi</option>
+                      <option value="Kompakt">Kompakt</option>
+                      <option value="Limuzyna">Limuzyna</option>
+                      <option value="Pickup">Pickup</option>
+                      <option value="Sedan">Sedan</option>
+                      <option value="Sportowe">Sportowe</option>
+                      <option value="SUV">SUV</option>
+                      <option value="Terenowe">Terenowe</option>
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                      <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                      <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
                     </div>
                   </div>
                   <div className="relative flex-1">
-                    <select name="origin" value={filters.origin} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                      <option value="">Kraj</option>
-                      <option value="germany">Niemcy</option>
+                    <select name="krajProducenta" value={filters.krajProducenta} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                      <option value="">Kraj Producenta</option>
+                      <option value="czech">Czechy</option>
+                      <option value="china">Chiny</option>
+                      <option value="france">Francja</option>
+                      <option value="holland">Holandia</option>
                       <option value="japan">Japonia</option>
+                      <option value="south-korea">Korea Południowa</option>
+                      <option value="germany">Niemcy</option>
+                      <option value="poland">Polska</option>
+                      <option value="russia">Rosja</option>
+                      <option value="sweden">Szwecja</option>
                       <option value="united-states">USA</option>
                       <option value="united-kingdom">Wielka Brytania</option>
                       <option value="italy">Włochy</option>
-                      <option value="russia">Rosja</option>
-                      <option value="france">Francja</option>
-                      <option value="south-korea">Korea Południowa</option>
-                      <option value="sweden">Szwecja</option>
-                      <option value="china">Chiny</option>
-                      <option value="poland">Polska</option>
-                      <option value="czech">Czechy</option>
-                      <option value="holland">Holandia</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                      <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="relative flex-1">
+                    <select name="yearFrom" value={filters.yearFrom} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                      <option value="">Rok od</option>
+                      <option value="2025">2025</option>
+                      <option value="2024">2024</option>
+                      <option value="2023">2023</option>
+                      <option value="2022">2022</option>
+                      <option value="2021">2021</option>
+                      <option value="2020">2020</option>
+                      <option value="2019">2019</option>
+                      <option value="2018">2018</option>
+                      <option value="2017">2017</option>
+                      <option value="2016">2016</option>
+                      <option value="2015">2015</option>
+                      <option value="2014">2014</option>
+                      <option value="2013">2013</option>
+                      <option value="2012">2012</option>
+                      <option value="2011">2011</option>
+                      <option value="2010">2010</option>
+                      <option value="2009">2009</option>
+                      <option value="2008">2008</option>
+                      <option value="2007">2007</option>
+                      <option value="2006">2006</option>
+                      <option value="2005">2005</option>
+                      <option value="2004">2004</option>
+                      <option value="2003">2003</option>
+                      <option value="2002">2002</option>
+                      <option value="2001">2001</option>
+                      <option value="2000">2000</option>
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
                   </div>
-                  <div className="relative flex-1 overflow-visible" ref={yearDropdownRef}>
-                    <button onClick={() => { setShowYearDropdown(!showYearDropdown); setShowPriceDropdown(false); }} className={`w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none shadow-sm text-left ${showYearDropdown || filters.yearFrom || filters.yearTo ? 'text-black bg-white border-blue-300' : 'text-gray-700 bg-white'}`}>{getYearDisplayText()}</button>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className={`w-3 h-3 text-gray-400 transition-transform ${showYearDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
-                    {showYearDropdown && (
-                      <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-3 w-full z-50 pointer-events-auto">
-                        <div className="grid grid-cols-1 gap-2">
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Rok od</label>
-                            <select
-                              name="yearFrom"
-                              value={filters.yearFrom}
-                              onChange={handleInputChange}
-                              className="w-full px-3 h-10 text-sm border border-gray-200 rounded-md focus:outline-none"
-                            />
-                            <select name="yearFrom" value={filters.yearFrom} onChange={handleInputChange} className="w-full px-3 h-10 text-sm border border-gray-200 rounded-md focus:outline-none">
-                              <option value="">Rok od</option>
-                              <option value="2025">2025</option>
-                              <option value="2024">2024</option>
-                              <option value="2023">2023</option>
-                              <option value="2022">2022</option>
-                              <option value="2021">2021</option>
-                              <option value="2020">2020</option>
-                              <option value="2019">2019</option>
-                              <option value="2018">2018</option>
-                              <option value="2017">2017</option>
-                              <option value="2016">2016</option>
-                              <option value="2015">2015</option>
-                              <option value="2014">2014</option>
-                              <option value="2013">2013</option>
-                              <option value="2012">2012</option>
-                              <option value="2011">2011</option>
-                              <option value="2010">2010</option>
-                              <option value="2009">2009</option>
-                              <option value="2008">2008</option>
-                              <option value="2007">2007</option>
-                              <option value="2006">2006</option>
-                              <option value="2005">2005</option>
-                              <option value="2004">2004</option>
-                              <option value="2003">2003</option>
-                              <option value="2002">2002</option>
-                              <option value="2001">2001</option>
-                              <option value="2000">2000</option>
-                            </select>
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Roku do</label>
-                            <select name="yearTo" value={filters.yearTo} onChange={handleInputChange} className="w-full px-3 h-10 text-sm border border-gray-200 rounded-md focus:outline-none">
-                              <option value="">Roku Do </option>
-                              <option value="2025">2025</option>
-                              <option value="2024">2024</option>
-                              <option value="2023">2023</option>
-                              <option value="2022">2022</option>
-                              <option value="2021">2021</option>
-                              <option value="2020">2020</option>
-                              <option value="2019">2019</option>
-                              <option value="2018">2018</option>
-                              <option value="2017">2017</option>
-                              <option value="2016">2016</option>
-                              <option value="2015">2015</option>
-                              <option value="2014">2014</option>
-                              <option value="2013">2013</option>
-                              <option value="2012">2012</option>
-                              <option value="2011">2011</option>
-                              <option value="2010">2010</option>
-                              <option value="2009">2009</option>
-                              <option value="2008">2008</option>
-                              <option value="2007">2007</option>
-                              <option value="2006">2006</option>
-                              <option value="2005">2005</option>
-                              <option value="2004">2004</option>
-                              <option value="2003">2003</option>
-                              <option value="2002">2002</option>
-                              <option value="2001">2001</option>
-                              <option value="2000">2000</option>
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                  <div className="relative flex-1">
+                    <select name="yearTo" value={filters.yearTo} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                      <option value="">Rok do</option>
+                      <option value="2025">2025</option>
+                      <option value="2024">2024</option>
+                      <option value="2023">2023</option>
+                      <option value="2022">2022</option>
+                      <option value="2021">2021</option>
+                      <option value="2020">2020</option>
+                      <option value="2019">2019</option>
+                      <option value="2018">2018</option>
+                      <option value="2017">2017</option>
+                      <option value="2016">2016</option>
+                      <option value="2015">2015</option>
+                      <option value="2014">2014</option>
+                      <option value="2013">2013</option>
+                      <option value="2012">2012</option>
+                      <option value="2011">2011</option>
+                      <option value="2010">2010</option>
+                      <option value="2009">2009</option>
+                      <option value="2008">2008</option>
+                      <option value="2007">2007</option>
+                      <option value="2006">2006</option>
+                      <option value="2005">2005</option>
+                      <option value="2004">2004</option>
+                      <option value="2003">2003</option>
+                      <option value="2002">2002</option>
+                      <option value="2001">2001</option>
+                      <option value="2000">2000</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
                   </div>
                 </div>
                 {/* Condition + Mileage */}
@@ -867,25 +875,13 @@ export default function FilterNavbar({ onApplyFilters }) {
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
                   </div>
                 </div>
-                {/* Price */}
-                <div className="w-full">
-                  <div className="relative overflow-visible" ref={priceDropdownRef}>
-                    <button onClick={() => { setShowPriceDropdown(!showPriceDropdown); setShowYearDropdown(false); }} className={`w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none shadow-sm text-left ${showPriceDropdown || filters.priceFrom || filters.priceTo ? 'text-black bg-white border-blue-300' : 'text-gray-700 bg-white'}`}>{getPriceDisplayText()}</button>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className={`w-3 h-3 text-gray-400 transition-transform ${showPriceDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
-                    {showPriceDropdown && (
-                      <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-3 max-h-72 overflow-y-auto pointer-events-auto z-50">
-                        <div className="grid grid-cols-2 gap-2">
-                          <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">Od</label>
-                            <input type="number" name="priceFrom" value={filters.priceFrom} onChange={handleInputChange} placeholder="Min Cena" className="w-full px-3 h-10 text-sm border border-gray-200 rounded-md focus:outline-none" />
-                          </div>
-                          <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">Do</label>
-                            <input type="number" name="priceTo" value={filters.priceTo} onChange={handleInputChange} placeholder="Max Cena" className="w-full px-3 h-10 text-sm border border-gray-200 rounded-md focus:outline-none" />
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                {/* Price From + Price To */}
+                <div className="flex items-center justify-between w-full gap-2">
+                  <div className="relative flex-1">
+                    <input type="number" name="priceFrom" value={filters.priceFrom} onChange={handleInputChange} placeholder="Cena od" className="w-full px-3 h-10 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm" />
+                  </div>
+                  <div className="relative flex-1">
+                    <input type="number" name="priceTo" value={filters.priceTo} onChange={handleInputChange} placeholder="Cena do" className="w-full px-3 h-10 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm" />
                   </div>
                 </div>
                 {/* Actions */}
@@ -1169,55 +1165,30 @@ export default function FilterNavbar({ onApplyFilters }) {
                 </div>
               </div>
 
-                {/* Row 2 Mobile: Price + Reset, Desktop: All in one row */}
+                {/* Row 2 Mobile: Price From + Price To, Desktop: All in one row */}
                 <div className="flex items-center justify-between w-full gap-2 md:gap-0">
-              {/* Price Button with Dropdown */}
-              <div className="relative flex-1 mx-0.5 my-0.5" ref={priceDropdownRef}>
-                <button
-                  onClick={() => { setShowPriceDropdown(!showPriceDropdown); setShowYearDropdown(false); }}
-                  className={`w-full px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none transition-all duration-200 shadow-sm hover:shadow-md text-left ${
-                    showPriceDropdown || filters.priceFrom || filters.priceTo
-                      ? 'text-black bg-white border-blue-300' 
-                      : 'text-gray-700 bg-white'
-                  }`}
-                >
-                  {getPriceDisplayText()}
-                </button>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                  <svg className={`w-4 h-4 text-gray-400 transition-transform ${showPriceDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
+              {/* Price From */}
+              <div className="relative flex-1 mx-0.5 my-0.5">
+                <input
+                  type="number"
+                  name="priceFrom"
+                  value={filters.priceFrom}
+                  onChange={handleInputChange}
+                  placeholder="Cena od"
+                  className="w-full px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200"
+                />
+              </div>
 
-                {/* Price Dropdown */}
-                {showPriceDropdown && (
-                      <div className="absolute top-full left-0 right-auto mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-3 max-h-72 overflow-y-auto pointer-events-auto">
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Od</label>
-                        <input
-                          type="number"
-                          name="priceFrom"
-                          value={filters.priceFrom}
-                          onChange={handleInputChange}
-                          placeholder="Min Cena"
-                          className="w-full px-3 py-3 lg:px-3 lg:py-2 text-sm lg:text-sm border border-gray-200 rounded-md lg:rounded-lg focus:outline-none focus:border-blue-500"
-                        />
-                      </div>
-                      <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Do</label>
-                        <input
-                          type="number"
-                          name="priceTo"
-                          value={filters.priceTo}
-                          onChange={handleInputChange}
-                          placeholder="Max Cena"
-                          className="w-full px-3 py-3 lg:px-3 lg:py-2 text-sm lg:text-sm border border-gray-200 rounded-md lg:rounded-lg focus:outline-none focus:border-blue-500"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
+              {/* Price To */}
+              <div className="relative flex-1 mx-0.5 my-0.5">
+                <input
+                  type="number"
+                  name="priceTo"
+                  value={filters.priceTo}
+                  onChange={handleInputChange}
+                  placeholder="Cena do"
+                  className="w-full px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200"
+                />
               </div>
 
             </div>
