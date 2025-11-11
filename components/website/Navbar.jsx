@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import { BsChatLeftDots } from "react-icons/bs";
 import { BsBell } from "react-icons/bs";
+import { FiBell } from "react-icons/fi";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import LanguageSwitcher from "../LanguageSwitcher";
@@ -14,19 +15,27 @@ import Avatar from "../both/Avatar";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [openNotif, setOpenNotif] = useState(false);
   const [chatCount, setChatCount] = useState(0);
   const router = useRouter();
   const { t } = useLanguage();
   const { isSignedIn, logout, user } = useAuth();
+  const notifRef = useRef(null);
 
   // Get notifications (hook must be called unconditionally)
-  let notifications = null;
+  let notificationsContext = null;
+  let notificationsList = [];
   let unreadCount = 0;
   let notificationsError = false;
+  let markRead = null;
+  let markAll = null;
   
   try {
-    notifications = useNotifications();
-    unreadCount = notifications?.unreadCount || 0;
+    notificationsContext = useNotifications();
+    notificationsList = notificationsContext?.notifications || [];
+    unreadCount = notificationsContext?.unreadCount || 0;
+    markRead = notificationsContext?.markRead;
+    markAll = notificationsContext?.markAll;
   } catch (e) {
     // NotificationsProvider not available (user not signed in or error)
     notificationsError = true;
@@ -52,6 +61,19 @@ const Navbar = () => {
     { name: t("navbar.links.faq"), href: "/website/faq" },
     { name: t("navbar.links.contact"), href: "/website/contact" },
   ];
+
+  // Close notification popup when clicking outside
+  useEffect(() => {
+    const handler = (e) => {
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setOpenNotif(false);
+      }
+    };
+    if (openNotif) {
+      document.addEventListener('mousedown', handler);
+      return () => document.removeEventListener('mousedown', handler);
+    }
+  }, [openNotif]);
 
   // Smooth dropdown: animate max-height from 0 to content height
   const dropdownRef = useRef(null);
@@ -83,17 +105,64 @@ const Navbar = () => {
 
         {/* Notification Bell - Only for signed-in users */}
         {isSignedIn && (
-          <button
-            onClick={() => router.push("/dashboard/notifications")}
-            className="relative text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-300"
-          >
-            <BsBell size={24} />
-            {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                {unreadCount > 9 ? "9+" : unreadCount}
-              </span>
+          <div className="relative" ref={notifRef}>
+            <button
+              onClick={() => setOpenNotif((v) => !v)}
+              className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors duration-300"
+            >
+              <FiBell className="w-5 h-5" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-red-600 text-white text-[10px] flex items-center justify-center">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
+            </button>
+            {openNotif && (
+              <div className="absolute right-0 mt-2 w-80 max-w-[90vw] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden">
+                <div className="flex items-center justify-between px-3 py-2 border-b border-gray-100 dark:border-gray-700">
+                  <div className="text-sm font-semibold text-gray-900 dark:text-white">Notifications</div>
+                  {markAll && (
+                    <button onClick={markAll} className="text-xs text-blue-600 hover:underline">
+                      Mark all as read
+                    </button>
+                  )}
+                </div>
+                <div className="max-h-96 overflow-auto">
+                  {notificationsList.length === 0 ? (
+                    <div className="px-3 py-4 text-sm text-gray-500 dark:text-gray-400">No notifications</div>
+                  ) : (
+                    <ul className="divide-y divide-gray-100 dark:divide-gray-700">
+                      {notificationsList.slice(0, 8).map((n) => (
+                        <li key={n.id} className={`px-3 py-2 flex items-start gap-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 ${n.read ? "opacity-60" : ""}`}>
+                          <div className={`mt-1 w-2 h-2 rounded-full ${n.read ? "bg-gray-300 dark:bg-gray-600" : "bg-blue-500"}`} />
+                          <div className="min-w-0 flex-1">
+                            <div className="text-sm font-medium text-gray-900 dark:text-white truncate">{n.title}</div>
+                            {n.body && <div className="text-xs text-gray-600 dark:text-gray-300 line-clamp-2">{n.body}</div>}
+                            <div className="text-[10px] text-gray-400 dark:text-gray-500 mt-1">{new Date(n.createdAt).toLocaleString()}</div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {!n.read && markRead && (
+                              <button
+                                onClick={() => markRead(n.id)}
+                                className="text-xs text-blue-600 hover:underline"
+                              >
+                                Read
+                              </button>
+                            )}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+                <div className="px-3 py-2 border-t border-gray-100 dark:border-gray-700 text-right">
+                  <Link href="/dashboard/notifications" onClick={() => setOpenNotif(false)} className="text-sm text-blue-600 hover:underline">
+                    See all notifications
+                  </Link>
+                </div>
+              </div>
             )}
-          </button>
+          </div>
         )}
 
         {/* <div className="">
