@@ -22,12 +22,17 @@ const Navbar = () => {
   // Get notifications (hook must be called unconditionally)
   let notifications = null;
   let unreadCount = 0;
+  let notificationsError = false;
+  
   try {
     notifications = useNotifications();
     unreadCount = notifications?.unreadCount || 0;
   } catch (e) {
     // NotificationsProvider not available (user not signed in or error)
-    // This is expected for non-authenticated users
+    notificationsError = true;
+    if (isSignedIn) {
+      console.warn('[Navbar] Notifications not available for signed-in user:', e);
+    }
   }
 
   const handleSignIn = () => {

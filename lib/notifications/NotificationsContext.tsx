@@ -12,6 +12,8 @@ import {
 import { getCarsByUserId } from "../../services/carService";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+const SOCKET_BASE = process.env.NEXT_PUBLIC_SOCKET_URL || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5000');
+const SOCKET_PATH = process.env.NEXT_PUBLIC_SOCKET_PATH || "/socket.io/";
 
 export type NotificationsContextType = {
   notifications: NotificationItem[];
@@ -86,10 +88,13 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
 
   // Optional: Socket listeners for backend events
   useEffect(() => {
-    if (!user) return;
+    if (!user || typeof window === 'undefined') return;
     const token = getToken();
-    const socket = io(API_BASE || undefined, { 
+    console.log('[Notifications] Connecting to socket:', SOCKET_BASE, 'with path:', SOCKET_PATH);
+    const socket = io(SOCKET_BASE, { 
+      path: SOCKET_PATH,
       autoConnect: true,
+      withCredentials: true,
       auth: { 
         token,
         userId: user.id || user._id 
@@ -104,10 +109,18 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
 
     socket.on("connect_error", (err: any) => {
       console.error("[Notifications] Socket connection error:", err?.message || err);
+      console.error("[Notifications] Attempted connection to:", SOCKET_BASE);
+      console.error("[Notifications] With path:", SOCKET_PATH);
+      console.error("[Notifications] Full error:", err);
     });
 
     socket.on("disconnect", (reason: string) => {
       console.warn("[Notifications] Socket disconnected:", reason);
+      if (reason === "io server disconnect") {
+        // Server disconnected, try to reconnect
+        console.log("[Notifications] Attempting to reconnect...");
+        socket.connect();
+      }
     });
 
     socket.on("chat:message:received", (payload: any) => {
