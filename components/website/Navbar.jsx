@@ -120,16 +120,16 @@ const Navbar = () => {
             {openNotif && (
               <div className="absolute right-0 mt-2 w-80 max-w-[90vw] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden">
                 <div className="flex items-center justify-between px-3 py-2 border-b border-gray-100 dark:border-gray-700">
-                  <div className="text-sm font-semibold text-gray-900 dark:text-white">Notifications</div>
+                  <div className="text-sm font-semibold text-gray-900 dark:text-white">Powiadomienia</div>
                   {markAll && (
                     <button onClick={markAll} className="text-xs text-blue-600 hover:underline">
-                      Mark all as read
+                      Oznacz wszystkie jako przeczytane
                     </button>
                   )}
                 </div>
                 <div className="max-h-96 overflow-auto">
                   {notificationsList.length === 0 ? (
-                    <div className="px-3 py-4 text-sm text-gray-500 dark:text-gray-400">No notifications</div>
+                    <div className="px-3 py-4 text-sm text-gray-500 dark:text-gray-400">Brak powiadomień</div>
                   ) : (
                     <ul className="divide-y divide-gray-100 dark:divide-gray-700">
                       {notificationsList.slice(0, 8).map((n) => (
@@ -146,7 +146,7 @@ const Navbar = () => {
                                 onClick={() => markRead(n.id)}
                                 className="text-xs text-blue-600 hover:underline"
                               >
-                                Read
+                                Przeczytaj
                               </button>
                             )}
                           </div>
@@ -157,7 +157,7 @@ const Navbar = () => {
                 </div>
                 <div className="px-3 py-2 border-t border-gray-100 dark:border-gray-700 text-right">
                   <Link href="/dashboard/notifications" onClick={() => setOpenNotif(false)} className="text-sm text-blue-600 hover:underline">
-                    See all notifications
+                    Zobacz wszystkie powiadomienia
                   </Link>
                 </div>
               </div>

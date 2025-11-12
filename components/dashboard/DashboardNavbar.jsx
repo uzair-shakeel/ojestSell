@@ -75,12 +75,12 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
           {openNotif && (
             <div className="absolute right-0 mt-2 w-80 max-w-[90vw] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden">
               <div className="flex items-center justify-between px-3 py-2 border-b border-gray-100 dark:border-gray-700">
-                <div className="text-sm font-semibold text-gray-900 dark:text-white">Notifications</div>
-                <button onClick={markAll} className="text-xs text-blue-600 hover:underline">Mark all as read</button>
+                <div className="text-sm font-semibold text-gray-900 dark:text-white">Powiadomienia</div>
+                <button onClick={markAll} className="text-xs text-blue-600 hover:underline">Oznacz wszystkie jako przeczytane</button>
               </div>
               <div className="max-h-96 overflow-auto">
                 {(notifications || []).length === 0 ? (
-                  <div className="px-3 py-4 text-sm text-gray-500">No notifications</div>
+                  <div className="px-3 py-4 text-sm text-gray-500">Brak powiadomień</div>
                 ) : (
                   <ul className="divide-y divide-gray-100 dark:divide-gray-700">
                     {(notifications || []).slice(0, 8).map((n) => (
@@ -97,14 +97,14 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
                               onClick={() => add({ ...n, id: n.id + "-dup", read: false, createdAt: Date.now() })}
                               className="text-xs text-gray-500 hover:underline"
                             >
-                              Unread
+                              Nieprzeczytane
                             </button>
                           ) : (
                             <button
                               onClick={() => markRead(n.id)}
                               className="text-xs text-blue-600 hover:underline"
                             >
-                              Mark read
+                              Oznacz jako przeczytane
                             </button>
                           )}
                         </div>
@@ -115,7 +115,7 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
               </div>
               <div className="px-3 py-2 border-t border-gray-100 dark:border-gray-700 text-right">
                 <Link href="/dashboard/notifications" onClick={() => setOpenNotif(false)} className="text-sm text-blue-600 hover:underline">
-                  See all
+                  Zobacz wszystkie
                 </Link>
               </div>
             </div>

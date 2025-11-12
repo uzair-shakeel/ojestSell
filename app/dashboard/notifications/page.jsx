@@ -39,8 +39,8 @@ export default function NotificationsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Notifications</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Unread: {unreadCount}</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Powiadomienia</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Nieprzeczytane: {unreadCount}</p>
         </div>
         <div className="flex items-center gap-2">
           <select
@@ -48,10 +48,10 @@ export default function NotificationsPage() {
             onChange={(e) => setFilter(e.target.value)}
             className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-md px-2 py-1 text-sm"
           >
-            <option value="all">All</option>
-            <option value="unread">Unread</option>
-            <option value="message">Messages</option>
-            <option value="car">Cars</option>
+            <option value="all">Wszystkie</option>
+            <option value="unread">Nieprzeczytane</option>
+            <option value="message">Wiadomości</option>
+            <option value="car">Samochody</option>
             <option value="status">Status</option>
             <option value="system">System</option>
           </select>
@@ -59,14 +59,14 @@ export default function NotificationsPage() {
             onClick={markAll}
             className="px-3 py-1.5 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700"
           >
-            Mark all as read
+            Oznacz wszystkie jako przeczytane
           </button>
         </div>
       </div>
 
       <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
         {items.length === 0 ? (
-          <div className="text-sm text-gray-500 dark:text-gray-400">No notifications</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">Brak powiadomień</div>
         ) : (
           <ul className="divide-y divide-gray-100 dark:divide-gray-700">
             {items.map((n) => (
@@ -97,7 +97,7 @@ export default function NotificationsPage() {
                       onClick={() => markRead(n.id)}
                       className="text-xs text-blue-600 hover:underline"
                     >
-                      Mark as read
+                      Oznacz jako przeczytane
                     </button>
                   )}
                 </div>

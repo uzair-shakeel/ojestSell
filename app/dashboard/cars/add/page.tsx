@@ -331,9 +331,9 @@ export default function MultiStepForm() {
         window.dispatchEvent(
           new CustomEvent("ojest:notify", {
             detail: {
-              type: "car",
-              title: "Car created",
-              body: formData.title || "New listing submitted",
+              type: "status",
+              title: "Samochód dodany",
+              body: "Twój samochód oczekuje na zatwierdzenie",
               meta: { createdAt: Date.now() },
             },
           })

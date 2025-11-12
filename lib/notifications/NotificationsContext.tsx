@@ -12,7 +12,7 @@ import {
 import { getCarsByUserId } from "../../services/carService";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
-const SOCKET_BASE = process.env.NEXT_PUBLIC_SOCKET_URL || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5000');
+const SOCKET_BASE = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5000";
 const SOCKET_PATH = process.env.NEXT_PUBLIC_SOCKET_PATH || "/socket.io/";
 
 export type NotificationsContextType = {
@@ -124,7 +124,13 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
     });
 
     socket.on("chat:message:received", (payload: any) => {
-      add({ type: "message", title: "Nowa wiadomość", body: payload?.text || payload?.content, meta: payload });
+      const senderName = payload?.senderName || payload?.sender?.name || payload?.sender?.firstName || "Ktoś";
+      add({ 
+        type: "message", 
+        title: "Nowa wiadomość", 
+        body: `Otrzymałeś wiadomość od ${senderName}`, 
+        meta: payload 
+      });
     });
 
     socket.on("car:created", (car: any) => {
@@ -132,7 +138,21 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
     });
 
     socket.on("car:status", (data: any) => {
-      add({ type: "status", title: "Status ogłoszenia", body: `${data?.status || "Zaktualizowano"}`, meta: data });
+      let title = "Aktualizacja statusu";
+      let body = "Status zaktualizowany";
+      
+      if (data?.status === "Approved") {
+        title = "Samochód zatwierdzony";
+        body = "Twój samochód został zatwierdzony";
+      } else if (data?.status === "Rejected") {
+        title = "Samochód odrzucony";
+        body = "Twój samochód został odrzucony, spróbuj ponownie";
+      } else if (data?.status === "Pending") {
+        title = "Status samochodu";
+        body = "Twój samochód oczekuje na zatwierdzenie";
+      }
+      
+      add({ type: "status", title, body, meta: data });
     });
 
     // Global message listener - works on ALL pages
@@ -146,8 +166,8 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
         console.log("[Notifications] New message received:", { chatId, sender: message.sender, content: message.content });
         add({ 
           type: "message", 
-          title: "New message", 
-          body: message.content || "You have a new message", 
+          title: "Nowa wiadomość", 
+          body: message.content || "Masz nową wiadomość", 
           meta: { chatId, messageId: message.id } 
         });
       }
@@ -176,28 +196,33 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
 
         // Skip creation/status detection on first run (just set baseline)
         if (!isFirstRun) {
-          // Detect creations
-          Object.keys(map).forEach((id) => {
-            if (!prevCarsRef.current[id]) {
-              console.log("[Notifications] New car detected:", id, map[id]);
-              add({
-                type: "car",
-                title: "Car created",
-                body: `${map[id].make || "Car"} ${map[id].model || ""}`.trim() || map[id].title,
-                meta: { carId: id },
-              });
-            }
-          });
+          // Skip car creation notifications - they're handled elsewhere
+          // Just update the ref without creating notifications
 
           // Detect status changes
           Object.keys(map).forEach((id) => {
             const prev = prevCarsRef.current[id];
             if (prev && prev.status !== map[id].status) {
               console.log("[Notifications] Status changed:", id, prev.status, "->", map[id].status);
+              
+              let title = "Aktualizacja statusu";
+              let body = "Status zaktualizowany";
+              
+              if (map[id].status === "Approved") {
+                title = "Samochód zatwierdzony";
+                body = "Twój samochód został zatwierdzony";
+              } else if (map[id].status === "Rejected") {
+                title = "Samochód odrzucony";
+                body = "Twój samochód został odrzucony, spróbuj ponownie";
+              } else if (map[id].status === "Pending") {
+                title = "Status samochodu";
+                body = "Twój samochód oczekuje na zatwierdzenie";
+              }
+              
               add({
                 type: "status",
-                title: "Listing status updated",
-                body: `${map[id].title || map[id].make || "Your car"} is now ${map[id].status}`,
+                title,
+                body,
                 meta: { carId: id, status: map[id].status },
               });
             }
