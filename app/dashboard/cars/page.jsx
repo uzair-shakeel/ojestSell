@@ -23,7 +23,7 @@ export default function DashboardCarsPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [userId, getToken]);
+  }, [userId]);
 
   const handleDelete = async (carId) => {
     if (!window.confirm("Are you sure you want to delete this car?")) return;
@@ -36,10 +36,9 @@ export default function DashboardCarsPage() {
   };
 
   useEffect(() => {
-    if (userId) {
-      loadCars();
-    }
-  }, [userId, loadCars]);
+    if (!userId) return;
+    loadCars();
+  }, [userId]);
 
   // Handle the case when there's no user or still loading
   if (isLoading || !user) {
