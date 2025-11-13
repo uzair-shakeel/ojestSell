@@ -816,8 +816,8 @@ export default function StepTwo({
             }
           >
             <option value="">Wybierz Skrzynia Biegów</option>
-            <option value="Manual">Manualna</option>
-            <option value="Automatic">Automatyczna</option>
+            <option value="Manual">Manual</option>
+            <option value="Automatic">Automat</option>
           </select>
         </div>
 
@@ -837,6 +837,7 @@ export default function StepTwo({
             <option value="Hybrid">Hybryda</option>
             <option value="Electric">Elektryk</option>
             <option value="LPG">LPG</option>
+            <option value="Wodór">Wodór</option>
           </select>
         </div>
 

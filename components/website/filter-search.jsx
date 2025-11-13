@@ -11,14 +11,19 @@ import { useMakesModels } from "../../hooks/useMakesModels";
 // Car types
 const CAR_TYPES = [
   "All Types",
-  "Sedan",
-  "SUV",
-  "Truck",
-  "Coupe",
-  "Convertible",
-  "Wagon",
-  "Van",
-  "Hatchback",
+  "hatchback",
+  "sedan",
+  "kombi",
+  "coupe",
+  "sports",
+  "limousine",
+  "suv",
+  "convertible",
+  "pickup",
+  "offroad",
+  "bus",
+  "classic",
+  "campers",
 ];
 
 // Generate years for dropdown
