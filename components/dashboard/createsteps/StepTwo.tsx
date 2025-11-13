@@ -46,6 +46,23 @@ export default function StepTwo({
     (_, i) => currentYear - i
   );
   const engines = ["0.5", "1.0", "1.5", "2.0", "3.0", "4.0", "5.0", "7.3"];
+  const colors = [
+    "Beżowy",
+    "Biały",
+    "Bordowy",
+    "Brązowy",
+    "Czarny",
+    "Czerwony",
+    "Fioletowy",
+    "Granatowy",
+    "Niebieski",
+    "Pomarańczowy",
+    "Srebrny",
+    "Szary",
+    "Zielony",
+    "Złoty",
+    "Żółty",
+  ];
   const countries = [
     "Poland",
     "Germany",
@@ -156,6 +173,12 @@ export default function StepTwo({
     Tunisia: "Tunezja",
     "United States": "USA",
   };
+
+  const colorSelectedValue = colors.includes(localData.color)
+    ? localData.color
+    : localData.color
+    ? "__OTHER__"
+    : "";
 
   // Get makes from the hook data
   const makes = makesModelsData?.getMakes() || [];
@@ -718,15 +741,37 @@ export default function StepTwo({
         {/* Color */}
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Kolor</label>
-          <input
-            type="text"
-            placeholder="Kolor"
+          <select
             className="border p-3 w-full rounded h-12"
-            value={localData.color}
-            onChange={(e) =>
-              setLocalData({ ...localData, color: e.target.value })
-            }
-          />
+            value={colorSelectedValue}
+            onChange={(e) => {
+              const v = e.target.value;
+              if (v === "__OTHER__") {
+                setLocalData({ ...localData, color: "" });
+              } else {
+                setLocalData({ ...localData, color: v });
+              }
+            }}
+          >
+            <option value="">Wybierz Kolor</option>
+            {colors.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+            <option value="__OTHER__">Inny kolor</option>
+          </select>
+          {colorSelectedValue === "__OTHER__" && (
+            <input
+              type="text"
+              placeholder="Inny kolor"
+              className="border p-3 w-full rounded h-12 mt-2"
+              value={localData.color}
+              onChange={(e) =>
+                setLocalData({ ...localData, color: e.target.value })
+              }
+            />
+          )}
         </div>
 
         {/* Mileage */}

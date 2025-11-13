@@ -44,6 +44,31 @@ const Navbar = () => {
     }
   }
 
+  const getNotifTarget = (n) => {
+    try {
+      const type = n?.type;
+      const meta = n?.meta || {};
+      if (type === "message") {
+        if (meta.chatId) return `/dashboard/messages?chatId=${encodeURIComponent(meta.chatId)}`;
+        return "/dashboard/messages";
+      }
+      if (type === "car" || type === "status") {
+        return "/dashboard/cars";
+      }
+      return "/dashboard/notifications";
+    } catch {
+      return "/dashboard/notifications";
+    }
+  };
+
+  const handleNotifClick = async (n) => {
+    try {
+      if (!n.read && markRead) await markRead(n.id);
+    } catch {}
+    setOpenNotif(false);
+    router.push(getNotifTarget(n));
+  };
+
   const handleSignIn = () => {
     setIsMenuOpen(false);
     router.push("/sign-in");
@@ -133,23 +158,32 @@ const Navbar = () => {
                   ) : (
                     <ul className="divide-y divide-gray-100 dark:divide-gray-700">
                       {notificationsList.slice(0, 8).map((n) => (
-                        <li key={n.id} className={`px-3 py-2 flex items-start gap-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 ${n.read ? "opacity-60" : ""}`}>
-                          <div className={`mt-1 w-2 h-2 rounded-full ${n.read ? "bg-gray-300 dark:bg-gray-600" : "bg-blue-500"}`} />
-                          <div className="min-w-0 flex-1">
-                            <div className="text-sm font-medium text-gray-900 dark:text-white truncate">{n.title}</div>
-                            {n.body && <div className="text-xs text-gray-600 dark:text-gray-300 line-clamp-2">{n.body}</div>}
-                            <div className="text-[10px] text-gray-400 dark:text-gray-500 mt-1">{new Date(n.createdAt).toLocaleString()}</div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            {!n.read && markRead && (
-                              <button
-                                onClick={() => markRead(n.id)}
-                                className="text-xs text-blue-600 hover:underline"
-                              >
-                                Przeczytaj
-                              </button>
-                            )}
-                          </div>
+                        <li key={n.id} className="px-0">
+                          <Link
+                            href={getNotifTarget(n)}
+                            className={`px-3 py-2 flex items-start gap-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 ${n.read ? "opacity-60" : ""}`}
+                            onClick={async () => {
+                              try { if (!n.read && markRead) await markRead(n.id); } catch {}
+                              setOpenNotif(false);
+                            }}
+                          >
+                            <div className={`mt-1 w-2 h-2 rounded-full ${n.read ? "bg-gray-300 dark:bg-gray-600" : "bg-blue-500"}`} />
+                            <div className="min-w-0 flex-1">
+                              <div className="text-sm font-medium text-gray-900 dark:text-white truncate">{n.title}</div>
+                              {n.body && <div className="text-xs text-gray-600 dark:text-gray-300 line-clamp-2">{n.body}</div>}
+                              <div className="text-[10px] text-gray-400 dark:text-gray-500 mt-1">{new Date(n.createdAt).toLocaleString()}</div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {!n.read && markRead && (
+                                <button
+                                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); markRead(n.id); }}
+                                  className="text-xs text-blue-600 hover:underline"
+                                >
+                                  Przeczytaj
+                                </button>
+                              )}
+                            </div>
+                          </Link>
                         </li>
                       ))}
                     </ul>

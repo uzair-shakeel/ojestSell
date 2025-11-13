@@ -23,6 +23,31 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
   const [openNotif, setOpenNotif] = useState(false);
   const notifRef = useRef(null);
 
+  const getNotifTarget = (n) => {
+    try {
+      const type = n?.type;
+      const meta = n?.meta || {};
+      if (type === "message") {
+        if (meta.chatId) return `/dashboard/messages?chatId=${encodeURIComponent(meta.chatId)}`;
+        return "/dashboard/messages";
+      }
+      if (type === "car" || type === "status") {
+        return "/dashboard/cars";
+      }
+      return "/dashboard/notifications";
+    } catch {
+      return "/dashboard/notifications";
+    }
+  };
+
+  const handleNotifClick = async (n) => {
+    try {
+      if (!n.read) await markRead(n.id);
+    } catch {}
+    setOpenNotif(false);
+    router.push(getNotifTarget(n));
+  };
+
   // No dropdown anymore
 
   // Ensure we have the latest user image (handles stale localStorage)
@@ -84,7 +109,11 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
                 ) : (
                   <ul className="divide-y divide-gray-100 dark:divide-gray-700">
                     {(notifications || []).slice(0, 8).map((n) => (
-                      <li key={n.id} className={`px-3 py-2 flex items-start gap-3 ${n.read ? "opacity-80" : ""}`}>
+                      <li
+                        key={n.id}
+                        className={`px-3 py-2 flex items-start gap-3 ${n.read ? "opacity-80" : ""} cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700`}
+                        onClick={() => handleNotifClick(n)}
+                      >
                         <div className={`mt-1 w-2 h-2 rounded-full ${n.read ? "bg-gray-300" : "bg-blue-500"}`} />
                         <div className="min-w-0 flex-1">
                           <div className="text-sm font-medium text-gray-900 dark:text-white truncate">{n.title}</div>
@@ -101,7 +130,7 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
                             </button>
                           ) : (
                             <button
-                              onClick={() => markRead(n.id)}
+                              onClick={(e) => { e.stopPropagation(); markRead(n.id); }}
                               className="text-xs text-blue-600 hover:underline"
                             >
                               Oznacz jako przeczytane

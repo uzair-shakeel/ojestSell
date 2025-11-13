@@ -669,55 +669,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 </div>
                 {/* Body Type + Manufacturer Country */}
                 <div className="flex items-center justify-between w-full gap-2">
-                  <div className="relative flex-1">
-                    <select name="bodyType" value={filters.bodyType} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                      <option value="">Typ nadwozia</option>
-                      <option value="Bus I Van">Bus I Van</option>
-                      <option value="Coupe">Coupe</option>
-                      <option value="Crossover">Crossover</option>
-                      <option value="Hatchback">Hatchback</option>
-                      <option value="Kabriolet">Kabriolet</option>
-                      <option value="Kamper">Kamper</option>
-                      <option value="Klasyk">Klasyk</option>
-                      <option value="Kombi">Kombi</option>
-                      <option value="Kompakt">Kompakt</option>
-                      <option value="Limuzyna">Limuzyna</option>
-                      <option value="Pickup">Pickup</option>
-                      <option value="Sedan">Sedan</option>
-                      <option value="Sportowe">Sportowe</option>
-                      <option value="SUV">SUV</option>
-                      <option value="Terenowe">Terenowe</option>
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                      <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="relative flex-1">
-                    <select name="krajProducenta" value={filters.krajProducenta} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                      <option value="">Kraj Producenta</option>
-                      <option value="czech">Czechy</option>
-                      <option value="china">Chiny</option>
-                      <option value="france">Francja</option>
-                      <option value="holland">Holandia</option>
-                      <option value="japan">Japonia</option>
-                      <option value="south-korea">Korea Południowa</option>
-                      <option value="germany">Niemcy</option>
-                      <option value="poland">Polska</option>
-                      <option value="russia">Rosja</option>
-                      <option value="sweden">Szwecja</option>
-                      <option value="united-states">USA</option>
-                      <option value="united-kingdom">Wielka Brytania</option>
-                      <option value="italy">Włochy</option>
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                      <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="relative flex-1">
+                 <div className="relative flex-1">
                     <select name="yearFrom" value={filters.yearFrom} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
                       <option value="">Rok od</option>
                       <option value="2025">2025</option>
@@ -781,6 +733,57 @@ export default function FilterNavbar({ onApplyFilters }) {
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
                   </div>
+                  </div>
+                <div className="flex items-center justify-between w-full gap-2">
+                  <div className="relative flex-1">
+                    <select name="bodyType" value={filters.bodyType} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                      <option value="">Typ nadwozia</option>
+                      <option value="Bus I Van">Bus I Van</option>
+                      <option value="Coupe">Coupe</option>
+                      <option value="Crossover">Crossover</option>
+                      <option value="Hatchback">Hatchback</option>
+                      <option value="Kabriolet">Kabriolet</option>
+                      <option value="Kamper">Kamper</option>
+                      <option value="Klasyk">Klasyk</option>
+                      <option value="Kombi">Kombi</option>
+                      <option value="Kompakt">Kompakt</option>
+                      <option value="Limuzyna">Limuzyna</option>
+                      <option value="Pickup">Pickup</option>
+                      <option value="Sedan">Sedan</option>
+                      <option value="Sportowe">Sportowe</option>
+                      <option value="SUV">SUV</option>
+                      <option value="Terenowe">Terenowe</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                      <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="relative flex-1">
+                    <select name="krajProducenta" value={filters.krajProducenta} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                      <option value="">Kraj Producenta</option>
+                      <option value="czech">Czechy</option>
+                      <option value="china">Chiny</option>
+                      <option value="france">Francja</option>
+                      <option value="holland">Holandia</option>
+                      <option value="japan">Japonia</option>
+                      <option value="south-korea">Korea Południowa</option>
+                      <option value="germany">Niemcy</option>
+                      <option value="poland">Polska</option>
+                      <option value="russia">Rosja</option>
+                      <option value="sweden">Szwecja</option>
+                      <option value="united-states">USA</option>
+                      <option value="united-kingdom">Wielka Brytania</option>
+                      <option value="italy">Włochy</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                      <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                 
                 </div>
                 {/* Condition + Mileage */}
                 <div className="flex items-center justify-between w-full gap-2">
@@ -1084,41 +1087,7 @@ export default function FilterNavbar({ onApplyFilters }) {
             </div>
 
             {/* New Line: Kraj Pochodzenia (Origin Country) */}
-            <div className="space-y-2 md:space-y-0">
-              <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-between w-full gap-2">
-                <div className="flex items-center justify-between w-full gap-2 md:gap-0">
-              {/* Kraj Pochodzenia Filter */}
-              <div className="relative flex-1 mx-0.5 my-0.5">
-                <select
-                  name="krajPochodzenia"
-                  value={filters.krajPochodzenia}
-                  onChange={handleInputChange}
-                      className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                >
-                    <option value="">Kraj Pochodzenia</option>
-                <option value="czech">Czechy</option>
-                <option value="china">Chiny</option>
-                <option value="france">Francja</option>
-                <option value="holland">Holandia</option>
-                <option value="japan">Japonia</option>
-                <option value="south-korea">Korea Południowa</option>
-                <option value="germany">Niemcy</option>
-                <option value="poland">Polska</option>
-                <option value="russia">Rosja</option>
-                <option value="sweden">Szwecja</option>
-                <option value="united-states">USA</option>
-                <option value="united-kingdom">Wielka Brytania</option>
-                <option value="italy">Włochy</option>
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                  <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
-              </div>
-                </div>
-              </div>
-            </div>
+            
 
             {/* Fourth Line: Service History Accident History Price */}
             <div className="space-y-2 md:space-y-0">

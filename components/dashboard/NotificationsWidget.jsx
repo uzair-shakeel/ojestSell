@@ -27,6 +27,29 @@ const TypeBadge = ({ type }) => {
 export default function NotificationsWidget() {
   const { notifications, unreadCount, markRead } = useNotifications();
   const items = (notifications || []).slice(0, 6);
+  const getTarget = (n) => {
+    try {
+      const type = n?.type;
+      const meta = n?.meta || {};
+      if (type === "message") {
+        if (meta.chatId) return `/dashboard/messages?chatId=${encodeURIComponent(meta.chatId)}`;
+        return "/dashboard/messages";
+      }
+      if (type === "car" || type === "status") {
+        return "/dashboard/cars";
+      }
+      return "/dashboard/notifications";
+    } catch {
+      return "/dashboard/notifications";
+    }
+  };
+  const handleMarkReadClick = async (e, n) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      if (!n.read) await markRead(n.id);
+    } catch {}
+  };
   return (
     <div className="p-4 bg-white dark:bg-gray-800 shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 transition-colors duration-300">
       <div className="flex items-center justify-between mb-3">
@@ -41,7 +64,11 @@ export default function NotificationsWidget() {
           <div className="text-sm text-gray-500 dark:text-gray-400">No notifications</div>
         )}
         {items.map((n) => (
-          <div key={n.id} className={`flex items-start gap-3 ${n.read ? "opacity-80" : ""}`}>
+          <Link
+            key={n.id}
+            href={getTarget(n)}
+            className={`flex items-start gap-3 ${n.read ? "opacity-80" : ""} cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md p-1`}
+          >
             <div className="pt-0.5"><TypeBadge type={n.type} /></div>
             <div className="min-w-0 flex-1">
               <div className="truncate font-medium text-gray-900 dark:text-white">{n.title}</div>
@@ -49,9 +76,9 @@ export default function NotificationsWidget() {
               <div className="text-[10px] text-gray-400 mt-1">{fmt(n.createdAt)}</div>
             </div>
             {!n.read && (
-              <button onClick={() => markRead(n.id)} className="text-xs text-blue-600 hover:underline">Mark as read</button>
+              <button onClick={(e) => handleMarkReadClick(e, n)} className="text-xs text-blue-600 hover:underline">Mark as read</button>
             )}
-          </div>
+          </Link>
         ))}
       </div>
     </div>
