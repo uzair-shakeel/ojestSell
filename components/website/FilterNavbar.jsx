@@ -786,6 +786,64 @@ export default function FilterNavbar({ onApplyFilters }) {
                   </div>
                  
                 </div>
+                {/* Origin Country (Kraj Pochodzenia) - mobile overlay */}
+                <div className="flex items-center justify-between w-full gap-2">
+                  <div className="relative flex-1">
+                    <select
+                      name="krajPochodzenia"
+                      value={filters.krajPochodzenia}
+                      onChange={handleInputChange}
+                      className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
+                    >
+                      <option value="">Kraj Pochodzenia</option>
+                      <option value="czech">Czechy</option>
+                      <option value="china">Chiny</option>
+                      <option value="france">Francja</option>
+                      <option value="holland">Holandia</option>
+                      <option value="japan">Japonia</option>
+                      <option value="south-korea">Korea Południowa</option>
+                      <option value="germany">Niemcy</option>
+                      <option value="poland">Polska</option>
+                      <option value="russia">Rosja</option>
+                      <option value="sweden">Szwecja</option>
+                      <option value="united-states">USA</option>
+                      <option value="united-kingdom">Wielka Brytania</option>
+                      <option value="italy">Włochy</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                      <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                                  {/* Color (Kolor) */}
+                  <div className="relative flex-1">
+                    <select
+                      name="color"
+                      value={filters.color}
+                      onChange={handleInputChange}
+                      className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
+                    >
+                      <option value="">Kolor</option>
+                      <option value="bialy">Biały</option>
+                      <option value="czarny">Czarny</option>
+                      <option value="srebrny">Srebrny</option>
+                      <option value="szary">Szary</option>
+                      <option value="czerwony">Czerwony</option>
+                      <option value="niebieski">Niebieski</option>
+                      <option value="zielony">Zielony</option>
+                      <option value="zolty">Żółty</option>
+                      <option value="brazowy">Brązowy</option>
+                      <option value="inny">Inny</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                      <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Condition + Mileage */}
                 <div className="flex items-center justify-between w-full gap-2">
                   <div className="relative flex-1">
