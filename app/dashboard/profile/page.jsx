@@ -550,7 +550,7 @@ const ProfileComponent = () => {
             </select>
           </div>
 
-          {/* Social Media Links */}
+          {/* Social Media Links (Twitter/LinkedIn hidden per requirements) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
               <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
@@ -578,36 +578,12 @@ const ProfileComponent = () => {
             </div>
             <div>
               <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-                Twitter Link
-              </label>
-              <input
-                type="url"
-                name="twitter"
-                value={formData.socialMedia.twitter}
-                onChange={handleInputChange}
-                className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
-              />
-            </div>
-            <div>
-              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
                 Strona WWW firmowa Link
               </label>
               <input
                 type="url"
                 name="website"
                 value={formData.socialMedia.website}
-                onChange={handleInputChange}
-                className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
-              />
-            </div>
-            <div>
-              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-                LinkedIn Link
-              </label>
-              <input
-                type="url"
-                name="linkedin"
-                value={formData.socialMedia.linkedin}
                 onChange={handleInputChange}
                 className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
               />

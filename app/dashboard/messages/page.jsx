@@ -688,7 +688,7 @@ const MessagesPage = () => {
   const chatCount = chats.length;
 
   return (
-<div className="flex h-[calc(100vh-100px)] bg-white font-sans overflow-hidden">
+<div className="flex h-[calc(100vh-100px)] bg-white font-sans overflow-hidden relative">
   {/* Sidebar */}
       <div
         className={`absolute md:relative inset-y-0 left-0 z-20 bg-white h-full min-h-0 w-full sm:w-[320px] md:w-[320px] border-r border-gray-300 flex flex-col transform transition-transform duration-300 ${
@@ -766,17 +766,27 @@ const MessagesPage = () => {
       <div className="flex-1 grid grid-rows-[auto_1fr_auto] h-full min-h-0 overflow-hidden bg-white">
         {/* Chat Header - Fixed */}
         <div className="border-b border-gray-300 p-4 flex items-center justify-between shrink-0">
-          <div>
-            <div className="font-medium text-lg">
-              {selectedChat
-                ? getParticipantName(selectedChat)
-                : "Select a chat"}
-            </div>
-            {selectedChat && selectedChat.carId && (
-              <div className="text-xs text-gray-500">
-                Auto: {selectedChat.carId.title || "Brak Auta"}
+          <div className="flex items-center gap-3">
+            {/* Mobile: sidebar toggle */}
+            <button
+              type="button"
+              className="md:hidden inline-flex items-center justify-center h-9 w-9 rounded-full border border-gray-300 text-gray-700 mr-1"
+              onClick={() => setShowSidebar((prev) => !prev)}
+            >
+              <FaBars className="h-4 w-4" />
+            </button>
+            <div>
+              <div className="font-medium text-lg">
+                {selectedChat
+                  ? getParticipantName(selectedChat)
+                  : "Select a chat"}
               </div>
-            )}
+              {selectedChat && selectedChat.carId && (
+                <div className="text-xs text-gray-500">
+                  Auto: {selectedChat.carId.title || "Brak Auta"}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

@@ -469,20 +469,18 @@ const SellerDetailsPage = () => {
 
           {current?.key === "social" && (
             <div className="grid gap-3">
-              {["instagram", "facebook", "twitter", "website", "linkedin"].map(
-                (platform) => (
-                  <input
-                    key={platform}
-                    type="url"
-                    value={formData.socialMedia?.[platform] || ""}
-                    onChange={(e) =>
-                      setValue(`socialMedia.${platform}`, e.target.value)
-                    }
-                    placeholder={`${platform} link`}
-                    className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  />
-                )
-              )}
+              {["instagram", "facebook", "website"].map((platform) => (
+                <input
+                  key={platform}
+                  type="url"
+                  value={formData.socialMedia?.[platform] || ""}
+                  onChange={(e) =>
+                    setValue(`socialMedia.${platform}`, e.target.value)
+                  }
+                  placeholder={`${platform} link`}
+                  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              ))}
             </div>
           )}
 

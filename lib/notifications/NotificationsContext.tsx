@@ -42,19 +42,33 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
   }, []);
 
   const add = useCallback(async (n: Omit<NotificationItem, "id" | "createdAt" | "read">) => {
-    // Create a unique key for this notification to prevent duplicates
-    const key = `${n.type}-${n.title}-${n.body}-${n.meta?.carId || ''}`;
-    
+    // Build a stable dedupe key prioritizing IDs over localized titles/bodies
+    let key = n.type;
+    const meta: Record<string, any> = n.meta || {};
+    if (n.type === "message") {
+      const mid = meta.messageId || meta.msgId || meta.id;
+      const cid = meta.chatId || meta.chat || meta.threadId;
+      if (mid || cid) key += `-m:${mid || ''}-c:${cid || ''}`;
+      else key += `-${n.title || ''}-${n.body || ''}`;
+    } else if (n.type === "car" || n.type === "status") {
+      const car = meta.carId || meta.id;
+      const st = meta.status || '';
+      if (car) key += `-car:${car}-st:${st}`;
+      else key += `-${n.title || ''}-${n.body || ''}`;
+    } else {
+      key += `-${n.title || ''}-${n.body || ''}`;
+    }
+
     // Skip if we just added this notification recently (within 5 seconds)
     if (recentNotificationsRef.current.has(key)) {
       console.log('[Notifications] Skipping duplicate notification:', key);
       return;
     }
-    
+
     // Mark as recent
     recentNotificationsRef.current.add(key);
     setTimeout(() => recentNotificationsRef.current.delete(key), 5000);
-    
+
     const saved = await createNotification(n);
     setNotifications((prev) => [saved, ...prev]);
   }, []);

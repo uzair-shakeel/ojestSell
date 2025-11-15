@@ -221,7 +221,9 @@ const Page = () => {
     }
 
     try {
-      const authToken = token || (typeof window !== "undefined" ? localStorage.getItem("token") : null);
+      const authToken =
+        token ||
+        (typeof window !== "undefined" ? localStorage.getItem("token") : null);
       const response = await fetch(`${API_BASE}/api/chat/create`, {
         method: "POST",
         headers: {
@@ -260,10 +262,35 @@ const Page = () => {
   };
 
   const callSeller = () => {
-    const raw = seller?.phoneNumbers?.[0];
-    if (!raw) return;
-    // Sanitize common separators to make sure tel: works across devices
+    // Try multiple possible sources for the seller phone
+    const primaryPhoneFromArray = seller?.phoneNumbers?.[0];
+    const fallbackSinglePhone = seller?.phoneNumber || seller?.phone;
+
+    let raw =
+      primaryPhoneFromArray && typeof primaryPhoneFromArray === "object"
+        ? primaryPhoneFromArray.phone || primaryPhoneFromArray.number || ""
+        : primaryPhoneFromArray;
+
+    if (!raw) {
+      raw = fallbackSinglePhone || "";
+    }
+
+    if (!raw) {
+      if (typeof window !== "undefined") {
+        alert("Numer telefonu sprzedawcy jest niedostępny.");
+      }
+      return;
+    }
+
+    // Sanitize to keep only digits and leading + so tel: works on most devices
     const sanitized = String(raw).replace(/[^+\d]/g, "");
+    if (!sanitized) {
+      if (typeof window !== "undefined") {
+        alert("Nieprawidłowy numer telefonu sprzedawcy.");
+      }
+      return;
+    }
+
     try {
       window.location.href = `tel:${sanitized}`;
     } catch (e) {
@@ -274,7 +301,7 @@ const Page = () => {
 
   // Open WhatsApp chat to a specific number using wa.me format
   const openWhatsApp = (rawNumber) => {
-    const sanitized = String(rawNumber).replace(/[^\d]/g, ""); // remove + and non-digits for wa.me
+    const sanitized = String(rawNumber).replace(/[^\d]/g, "");
     const url = `https://wa.me/${sanitized}`;
     try {
       window.open(url, "_blank");

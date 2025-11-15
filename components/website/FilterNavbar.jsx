@@ -21,6 +21,7 @@ export default function FilterNavbar({ onApplyFilters }) {
     transmission: "",
     fuel: "",
     engineCapacity: "",
+    color: "",
     krajProducenta: "",
     krajPochodzenia: "",
     serviceHistory: "",
@@ -79,6 +80,7 @@ export default function FilterNavbar({ onApplyFilters }) {
       transmission: "",
       fuel: "",
       engineCapacity: "",
+      color: "",
       krajProducenta: "",
       krajPochodzenia: "",
       serviceHistory: "",
@@ -986,7 +988,7 @@ export default function FilterNavbar({ onApplyFilters }) {
               </div>
             </div>
 
-            {/* Third Line: Fuel Engine Transmission Drivetrain */}
+            {/* Third Line: Fuel Engine Color Transmission Drivetrain */}
             <div className="space-y-2 md:space-y-0">
               {/* Mobile: Two selectors per row, Desktop: All in one row */}
               <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-between w-full gap-2">
@@ -1037,6 +1039,35 @@ export default function FilterNavbar({ onApplyFilters }) {
                 </div>
               </div>
 
+              {/* Color Filter */}
+              <div className="flex items-center justify-between w-full gap-2 md:gap-0">
+                <div className="relative flex-1 mx-0.5 my-0.5">
+                  <select
+                    name="color"
+                    value={filters.color}
+                    onChange={handleInputChange}
+                    className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                  >
+                    <option value="">Kolor</option>
+                    <option value="bialy">Biały</option>
+                    <option value="czarny">Czarny</option>
+                    <option value="srebrny">Srebrny</option>
+                    <option value="szary">Szary</option>
+                    <option value="czerwony">Czerwony</option>
+                    <option value="niebieski">Niebieski</option>
+                    <option value="zielony">Zielony</option>
+                    <option value="zolty">Żółty</option>
+                    <option value="brazowy">Brązowy</option>
+                    <option value="inny">Inny</option>
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                    <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
                 {/* Row 2 Mobile: Transmission + Drivetrain, Desktop: All in one row */}
                 <div className="flex items-center justify-between w-full gap-2 md:gap-0">
               {/* Transmission Filter */}
@@ -1082,7 +1113,40 @@ export default function FilterNavbar({ onApplyFilters }) {
             </div>
 
             {/* New Line: Kraj Pochodzenia (Origin Country) */}
-            
+            <div className="space-y-2 md:space-y-0 mt-1">
+              <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-between w-full gap-2">
+                <div className="flex items-center justify-between w-full gap-2 md:gap-0">
+                  <div className="relative flex-1 mx-0.5 my-0.5">
+                    <select
+                      name="krajPochodzenia"
+                      value={filters.krajPochodzenia}
+                      onChange={handleInputChange}
+                      className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                    >
+                      <option value="">Kraj Pochodzenia</option>
+                      <option value="czech">Czechy</option>
+                      <option value="china">Chiny</option>
+                      <option value="france">Francja</option>
+                      <option value="holland">Holandia</option>
+                      <option value="japan">Japonia</option>
+                      <option value="south-korea">Korea Południowa</option>
+                      <option value="germany">Niemcy</option>
+                      <option value="poland">Polska</option>
+                      <option value="russia">Rosja</option>
+                      <option value="sweden">Szwecja</option>
+                      <option value="united-states">USA</option>
+                      <option value="united-kingdom">Wielka Brytania</option>
+                      <option value="italy">Włochy</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                      <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             {/* Fourth Line: Service History Accident History Price */}
             <div className="space-y-2 md:space-y-0">
