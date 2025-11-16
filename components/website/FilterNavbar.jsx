@@ -42,13 +42,36 @@ export default function FilterNavbar({ onApplyFilters }) {
     setIsMounted(true);
   }, []);
 
-  // Initialize origin from URL (?origin=...)
+  // Initialize filters from URL query on first mount
   useEffect(() => {
-    const qpOrigin = searchParams?.get?.("origin");
-    if (qpOrigin) {
-      setFilters((prev) => ({ ...prev, krajPochodzenia: qpOrigin }));
-      onApplyFilters({ ...filters, krajPochodzenia: qpOrigin });
+    if (!searchParams) return;
+
+    const qpMake = searchParams.get("make");
+    const qpModel = searchParams.get("model");
+    const qpStartYear = searchParams.get("startYear");
+    const qpEndYear = searchParams.get("endYear");
+    const qpType = searchParams.get("type");
+    const qpOrigin = searchParams.get("origin");
+
+    // If there are no relevant query params, do nothing
+    if (!qpMake && !qpModel && !qpStartYear && !qpEndYear && !qpType && !qpOrigin) {
+      return;
     }
+
+    setFilters((prev) => {
+      const next = {
+        ...prev,
+        make: qpMake || prev.make,
+        model: qpModel || prev.model,
+        yearFrom: qpStartYear || prev.yearFrom,
+        yearTo: qpEndYear || prev.yearTo,
+        bodyType: qpType || prev.bodyType,
+        krajPochodzenia: qpOrigin || prev.krajPochodzenia,
+      };
+
+      onApplyFilters(next);
+      return next;
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

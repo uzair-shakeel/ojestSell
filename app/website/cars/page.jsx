@@ -143,6 +143,9 @@ const CarsContent = () => {
         const transmission = searchParams.get("transmission");
         const location = searchParams.get("location");
         const origin = searchParams.get("origin");
+        const startYear = searchParams.get("startYear");
+        const endYear = searchParams.get("endYear");
+        const type = searchParams.get("type");
 
         let carsData;
 
@@ -156,17 +159,21 @@ const CarsContent = () => {
           maxYear ||
           fuel ||
           transmission ||
-          location
+          location ||
+          startYear ||
+          endYear ||
+          type
         ) {
           // Use search with filters - map to service interface
           const searchParams_obj = {
             make: make || undefined,
             model: model || undefined,
-            yearFrom: minYear || undefined,
-            yearTo: maxYear || undefined,
+            yearFrom: minYear || startYear || undefined,
+            yearTo: maxYear || endYear || undefined,
             transmission: transmission || undefined,
             fuel: fuel || undefined,
             location: location || undefined,
+            bodyType: type || undefined,
           };
 
           // Remove undefined values
@@ -276,7 +283,7 @@ const CarsContent = () => {
         model: filters.model || undefined,
         yearFrom: filters.yearFrom || undefined,
         yearTo: filters.yearTo || undefined,
-        type: filters.type || undefined,
+        bodyType: filters.bodyType || filters.type || undefined,
         // Only pass condition to backend if it's the backend-supported values
         condition:
           filters.condition === "New" || filters.condition === "Used"
