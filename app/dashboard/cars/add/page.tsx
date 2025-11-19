@@ -59,6 +59,8 @@ export default function MultiStepForm() {
       frameandUnderbody: "",
       overall: "",
     },
+    // Explicit used/new flag
+    conditionType: "Used" as "New" | "Used",
 
     // Step 4: Financial Information
     financialInfo: {
@@ -74,6 +76,8 @@ export default function MultiStepForm() {
       coordinates: [51.5074, -0.1278], // Default to London
     },
     createdBy: "",
+    // Optional warranties for new cars
+    warranties: [] as any[],
   });
 
   useEffect(() => {
@@ -213,16 +217,25 @@ export default function MultiStepForm() {
         "Normalny": "Normal",
         "Zły": "Bad",
       };
-      const norm = (v: any) => (typeof v === "string" && plToEn[v] ? plToEn[v] : v || "");
+      const norm = (v: any) =>
+        typeof v === "string" && plToEn[v] ? plToEn[v] : v || "";
       const normalizedCondition = {
-        interior: norm(formData.condition?.interior),
-        mechanical: norm(formData.condition?.mechanical),
-        paintandBody: norm(formData.condition?.paintandBody),
-        frameandUnderbody: norm(formData.condition?.frameandUnderbody),
-        overall: norm(formData.condition?.overall),
+        interior: formData.condition?.interior ? norm(formData.condition?.interior) : undefined,
+        mechanical: formData.condition?.mechanical ? norm(formData.condition?.mechanical) : undefined,
+        paintandBody: formData.condition?.paintandBody ? norm(formData.condition?.paintandBody) : undefined,
+        frameandUnderbody: formData.condition?.frameandUnderbody
+          ? norm(formData.condition?.frameandUnderbody)
+          : undefined,
+        overall: formData.condition?.overall ? norm(formData.condition?.overall) : undefined,
       };
 
-      const carData = {
+      const effectiveCondition =
+        formData.conditionType ||
+        (normalizedCondition.overall && normalizedCondition.overall === "New"
+          ? "New"
+          : "Used");
+
+      const carData: any = {
         title: formData.title,
         description: formData.description,
         make: formData.make,
@@ -231,19 +244,17 @@ export default function MultiStepForm() {
         type: formData.type,
         year: formData.year,
         color: formData.color,
-        condition: formData.condition.interior ? "Used" : "New",
+        condition: effectiveCondition,
         mileage: formData.mileage,
-        drivetrain: formData.drivetrain,
-        transmission: formData.transmission,
-        fuel: formData.fuel,
         engine: formData.engine,
         horsepower: formData.horsepower,
-        accidentHistory: formData.accidentHistory,
-        serviceHistory: formData.serviceHistory,
         vin: formData.vin,
         country: formData.country,
         isFeatured: formData.isFeatured,
         carCondition: normalizedCondition,
+        warranties: Array.isArray(formData.warranties)
+          ? formData.warranties
+          : [],
         location: formData.location,
         financialInfo: {
           sellOptions: Array.isArray(formData.financialInfo.sellOptions)
@@ -259,6 +270,13 @@ export default function MultiStepForm() {
         createdBy: formData.createdBy || userId || "",
       };
 
+      // Only include optional enum fields when they have a value
+      if (formData.drivetrain) carData.drivetrain = formData.drivetrain;
+      if (formData.transmission) carData.transmission = formData.transmission;
+      if (formData.fuel) carData.fuel = formData.fuel;
+      if (formData.accidentHistory) carData.accidentHistory = formData.accidentHistory;
+      if (formData.serviceHistory) carData.serviceHistory = formData.serviceHistory;
+
       const formDataToSend = new FormData();
       for (const key in carData) {
         if (key === "images") {
@@ -267,6 +285,8 @@ export default function MultiStepForm() {
           });
         } else if (key === "location") {
           formDataToSend.append("location", JSON.stringify(carData[key]));
+        } else if (key === "warranties") {
+          formDataToSend.append("warranties", JSON.stringify(carData[key]));
         } else if (key === "financialInfo") {
           for (const financialKey in carData[key]) {
             if (financialKey === "sellOptions" || financialKey === "invoiceOptions") {
@@ -288,10 +308,9 @@ export default function MultiStepForm() {
           formDataToSend.append("createdBy", String(carData[key] || ""));
         } else if (key === "carCondition") {
           for (const conditionKey in carData[key]) {
-            formDataToSend.append(
-              `carCondition[${conditionKey}]`,
-              carData[key][conditionKey]
-            );
+            const val = carData[key][conditionKey];
+            if (!val) continue;
+            formDataToSend.append(`carCondition[${conditionKey}]`, val);
           }
         } else {
           // Coerce non-file values to string for FormData

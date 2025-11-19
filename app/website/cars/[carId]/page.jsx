@@ -40,6 +40,8 @@ const Page = () => {
   const [error, setError] = useState(null);
   const [city, setCity] = useState("");
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
+  const [selectedWarrantyIndex, setSelectedWarrantyIndex] = useState(null);
+  const [isWarrantyModalOpen, setIsWarrantyModalOpen] = useState(false);
   const mainSwiperRef = useRef(null);
   const fullscreenSwiperRef = useRef(null);
 
@@ -341,7 +343,44 @@ const Page = () => {
             exit="exit"
             variants={animationVariants}
           >
-            <ConditionTab carCondition={car?.carCondition} />
+            {car?.condition === "New" && Array.isArray(car?.warranties) &&
+            car.warranties.length > 0 ? (
+              <div className="space-y-3">
+                <h3 className="text-lg font-semibold">Gwarancja</h3>
+                <p className="text-sm text-gray-600">
+                  Ten samochód jest nowy i posiada następujące opcje gwarancji:
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {car.warranties.map((w, idx) => (
+                    <div
+                      key={idx}
+                      className="border border-gray-200 rounded p-3 text-sm"
+                    >
+                      <p className="font-medium text-black dark:text-white">
+                        {w.years ? `${w.years} lata` : "Gwarancja"}
+                      </p>
+                      {typeof w.mileageLimit === "number" && (
+                        <p className="text-gray-600">
+                          Do przebiegu: {w.mileageLimit.toLocaleString("pl-PL")} km
+                        </p>
+                      )}
+                      {typeof w.extraPrice === "number" && (
+                        <p className="text-gray-700 mt-1">
+                          Dopłata: {w.extraPrice.toLocaleString("pl-PL")} zł
+                        </p>
+                      )}
+                      {w.description && (
+                        <p className="text-gray-600 mt-1">
+                          {w.description}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <ConditionTab carCondition={car?.carCondition} />
+            )}
           </motion.div>
         );
       case "lokalizacja":
@@ -388,6 +427,23 @@ const Page = () => {
       </div>
     );
   }
+
+  const basePriceNetto = car?.financialInfo?.priceNetto
+    ? Number(car.financialInfo.priceNetto)
+    : null;
+  const selectedWarranty =
+    selectedWarrantyIndex !== null &&
+    Array.isArray(car?.warranties) &&
+    car.warranties[selectedWarrantyIndex]
+      ? car.warranties[selectedWarrantyIndex]
+      : null;
+
+  const totalPriceWithWarranty =
+    basePriceNetto !== null &&
+    selectedWarranty &&
+    typeof selectedWarranty.extraPrice === "number"
+      ? basePriceNetto + selectedWarranty.extraPrice
+      : null;
 
   const sellerName = (() => {
     if (!seller) return "Seller";
@@ -637,25 +693,59 @@ const Page = () => {
           </div>
           <div className="col-span-1  sm:mt-20">
             <div className="w-full p-4 bg-white dark:bg-black/10 rounded-sm border sticky top-4 shadow">
-              <div className="py-3 flex flex-row">
+              <div className="py-3 flex flex-col space-y-3">
                 <div className="flex flex-col items-start">
                   <h3 className="text-base font-medium mb-2">Cena</h3>
-                  <p className="text-4xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">
-                    {car?.financialInfo?.priceNetto
-                      ? `${Number(car.financialInfo.priceNetto).toLocaleString(
-                          "pl-PL"
-                        )} zł`
+                  <p className="text-4xl font-bold text-gray-900 dark:text-white mb-1 transition-colors duration-300">
+                    {basePriceNetto !== null
+                      ? `${basePriceNetto.toLocaleString("pl-PL")} zł`
                       : "N/A"}
-
-                    {/* <span className="text-xl text-gray-600">(NETTO)</span> */}
                   </p>
-                  <p className="text-xl text-medium text-gray-600 underline">
+                  <p className="text-sm text-gray-500">Cena podstawowa (bez gwarancji)</p>
+                  {totalPriceWithWarranty !== null && (
+                    <div className="mt-3 w-full">
+                      <p className="text-sm font-medium text-gray-700">Cena z wybraną gwarancją</p>
+                      <p className="text-2xl font-semibold text-blue-600 mt-1">
+                        {totalPriceWithWarranty.toLocaleString("pl-PL")} zł
+                      </p>
+                      {selectedWarranty && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          Zawiera dopłatę za gwarancję:
+                          {" "}
+                          {typeof selectedWarranty.extraPrice === "number"
+                            ? `${selectedWarranty.extraPrice.toLocaleString("pl-PL")} zł`
+                            : ""}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                  <p className="text-xl text-medium text-gray-600 underline mt-3">
                     {car?.financialInfo?.priceWithVat
                       ? `${car?.financialInfo?.priceWithVat} zł`
                       : ""}
                   </p>
                 </div>
               </div>
+
+              {car?.condition === "New" &&
+                Array.isArray(car?.warranties) &&
+                car.warranties.length > 0 && (
+                  <div className="mt-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsWarrantyModalOpen(true)}
+                      className="w-full border border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold py-2.5 rounded-md text-sm transition-colors"
+                    >
+                      Wybierz gwarancję
+                    </button>
+                    {selectedWarranty && (
+                      <p className="mt-2 text-xs text-gray-600">
+                        Wybrana gwarancja: {selectedWarranty.years ? `${selectedWarranty.years} lata` : "Gwarancja"}
+                      </p>
+                    )}
+                  </div>
+                )}
+
               <div className="flex items-center my-4">
                 <div className="flex-grow border-b"></div>
                 <p className="px-2 text-gray-500 text-sm">LUB</p>
@@ -748,8 +838,81 @@ const Page = () => {
         </div>
         <SimilarVehicles />
       </div>
+
+      {isWarrantyModalOpen &&
+        car?.condition === "New" &&
+        Array.isArray(car?.warranties) &&
+        car.warranties.length > 0 && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[80vh] flex flex-col">
+              <div className="flex items-center justify-between px-4 py-3 border-b">
+                <h3 className="text-lg font-semibold">Wybierz gwarancję</h3>
+                <button
+                  type="button"
+                  className="text-gray-500 hover:text-gray-700 text-sm"
+                  onClick={() => setIsWarrantyModalOpen(false)}
+                >
+                  Zamknij
+                </button>
+              </div>
+              <div className="px-4 py-3 text-sm text-gray-600 border-b">
+                Wybierz jedną z dostępnych opcji gwarancji, aby zobaczyć cenę z uwzględnioną dopłatą.
+              </div>
+              <div className="px-4 py-3 space-y-3 overflow-y-auto">
+                {car.warranties.map((w, idx) => {
+                  const isSelected = selectedWarrantyIndex === idx;
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => {
+                        setSelectedWarrantyIndex(idx);
+                        setIsWarrantyModalOpen(false);
+                      }}
+                      className={`w-full text-left border rounded-md px-3 py-2 text-sm transition-colors ${
+                        isSelected
+                          ? "border-blue-500 bg-blue-50"
+                          : "border-gray-200 bg-white hover:bg-gray-50"
+                      }`}
+                    >
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium text-black">
+                          {w.years ? `${w.years} lata` : "Gwarancja"}
+                        </span>
+                        {typeof w.extraPrice === "number" && (
+                          <span className="text-blue-600 font-semibold">
+                            +{w.extraPrice.toLocaleString("pl-PL")} zł
+                          </span>
+                        )}
+                      </div>
+                      {typeof w.mileageLimit === "number" && (
+                        <p className="text-xs text-gray-600 mt-1">
+                          Do przebiegu: {w.mileageLimit.toLocaleString("pl-PL")} km
+                        </p>
+                      )}
+                      {w.description && (
+                        <p className="text-xs text-gray-600 mt-1">
+                          {w.description}
+                        </p>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="px-4 py-3 border-t flex justify-end">
+                <button
+                  type="button"
+                  className="px-4 py-2 text-sm rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
+                  onClick={() => setIsWarrantyModalOpen(false)}
+                >
+                  Zamknij
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
     </>
   );
-};
+}
 
 export default Page;

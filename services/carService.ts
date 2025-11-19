@@ -52,6 +52,12 @@ interface CarData {
     priceNetto: number;
     priceWithVat?: number;
   };
+  warranties?: {
+    years?: number;
+    mileageLimit?: number;
+    extraPrice?: number;
+    description?: string;
+  }[];
   location: {
     type: "Point";
     coordinates: [number, number]; // [lng, lat]
@@ -98,6 +104,12 @@ interface AddCarData {
     sellerType: "private" | "company";
     priceNetto: number;
   };
+  warranties?: {
+    years?: number;
+    mileageLimit?: number;
+    extraPrice?: number;
+    description?: string;
+  }[];
 }
 
 // Add a new car

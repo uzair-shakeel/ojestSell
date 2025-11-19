@@ -10,6 +10,7 @@ import {
   FaEdit,
 } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import { useMakesModels } from "../../../hooks/useMakesModels";
 
 export default function StepOne({ nextStep, updateFormData, formData }) {
   const router = useRouter();
@@ -17,6 +18,7 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
   const [isLoading, setIsLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const ENABLE_STEP1_IMAGES = false;
+  const makesModelsData = useMakesModels();
   const [localData, setLocalData] = useState({
     title: formData.title || "",
     description: formData.description || "",
@@ -26,7 +28,27 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
       type: "Point",
       coordinates: [51.5074, -0.1278], // Default to London
     },
+    make: formData.make || "",
+    model: formData.model || "",
   });
+
+  // Make/model options (same source as StepTwo)
+  const makes = makesModelsData?.getMakes ? makesModelsData.getMakes() : [];
+  const [models, setModels] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (localData.make && makesModelsData?.getModelsForMake) {
+      let modelsList = makesModelsData.getModelsForMake(localData.make) || [];
+
+      if (localData.model && !modelsList.includes(localData.model)) {
+        modelsList = [...modelsList, localData.model];
+      }
+
+      setModels(modelsList);
+    } else {
+      setModels([]);
+    }
+  }, [localData.make, localData.model, makesModelsData]);
 
   // Drag & drop reordering state
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
@@ -354,6 +376,77 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
               setLocalData({ ...localData, title: e.target.value })
             }
           />
+        </div>
+
+        <div className="col-span-2">
+          <label className="block text-gray-700 mb-1">Stan auta</label>
+          <div className="flex items-center gap-4">
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="conditionType"
+                value="Used"
+                checked={formData.conditionType === "Used"}
+                onChange={() => updateFormData({ conditionType: "Used" })}
+              />
+              <span>Używany</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="conditionType"
+                value="New"
+                checked={formData.conditionType === "New"}
+                onChange={() => updateFormData({ conditionType: "New" })}
+              />
+              <span>Nowy</span>
+            </label>
+          </div>
+        </div>
+
+        {/* Make & Model quick selection in Step 1 (same source as Step 3) */}
+        <div className="col-span-2 md:col-span-1">
+          <label className="block text-gray-700 mb-1">Marka</label>
+          <select
+            className="border p-3 w-full rounded h-12"
+            value={localData.make}
+            onChange={(e) => {
+              const make = e.target.value;
+              const updated = { ...localData, make, model: "" };
+              setLocalData(updated);
+              updateFormData({ ...formData, make, model: "" });
+            }}
+            disabled={makesModelsData?.loading}
+          >
+            <option value="">Wybierz Marka</option>
+            {makes.map((make, index) => (
+              <option key={index} value={make}>
+                {make}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="col-span-2 md:col-span-1">
+          <label className="block text-gray-700 mb-1">Model</label>
+          <select
+            className="border p-3 w-full rounded h-12"
+            value={localData.model}
+            onChange={(e) => {
+              const model = e.target.value;
+              const updated = { ...localData, model };
+              setLocalData(updated);
+              updateFormData({ ...formData, model });
+            }}
+            disabled={makesModelsData?.loading || !localData.make}
+          >
+            <option value="">Wybierz Model</option>
+            {models.map((model, index) => (
+              <option key={index} value={model}>
+                {model}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="col-span-2">
