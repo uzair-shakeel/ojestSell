@@ -204,12 +204,15 @@ const Navbar = () => {
         </div> */}
         {/* CTA Button: Become a seller (signed out) or Dashboard (signed in) */}
         {isSignedIn ? (
+          <>
           <button
             onClick={() => router.push("/dashboard/home")}
             className="hidden md:block bg-white dark:bg-gray-800800800800800800800800800800 border border-gray-300 dark:border-white px-4 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-900 text-black dark:text-white transition-colors duration-300"
           >
             Panel
           </button>
+          
+          </>
         ) : (
           <Link
             href="/sign-up"
@@ -267,6 +270,12 @@ const Navbar = () => {
             >
               Panel
             </button>
+            <button
+            onClick={() => router.push("/dashboard/messages")}
+            className="block w-full text-left hover:bg-gray-100 dark:hover:bg-gray-800 px-2 py-2 duration-300 text-black dark:text-white"
+          >
+            Wiadomości
+          </button>
             <button
               onClick={handleSignOut}
               className="block w-full text-left hover:bg-gray-100 dark:hover:bg-gray-800 px-2 py-2 duration-300 text-black dark:text-white"
