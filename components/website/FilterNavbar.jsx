@@ -388,6 +388,10 @@ export default function FilterNavbar({ onApplyFilters }) {
               </div>
             </div>
 
+          </div>
+          <div className="flex items-center justify-between w-full gap-3 overflow-visible relative">
+
+
             {/* Origin Country (Kraj Pochodzenia) */}
             <div className="relative flex-1">
               <select
@@ -503,6 +507,35 @@ export default function FilterNavbar({ onApplyFilters }) {
                 </svg>
               </div>
             </div>
+
+             {/* Color Filter */}
+              <div className="flex flex-1 items-center justify-between  gap-2 md:gap-0">
+                <div className="relative flex-1 mx-0.5 my-0.5">
+                  <select
+                    name="color"
+                    value={filters.color}
+                    onChange={handleInputChange}
+                    className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                  >
+                    <option value="">Kolor</option>
+                    <option value="bialy">Biały</option>
+                    <option value="czarny">Czarny</option>
+                    <option value="srebrny">Srebrny</option>
+                    <option value="szary">Szary</option>
+                    <option value="czerwony">Czerwony</option>
+                    <option value="niebieski">Niebieski</option>
+                    <option value="zielony">Zielony</option>
+                    <option value="zolty">Żółty</option>
+                    <option value="brazowy">Brązowy</option>
+                    <option value="inny">Inny</option>
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                    <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
           </div>
             </div>
 
@@ -1120,34 +1153,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 </div>
               </div>
 
-              {/* Color Filter */}
-              <div className="flex items-center justify-between w-full gap-2 md:gap-0">
-                <div className="relative flex-1 mx-0.5 my-0.5">
-                  <select
-                    name="color"
-                    value={filters.color}
-                    onChange={handleInputChange}
-                    className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                  >
-                    <option value="">Kolor</option>
-                    <option value="bialy">Biały</option>
-                    <option value="czarny">Czarny</option>
-                    <option value="srebrny">Srebrny</option>
-                    <option value="szary">Szary</option>
-                    <option value="czerwony">Czerwony</option>
-                    <option value="niebieski">Niebieski</option>
-                    <option value="zielony">Zielony</option>
-                    <option value="zolty">Żółty</option>
-                    <option value="brazowy">Brązowy</option>
-                    <option value="inny">Inny</option>
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                    <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
+             
 
                 {/* Row 2 Mobile: Transmission + Drivetrain, Desktop: All in one row */}
                 <div className="flex items-center justify-between w-full gap-2 md:gap-0">
