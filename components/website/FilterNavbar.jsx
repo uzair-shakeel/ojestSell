@@ -5,6 +5,82 @@ import { useSearchParams } from "next/navigation";
 import { useMakesModels } from "../../hooks/useMakesModels";
 import { createPortal } from "react-dom";
 
+const COUNTRY_OPTIONS = [
+  { value: "germany", label: "Niemcy" },
+  { value: "france", label: "Francja" },
+  { value: "belgium", label: "Belgia" },
+  { value: "netherlands", label: "Holandia" },
+  { value: "italy", label: "Włochy" },
+  { value: "australia", label: "Australia" },
+  { value: "austria", label: "Austria" },
+  { value: "switzerland", label: "Szwajcaria" },
+  { value: "sweden", label: "Szwecja" },
+  { value: "denmark", label: "Dania" },
+  { value: "czech-republic", label: "Czechy" },
+  { value: "slovakia", label: "Słowacja" },
+  { value: "spain", label: "Hiszpania" },
+  { value: "portugal", label: "Portugalia" },
+  { value: "united-kingdom", label: "Wielka Brytania" },
+  { value: "ireland", label: "Irlandia" },
+  { value: "luxembourg", label: "Luksemburg" },
+  { value: "finland", label: "Finlandia" },
+  { value: "norway", label: "Norwegia" },
+  { value: "iceland", label: "Islandia" },
+  { value: "hungary", label: "Węgry" },
+  { value: "romania", label: "Rumunia" },
+  { value: "bulgaria", label: "Bułgaria" },
+  { value: "croatia", label: "Chorwacja" },
+  { value: "slovenia", label: "Słowenia" },
+  { value: "serbia", label: "Serbia" },
+  { value: "montenegro", label: "Czarnogóra" },
+  { value: "north-macedonia", label: "Macedonia Północna" },
+  { value: "albania", label: "Albania" },
+  { value: "lithuania", label: "Litwa" },
+  { value: "latvia", label: "Łotwa" },
+  { value: "estonia", label: "Estonia" },
+  { value: "belarus", label: "Białoruś" },
+  { value: "ukraine", label: "Ukraina" },
+  { value: "united-states", label: "Stany Zjednoczone" },
+  { value: "canada", label: "Kanada" },
+  { value: "japan", label: "Japonia" },
+  { value: "south-korea", label: "Korea Południowa" },
+  { value: "china", label: "Chiny" },
+  { value: "united-arab-emirates", label: "Zjednoczone Emiraty Arabskie" },
+  { value: "dubai", label: "Dubaj" },
+  { value: "qatar", label: "Katar" },
+  { value: "kuwait", label: "Kuwejt" },
+  { value: "saudi-arabia", label: "Arabia Saudyjska" },
+  { value: "oman", label: "Oman" },
+  { value: "bahrain", label: "Bahrajn" },
+  { value: "israel", label: "Izrael" },
+  { value: "turkey", label: "Turcja" },
+  { value: "kazakhstan", label: "Kazachstan" },
+  { value: "georgia", label: "Gruzja" },
+  { value: "armenia", label: "Armenia" },
+  { value: "azerbaijan", label: "Azerbejdżan" },
+  { value: "india", label: "Indie" },
+];
+
+const ORIGIN_COUNTRY_OPTIONS = [
+  { value: "australia", label: "Australia" },
+  { value: "china", label: "Chiny" },
+  { value: "czech-republic", label: "Czechy" },
+  { value: "france", label: "Francja" },
+  { value: "spain", label: "Hiszpania" },
+  { value: "netherlands", label: "Holandia" },
+  { value: "india", label: "Indie" },
+  { value: "japan", label: "Japonia" },
+  { value: "canada", label: "Kanada" },
+  { value: "south-korea", label: "Korea Południowa" },
+  { value: "germany", label: "Niemcy" },
+  { value: "russia", label: "Rosja" },
+  { value: "romania", label: "Rumunia" },
+  { value: "united-states", label: "Stany Zjednoczone" },
+  { value: "sweden", label: "Szwecja" },
+  { value: "united-kingdom", label: "Wielka Brytania" },
+  { value: "italy", label: "Włochy" },
+];
+
 export default function FilterNavbar({ onApplyFilters }) {
   const { getMakes, getModelsForMake, loading } = useMakesModels();
   const [filters, setFilters] = useState({
@@ -367,19 +443,11 @@ export default function FilterNavbar({ onApplyFilters }) {
                 className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
               >
                 <option value="">Kraj Producenta</option>
-                <option value="czech">Czechy</option>
-                <option value="china">Chiny</option>
-                <option value="france">Francja</option>
-                <option value="holland">Holandia</option>
-                <option value="japan">Japonia</option>
-                <option value="south-korea">Korea Południowa</option>
-                <option value="germany">Niemcy</option>
-                <option value="poland">Polska</option>
-                <option value="russia">Rosja</option>
-                <option value="sweden">Szwecja</option>
-                <option value="united-states">USA</option>
-                <option value="united-kingdom">Wielka Brytania</option>
-                <option value="italy">Włochy</option>
+                {COUNTRY_OPTIONS.map(({ value, label }) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
               </select>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
                 <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -401,19 +469,11 @@ export default function FilterNavbar({ onApplyFilters }) {
                 className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
               >
                 <option value="">Kraj Pochodzenia</option>
-                <option value="czech">Czechy</option>
-                <option value="china">Chiny</option>
-                <option value="france">Francja</option>
-                <option value="holland">Holandia</option>
-                <option value="japan">Japonia</option>
-                <option value="south-korea">Korea Południowa</option>
-                <option value="germany">Niemcy</option>
-                <option value="poland">Polska</option>
-                <option value="russia">Rosja</option>
-                <option value="sweden">Szwecja</option>
-                <option value="united-states">USA</option>
-                <option value="united-kingdom">Wielka Brytania</option>
-                <option value="italy">Włochy</option>
+                {ORIGIN_COUNTRY_OPTIONS.map(({ value, label }) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
               </select>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
                 <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -707,7 +767,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 {/* Location + Distance */}
                 <div className="flex items-center justify-between w-full gap-2">
                   <div className="relative flex-1">
-                    <input type="text" name="location" value={filters.location} onChange={handleInputChange} placeholder="Lokalizacja" className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm" />
+                    <input type="text" name="location" value={filters.location} onChange={handleInputChange} placeholder="Lokalizacja" className="w-full px-3 h-10 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm" />
                   </div>
                   <div className="relative flex-1">
                     <select name="maxDistance" value={filters.maxDistance} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
@@ -787,25 +847,6 @@ export default function FilterNavbar({ onApplyFilters }) {
                       <option value="2003">2003</option>
                       <option value="2002">2002</option>
                       <option value="2001">2001</option>
-                      <option value="2000">2000</option>
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
-                  </div>
-                  </div>
-                <div className="flex items-center justify-between w-full gap-2">
-                  <div className="relative flex-1">
-                    <select name="bodyType" value={filters.bodyType} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                      <option value="">Typ nadwozia</option>
-                      <option value="hatchback">Hatchback</option>
-<option value="sedan">Sedan</option>
-<option value="kombi">Kombi</option>
-<option value="coupe">Coupe</option>
-<option value="sports">Sports</option>
-<option value="limousine">Limousine</option>
-<option value="suv">SUV</option>
-<option value="convertible">Convertible</option>
-<option value="pickup">Pickup</option>
-<option value="offroad">Offroad</option>
 <option value="bus">Bus</option>
 <option value="classic">Classic</option>
 <option value="campers">Campers</option>
@@ -820,19 +861,11 @@ export default function FilterNavbar({ onApplyFilters }) {
                   <div className="relative flex-1">
                     <select name="krajProducenta" value={filters.krajProducenta} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
                       <option value="">Kraj Producenta</option>
-                      <option value="czech">Czechy</option>
-                      <option value="china">Chiny</option>
-                      <option value="france">Francja</option>
-                      <option value="holland">Holandia</option>
-                      <option value="japan">Japonia</option>
-                      <option value="south-korea">Korea Południowa</option>
-                      <option value="germany">Niemcy</option>
-                      <option value="poland">Polska</option>
-                      <option value="russia">Rosja</option>
-                      <option value="sweden">Szwecja</option>
-                      <option value="united-states">USA</option>
-                      <option value="united-kingdom">Wielka Brytania</option>
-                      <option value="italy">Włochy</option>
+                      {COUNTRY_OPTIONS.map(({ value, label }) => (
+                        <option key={value} value={value}>
+                          {label}
+                        </option>
+                      ))}
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                       <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -840,7 +873,6 @@ export default function FilterNavbar({ onApplyFilters }) {
                       </svg>
                     </div>
                   </div>
-                 
                 </div>
                 {/* Origin Country (Kraj Pochodzenia) - mobile overlay */}
                 <div className="flex items-center justify-between w-full gap-2">
@@ -852,19 +884,11 @@ export default function FilterNavbar({ onApplyFilters }) {
                       className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
                     >
                       <option value="">Kraj Pochodzenia</option>
-                      <option value="czech">Czechy</option>
-                      <option value="china">Chiny</option>
-                      <option value="france">Francja</option>
-                      <option value="holland">Holandia</option>
-                      <option value="japan">Japonia</option>
-                      <option value="south-korea">Korea Południowa</option>
-                      <option value="germany">Niemcy</option>
-                      <option value="poland">Polska</option>
-                      <option value="russia">Rosja</option>
-                      <option value="sweden">Szwecja</option>
-                      <option value="united-states">USA</option>
-                      <option value="united-kingdom">Wielka Brytania</option>
-                      <option value="italy">Włochy</option>
+                      {ORIGIN_COUNTRY_OPTIONS.map(({ value, label }) => (
+                        <option key={value} value={value}>
+                          {label}
+                        </option>
+                      ))}
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                       <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1153,7 +1177,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 </div>
               </div>
 
-             
+              
 
                 {/* Row 2 Mobile: Transmission + Drivetrain, Desktop: All in one row */}
                 <div className="flex items-center justify-between w-full gap-2 md:gap-0">
@@ -1195,9 +1219,9 @@ export default function FilterNavbar({ onApplyFilters }) {
                   </svg>
                     </div>
                   </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
             {/* New Line: Kraj Pochodzenia (Origin Country) */}
             <div className="md:hidden space-y-2 md:space-y-0 mt-1">
@@ -1211,19 +1235,11 @@ export default function FilterNavbar({ onApplyFilters }) {
                       className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                     >
                       <option value="">Kraj Pochodzenia</option>
-                      <option value="czech">Czechy</option>
-                      <option value="china">Chiny</option>
-                      <option value="france">Francja</option>
-                      <option value="holland">Holandia</option>
-                      <option value="japan">Japonia</option>
-                      <option value="south-korea">Korea Południowa</option>
-                      <option value="germany">Niemcy</option>
-                      <option value="poland">Polska</option>
-                      <option value="russia">Rosja</option>
-                      <option value="sweden">Szwecja</option>
-                      <option value="united-states">USA</option>
-                      <option value="united-kingdom">Wielka Brytania</option>
-                      <option value="italy">Włochy</option>
+                      {ORIGIN_COUNTRY_OPTIONS.map(({ value, label }) => (
+                        <option key={value} value={value}>
+                          {label}
+                        </option>
+                      ))}
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
                       <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
