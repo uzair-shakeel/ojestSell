@@ -376,6 +376,40 @@ const CarsContent = () => {
         });
       }
 
+      // Apply frontend engine capacity filtering (supports engineCapacity ranges from FilterNavbar)
+      if (filters.engineCapacity) {
+        let engineMin = 0;
+        let engineMax = Number.MAX_SAFE_INTEGER;
+
+        switch (filters.engineCapacity) {
+          case "0-1000":
+            engineMin = 0;
+            engineMax = 1000;
+            break;
+          case "0-2000":
+            engineMin = 0;
+            engineMax = 2000;
+            break;
+          case "2000-3000":
+            engineMin = 2000;
+            engineMax = 3000;
+            break;
+          case "2900+":
+            engineMin = 2900;
+            engineMax = Number.MAX_SAFE_INTEGER;
+            break;
+          default:
+            engineMin = 0;
+            engineMax = Number.MAX_SAFE_INTEGER;
+        }
+
+        carsData = carsData.filter((car) => {
+          // car.engine may be a string like "1900", "1900 cm3" etc.; extract digits
+          const numeric = parseInt(String(car.engine || "0").replace(/[^\d]/g, ""), 10) || 0;
+          return numeric >= engineMin && numeric <= engineMax;
+        });
+      }
+
       // Apply frontend filtering for other unsupported filters
       if (filters.doors) {
         carsData = carsData.filter((car) => car.doors === filters.doors);
