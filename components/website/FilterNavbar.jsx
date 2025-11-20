@@ -1194,7 +1194,7 @@ export default function FilterNavbar({ onApplyFilters }) {
             </div>
 
             {/* New Line: Kraj Pochodzenia (Origin Country) */}
-            <div className="space-y-2 md:space-y-0 mt-1">
+            <div className="md:hidden space-y-2 md:space-y-0 mt-1">
               <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-between w-full gap-2">
                 <div className="flex items-center justify-between w-full gap-2 md:gap-0">
                   <div className="relative flex-1 mx-0.5 my-0.5">

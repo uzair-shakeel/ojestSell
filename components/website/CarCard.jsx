@@ -186,7 +186,7 @@ export default function CarCard({ car, viewMode = 'grid' }) {
             </div>
             <div className="space-y-1 mb-2">
               <div className="text-[14px] text-gray-700 font-normal leading-[1.5]">
-                {car.mileage || 'N/A'}, {car.fuel || 'N/A'}, {car.engine || 'N/A'}, {car.transmission || 'N/A'}
+                {car.mileage || 'N/A'} km, {car.fuel || 'N/A'}, {car.engine || 'N/A'} cm3, {car.transmission || 'N/A'}
               </div>
               <div className="text-[14px] text-gray-500 dark:text-gray-400 font-normal leading-[1.5] flex items-center transition-colors duration-300">
                 {locationDetails.city && locationDetails.state

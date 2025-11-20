@@ -347,7 +347,7 @@ const Page = () => {
             car.warranties.length > 0 ? (
               <div className="space-y-3">
                 <h3 className="text-lg font-semibold">Gwarancja</h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 mb-3">
                   Ten samochód jest nowy i posiada następujące opcje gwarancji:
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -362,11 +362,6 @@ const Page = () => {
                       {typeof w.mileageLimit === "number" && (
                         <p className="text-gray-600">
                           Do przebiegu: {w.mileageLimit.toLocaleString("pl-PL")} km
-                        </p>
-                      )}
-                      {typeof w.extraPrice === "number" && (
-                        <p className="text-gray-700 mt-1">
-                          Dopłata: {w.extraPrice.toLocaleString("pl-PL")} zł
                         </p>
                       )}
                       {w.description && (
@@ -431,19 +426,6 @@ const Page = () => {
   const basePriceNetto = car?.financialInfo?.priceNetto
     ? Number(car.financialInfo.priceNetto)
     : null;
-  const selectedWarranty =
-    selectedWarrantyIndex !== null &&
-    Array.isArray(car?.warranties) &&
-    car.warranties[selectedWarrantyIndex]
-      ? car.warranties[selectedWarrantyIndex]
-      : null;
-
-  const totalPriceWithWarranty =
-    basePriceNetto !== null &&
-    selectedWarranty &&
-    typeof selectedWarranty.extraPrice === "number"
-      ? basePriceNetto + selectedWarranty.extraPrice
-      : null;
 
   const sellerName = (() => {
     if (!seller) return "Seller";
@@ -701,24 +683,7 @@ const Page = () => {
                       ? `${basePriceNetto.toLocaleString("pl-PL")} zł`
                       : "N/A"}
                   </p>
-                  <p className="text-sm text-gray-500">Cena podstawowa (bez gwarancji)</p>
-                  {totalPriceWithWarranty !== null && (
-                    <div className="mt-3 w-full">
-                      <p className="text-sm font-medium text-gray-700">Cena z wybraną gwarancją</p>
-                      <p className="text-2xl font-semibold text-blue-600 mt-1">
-                        {totalPriceWithWarranty.toLocaleString("pl-PL")} zł
-                      </p>
-                      {selectedWarranty && (
-                        <p className="text-xs text-gray-500 mt-1">
-                          Zawiera dopłatę za gwarancję:
-                          {" "}
-                          {typeof selectedWarranty.extraPrice === "number"
-                            ? `${selectedWarranty.extraPrice.toLocaleString("pl-PL")} zł`
-                            : ""}
-                        </p>
-                      )}
-                    </div>
-                  )}
+                  <p className="text-sm text-gray-500">Cena podstawowa</p>
                   <p className="text-xl text-medium text-gray-600 underline mt-3">
                     {car?.financialInfo?.priceWithVat
                       ? `${car?.financialInfo?.priceWithVat} zł`
@@ -738,11 +703,6 @@ const Page = () => {
                     >
                       Wybierz gwarancję
                     </button>
-                    {selectedWarranty && (
-                      <p className="mt-2 text-xs text-gray-600">
-                        Wybrana gwarancja: {selectedWarranty.years ? `${selectedWarranty.years} lata` : "Gwarancja"}
-                      </p>
-                    )}
                   </div>
                 )}
 
@@ -856,7 +816,7 @@ const Page = () => {
                 </button>
               </div>
               <div className="px-4 py-3 text-sm text-gray-600 border-b">
-                Wybierz jedną z dostępnych opcji gwarancji, aby zobaczyć cenę z uwzględnioną dopłatą.
+                Wybierz jedną z dostępnych opcji gwarancji, aby zobaczyć szczegóły.
               </div>
               <div className="px-4 py-3 space-y-3 overflow-y-auto">
                 {car.warranties.map((w, idx) => {
@@ -879,11 +839,6 @@ const Page = () => {
                         <span className="font-medium text-black">
                           {w.years ? `${w.years} lata` : "Gwarancja"}
                         </span>
-                        {typeof w.extraPrice === "number" && (
-                          <span className="text-blue-600 font-semibold">
-                            +{w.extraPrice.toLocaleString("pl-PL")} zł
-                          </span>
-                        )}
                       </div>
                       {typeof w.mileageLimit === "number" && (
                         <p className="text-xs text-gray-600 mt-1">

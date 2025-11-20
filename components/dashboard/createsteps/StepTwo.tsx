@@ -45,7 +45,7 @@ export default function StepTwo({
     { length: currentYear - startYear + 1 },
     (_, i) => currentYear - i
   );
-  const engines = ["0.5", "1.0", "1.5", "2.0", "3.0", "4.0", "5.0", "7.3"];
+  const engines = ["1000", "1900", "2000", "2400", "3000", "4000", "5000", "7300"];
   const colors = [
     "Beżowy",
     "Biały",
@@ -863,7 +863,7 @@ export default function StepTwo({
           <input
             list="engines"
             type="text"
-            placeholder="Pojemność"
+            placeholder="1900 cm3"
             className="border p-3 w-full rounded h-12"
             value={localData.engine}
             onChange={(e) =>
