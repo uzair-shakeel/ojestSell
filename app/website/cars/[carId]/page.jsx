@@ -21,6 +21,7 @@ import { getCarById } from "../../../../services/carService";
 import { getPublicUserInfo } from "../../../../services/userService";
 import { useAuth } from "../../../../lib/auth/AuthContext";
 import io from "socket.io-client";
+import ImageCategorizationModal from "../../../../components/website/ImageCategorizationModal";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 const socket = io(API_BASE || undefined, {
@@ -42,6 +43,7 @@ const Page = () => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [selectedWarrantyIndex, setSelectedWarrantyIndex] = useState(null);
   const [isWarrantyModalOpen, setIsWarrantyModalOpen] = useState(false);
+  const [isCategorizationModalOpen, setIsCategorizationModalOpen] = useState(false);
   const mainSwiperRef = useRef(null);
   const fullscreenSwiperRef = useRef(null);
 
@@ -565,7 +567,7 @@ const Page = () => {
                             index + 1
                           }`}
                           className="w-full aspect-[5/3] object-cover cursor-pointer rounded-lg lg:rounded-none"
-                          onClick={() => setIsFullscreen(true)}
+                          onClick={() => setIsCategorizationModalOpen(true)}
                         />
                       </div>
                     </SwiperSlide>
@@ -866,6 +868,14 @@ const Page = () => {
             </div>
           </div>
         )}
+
+      {/* Image Categorization Modal */}
+      <ImageCategorizationModal
+        isOpen={isCategorizationModalOpen}
+        onClose={() => setIsCategorizationModalOpen(false)}
+        images={images}
+        carId={carId}
+      />
     </>
   );
 }
