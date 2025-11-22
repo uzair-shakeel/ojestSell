@@ -858,21 +858,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                       </svg>
                     </div>
                   </div>
-                  <div className="relative flex-1">
-                    <select name="krajProducenta" value={filters.krajProducenta} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                      <option value="">Kraj Producenta</option>
-                      {COUNTRY_OPTIONS.map(({ value, label }) => (
-                        <option key={value} value={value}>
-                          {label}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                      <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </div>
-                  </div>
+                  
                 </div>
                 {/* Origin Country (Kraj Pochodzenia) - mobile overlay */}
                 <div className="flex items-center justify-between w-full gap-1">
@@ -896,7 +882,58 @@ export default function FilterNavbar({ onApplyFilters }) {
                       </svg>
                     </div>
                   </div>
-                                  {/* Color (Kolor) */}
+
+                  <div className="relative flex-1">
+                    <select name="krajProducenta" value={filters.krajProducenta} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                      <option value="">Kraj Producenta</option>
+                      {COUNTRY_OPTIONS.map(({ value, label }) => (
+                        <option key={value} value={value}>
+                          {label}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                      <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                
+                </div>
+
+                <div className="flex items-center justify-between w-full gap-1">
+                         {/* Body Type Filter */}
+            <div className="relative flex-1">
+              <select
+                name="bodyType"
+                value={filters.bodyType}
+                onChange={handleInputChange}
+                className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+              >
+              <option value="">Typ nadwozia</option>
+              <option value="Bus I Van">Bus I Van</option>
+              <option value="Coupe">Coupe</option>
+              <option value="Crossover">Crossover</option>
+              <option value="Hatchback">Hatchback</option>
+              <option value="Kabriolet">Kabriolet</option>
+              <option value="Kamper">Kamper</option>
+              <option value="Klasyk">Klasyk</option>
+              <option value="Kombi">Kombi</option>
+              <option value="Kompakt">Kompakt</option>
+              <option value="Limuzyna">Limuzyna</option>
+              <option value="Pickup">Pickup</option>
+              <option value="Sedan">Sedan</option>
+              <option value="Sportowe">Sportowe</option>
+              <option value="SUV">SUV</option>
+              <option value="Terenowe">Terenowe</option>
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+                                    {/* Color (Kolor) */}
                   <div className="relative flex-1">
                     <select
                       name="color"
