@@ -36,7 +36,7 @@ export default function NotificationsPage() {
   }, [notifications, filter]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 p-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Powiadomienia</h1>

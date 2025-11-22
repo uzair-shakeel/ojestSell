@@ -688,7 +688,7 @@ const MessagesPage = () => {
   const chatCount = chats.length;
 
   return (
-<div className="flex h-[calc(100vh-100px)] bg-white font-sans overflow-hidden relative">
+<div className="flex h-[calc(100vh-70px)] bg-white font-sans overflow-hidden relative">
   {/* Sidebar */}
       <div
         className={`absolute md:relative inset-y-0 left-0 z-20 bg-white h-full min-h-0 w-full sm:w-[320px] md:w-[320px] border-r border-gray-300 flex flex-col transform transition-transform duration-300 ${
