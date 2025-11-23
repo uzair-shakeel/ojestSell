@@ -196,13 +196,44 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
         });
 
         if (!detectResponse.ok) {
-          throw new Error(`HTTP error! status: ${detectResponse.status}`);
+          const errorText = await detectResponse.text();
+          console.error(`API Error for image ${i}:`, {
+            status: detectResponse.status,
+            statusText: detectResponse.statusText,
+            error: errorText,
+            url: item.url,
+          });
+          throw new Error(`HTTP error! status: ${detectResponse.status} - ${errorText}`);
         }
 
-        const detectData = await detectResponse.json();
+        let detectData;
+        try {
+          detectData = await detectResponse.json();
+        } catch (jsonError) {
+          const textResponse = await detectResponse.text();
+          console.error(`Failed to parse JSON response for image ${i + 1}:`, {
+            error: jsonError,
+            responseText: textResponse,
+          });
+          throw new Error(`Invalid JSON response: ${textResponse.substring(0, 100)}`);
+        }
+        
+        // Log the response for debugging
+        console.log(`Image ${i + 1} detection response:`, {
+          success: detectData.success,
+          category: detectData.category,
+          detected_label: detectData.detected_label,
+          confidence: detectData.confidence,
+          fullResponse: detectData,
+        });
 
-        if (detectData.success) {
+        // Check if response is successful (handle different response formats)
+        const isSuccess = detectData.success !== false && (detectData.success || detectData.category || detectData.detected_label);
+        
+        if (isSuccess) {
           const category = normalizeCategory(detectData.category || detectData.detected_label);
+          console.log(`Image ${i + 1} normalized category:`, category);
+          
           const imageData = {
             url: item.url,
             category: category,
@@ -213,17 +244,33 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
 
           // Add to all
           results.all.push(imageData);
+          console.log(`Added image ${i + 1} to 'all' category`);
 
           // Add to specific category
           if (results[category]) {
             results[category].push(imageData);
+            console.log(`Added image ${i + 1} to '${category}' category`);
           } else {
             // If category doesn't exist, add to 'all' only
-            console.warn(`Unknown category: ${category}`);
+            console.warn(`Unknown category: ${category} for image ${i + 1}. Available categories:`, Object.keys(results));
           }
+        } else {
+          console.warn(`Detection failed for image ${i + 1}:`, detectData);
+          // Add to 'all' even if detection fails
+          results.all.push({
+            url: item.url,
+            category: "unknown",
+            detected_label: detectData.detected_label || "Unknown",
+            confidence: detectData.confidence || 0,
+            index: item.index,
+          });
         }
       } catch (error) {
-        console.error(`Error processing image ${i}:`, error);
+        console.error(`Error processing image ${i + 1}:`, {
+          error: error.message,
+          stack: error.stack,
+          url: item.url,
+        });
         // Add to 'all' even if detection fails
         results.all.push({
           url: item.url,
@@ -243,6 +290,16 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
         if (orderA !== orderB) return orderA - orderB;
         return b.index - a.index;
       });
+    });
+
+    // Log final results for debugging
+    console.log("Final categorized results:", {
+      totalImages: results.all.length,
+      byCategory: Object.keys(results).reduce((acc, key) => {
+        acc[key] = results[key].length;
+        return acc;
+      }, {}),
+      results: results,
     });
 
     setCategorizedImages(results);

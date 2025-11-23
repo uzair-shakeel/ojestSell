@@ -38,9 +38,11 @@ const nextConfig = {
 
   async rewrites() {
     return [
+      // Exclude detect-image from rewrites - it's a Next.js API route
+      // All other /api/* routes will be proxied to the backend
       {
-        source: "/api/:path*",
-        destination: `${API_BASE_URL}/api/:path*`,
+        source: "/api/:path((?!detect-image).*)",
+        destination: `${API_BASE_URL}/api/:path`,
       },
     ];
   },

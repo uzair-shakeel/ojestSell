@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/detect-image",
+      "destination": "/api/detect-image"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "https://ojest-ap-is.vercel.app/api/$1"
     }

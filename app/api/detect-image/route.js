@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
-// const API_BASE_URL = "https://photo-detect-api-lxbhx.ondigitalocean.app";
-const API_BASE_URL = "https://ojest.pl/image/separation";
+const API_BASE_URL = "https://photo-detect-api-lxbhx.ondigitalocean.app";
 
 export async function POST(request) {
   try {
@@ -40,13 +39,31 @@ export async function POST(request) {
     }
 
     // Forward to the detection API
-    const response = await fetch(`${API_BASE_URL}/api/detect`, {
+    // According to API docs: https://photo-detect-api-lxbhx.ondigitalocean.app/
+    // The endpoint is /api/detect (POST)
+    const apiEndpoint = `${API_BASE_URL}/api/detect`;
+    
+    console.log("Calling detection API:", {
+      endpoint: apiEndpoint,
+      hasImageFile: !!imageFile,
+      hasImageUrl: !!imageUrl,
+      imageUrl: imageUrl?.substring(0, 50) + '...',
+    });
+    
+    const response = await fetch(apiEndpoint, {
       method: "POST",
       body: apiFormData,
     });
 
     if (!response.ok) {
       const errorText = await response.text();
+      console.error("Detection API error:", {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText,
+        hasImageFile: !!imageFile,
+        hasImageUrl: !!imageUrl,
+      });
       return NextResponse.json(
         { error: `Detection API error: ${response.status} - ${errorText}` },
         { status: response.status }
@@ -54,6 +71,12 @@ export async function POST(request) {
     }
 
     const data = await response.json();
+    console.log("Detection API success response:", {
+      success: data.success,
+      category: data.category,
+      detected_label: data.detected_label,
+      confidence: data.confidence,
+    });
     return NextResponse.json(data);
   } catch (error) {
     console.error("Error in detect-image route:", error);
