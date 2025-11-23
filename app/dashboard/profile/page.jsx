@@ -406,7 +406,7 @@ const ProfileComponent = () => {
   if (!user) return <div>Loading...</div>;
 
   return (
-    <>
+    <div className="p-6">
     
     <motion.div
       initial={{ opacity: 0 }}
@@ -757,7 +757,7 @@ const ProfileComponent = () => {
         </div>
       </div>
     )}
-    </>
+    </div>
   );
 };
 

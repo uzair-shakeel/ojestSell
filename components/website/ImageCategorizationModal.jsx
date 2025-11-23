@@ -48,7 +48,7 @@ const getCacheKey = (carId) => {
 // Helper function to load cached data
 const loadCachedData = (carId, imagesHash) => {
   if (typeof window === "undefined") return null;
-  
+
   try {
     const cacheKey = getCacheKey(carId);
     const cached = localStorage.getItem(cacheKey);
@@ -71,7 +71,7 @@ const loadCachedData = (carId, imagesHash) => {
 // Helper function to save cached data
 const saveCachedData = (carId, imagesHash, results) => {
   if (typeof window === "undefined") return;
-  
+
   try {
     const cacheKey = getCacheKey(carId);
     const data = {
@@ -133,7 +133,7 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
         documents: [],
         keys: [],
       };
-      
+
       setCurrentCategory("all");
       setSliderImages([]);
       setSliderIndex(0);
@@ -142,10 +142,10 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
 
       // Create hash of current images
       const imagesHash = createImagesHash(images);
-      
+
       // Check for cached data
       const cachedResults = loadCachedData(carId, imagesHash);
-      
+
       if (cachedResults) {
         // Use cached results
         setCategorizedImages(cachedResults);
@@ -376,11 +376,10 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
               <button
                 key={cat}
                 onClick={() => handleCategoryClick(cat)}
-                className={`text-sm font-medium pb-1.5 relative transition-colors ${
-                  currentCategory === cat
+                className={`text-sm font-medium pb-1.5 relative transition-colors ${currentCategory === cat
                     ? "text-white"
                     : "text-gray-400 hover:text-white"
-                }`}
+                  }`}
               >
                 {capitalizeWord(cat)}
                 {currentCategory === cat && (

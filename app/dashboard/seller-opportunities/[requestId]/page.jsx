@@ -204,7 +204,7 @@ const MakeOfferPage = ({ params }) => {
 
   if (!request) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center p-6 items-center h-screen">
         <div className="text-center">
           <p className="text-gray-600 mb-4">Request not found</p>
           <Link

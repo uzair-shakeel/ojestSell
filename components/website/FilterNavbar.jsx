@@ -352,9 +352,9 @@ export default function FilterNavbar({ onApplyFilters }) {
         
         <div className="space-y-1">
         {/* Desktop Layout: First Line - Make Model Type Year */}
-        <div className="hidden md:block lg:w-full">
+        <div className="hidden md:block space-y-1 lg:w-full">
           {/* First row: Make, Model, Type, Country, Year */}
-          <div className="flex items-center justify-between w-full gap-3 overflow-visible relative">
+          <div className="flex items-center justify-between w-full gap-1 overflow-visible relative">
 
             {/* Make Filter */}
             <div className="relative flex-1">
@@ -457,7 +457,7 @@ export default function FilterNavbar({ onApplyFilters }) {
             </div>
 
           </div>
-          <div className="flex items-center justify-between w-full gap-3 overflow-visible relative">
+          <div className="flex items-center justify-between w-full gap-1 overflow-visible relative">
 
 
             {/* Origin Country (Kraj Pochodzenia) */}
@@ -569,8 +569,8 @@ export default function FilterNavbar({ onApplyFilters }) {
             </div>
 
              {/* Color Filter */}
-              <div className="flex flex-1 items-center justify-between  gap-2 md:gap-0">
-                <div className="relative flex-1 mx-0.5 my-0.5">
+              <div className="flex flex-1 items-center justify-between ">
+                <div className="relative flex-1 ">
                   <select
                     name="color"
                     value={filters.color}
@@ -601,7 +601,7 @@ export default function FilterNavbar({ onApplyFilters }) {
 
         {/* Desktop Layout: Second Line - Reset + Show More buttons (hidden when expanded) */}
         {!showMoreFilters && (
-          <div className="hidden md:flex items-center justify-center w-full gap-2">
+          <div className="hidden md:flex items-center justify-center w-full gap-1">
             {/* Reset Button - Desktop only */}
             <button
               onClick={handleReset}
@@ -720,7 +720,7 @@ export default function FilterNavbar({ onApplyFilters }) {
               </div>
               <div className="space-y-3">
                 {/* Make + Model */}
-                <div className="flex items-center justify-between w-full gap-2">
+                <div className="flex items-center justify-between w-full gap-1">
                   <div className="relative flex-1">
                     <select
                       name="make"
@@ -765,7 +765,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                   </div>
                 </div>
                 {/* Location + Distance */}
-                <div className="flex items-center justify-between w-full gap-2">
+                <div className="flex items-center justify-between w-full gap-1">
                   <div className="relative flex-1">
                     <input type="text" name="location" value={filters.location} onChange={handleInputChange} placeholder="Lokalizacja" className="w-full px-3 h-10 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm" />
                   </div>
@@ -786,7 +786,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                   </div>
                 </div>
                 {/* Body Type + Manufacturer Country */}
-                <div className="flex items-center justify-between w-full gap-2">
+                <div className="flex items-center justify-between w-full gap-1">
                  <div className="relative flex-1">
                     <select name="yearFrom" value={filters.yearFrom} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
                       <option value="">Rok od</option>
@@ -858,24 +858,10 @@ export default function FilterNavbar({ onApplyFilters }) {
                       </svg>
                     </div>
                   </div>
-                  <div className="relative flex-1">
-                    <select name="krajProducenta" value={filters.krajProducenta} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                      <option value="">Kraj Producenta</option>
-                      {COUNTRY_OPTIONS.map(({ value, label }) => (
-                        <option key={value} value={value}>
-                          {label}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                      <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </div>
-                  </div>
+                  
                 </div>
                 {/* Origin Country (Kraj Pochodzenia) - mobile overlay */}
-                <div className="flex items-center justify-between w-full gap-2">
+                <div className="flex items-center justify-between w-full gap-1">
                   <div className="relative flex-1">
                     <select
                       name="krajPochodzenia"
@@ -896,7 +882,58 @@ export default function FilterNavbar({ onApplyFilters }) {
                       </svg>
                     </div>
                   </div>
-                                  {/* Color (Kolor) */}
+
+                  <div className="relative flex-1">
+                    <select name="krajProducenta" value={filters.krajProducenta} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                      <option value="">Kraj Producenta</option>
+                      {COUNTRY_OPTIONS.map(({ value, label }) => (
+                        <option key={value} value={value}>
+                          {label}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                      <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                
+                </div>
+
+                <div className="flex items-center justify-between w-full gap-1">
+                         {/* Body Type Filter */}
+            <div className="relative flex-1">
+              <select
+                name="bodyType"
+                value={filters.bodyType}
+                onChange={handleInputChange}
+                className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+              >
+              <option value="">Typ nadwozia</option>
+              <option value="Bus I Van">Bus I Van</option>
+              <option value="Coupe">Coupe</option>
+              <option value="Crossover">Crossover</option>
+              <option value="Hatchback">Hatchback</option>
+              <option value="Kabriolet">Kabriolet</option>
+              <option value="Kamper">Kamper</option>
+              <option value="Klasyk">Klasyk</option>
+              <option value="Kombi">Kombi</option>
+              <option value="Kompakt">Kompakt</option>
+              <option value="Limuzyna">Limuzyna</option>
+              <option value="Pickup">Pickup</option>
+              <option value="Sedan">Sedan</option>
+              <option value="Sportowe">Sportowe</option>
+              <option value="SUV">SUV</option>
+              <option value="Terenowe">Terenowe</option>
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+                                    {/* Color (Kolor) */}
                   <div className="relative flex-1">
                     <select
                       name="color"
@@ -925,7 +962,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 </div>
 
                 {/* Condition + Mileage */}
-                <div className="flex items-center justify-between w-full gap-2">
+                <div className="flex items-center justify-between w-full gap-1">
                   <div className="relative flex-1">
                     <select name="stan" value={filters.stan} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
                       <option value="">Stan</option>
@@ -1039,7 +1076,7 @@ export default function FilterNavbar({ onApplyFilters }) {
             {/* Second Line: Location Distance Condition Mileage */}
             <div className="space-y-0.5 md:space-y-0">
               {/* Mobile: Two selectors per row, Desktop: All in one row */}
-              <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-between w-full gap-1">
+              <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-between w-full gap-0">
                 {/* Row 1 Mobile: Location + Distance, Desktop: All in one row */}
                 <div className="flex items-center justify-between w-full gap-1 md:gap-0">
               {/* Location Filter */}
@@ -1129,7 +1166,7 @@ export default function FilterNavbar({ onApplyFilters }) {
             {/* Third Line: Fuel Engine Color Transmission Drivetrain */}
             <div className="space-y-2 md:space-y-0">
               {/* Mobile: Two selectors per row, Desktop: All in one row */}
-              <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-between w-full gap-2">
+              <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-between w-full ">
                 {/* Row 1 Mobile: Fuel + Engine, Desktop: All in one row */}
                 <div className="flex items-center justify-between w-full gap-2 md:gap-0">
               {/* Fuel Filter */}
@@ -1254,7 +1291,7 @@ export default function FilterNavbar({ onApplyFilters }) {
             {/* Fourth Line: Service History Accident History Price */}
             <div className="space-y-2 md:space-y-0">
               {/* Mobile: Two selectors per row, Desktop: All in one row */}
-              <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-between w-full gap-2">
+              <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-between w-full ">
                 {/* Row 1 Mobile: Service History + Accident History, Desktop: All in one row */}
                 <div className="flex items-center justify-between w-full gap-2 md:gap-0">
               {/* Service History Filter */}

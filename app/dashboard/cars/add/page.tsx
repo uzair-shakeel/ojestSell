@@ -368,7 +368,7 @@ export default function MultiStepForm() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-5 overflow-hidden h-auto border border-gray-200 shadow-md rounded-lg relative">
+    <div className="max-w-5xl mx-auto p-6 overflow-hidden h-auto border border-gray-200 shadow-md rounded-lg relative">
       {error && <div className="text-red-500 mb-4">{error}</div>}
       <AnimatePresence mode="wait">
         <motion.div

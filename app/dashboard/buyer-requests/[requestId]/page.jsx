@@ -79,7 +79,7 @@ const BuyerRequestDetailPage = ({ params }) => {
 
   if (!request) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center p-6 items-center h-screen">
         <div className="text-center">
           <p className="text-gray-600 mb-4">Request not found</p>
           <Link
@@ -94,7 +94,7 @@ const BuyerRequestDetailPage = ({ params }) => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="container mx-auto p-6  max-w-7xl">
       <div className="mb-6">
         <Link
           href={
