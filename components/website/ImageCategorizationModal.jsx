@@ -34,76 +34,7 @@ const capitalizeWord = (word) => {
   return word.charAt(0).toUpperCase() + word.slice(1);
 };
 
-// Helper function to create a hash from images array
-const createImagesHash = (images) => {
-  if (!images || images.length === 0) return "";
-  return images.join("|");
-};
-
-// Helper function to get cache key
-const getCacheKey = (carId) => {
-  return `car_categorization_${carId}`;
-};
-
-// Helper function to load cached data
-const loadCachedData = (carId, imagesHash) => {
-  if (typeof window === "undefined") return null;
-
-  try {
-    const cacheKey = getCacheKey(carId);
-    const cached = localStorage.getItem(cacheKey);
-    if (!cached) return null;
-
-    const parsed = JSON.parse(cached);
-    // Check if images hash matches (images haven't changed)
-    if (parsed.imagesHash === imagesHash && parsed.results) {
-      return parsed.results;
-    }
-    // Images have changed, clear old cache
-    localStorage.removeItem(cacheKey);
-    return null;
-  } catch (error) {
-    console.error("Error loading cached data:", error);
-    return null;
-  }
-};
-
-// Helper function to save cached data
-const saveCachedData = (carId, imagesHash, results) => {
-  if (typeof window === "undefined") return;
-
-  try {
-    const cacheKey = getCacheKey(carId);
-    const data = {
-      imagesHash,
-      results,
-      timestamp: Date.now(),
-    };
-    localStorage.setItem(cacheKey, JSON.stringify(data));
-  } catch (error) {
-    console.error("Error saving cached data:", error);
-    // If storage is full, try to clear old entries
-    try {
-      const keys = Object.keys(localStorage);
-      const oldCaches = keys.filter((k) => k.startsWith("car_categorization_"));
-      if (oldCaches.length > 50) {
-        // Remove oldest 10 entries
-        const sorted = oldCaches
-          .map((k) => ({
-            key: k,
-            timestamp: JSON.parse(localStorage.getItem(k) || '{"timestamp":0}').timestamp || 0,
-          }))
-          .sort((a, b) => a.timestamp - b.timestamp)
-          .slice(0, 10);
-        sorted.forEach(({ key }) => localStorage.removeItem(key));
-        // Try saving again
-        localStorage.setItem(cacheKey, JSON.stringify(data));
-      }
-    } catch (e) {
-      console.error("Error clearing old cache:", e);
-    }
-  }
-};
+// Cache logic removed - images will be processed every time
 
 export default function ImageCategorizationModal({ isOpen, onClose, images = [], carId }) {
   const [currentCategory, setCurrentCategory] = useState("all");
@@ -120,7 +51,7 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
 
   const ZOOM_STEPS = [1, 1.25, 1.5, 1.75, 2, 2.25];
 
-  // Initialize categories and check cache
+  // Initialize categories and process images every time modal opens
   useEffect(() => {
     if (isOpen && images.length > 0 && carId) {
       const initialCategories = {
@@ -140,27 +71,21 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
       setShowSlider(false);
       setZoomLevel(1);
 
-      // Create hash of current images
-      const imagesHash = createImagesHash(images);
-
-      // Check for cached data
-      const cachedResults = loadCachedData(carId, imagesHash);
-
-      if (cachedResults) {
-        // Use cached results
-        setCategorizedImages(cachedResults);
-        setIsProcessing(false);
-      } else {
-        // No cache found, need to process
-        setCategorizedImages(initialCategories);
-        processImagesQueue(imagesHash);
-      }
+      // Always process images - no caching
+      console.log("Processing images for car:", carId);
+      setCategorizedImages(initialCategories);
+      processImagesQueue();
+    } else if (!isOpen) {
+      // Reset processing state when modal closes
+      setIsProcessing(false);
+      setProcessingQueue([]);
+      setProcessingStatus({});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, carId]);
+  }, [isOpen, carId, images.length]);
 
   // Process images through detection API in queue
-  const processImagesQueue = async (imagesHash) => {
+  const processImagesQueue = async () => {
     if (images.length === 0 || !carId) return;
 
     setIsProcessing(true);
@@ -306,11 +231,6 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
     setProcessingQueue([]);
     setProcessingStatus({});
     setIsProcessing(false);
-
-    // Save results to cache
-    if (imagesHash && carId) {
-      saveCachedData(carId, imagesHash, results);
-    }
   };
 
   const handleCategoryClick = (category) => {

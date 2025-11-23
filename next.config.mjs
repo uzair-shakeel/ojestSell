@@ -37,12 +37,37 @@ const nextConfig = {
   },
 
   async rewrites() {
+    // Next.js API routes (detect-image, blur-plate, vin-lookup, save-edited-image, cars/featured)
+    // are handled by Next.js and don't need rewrites
+    // Only proxy backend API routes
     return [
-      // Exclude detect-image from rewrites - it's a Next.js API route
-      // All other /api/* routes will be proxied to the backend
       {
-        source: "/api/:path((?!detect-image).*)",
-        destination: `${API_BASE_URL}/api/:path`,
+        source: "/api/cars/:path*",
+        destination: `${API_BASE_URL}/api/cars/:path*`,
+      },
+      {
+        source: "/api/users/:path*",
+        destination: `${API_BASE_URL}/api/users/:path*`,
+      },
+      {
+        source: "/api/auth/:path*",
+        destination: `${API_BASE_URL}/api/auth/:path*`,
+      },
+      {
+        source: "/api/chat/:path*",
+        destination: `${API_BASE_URL}/api/chat/:path*`,
+      },
+      {
+        source: "/api/buyer-requests/:path*",
+        destination: `${API_BASE_URL}/api/buyer-requests/:path*`,
+      },
+      {
+        source: "/api/seller-offers/:path*",
+        destination: `${API_BASE_URL}/api/seller-offers/:path*`,
+      },
+      {
+        source: "/api/notifications/:path*",
+        destination: `${API_BASE_URL}/api/notifications/:path*`,
       },
     ];
   },
