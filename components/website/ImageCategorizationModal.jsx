@@ -115,6 +115,7 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
   const [sliderIndex, setSliderIndex] = useState(0);
   const [showSlider, setShowSlider] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const sliderImageRef = useRef(null);
 
   const ZOOM_STEPS = [1, 1.25, 1.5, 1.75, 2, 2.25];
@@ -369,7 +370,8 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
       {/* Navigation Bar */}
       <div className="w-full sticky top-0 left-0 z-[110] bg-black shadow-lg">
         <div className="max-w-[1600px] mx-auto px-5 md:px-20 py-3.5 flex justify-between items-center gap-6">
-          <div className="flex gap-6 flex-wrap">
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex gap-6 flex-wrap">
             {categories.map((cat) => (
               <button
                 key={cat}
@@ -387,19 +389,46 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
               </button>
             ))}
           </div>
+
+          {/* Mobile Hamburger Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden text-white flex items-center justify-center hover:opacity-70 transition-opacity p-2"
+            title="Menu"
+          >
+            {isMobileMenuOpen ? (
+              <span className="text-2xl">×</span>
+            ) : (
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            )}
+          </button>
+
+          {/* Action Buttons */}
           <div className="flex gap-4 items-center ml-auto">
             {showSlider && (
               <>
                 <button
                   onClick={handleZoom}
-                  className="w-9 h-9 rounded-full border border-gray-600 bg-gray-900 text-white flex items-center justify-center hover:bg-gray-700 transition-all text-sm"
+                  className="text-white flex items-center justify-center hover:opacity-70 transition-opacity text-xl p-2"
                   title="Zoom"
                 >
                   +
                 </button>
                 <button
                   onClick={handleFullscreen}
-                  className="w-9 h-9 rounded-full border border-gray-600 bg-gray-900 text-white flex items-center justify-center hover:bg-gray-700 transition-all"
+                  className="text-white flex items-center justify-center hover:opacity-70 transition-opacity text-xl p-2"
                   title="Full Screen"
                 >
                   ⛶
@@ -408,13 +437,37 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
             )}
             <button
               onClick={handleClose}
-              className="w-9 h-9 rounded-full border border-gray-600 bg-gray-900 text-white flex items-center justify-center hover:bg-gray-700 transition-all text-xl"
+              className="text-white flex items-center justify-center hover:opacity-70 transition-opacity text-2xl p-2"
               title="Close"
             >
               ×
             </button>
           </div>
         </div>
+
+        {/* Mobile Dropdown Menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden border-t border-gray-700 bg-black">
+            <div className="px-5 py-4 space-y-3">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => {
+                    handleCategoryClick(cat);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`w-full text-left px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    currentCategory === cat
+                      ? "bg-gray-800 text-white"
+                      : "text-gray-400 hover:text-white hover:bg-gray-900"
+                  }`}
+                >
+                  {capitalizeWord(cat)}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Main Content */}
@@ -472,7 +525,7 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
             <div className="flex items-center justify-center gap-10 my-10 relative">
               <button
                 onClick={() => navigateSlider(-1)}
-                className="w-14 h-14 rounded-full border border-gray-600 bg-gray-900 text-white text-3xl flex items-center justify-center hover:bg-gray-700 transition-all fixed left-8 top-1/2 -translate-y-1/2 z-[105]"
+                className="text-white text-4xl flex items-center justify-center hover:opacity-70 transition-opacity fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-[105] disabled:opacity-30 disabled:cursor-not-allowed md:bg-transparent bg-black rounded-full w-12 h-12 md:w-auto md:h-auto md:p-2"
                 disabled={sliderIndex === 0 && categorySequence.indexOf(currentCategory) === 0}
               >
                 ‹
@@ -486,6 +539,24 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
                   className="max-w-[90vw] max-h-[80vh] object-contain rounded-2xl shadow-2xl bg-gray-900"
                   style={{ transform: `scale(${zoomLevel})`, transformOrigin: "center center" }}
                 />
+                {/* Mobile navigation buttons centered on image */}
+                <button
+                  onClick={() => navigateSlider(-1)}
+                  className="md:hidden absolute left-1/2 top-1/2 -translate-x-16 -translate-y-1/2 text-white text-3xl flex items-center justify-center bg-black rounded-full w-12 h-12 z-[106] disabled:opacity-30 disabled:cursor-not-allowed"
+                  disabled={sliderIndex === 0 && categorySequence.indexOf(currentCategory) === 0}
+                >
+                  ‹
+                </button>
+                <button
+                  onClick={() => navigateSlider(1)}
+                  className="md:hidden absolute left-1/2 top-1/2 translate-x-16 -translate-y-1/2 text-white text-3xl flex items-center justify-center bg-black rounded-full w-12 h-12 z-[106] disabled:opacity-30 disabled:cursor-not-allowed"
+                  disabled={
+                    sliderIndex === sliderImages.length - 1 &&
+                    categorySequence.indexOf(currentCategory) === categorySequence.length - 1
+                  }
+                >
+                  ›
+                </button>
                 <div className="absolute -top-9 right-0 text-gray-400 text-sm">
                   {sliderIndex + 1} of {sliderImages.length}
                 </div>
@@ -493,7 +564,7 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
 
               <button
                 onClick={() => navigateSlider(1)}
-                className="w-14 h-14 rounded-full border border-gray-600 bg-gray-900 text-white text-3xl flex items-center justify-center hover:bg-gray-700 transition-all fixed right-8 top-1/2 -translate-y-1/2 z-[105]"
+                className="text-white text-4xl flex items-center justify-center hover:opacity-70 transition-opacity fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-[105] disabled:opacity-30 disabled:cursor-not-allowed md:bg-transparent bg-black rounded-full w-12 h-12 md:w-auto md:h-auto md:p-2 hidden md:flex"
                 disabled={
                   sliderIndex === sliderImages.length - 1 &&
                   categorySequence.indexOf(currentCategory) === categorySequence.length - 1
