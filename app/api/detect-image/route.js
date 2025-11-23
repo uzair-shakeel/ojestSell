@@ -1,20 +1,18 @@
 import { NextResponse } from "next/server";
 
-const API_BASE_URL = "https://photo-detect-api-lxbhx.ondigitalocean.app";
+// const API_BASE_URL = "https://photo-detect-api-lxbhx.ondigitalocean.app";
+const API_BASE_URL = "https://ojest.pl/image/separation";
 
 export async function POST(request) {
   try {
     const formData = await request.formData();
-    
+
     // Check if we have an image file or image URL
     const imageFile = formData.get("image");
     const imageUrl = formData.get("image_url");
 
     if (!imageFile && !imageUrl) {
-      return NextResponse.json(
-        { error: "No image provided" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "No image provided" }, { status: 400 });
     }
 
     // Create new FormData for the external API
@@ -65,4 +63,3 @@ export async function POST(request) {
     );
   }
 }
-
