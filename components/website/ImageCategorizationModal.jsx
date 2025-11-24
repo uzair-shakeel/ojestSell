@@ -2,8 +2,8 @@
 import { useState, useEffect, useRef } from "react";
 import { IoClose } from "react-icons/io5";
 
-// Use Next.js API route - works in both local and production
-const DETECTION_API_URL = "/api/detect-image";
+// Use backend API endpoint - consistent with other API calls
+const DETECTION_API_URL = "/api/image-detection/detect";
 
 const categorySequence = [
   "exterior",
