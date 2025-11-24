@@ -3,9 +3,17 @@ import { useState, useEffect, useRef } from "react";
 import { IoClose } from "react-icons/io5";
 
 // Use Next.js API route to proxy requests and handle CORS
-const API_BASE_URL = "/api/detect-image";
+const API_BASE_URL = "https://ojest.pl/api/detect-image";
 
-const categorySequence = ["exterior", "interior", "engine", "dashboard", "wheel", "keys", "documents"];
+const categorySequence = [
+  "exterior",
+  "interior",
+  "engine",
+  "dashboard",
+  "wheel",
+  "keys",
+  "documents",
+];
 const categoryOrder = {
   exterior: 0,
   interior: 1,
@@ -36,7 +44,12 @@ const capitalizeWord = (word) => {
 
 // Cache logic removed - images will be processed every time
 
-export default function ImageCategorizationModal({ isOpen, onClose, images = [], carId }) {
+export default function ImageCategorizationModal({
+  isOpen,
+  onClose,
+  images = [],
+  carId,
+}) {
   const [currentCategory, setCurrentCategory] = useState("all");
   const [categorizedImages, setCategorizedImages] = useState({});
   const [processingQueue, setProcessingQueue] = useState([]);
@@ -106,7 +119,11 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
     // Process images one by one
     for (let i = 0; i < queue.length; i++) {
       const item = queue[i];
-      setProcessingStatus({ current: i + 1, total: queue.length, imageIndex: i });
+      setProcessingStatus({
+        current: i + 1,
+        total: queue.length,
+        imageIndex: i,
+      });
 
       try {
         // Create FormData with image URL
@@ -128,7 +145,9 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
             error: errorText,
             url: item.url,
           });
-          throw new Error(`HTTP error! status: ${detectResponse.status} - ${errorText}`);
+          throw new Error(
+            `HTTP error! status: ${detectResponse.status} - ${errorText}`
+          );
         }
 
         let detectData;
@@ -140,9 +159,11 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
             error: jsonError,
             responseText: textResponse,
           });
-          throw new Error(`Invalid JSON response: ${textResponse.substring(0, 100)}`);
+          throw new Error(
+            `Invalid JSON response: ${textResponse.substring(0, 100)}`
+          );
         }
-        
+
         // Log the response for debugging
         console.log(`Image ${i + 1} detection response:`, {
           success: detectData.success,
@@ -153,12 +174,18 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
         });
 
         // Check if response is successful (handle different response formats)
-        const isSuccess = detectData.success !== false && (detectData.success || detectData.category || detectData.detected_label);
-        
+        const isSuccess =
+          detectData.success !== false &&
+          (detectData.success ||
+            detectData.category ||
+            detectData.detected_label);
+
         if (isSuccess) {
-          const category = normalizeCategory(detectData.category || detectData.detected_label);
+          const category = normalizeCategory(
+            detectData.category || detectData.detected_label
+          );
           console.log(`Image ${i + 1} normalized category:`, category);
-          
+
           const imageData = {
             url: item.url,
             category: category,
@@ -177,7 +204,12 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
             console.log(`Added image ${i + 1} to '${category}' category`);
           } else {
             // If category doesn't exist, add to 'all' only
-            console.warn(`Unknown category: ${category} for image ${i + 1}. Available categories:`, Object.keys(results));
+            console.warn(
+              `Unknown category: ${category} for image ${
+                i + 1
+              }. Available categories:`,
+              Object.keys(results)
+            );
           }
         } else {
           console.warn(`Detection failed for image ${i + 1}:`, detectData);
@@ -288,7 +320,9 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
 
   const handleZoom = () => {
     if (!showSlider) return;
-    const currentIndex = ZOOM_STEPS.findIndex((step) => Math.abs(step - zoomLevel) < 0.05);
+    const currentIndex = ZOOM_STEPS.findIndex(
+      (step) => Math.abs(step - zoomLevel) < 0.05
+    );
     const nextIndex = (currentIndex + 1) % ZOOM_STEPS.length;
     setZoomLevel(ZOOM_STEPS[nextIndex]);
   };
@@ -340,7 +374,16 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
   if (!isOpen) return null;
 
   const currentImages = categorizedImages[currentCategory] || [];
-  const categories = ["all", "interior", "exterior", "dashboard", "wheel", "engine", "documents", "keys"];
+  const categories = [
+    "all",
+    "interior",
+    "exterior",
+    "dashboard",
+    "wheel",
+    "engine",
+    "documents",
+    "keys",
+  ];
 
   return (
     <div className="fixed inset-0 z-[100] bg-black overflow-hidden">
@@ -353,10 +396,11 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
               <button
                 key={cat}
                 onClick={() => handleCategoryClick(cat)}
-                className={`text-sm font-medium pb-1.5 relative transition-colors ${currentCategory === cat
+                className={`text-sm font-medium pb-1.5 relative transition-colors ${
+                  currentCategory === cat
                     ? "text-white"
                     : "text-gray-400 hover:text-white"
-                  }`}
+                }`}
               >
                 {capitalizeWord(cat)}
                 {currentCategory === cat && (
@@ -453,7 +497,8 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
           <div className="mb-5 text-center text-white">
             <div className="inline-block w-10 h-10 border-4 border-gray-600 border-t-white rounded-full animate-spin mb-2"></div>
             <p className="text-sm">
-              Processing image {processingStatus.current} of {processingStatus.total}...
+              Processing image {processingStatus.current} of{" "}
+              {processingStatus.total}...
             </p>
           </div>
         )}
@@ -464,7 +509,9 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
             <div className="mb-5 text-right text-gray-400 text-sm">
               {currentCategory === "all"
                 ? `Total photos: ${currentImages.length}`
-                : `${capitalizeWord(currentCategory)}: ${currentImages.length} photo${currentImages.length === 1 ? "" : "s"}`}
+                : `${capitalizeWord(currentCategory)}: ${
+                    currentImages.length
+                  } photo${currentImages.length === 1 ? "" : "s"}`}
             </div>
 
             {currentImages.length > 0 ? (
@@ -502,7 +549,10 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
               <button
                 onClick={() => navigateSlider(-1)}
                 className="text-white text-4xl flex items-center justify-center hover:opacity-70 transition-opacity fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-[105] disabled:opacity-30 disabled:cursor-not-allowed md:bg-transparent bg-black rounded-full w-12 h-12 md:w-auto md:h-auto md:p-2"
-                disabled={sliderIndex === 0 && categorySequence.indexOf(currentCategory) === 0}
+                disabled={
+                  sliderIndex === 0 &&
+                  categorySequence.indexOf(currentCategory) === 0
+                }
               >
                 ‹
               </button>
@@ -511,15 +561,23 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
                 <img
                   ref={sliderImageRef}
                   src={sliderImages[sliderIndex]?.url}
-                  alt={sliderImages[sliderIndex]?.detected_label || "Gallery image"}
+                  alt={
+                    sliderImages[sliderIndex]?.detected_label || "Gallery image"
+                  }
                   className="max-w-[90vw] max-h-[80vh] object-contain rounded-2xl shadow-2xl bg-gray-900"
-                  style={{ transform: `scale(${zoomLevel})`, transformOrigin: "center center" }}
+                  style={{
+                    transform: `scale(${zoomLevel})`,
+                    transformOrigin: "center center",
+                  }}
                 />
                 {/* Mobile navigation buttons centered on image */}
                 <button
                   onClick={() => navigateSlider(-1)}
                   className="md:hidden absolute left-1/2 top-1/2 -translate-x-16 -translate-y-1/2 text-white text-3xl flex items-center justify-center bg-black rounded-full w-12 h-12 z-[106] disabled:opacity-30 disabled:cursor-not-allowed"
-                  disabled={sliderIndex === 0 && categorySequence.indexOf(currentCategory) === 0}
+                  disabled={
+                    sliderIndex === 0 &&
+                    categorySequence.indexOf(currentCategory) === 0
+                  }
                 >
                   ‹
                 </button>
@@ -528,7 +586,8 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
                   className="md:hidden absolute left-1/2 top-1/2 translate-x-16 -translate-y-1/2 text-white text-3xl flex items-center justify-center bg-black rounded-full w-12 h-12 z-[106] disabled:opacity-30 disabled:cursor-not-allowed"
                   disabled={
                     sliderIndex === sliderImages.length - 1 &&
-                    categorySequence.indexOf(currentCategory) === categorySequence.length - 1
+                    categorySequence.indexOf(currentCategory) ===
+                      categorySequence.length - 1
                   }
                 >
                   ›
@@ -543,7 +602,8 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
                 className="text-white text-4xl flex items-center justify-center hover:opacity-70 transition-opacity fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-[105] disabled:opacity-30 disabled:cursor-not-allowed md:bg-transparent bg-black rounded-full w-12 h-12 md:w-auto md:h-auto md:p-2 hidden md:flex"
                 disabled={
                   sliderIndex === sliderImages.length - 1 &&
-                  categorySequence.indexOf(currentCategory) === categorySequence.length - 1
+                  categorySequence.indexOf(currentCategory) ===
+                    categorySequence.length - 1
                 }
               >
                 ›
@@ -555,4 +615,3 @@ export default function ImageCategorizationModal({ isOpen, onClose, images = [],
     </div>
   );
 }
-
