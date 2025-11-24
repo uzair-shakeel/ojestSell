@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { IoClose } from "react-icons/io5";
 
 // Use Next.js API route to proxy requests and handle CORS
-const API_BASE_URL = "https://ojest.pl/api/detect-image";
+const API_BASE_URL = "/api/detect-image";
 
 const categorySequence = [
   "exterior",
@@ -205,8 +205,7 @@ export default function ImageCategorizationModal({
           } else {
             // If category doesn't exist, add to 'all' only
             console.warn(
-              `Unknown category: ${category} for image ${
-                i + 1
+              `Unknown category: ${category} for image ${i + 1
               }. Available categories:`,
               Object.keys(results)
             );
@@ -396,11 +395,10 @@ export default function ImageCategorizationModal({
               <button
                 key={cat}
                 onClick={() => handleCategoryClick(cat)}
-                className={`text-sm font-medium pb-1.5 relative transition-colors ${
-                  currentCategory === cat
-                    ? "text-white"
-                    : "text-gray-400 hover:text-white"
-                }`}
+                className={`text-sm font-medium pb-1.5 relative transition-colors ${currentCategory === cat
+                  ? "text-white"
+                  : "text-gray-400 hover:text-white"
+                  }`}
               >
                 {capitalizeWord(cat)}
                 {currentCategory === cat && (
@@ -476,11 +474,10 @@ export default function ImageCategorizationModal({
                     handleCategoryClick(cat);
                     setIsMobileMenuOpen(false);
                   }}
-                  className={`w-full text-left px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    currentCategory === cat
-                      ? "bg-gray-800 text-white"
-                      : "text-gray-400 hover:text-white hover:bg-gray-900"
-                  }`}
+                  className={`w-full text-left px-4 py-2 rounded-md text-sm font-medium transition-colors ${currentCategory === cat
+                    ? "bg-gray-800 text-white"
+                    : "text-gray-400 hover:text-white hover:bg-gray-900"
+                    }`}
                 >
                   {capitalizeWord(cat)}
                 </button>
@@ -509,9 +506,8 @@ export default function ImageCategorizationModal({
             <div className="mb-5 text-right text-gray-400 text-sm">
               {currentCategory === "all"
                 ? `Total photos: ${currentImages.length}`
-                : `${capitalizeWord(currentCategory)}: ${
-                    currentImages.length
-                  } photo${currentImages.length === 1 ? "" : "s"}`}
+                : `${capitalizeWord(currentCategory)}: ${currentImages.length
+                } photo${currentImages.length === 1 ? "" : "s"}`}
             </div>
 
             {currentImages.length > 0 ? (
@@ -587,7 +583,7 @@ export default function ImageCategorizationModal({
                   disabled={
                     sliderIndex === sliderImages.length - 1 &&
                     categorySequence.indexOf(currentCategory) ===
-                      categorySequence.length - 1
+                    categorySequence.length - 1
                   }
                 >
                   ›
@@ -603,7 +599,7 @@ export default function ImageCategorizationModal({
                 disabled={
                   sliderIndex === sliderImages.length - 1 &&
                   categorySequence.indexOf(currentCategory) ===
-                    categorySequence.length - 1
+                  categorySequence.length - 1
                 }
               >
                 ›

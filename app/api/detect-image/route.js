@@ -5,6 +5,7 @@ const API_BASE_URL = "https://ojest.pl/image/separation";
 
 export async function POST(request) {
   try {
+    console.log("HIT /api/detect-image route");
     const contentType = request.headers.get("content-type") || "";
     let imageFile = null;
     let imageUrl = null;
