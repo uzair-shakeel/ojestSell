@@ -2,8 +2,11 @@
 import { useState, useEffect, useRef } from "react";
 import { IoClose } from "react-icons/io5";
 
-// Use backend API endpoint - consistent with other API calls
-const DETECTION_API_URL = "/api/image-detection/detect";
+// Use environment variable to construct full API URL
+// In production, this will be the deployed backend URL
+// In local, it will be http://localhost:5000
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const DETECTION_API_URL = `${API_BASE_URL}/api/image-detection/detect`;
 
 const categorySequence = [
   "exterior",

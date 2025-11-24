@@ -46,11 +46,6 @@ const nextConfig = {
         source: "/api/image-detection/:path*",
         destination: `${API_BASE_URL}/api/image-detection/:path*`,
       },
-      // Old proxy - can be removed later
-      {
-        source: "/api/detect-image/:path*",
-        destination: "https://ojest.pl/image/separation/api/detect",
-      },
       {
         source: "/api/cars/:path*",
         destination: `${API_BASE_URL}/api/cars/:path*`,
