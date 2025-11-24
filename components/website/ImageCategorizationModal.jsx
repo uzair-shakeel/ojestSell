@@ -2,8 +2,9 @@
 import { useState, useEffect, useRef } from "react";
 import { IoClose } from "react-icons/io5";
 
-// Use Next.js API route to proxy requests and handle CORS
-const API_BASE_URL = "/api/detect-image";
+// Use Next.js rewrite proxy to avoid CORS issues
+// This route is proxied to https://ojest.pl/image/separation/api/detect in next.config.mjs
+const DETECTION_API_URL = "/api/detect-image-proxy";
 
 const categorySequence = [
   "exterior",
@@ -126,15 +127,50 @@ export default function ImageCategorizationModal({
       });
 
       try {
-        // Send image URL to our Next.js API route
-        // The API route handles URL normalization and proxies to the external detection API
-        const detectResponse = await fetch(API_BASE_URL, {
+        // Normalize the image URL - ensure it's a full, publicly accessible URL
+        let normalizedUrl = item.url.trim();
+
+        // If it's not already a full URL (starts with http:// or https://)
+        if (!/^https?:\/\//i.test(normalizedUrl)) {
+          // Check if it's a Cloudinary URL without protocol (starts with //)
+          if (normalizedUrl.startsWith("//")) {
+            normalizedUrl = `https:${normalizedUrl}`;
+          } else if (
+            normalizedUrl.includes("cloudinary.com") ||
+            normalizedUrl.includes("res.cloudinary.com")
+          ) {
+            // Cloudinary URL missing protocol
+            normalizedUrl = `https://${normalizedUrl}`;
+          }
+        }
+
+        // Ensure Cloudinary URLs are properly formatted
+        if (
+          normalizedUrl.includes("cloudinary.com") &&
+          !normalizedUrl.includes("res.cloudinary.com")
+        ) {
+          normalizedUrl = normalizedUrl.replace(
+            "cloudinary.com",
+            "res.cloudinary.com"
+          );
+        }
+
+        console.log(`Processing image ${i + 1}:`, {
+          original: item.url?.substring(0, 100),
+          normalized: normalizedUrl?.substring(0, 100),
+        });
+
+        // Call the external detection API directly
+        // Using mode: 'cors' and letting the API handle CORS
+        const detectResponse = await fetch(DETECTION_API_URL, {
           method: "POST",
+          mode: "cors", // Explicitly set CORS mode
           headers: {
             "Content-Type": "application/json",
+            "Accept": "application/json",
           },
           body: JSON.stringify({
-            image_url: item.url,
+            image_url: normalizedUrl,
           }),
         });
 

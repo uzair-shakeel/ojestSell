@@ -41,6 +41,11 @@ const nextConfig = {
     // are handled by Next.js and don't need rewrites
     // Only proxy backend API routes
     return [
+      // Proxy for external image detection API to avoid CORS issues
+      {
+        source: "/api/detect-image-proxy",
+        destination: "https://ojest.pl/image/separation/api/detect",
+      },
       {
         source: "/api/cars/:path*",
         destination: `${API_BASE_URL}/api/cars/:path*`,
