@@ -2,9 +2,8 @@
 import { useState, useEffect, useRef } from "react";
 import { IoClose } from "react-icons/io5";
 
-// Use Next.js rewrite proxy to avoid CORS issues
-// This route is proxied to https://ojest.pl/image/separation/api/detect in next.config.mjs
-const DETECTION_API_URL = "/api/detect-image-proxy";
+// Use Next.js API route - works in both local and production
+const DETECTION_API_URL = "/api/detect-image";
 
 const categorySequence = [
   "exterior",

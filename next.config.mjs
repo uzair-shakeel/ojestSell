@@ -43,7 +43,7 @@ const nextConfig = {
     return [
       // Proxy for external image detection API to avoid CORS issues
       {
-        source: "/api/detect-image-proxy",
+        source: "/api/detect-image/:path*",
         destination: "https://ojest.pl/image/separation/api/detect",
       },
       {
