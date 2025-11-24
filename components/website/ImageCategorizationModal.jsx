@@ -126,15 +126,16 @@ export default function ImageCategorizationModal({
       });
 
       try {
-        // Create FormData with image URL
-        // Our Next.js API route will handle fetching and converting to blob
-        const formData = new FormData();
-        formData.append("image_url", item.url);
-
-        // Call our Next.js API route which proxies to the detection API
+        // Send image URL to our Next.js API route
+        // The API route handles URL normalization and proxies to the external detection API
         const detectResponse = await fetch(API_BASE_URL, {
           method: "POST",
-          body: formData,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            image_url: item.url,
+          }),
         });
 
         if (!detectResponse.ok) {
