@@ -37,6 +37,7 @@ interface CarData {
   serviceHistory?: "Yes" | "No";
   vin?: string;
   country?: string;
+  countryOfManufacturer?: string;
   isFeatured?: boolean;
   carCondition?: {
     interior?: "New" | "Very Good" | "Good" | "Normal" | "Bad";
@@ -90,6 +91,7 @@ interface AddCarData {
   serviceHistory?: "Yes" | "No";
   vin?: string;
   country?: string;
+  countryOfManufacturer?: string;
   isFeatured?: boolean;
   carCondition?: {
     interior?: "New" | "Very Good" | "Good" | "Normal" | "Bad";
@@ -239,7 +241,7 @@ export const getAllCars = async (): Promise<CarData[]> => {
 
       throw new Error(
         error?.response?.data?.message ||
-          `Failed to fetch cars: ${error.message}`
+        `Failed to fetch cars: ${error.message}`
       );
     }
   };
@@ -348,6 +350,7 @@ export const searchCars = async (queryParams: {
   engine?: string;
   serviceHistory?: "Yes" | "No";
   accidentHistory?: "Yes" | "No";
+  countryOfManufacturer?: string;
   location?: [number, number]; // [longitude, latitude]
   radius?: number; // in kilometers
 }): Promise<CarData[]> => {
@@ -537,8 +540,8 @@ export const getCarDetailsByVin = async (
 
     throw new Error(
       error.response?.data?.error ||
-        error.message ||
-        "Failed to fetch car details by VIN"
+      error.message ||
+      "Failed to fetch car details by VIN"
     );
   }
 };

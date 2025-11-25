@@ -46,7 +46,7 @@ export default function DashboardCarsPage() {
   }
 
   return (
-    <div>
+    <div className="p-6">
       <div className="flex justify-between items-center p-6 mb-6">
         <h1 className="text-3xl font-bold">Moje Auta</h1>
         <a

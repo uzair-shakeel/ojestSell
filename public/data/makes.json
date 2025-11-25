@@ -1,7 +1,10 @@
 [
   {
     "make": "AC",
-    "models": ["428", "Ace"]
+    "models": [
+      "428",
+      "Ace"
+    ]
   },
   {
     "make": "Acura",
@@ -114,7 +117,10 @@
   },
   {
     "make": "AM General",
-    "models": ["Hummer", "MV-1"]
+    "models": [
+      "Hummer",
+      "MV-1"
+    ]
   },
   {
     "make": "Abarth",
@@ -136,7 +142,10 @@
   },
   {
     "make": "Aiways",
-    "models": ["U5", "Andere"]
+    "models": [
+      "U5",
+      "Andere"
+    ]
   },
   {
     "make": "Aixam",
@@ -176,35 +185,56 @@
   },
   {
     "make": "Alpine",
-    "models": ["A110", "A290", "Andere"]
+    "models": [
+      "A110",
+      "A290",
+      "Andere"
+    ]
   },
   {
     "make": "Alvis",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Ariel",
-    "models": ["Atom", "Andere"]
+    "models": [
+      "Atom",
+      "Andere"
+    ]
   },
   {
     "make": "Artega",
-    "models": ["GT", "Andere"]
+    "models": [
+      "GT",
+      "Andere"
+    ]
   },
   {
     "make": "Asia Motors",
-    "models": ["Rocsta", "Andere"]
+    "models": [
+      "Rocsta",
+      "Andere"
+    ]
   },
   {
     "make": "Austin",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Austin-Healey",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Auto Union",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "BAIC",
@@ -227,7 +257,10 @@
   },
   {
     "make": "Barkas",
-    "models": ["B1000", "Andere"]
+    "models": [
+      "B1000",
+      "Andere"
+    ]
   },
   {
     "make": "Bentley",
@@ -253,7 +286,9 @@
   },
   {
     "make": "Bizzarrini",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "BMW",
@@ -422,15 +457,28 @@
   },
   {
     "make": "Borgward",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Brilliance",
-    "models": ["BC3", "BS2", "BS4", "BS6", "Andere"]
+    "models": [
+      "BC3",
+      "BS2",
+      "BS4",
+      "BS6",
+      "Andere"
+    ]
   },
   {
     "make": "Bugatti",
-    "models": ["Chiron", "EB 110", "Veyron", "Andere"]
+    "models": [
+      "Chiron",
+      "EB 110",
+      "Veyron",
+      "Andere"
+    ]
   },
   {
     "make": "Buick",
@@ -488,19 +536,27 @@
   },
   {
     "make": "Casalini",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Caterham",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Cenntro",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Chatenet",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Chevrolet",
@@ -645,7 +701,9 @@
   },
   {
     "make": "Cobra",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Corvette",
@@ -736,23 +794,38 @@
   },
   {
     "make": "Dallara",
-    "models": ["Stradale", "Andere"]
+    "models": [
+      "Stradale",
+      "Andere"
+    ]
   },
   {
     "make": "Datsun",
-    "models": ["240Z", "Andere"]
+    "models": [
+      "240Z",
+      "Andere"
+    ]
   },
   {
     "make": "Delahaye",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Delorean",
-    "models": ["DMC-12", "Andere"]
+    "models": [
+      "DMC-12",
+      "Andere"
+    ]
   },
   {
     "make": "Detomaso",
-    "models": ["Guarà", "Pantera", "Andere"]
+    "models": [
+      "Guarà",
+      "Pantera",
+      "Andere"
+    ]
   },
   {
     "make": "DFSK",
@@ -804,7 +877,12 @@
   },
   {
     "make": "Donkervoort",
-    "models": ["D8", "S7", "S8", "Andere"]
+    "models": [
+      "D8",
+      "S7",
+      "S8",
+      "Andere"
+    ]
   },
   {
     "make": "DS Automobiles",
@@ -820,18 +898,23 @@
       "Andere"
     ]
   },
- 
   {
     "make": "Elaris",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Estrima",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Facel Vega",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Ferrari",
@@ -1031,15 +1114,27 @@
   },
   {
     "make": "GAC Gonow",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Gemballa",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Genesis",
-    "models": ["G70", "G80", "G90", "GV60", "GV70", "GV80", "Andere"]
+    "models": [
+      "G70",
+      "G80",
+      "G90",
+      "GV60",
+      "GV70",
+      "GV80",
+      "Andere"
+    ]
   },
   {
     "make": "GMC",
@@ -1060,23 +1155,38 @@
   },
   {
     "make": "Grecav",
-    "models": ["Sonique", "Andere"]
+    "models": [
+      "Sonique",
+      "Andere"
+    ]
   },
   {
     "make": "GWM",
-    "models": ["Ora 03", "Ora 07", "Wey 03", "Wey 05", "Andere"]
+    "models": [
+      "Ora 03",
+      "Ora 07",
+      "Wey 03",
+      "Wey 05",
+      "Andere"
+    ]
   },
   {
     "make": "Hamann",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Heinkel",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Hondel",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Honda",
@@ -1114,15 +1224,27 @@
   },
   {
     "make": "Hongqi",
-    "models": ["E-HS9", "H9", "HS5", "Andere"]
+    "models": [
+      "E-HS9",
+      "H9",
+      "HS5",
+      "Andere"
+    ]
   },
   {
     "make": "Horch",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Hummer",
-    "models": ["H1", "H2", "H3", "Andere"]
+    "models": [
+      "H1",
+      "H2",
+      "H3",
+      "Andere"
+    ]
   },
   {
     "make": "Hyundai",
@@ -1179,7 +1301,10 @@
   },
   {
     "make": "INEOS",
-    "models": ["Grenadier", "Andere"]
+    "models": [
+      "Grenadier",
+      "Andere"
+    ]
   },
   {
     "make": "Infiniti",
@@ -1209,7 +1334,9 @@
   },
   {
     "make": "Invicta",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Isuzu",
@@ -1225,11 +1352,17 @@
   },
   {
     "make": "Iveco",
-    "models": ["Massif", "Andere"]
+    "models": [
+      "Massif",
+      "Andere"
+    ]
   },
   {
     "make": "JAC",
-    "models": ["8 Pro", "Andere"]
+    "models": [
+      "8 Pro",
+      "Andere"
+    ]
   },
   {
     "make": "Jaguar",
@@ -1280,7 +1413,10 @@
   },
   {
     "make": "Jiayuan",
-    "models": ["City Spirit", "Andere"]
+    "models": [
+      "City Spirit",
+      "Andere"
+    ]
   },
   {
     "make": "KGM",
@@ -1344,11 +1480,19 @@
   },
   {
     "make": "Koenigsegg",
-    "models": ["Agera", "CCR", "CCXR", "Andere"]
+    "models": [
+      "Agera",
+      "CCR",
+      "CCXR",
+      "Andere"
+    ]
   },
   {
     "make": "KTM",
-    "models": ["X-BOW", "Andere"]
+    "models": [
+      "X-BOW",
+      "Andere"
+    ]
   },
   {
     "make": "Lada",
@@ -1438,15 +1582,27 @@
   },
   {
     "make": "Landwind",
-    "models": ["CV-9", "S", "SC2", "SC4", "Andere"]
+    "models": [
+      "CV-9",
+      "S",
+      "SC2",
+      "SC4",
+      "Andere"
+    ]
   },
   {
     "make": "Leapmotor",
-    "models": ["C10", "T03", "Andere"]
+    "models": [
+      "C10",
+      "T03",
+      "Andere"
+    ]
   },
   {
     "make": "LEVC",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Lexus",
@@ -1568,19 +1724,32 @@
   },
   {
     "make": "Lucid",
-    "models": ["Air", "Andere"]
+    "models": [
+      "Air",
+      "Andere"
+    ]
   },
   {
     "make": "Lynk&Co",
-    "models": ["01", "02", "08", "Andere"]
+    "models": [
+      "01",
+      "02",
+      "08",
+      "Andere"
+    ]
   },
   {
     "make": "Mahindra",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "MAN",
-    "models": ["TGE", "Andere"]
+    "models": [
+      "TGE",
+      "Andere"
+    ]
   },
   {
     "make": "Maserati",
@@ -1614,7 +1783,7 @@
     ]
   },
   {
-    "make" : "Maxus",
+    "make": "Maxus",
     "models": [
       "Deliver 9",
       "eDeliver 3",
@@ -1628,7 +1797,13 @@
   },
   {
     "make": "Maybach",
-    "models": ["57", "62", "Pullman", "S650", "Andere"]
+    "models": [
+      "57",
+      "62",
+      "Pullman",
+      "S650",
+      "Andere"
+    ]
   },
   {
     "make": "Mazda",
@@ -1695,7 +1870,6 @@
       "500",
       "560",
       "600",
-
       "A-Klasse (Alle)",
       "A 140",
       "A 150",
@@ -1709,7 +1883,6 @@
       "A 250",
       "A 35 AMG",
       "A 45 AMG",
-
       "B-Klasse (Alle)",
       "B 150",
       "B 160",
@@ -1719,7 +1892,6 @@
       "B 220",
       "B 250",
       "B Electric Drive",
-
       "CE-Klasse (Alle)",
       "CE 200",
       "CE 220",
@@ -1727,9 +1899,7 @@
       "CE 280",
       "CE 300",
       "CE 320",
-
       "Citan",
-
       "C-Klasse (Alle)",
       "C 160",
       "C 180",
@@ -1751,7 +1921,6 @@
       "C 450 AMG",
       "C 55 AMG",
       "C 63 AMG",
-
       "CLA-Klasse (Alle)",
       "CLA 180",
       "CLA 180 Shooting Brake",
@@ -1767,7 +1936,6 @@
       "CLA 45 AMG",
       "CLA 45 AMG Shooting Brake",
       "CLA Shooting Brake",
-
       "CLC-Klasse (Alle)",
       "CLC 160",
       "CLC 180",
@@ -1776,7 +1944,6 @@
       "CLC 230",
       "CLC 250",
       "CLC 350",
-
       "CLE-Klasse (Alle)",
       "CLE 180",
       "CLE 200",
@@ -1784,7 +1951,6 @@
       "CLE 300",
       "CLE 450",
       "CLE 53 AMG",
-
       "CLK-Klasse (Alle)",
       "CLK 200",
       "CLK 220",
@@ -1798,7 +1964,6 @@
       "CLK 500",
       "CLK 55 AMG",
       "CLK 63 AMG",
-
       "CL-Klasse (Alle)",
       "CL 160",
       "CL 180",
@@ -1812,7 +1977,6 @@
       "CL 600",
       "CL 63 AMG",
       "CL 65 AMG",
-
       "CLS-Klasse (Alle)",
       "CLS 220",
       "CLS 220 Shooting Brake",
@@ -1833,9 +1997,7 @@
       "CLS 63 AMG",
       "CLS 63 AMG Shooting Brake",
       "CLS Shooting Brake",
-
       "eCitan",
-
       "E-Klasse (Alle)",
       "E 200",
       "E 220",
@@ -1861,7 +2023,6 @@
       "E 55 AMG",
       "E 60 AMG",
       "E 63 AMG",
-
       "EQA",
       "EQB",
       "EQC",
@@ -1871,10 +2032,8 @@
       "EQS SUV",
       "EQT",
       "EQV",
-
       "eSprinter",
       "eVito",
-
       "G-Klasse (Alle)",
       "G 230",
       "G 240",
@@ -1892,7 +2051,6 @@
       "G 580",
       "G 63 AMG",
       "G 65 AMG",
-
       "GLA-Klasse (Alle)",
       "GLA 180",
       "GLA 200",
@@ -1900,14 +2058,12 @@
       "GLA 250",
       "GLA 35 AMG",
       "GLA 45 AMG",
-
       "GLB-Klasse (Alle)",
       "GLB 180",
       "GLB 200",
       "GLB 220",
       "GLB 250",
       "GLB 35 AMG",
-
       "GLC-Klasse (Alle)",
       "GLC 200",
       "GLC 220",
@@ -1918,7 +2074,6 @@
       "GLC 43 AMG",
       "GLC 450",
       "GLC 63 AMG",
-
       "GLE-Klasse (Alle)",
       "GLE 250",
       "GLE 300",
@@ -1930,14 +2085,12 @@
       "GLE 53 AMG",
       "GLE 580",
       "GLE 63 AMG",
-
       "GLK-Klasse (Alle)",
       "GLK 200",
       "GLK 220",
       "GLK 250",
       "GLK 280",
       "GLK 300",
-
       "GL-Klasse (Alle)",
       "GL 320",
       "GL 350",
@@ -1947,7 +2100,6 @@
       "GL 500",
       "GL 55 AMG",
       "GL 63 AMG",
-
       "GLS-Klasse (Alle)",
       "GLS 350",
       "GLS 400",
@@ -1956,15 +2108,12 @@
       "GLS 580",
       "GLS 600",
       "GLS 63",
-
       "GT-Klasse (Alle)",
       "AMG GT",
       "AMG GT C",
       "AMG GT R",
       "AMG GT S",
-
       "MB 100",
-
       "ML-Klasse (Alle)",
       "ML 230",
       "ML 250",
@@ -1980,7 +2129,6 @@
       "ML 500",
       "ML 55 AMG",
       "ML 63 AMG",
-
       "R-Klasse (Alle)",
       "R 280",
       "R 300",
@@ -1988,7 +2136,6 @@
       "R 350",
       "R 500",
       "R 63 AMG",
-
       "S-Klasse (Alle)",
       "S 250",
       "S 260",
@@ -2010,7 +2157,6 @@
       "S 650",
       "S 65 AMG",
       "S 680",
-
       "SLC-Klasse (Alle)",
       "SLC 180",
       "SLC 200",
@@ -2018,7 +2164,6 @@
       "SLC 280",
       "SLC 300",
       "SLC 43 AMG",
-
       "SLK-Klasse (Alle)",
       "SLK 200",
       "SLK 230",
@@ -2029,7 +2174,6 @@
       "SLK 32 AMG",
       "SLK 350",
       "SLK 55 AMG",
-
       "SL-Klasse (Alle)",
       "SL 230",
       "SL 250",
@@ -2052,7 +2196,6 @@
       "SL 680",
       "SL 70 AMG",
       "SL 73 AMG",
-
       "SLR",
       "SLS AMG",
       "Sprinter",
@@ -2061,7 +2204,6 @@
       "Vario",
       "Viano",
       "Vito",
-
       "V-Klasse (Alle)",
       "V 200",
       "V 220",
@@ -2069,21 +2211,21 @@
       "V 250",
       "V 280",
       "V 300",
-
       "X-Klasse (Alle)",
       "X 220",
       "X 250",
       "X 350",
-
       "Andere"
     ]
   },
   {
-    "make" : "Messerschmitt",
-    "models": ["Andere"]
+    "make": "Messerschmitt",
+    "models": [
+      "Andere"
+    ]
   },
   {
-    "make" : "MG",
+    "make": "MG",
     "models": [
       "Beliebig",
       "Cyberster",
@@ -2108,7 +2250,7 @@
     ]
   },
   {
-    "make" : "Microcar",
+    "make": "Microcar",
     "models": [
       "Beliebig",
       "DUÈ",
@@ -2123,7 +2265,13 @@
   },
   {
     "make": "Microlino",
-    "models": ["Beliebig", "Competizione", "Dolce", "Pioneer", "Andere"]
+    "models": [
+      "Beliebig",
+      "Competizione",
+      "Dolce",
+      "Pioneer",
+      "Andere"
+    ]
   },
   {
     "make": "MINI",
@@ -2141,7 +2289,7 @@
         ]
       },
       {
-        "make":"Clubman Serie",
+        "make": "Clubman Serie",
         "models": [
           "Clubman Serie (Alle)",
           "Cooper Clubman",
@@ -2153,9 +2301,8 @@
           "One D Clubman"
         ]
       },
-      
       {
-        "make":"Countryman Serie",
+        "make": "Countryman Serie",
         "models": [
           "Countryman Serie (Alle)",
           "Cooper C Countryman",
@@ -2171,7 +2318,7 @@
         ]
       },
       {
-        "make":"Coupe Serie",
+        "make": "Coupe Serie",
         "models": [
           "Coupe Serie (Alle)",
           "Cooper Coupé",
@@ -2181,7 +2328,7 @@
         ]
       },
       {
-        "make":"MINI",
+        "make": "MINI",
         "models": [
           "MINI (Alle)",
           "1000",
@@ -2200,7 +2347,7 @@
         ]
       },
       {
-        "make":"Paceman Serie",
+        "make": "Paceman Serie",
         "models": [
           "Paceman Serie (Alle)",
           "Cooper D Paceman",
@@ -2211,7 +2358,7 @@
         ]
       },
       {
-        "make":"Roadster Serie",
+        "make": "Roadster Serie",
         "models": [
           "Roadster Serie (Alle)",
           "Cooper Roadster",
@@ -2224,7 +2371,7 @@
     ]
   },
   {
-    "make":"Mitsubishi",
+    "make": "Mitsubishi",
     "models": [
       "3000 GT",
       "ASX",
@@ -2264,7 +2411,7 @@
     ]
   },
   {
-    "make":"Morgan",
+    "make": "Morgan",
     "models": [
       "3 Wheeler",
       "4/4",
@@ -2277,20 +2424,7 @@
     ]
   },
   {
-    "make":"Morgan",
-    "models": [
-      "3 Wheeler",
-      "4/4",
-      "Aero 8",
-      "Plus 4",
-      "Plus 6",
-      "Plus 8",
-      "Roadster",
-      "Andere"
-    ]
-  },
-  {
-    "make":"Nissan",
+    "make": "Nissan",
     "models": [
       "100 NX",
       "200 SX",
@@ -2357,7 +2491,9 @@
     ]
   },
   {
-    "NSU": ["Andere"]
+    "NSU": [
+      "Andere"
+    ]
   },
   {
     "Oldsmobile": [
@@ -2372,7 +2508,7 @@
     ]
   },
   {
-    "make":"Opel",
+    "make": "Opel",
     "models": [
       "Adam",
       "Agila",
@@ -2430,15 +2566,24 @@
   },
   {
     "make": "KIA",
-    "models": ["Funky Cat", "Andere"]
+    "models": [
+      "Funky Cat",
+      "Andere"
+    ]
   },
   {
     "make": "Packard",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Pagani",
-    "models": ["Huayra", "Zonda", "Andere"]
+    "models": [
+      "Huayra",
+      "Zonda",
+      "Andere"
+    ]
   },
   {
     "make": "Peugeot",
@@ -2499,15 +2644,29 @@
   },
   {
     "make": "Piaggio",
-    "models": ["APE", "APE TM", "Porter", "Andere"]
+    "models": [
+      "APE",
+      "APE TM",
+      "Porter",
+      "Andere"
+    ]
   },
   {
     "make": "Plymouth",
-    "models": ["Prowler", "Andere"]
+    "models": [
+      "Prowler",
+      "Andere"
+    ]
   },
   {
     "make": "Polestar",
-    "models": ["1", "2", "3", "4", "Andere"]
+    "models": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "Andere"
+    ]
   },
   {
     "make": "Pontiac",
@@ -2565,7 +2724,11 @@
   },
   {
     "make": "Proton",
-    "models": ["300 Serie", "400 Serie", "Andere"]
+    "models": [
+      "300 Serie",
+      "400 Serie",
+      "Andere"
+    ]
   },
   {
     "make": "Renault",
@@ -2629,7 +2792,9 @@
   },
   {
     "make": "Riley",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Rolls-Royce",
@@ -2691,7 +2856,9 @@
   },
   {
     "make": "Ruf",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Saab",
@@ -2710,7 +2877,9 @@
   },
   {
     "make": "Santana",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Seat",
@@ -2736,15 +2905,24 @@
   },
   {
     "make": "Seres",
-    "models": ["3", "5", "Andere"]
+    "models": [
+      "3",
+      "5",
+      "Andere"
+    ]
   },
   {
     "make": "Silence",
-    "models": ["S04", "Andere"]
+    "models": [
+      "S04",
+      "Andere"
+    ]
   },
   {
     "make": "Simca",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Skoda",
@@ -2789,7 +2967,9 @@
   },
   {
     "make": "SpeedART",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Spyker",
@@ -2820,7 +3000,9 @@
   },
   {
     "make": "Sudebaker",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Subaru",
@@ -2849,11 +3031,20 @@
   },
   {
     "make": "SWM",
-    "models": ["G01", "G03", "G05", "Andere"]
+    "models": [
+      "G01",
+      "G03",
+      "G05",
+      "Andere"
+    ]
   },
   {
     "make": "Talbot",
-    "models": ["Horizon", "Samba", "Andere"]
+    "models": [
+      "Horizon",
+      "Samba",
+      "Andere"
+    ]
   },
   {
     "make": "Tata",
@@ -2871,11 +3062,20 @@
   },
   {
     "make": "TECHART",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Tesla",
-    "models": ["Model 3", "Model S", "Model X", "Model Y", "Roadster", "Andere"]
+    "models": [
+      "Model 3",
+      "Model S",
+      "Model X",
+      "Model Y",
+      "Roadster",
+      "Andere"
+    ]
   },
   {
     "make": "Toyota",
@@ -2940,7 +3140,10 @@
   },
   {
     "make": "Trabant",
-    "models": ["601", "Andere"]
+    "models": [
+      "601",
+      "Andere"
+    ]
   },
   {
     "make": "Triumph",
@@ -2959,19 +3162,34 @@
   },
   {
     "make": "TVR",
-    "models": ["Chimaera", "Griffith", "Tuscan", "Andere"]
+    "models": [
+      "Chimaera",
+      "Griffith",
+      "Tuscan",
+      "Andere"
+    ]
   },
   {
     "make": "TYN-e",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "Vincent",
-    "models": ["Andere"]
+    "models": [
+      "Andere"
+    ]
   },
   {
     "make": "VinFast",
-    "models": ["VF6", "VF7", "VF8", "VF9", "Andere"]
+    "models": [
+      "VF6",
+      "VF7",
+      "VF8",
+      "VF9",
+      "Andere"
+    ]
   },
   {
     "make": "Volkswagen",
@@ -3069,7 +3287,7 @@
     ]
   },
   {
-    "make":"Volvo",
+    "make": "Volvo",
     "models": [
       "240",
       "244",
@@ -3125,19 +3343,29 @@
     ]
   },
   {
-    "make" : "Wartburg",
-    "models": ["311", "353", "Andere"]
+    "make": "Wartburg",
+    "models": [
+      "311",
+      "353",
+      "Andere"
+    ]
   },
   {
-    "make" : "Westfield",
-    "models": ["Andere"]
+    "make": "Westfield",
+    "models": [
+      "Andere"
+    ]
   },
   {
-    "make" : "WEY",
-    "models": ["Coffee 01", "Coffee 02", "Andere"]
+    "make": "WEY",
+    "models": [
+      "Coffee 01",
+      "Coffee 02",
+      "Andere"
+    ]
   },
   {
-    "make" : "Wiesmann",
+    "make": "Wiesmann",
     "models": [
       "MF 25",
       "MF 28",
@@ -3150,19 +3378,30 @@
     ]
   },
   {
-    "make" : "XEV",
-    "models": ["Andere"]
+    "make": "XEV",
+    "models": [
+      "Andere"
+    ]
   },
   {
-    "make" : "XPENG",
-    "models": ["G6", "G9", "P7", "Andere"]
+    "make": "XPENG",
+    "models": [
+      "G6",
+      "G9",
+      "P7",
+      "Andere"
+    ]
   },
   {
-    "make" : "zeekr",
-    "models": ["Andere"]
+    "make": "zeekr",
+    "models": [
+      "Andere"
+    ]
   },
   {
-    "make" : "zhidou",
-    "models": ["Andere"]
+    "make": "zhidou",
+    "models": [
+      "Andere"
+    ]
   }
 ]
