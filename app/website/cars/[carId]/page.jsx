@@ -346,7 +346,7 @@ const Page = () => {
             variants={animationVariants}
           >
             {car?.condition === "New" && Array.isArray(car?.warranties) &&
-            car.warranties.length > 0 ? (
+              car.warranties.length > 0 ? (
               <div className="space-y-3">
                 <h3 className="text-lg font-semibold">Gwarancja</h3>
                 <p className="text-sm text-gray-600 mb-3">
@@ -435,9 +435,8 @@ const Page = () => {
     if (type === "company") {
       return seller?.companyName || "Company";
     }
-    const fullName = `${seller?.firstName || ""} ${
-      seller?.lastName || ""
-    }`.trim();
+    const fullName = `${seller?.firstName || ""} ${seller?.lastName || ""
+      }`.trim();
     return fullName || seller?.companyName || "Private Seller";
   })();
 
@@ -563,9 +562,8 @@ const Page = () => {
                       <div className="relative overflow-hidden rounded-lg lg:rounded-tl-[10px] lg:rounded-bl-[10px] lg:rounded-tr-none lg:rounded-br-none">
                         <img
                           src={img}
-                          alt={`${car?.make} ${car?.model} - Image ${
-                            index + 1
-                          }`}
+                          alt={`${car?.make} ${car?.model} - Image ${index + 1
+                            }`}
                           className="w-full aspect-[5/3] object-cover cursor-pointer rounded-lg lg:rounded-none"
                           onClick={() => setIsCategorizationModalOpen(true)}
                         />
@@ -633,11 +631,10 @@ const Page = () => {
                       <img
                         src={img}
                         alt={`Thumbnail ${index + 1}`}
-                        className={`w-[120px] h-[80px] object-cover rounded-md border-2 transition-all duration-200 cursor-pointer ${
-                          currentImageIndex === index
+                        className={`w-[120px] h-[80px] object-cover rounded-md border-2 transition-all duration-200 cursor-pointer ${currentImageIndex === index
                             ? "border-blue-500 shadow-lg"
                             : "border-gray-300 hover:border-gray-400"
-                        }`}
+                          }`}
                       />
                     </SwiperSlide>
                   ))}
@@ -661,11 +658,10 @@ const Page = () => {
                 {["opis", "stan", "lokalizacja", "finanse"].map((tab) => (
                   <button
                     key={tab}
-                    className={`px-4 py-2 border border-gray-200 ${
-                      activeTab === tab
+                    className={`px-4 py-2 border border-gray-200 ${activeTab === tab
                         ? "bg-blue-500 text-white"
                         : "bg-white text-gray-700"
-                    } rounded-md`}
+                      } rounded-md`}
                     onClick={() => setActiveTab(tab)}
                   >
                     {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -758,9 +754,9 @@ const Page = () => {
                 </div>
               </div>
               <hr className="my-4" />
-                <h2 className="text-base font-medium mb-2 col-span-2">
-                  Kontakt z sprzedawcą
-                </h2>
+              <h2 className="text-base font-medium mb-2 col-span-2">
+                Kontakt z sprzedawcą
+              </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4">
                 <button
                   onClick={startChat}
@@ -831,11 +827,10 @@ const Page = () => {
                         setSelectedWarrantyIndex(idx);
                         setIsWarrantyModalOpen(false);
                       }}
-                      className={`w-full text-left border rounded-md px-3 py-2 text-sm transition-colors ${
-                        isSelected
+                      className={`w-full text-left border rounded-md px-3 py-2 text-sm transition-colors ${isSelected
                           ? "border-blue-500 bg-blue-50"
                           : "border-gray-200 bg-white hover:bg-gray-50"
-                      }`}
+                        }`}
                     >
                       <div className="flex justify-between items-center">
                         <span className="font-medium text-black">
@@ -873,7 +868,17 @@ const Page = () => {
       <ImageCategorizationModal
         isOpen={isCategorizationModalOpen}
         onClose={() => setIsCategorizationModalOpen(false)}
-        images={images}
+        categorizedImages={
+          car?.categorizedImages && car.categorizedImages.length > 0
+            ? car.categorizedImages
+            : images.map((url, index) => ({
+              url,
+              category: "unknown",
+              detected_label: "Unknown",
+              confidence: 0,
+              index,
+            }))
+        }
         carId={carId}
       />
     </>

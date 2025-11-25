@@ -50,14 +50,11 @@ const capitalizeWord = (word) => {
 export default function ImageCategorizationModal({
   isOpen,
   onClose,
-  images = [],
+  categorizedImages = [], // Changed from images - now receives pre-categorized data
   carId,
 }) {
   const [currentCategory, setCurrentCategory] = useState("all");
-  const [categorizedImages, setCategorizedImages] = useState({});
-  const [processingQueue, setProcessingQueue] = useState([]);
-  const [processingStatus, setProcessingStatus] = useState({});
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [organizedImages, setOrganizedImages] = useState({});
   const [sliderImages, setSliderImages] = useState([]);
   const [sliderIndex, setSliderIndex] = useState(0);
   const [showSlider, setShowSlider] = useState(false);
@@ -67,241 +64,45 @@ export default function ImageCategorizationModal({
 
   const ZOOM_STEPS = [1, 1.25, 1.5, 1.75, 2, 2.25];
 
-  // Initialize categories and process images every time modal opens
+  // Organize pre-categorized images by category - NO API CALLS!
   useEffect(() => {
-    if (isOpen && images.length > 0 && carId) {
-      const initialCategories = {
-        all: [],
-        interior: [],
-        exterior: [],
-        dashboard: [],
-        wheel: [],
-        engine: [],
-        documents: [],
-        keys: [],
+    if (isOpen && categorizedImages.length > 0) {
+      console.log("Organizing pre-categorized images:", categorizedImages.length);
+
+      const organized = {
+        all: categorizedImages,
+        interior: categorizedImages.filter((img) => img.category === "interior"),
+        exterior: categorizedImages.filter((img) => img.category === "exterior"),
+        dashboard: categorizedImages.filter(
+          (img) => img.category === "dashboard"
+        ),
+        wheel: categorizedImages.filter((img) => img.category === "wheel"),
+        engine: categorizedImages.filter((img) => img.category === "engine"),
+        documents: categorizedImages.filter(
+          (img) => img.category === "documents"
+        ),
+        keys: categorizedImages.filter((img) => img.category === "keys"),
       };
 
+      setOrganizedImages(organized);
       setCurrentCategory("all");
       setSliderImages([]);
       setSliderIndex(0);
       setShowSlider(false);
       setZoomLevel(1);
 
-      // Always process images - no caching
-      console.log("Processing images for car:", carId);
-      setCategorizedImages(initialCategories);
-      processImagesQueue();
-    } else if (!isOpen) {
-      // Reset processing state when modal closes
-      setIsProcessing(false);
-      setProcessingQueue([]);
-      setProcessingStatus({});
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, carId, images.length]);
-
-  // Process images through detection API in queue
-  const processImagesQueue = async () => {
-    if (images.length === 0 || !carId) return;
-
-    setIsProcessing(true);
-    const queue = images.map((img, index) => ({ url: img, index }));
-    setProcessingQueue(queue);
-
-    const results = {
-      all: [],
-      interior: [],
-      exterior: [],
-      dashboard: [],
-      wheel: [],
-      engine: [],
-      documents: [],
-      keys: [],
-    };
-
-    // Process images one by one
-    for (let i = 0; i < queue.length; i++) {
-      const item = queue[i];
-      setProcessingStatus({
-        current: i + 1,
-        total: queue.length,
-        imageIndex: i,
+      console.log("Images organized by category:", {
+        all: organized.all.length,
+        interior: organized.interior.length,
+        exterior: organized.exterior.length,
+        dashboard: organized.dashboard.length,
+        wheel: organized.wheel.length,
+        engine: organized.engine.length,
+        documents: organized.documents.length,
+        keys: organized.keys.length,
       });
-
-      try {
-        // Normalize the image URL - ensure it's a full, publicly accessible URL
-        let normalizedUrl = item.url.trim();
-
-        // If it's not already a full URL (starts with http:// or https://)
-        if (!/^https?:\/\//i.test(normalizedUrl)) {
-          // Check if it's a Cloudinary URL without protocol (starts with //)
-          if (normalizedUrl.startsWith("//")) {
-            normalizedUrl = `https:${normalizedUrl}`;
-          } else if (
-            normalizedUrl.includes("cloudinary.com") ||
-            normalizedUrl.includes("res.cloudinary.com")
-          ) {
-            // Cloudinary URL missing protocol
-            normalizedUrl = `https://${normalizedUrl}`;
-          }
-        }
-
-        // Ensure Cloudinary URLs are properly formatted
-        if (
-          normalizedUrl.includes("cloudinary.com") &&
-          !normalizedUrl.includes("res.cloudinary.com")
-        ) {
-          normalizedUrl = normalizedUrl.replace(
-            "cloudinary.com",
-            "res.cloudinary.com"
-          );
-        }
-
-        console.log(`Processing image ${i + 1}:`, {
-          original: item.url?.substring(0, 100),
-          normalized: normalizedUrl?.substring(0, 100),
-        });
-
-        // Call the external detection API directly
-        // Using mode: 'cors' and letting the API handle CORS
-        const detectResponse = await fetch(DETECTION_API_URL, {
-          method: "POST",
-          mode: "cors", // Explicitly set CORS mode
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-          },
-          body: JSON.stringify({
-            image_url: normalizedUrl,
-          }),
-        });
-
-        if (!detectResponse.ok) {
-          const errorText = await detectResponse.text();
-          console.error(`API Error for image ${i}:`, {
-            status: detectResponse.status,
-            statusText: detectResponse.statusText,
-            error: errorText,
-            url: item.url,
-          });
-          throw new Error(
-            `HTTP error! status: ${detectResponse.status} - ${errorText}`
-          );
-        }
-
-        let detectData;
-        try {
-          detectData = await detectResponse.json();
-        } catch (jsonError) {
-          const textResponse = await detectResponse.text();
-          console.error(`Failed to parse JSON response for image ${i + 1}:`, {
-            error: jsonError,
-            responseText: textResponse,
-          });
-          throw new Error(
-            `Invalid JSON response: ${textResponse.substring(0, 100)}`
-          );
-        }
-
-        // Log the response for debugging
-        console.log(`Image ${i + 1} detection response:`, {
-          success: detectData.success,
-          category: detectData.category,
-          detected_label: detectData.detected_label,
-          confidence: detectData.confidence,
-          fullResponse: detectData,
-        });
-
-        // Check if response is successful (handle different response formats)
-        const isSuccess =
-          detectData.success !== false &&
-          (detectData.success ||
-            detectData.category ||
-            detectData.detected_label);
-
-        if (isSuccess) {
-          const category = normalizeCategory(
-            detectData.category || detectData.detected_label
-          );
-          console.log(`Image ${i + 1} normalized category:`, category);
-
-          const imageData = {
-            url: item.url,
-            category: category,
-            detected_label: detectData.detected_label,
-            confidence: detectData.confidence,
-            index: item.index,
-          };
-
-          // Add to all
-          results.all.push(imageData);
-          console.log(`Added image ${i + 1} to 'all' category`);
-
-          // Add to specific category
-          if (results[category]) {
-            results[category].push(imageData);
-            console.log(`Added image ${i + 1} to '${category}' category`);
-          } else {
-            // If category doesn't exist, add to 'all' only
-            console.warn(
-              `Unknown category: ${category} for image ${i + 1
-              }. Available categories:`,
-              Object.keys(results)
-            );
-          }
-        } else {
-          console.warn(`Detection failed for image ${i + 1}:`, detectData);
-          // Add to 'all' even if detection fails
-          results.all.push({
-            url: item.url,
-            category: "unknown",
-            detected_label: detectData.detected_label || "Unknown",
-            confidence: detectData.confidence || 0,
-            index: item.index,
-          });
-        }
-      } catch (error) {
-        console.error(`Error processing image ${i + 1}:`, {
-          error: error.message,
-          stack: error.stack,
-          url: item.url,
-        });
-        // Add to 'all' even if detection fails
-        results.all.push({
-          url: item.url,
-          category: "unknown",
-          detected_label: "Unknown",
-          confidence: 0,
-          index: item.index,
-        });
-      }
     }
-
-    // Sort images by category order
-    Object.keys(results).forEach((key) => {
-      results[key] = results[key].sort((a, b) => {
-        const orderA = categoryOrder[normalizeCategory(a.category)] ?? 999;
-        const orderB = categoryOrder[normalizeCategory(b.category)] ?? 999;
-        if (orderA !== orderB) return orderA - orderB;
-        return b.index - a.index;
-      });
-    });
-
-    // Log final results for debugging
-    console.log("Final categorized results:", {
-      totalImages: results.all.length,
-      byCategory: Object.keys(results).reduce((acc, key) => {
-        acc[key] = results[key].length;
-        return acc;
-      }, {}),
-      results: results,
-    });
-
-    setCategorizedImages(results);
-    setProcessingQueue([]);
-    setProcessingStatus({});
-    setIsProcessing(false);
-  };
+  }, [isOpen, categorizedImages]);
 
   const handleCategoryClick = (category) => {
     setCurrentCategory(category);
@@ -411,7 +212,6 @@ export default function ImageCategorizationModal({
 
   if (!isOpen) return null;
 
-  const currentImages = categorizedImages[currentCategory] || [];
   const categories = [
     "all",
     "interior",
@@ -422,6 +222,9 @@ export default function ImageCategorizationModal({
     "documents",
     "keys",
   ];
+
+  // Get images for current category
+  const currentImages = organizedImages[currentCategory] || [];
 
   return (
     <div className="fixed inset-0 z-[100] bg-black overflow-hidden">
@@ -528,17 +331,6 @@ export default function ImageCategorizationModal({
 
       {/* Main Content */}
       <div className="max-w-[1600px] mx-auto px-5 md:px-20 py-5">
-        {/* Processing Status */}
-        {isProcessing && (
-          <div className="mb-5 text-center text-white">
-            <div className="inline-block w-10 h-10 border-4 border-gray-600 border-t-white rounded-full animate-spin mb-2"></div>
-            <p className="text-sm">
-              Processing image {processingStatus.current} of{" "}
-              {processingStatus.total}...
-            </p>
-          </div>
-        )}
-
         {/* Gallery View */}
         {!showSlider && (
           <>
