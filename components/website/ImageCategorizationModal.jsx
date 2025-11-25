@@ -28,16 +28,16 @@ const categoryOrder = {
 };
 
 const normalizeCategory = (raw) => {
-  if (!raw) return "";
-  const value = raw.toString().toLowerCase();
-  if (value.includes("exterior")) return "exterior";
-  if (value.includes("interior")) return "interior";
-  if (value.includes("engine")) return "engine";
-  if (value.includes("dash")) return "dashboard";
-  if (value.includes("wheel")) return "wheel";
-  if (value.includes("key")) return "keys";
-  if (value.includes("document") || value.includes("doc")) return "documents";
-  return value;
+  if (!raw) return "exterior";
+  const lower = raw.toLowerCase().trim();
+  if (lower.includes("front") || lower.includes("back") || lower.includes("side") || lower.includes("exterior")) return "exterior";
+  if (lower.includes("seat") || lower.includes("steering") || lower.includes("interior")) return "interior";
+  if (lower.includes("dashboard") || lower.includes("console") || lower.includes("odometer") || lower.includes("instrument")) return "dashboard";
+  if (lower.includes("wheel") || lower.includes("tire") || lower.includes("rim")) return "wheel";
+  if (lower.includes("engine") || lower.includes("hood") || lower.includes("under")) return "engine";
+  if (lower.includes("key")) return "keys";
+  if (lower.includes("document") || lower.includes("paper") || lower.includes("vin")) return "documents";
+  return "exterior"; // Default
 };
 
 const capitalizeWord = (word) => {
@@ -45,26 +45,31 @@ const capitalizeWord = (word) => {
   return word.charAt(0).toUpperCase() + word.slice(1);
 };
 
-// Cache logic removed - images will be processed every time
+const ZOOM_STEPS = [1, 1.5, 2, 2.5, 3];
 
 export default function ImageCategorizationModal({
   isOpen,
   onClose,
-  categorizedImages = [], // Changed from images - now receives pre-categorized data
-  carId,
+  categorizedImages = [],
 }) {
+  const [organizedImages, setOrganizedImages] = useState({
+    all: [],
+    interior: [],
+    exterior: [],
+    dashboard: [],
+    wheel: [],
+    engine: [],
+    documents: [],
+    keys: [],
+  });
   const [currentCategory, setCurrentCategory] = useState("all");
-  const [organizedImages, setOrganizedImages] = useState({});
+  const [showSlider, setShowSlider] = useState(false);
   const [sliderImages, setSliderImages] = useState([]);
   const [sliderIndex, setSliderIndex] = useState(0);
-  const [showSlider, setShowSlider] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const sliderImageRef = useRef(null);
 
-  const ZOOM_STEPS = [1, 1.25, 1.5, 1.75, 2, 2.25];
-
-  // Organize pre-categorized images by category - NO API CALLS!
   useEffect(() => {
     if (isOpen && categorizedImages.length > 0) {
       console.log("Organizing pre-categorized images:", categorizedImages.length);
@@ -110,7 +115,7 @@ export default function ImageCategorizationModal({
   };
 
   const handleImageClick = (image, category) => {
-    const categoryImages = categorizedImages[category] || [];
+    const categoryImages = organizedImages[category] || [];
     const index = categoryImages.findIndex((img) => img.url === image.url);
     setSliderImages(categoryImages);
     setSliderIndex(index >= 0 ? index : 0);
@@ -122,12 +127,25 @@ export default function ImageCategorizationModal({
     if (!sliderImages.length) return;
 
     const newIndex = sliderIndex + step;
+
+    // Special handling for "all" category - just loop within the list
+    if (currentCategory === "all") {
+      if (newIndex < 0) {
+        setSliderIndex(sliderImages.length - 1);
+      } else if (newIndex >= sliderImages.length) {
+        setSliderIndex(0);
+      } else {
+        setSliderIndex(newIndex);
+      }
+      return;
+    }
+
     if (newIndex < 0) {
       // Go to previous category
       const currentIdx = categorySequence.indexOf(currentCategory);
       if (currentIdx > 0) {
         const prevCategory = categorySequence[currentIdx - 1];
-        const prevImages = categorizedImages[prevCategory] || [];
+        const prevImages = organizedImages[prevCategory] || [];
         if (prevImages.length > 0) {
           setCurrentCategory(prevCategory);
           setSliderImages(prevImages);
@@ -136,13 +154,13 @@ export default function ImageCategorizationModal({
           return;
         }
       }
-      setSliderIndex(0);
+      setSliderIndex(sliderImages.length - 1);
     } else if (newIndex >= sliderImages.length) {
       // Go to next category
       const currentIdx = categorySequence.indexOf(currentCategory);
       if (currentIdx < categorySequence.length - 1) {
         const nextCategory = categorySequence[currentIdx + 1];
-        const nextImages = categorizedImages[nextCategory] || [];
+        const nextImages = organizedImages[nextCategory] || [];
         if (nextImages.length > 0) {
           setCurrentCategory(nextCategory);
           setSliderImages(nextImages);
@@ -151,7 +169,7 @@ export default function ImageCategorizationModal({
           return;
         }
       }
-      setSliderIndex(sliderImages.length - 1);
+      setSliderIndex(0);
     } else {
       setSliderIndex(newIndex);
     }
@@ -208,7 +226,7 @@ export default function ImageCategorizationModal({
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, showSlider]);
+  }, [isOpen, showSlider, sliderIndex, currentCategory]);
 
   if (!isOpen) return null;
 
@@ -278,7 +296,7 @@ export default function ImageCategorizationModal({
           {/* Action Buttons */}
           <div className="flex gap-4 items-center ml-auto">
             {showSlider && (
-              <>
+              <div className="hidden md:flex gap-4">
                 <button
                   onClick={handleZoom}
                   className="text-white flex items-center justify-center hover:opacity-70 transition-opacity text-xl p-2"
@@ -293,7 +311,7 @@ export default function ImageCategorizationModal({
                 >
                   ⛶
                 </button>
-              </>
+              </div>
             )}
             <button
               onClick={handleClose}
@@ -377,6 +395,7 @@ export default function ImageCategorizationModal({
                 onClick={() => navigateSlider(-1)}
                 className="text-white text-4xl flex items-center justify-center hover:opacity-70 transition-opacity fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-[105] disabled:opacity-30 disabled:cursor-not-allowed md:bg-transparent bg-black rounded-full w-12 h-12 md:w-auto md:h-auto md:p-2"
                 disabled={
+                  currentCategory !== "all" &&
                   sliderIndex === 0 &&
                   categorySequence.indexOf(currentCategory) === 0
                 }
@@ -385,39 +404,52 @@ export default function ImageCategorizationModal({
               </button>
 
               <div className="flex items-center justify-center max-w-full relative">
-                <img
-                  ref={sliderImageRef}
-                  src={sliderImages[sliderIndex]?.url}
-                  alt={
-                    sliderImages[sliderIndex]?.detected_label || "Gallery image"
-                  }
-                  className="max-w-[90vw] max-h-[80vh] object-contain rounded-2xl shadow-2xl bg-gray-900"
-                  style={{
-                    transform: `scale(${zoomLevel})`,
-                    transformOrigin: "center center",
-                  }}
-                />
-                {/* Mobile navigation buttons centered on image */}
+                {sliderImages[sliderIndex] ? (
+                  <img
+                    key={sliderImages[sliderIndex].url} // Force re-render on image change
+                    ref={sliderImageRef}
+                    src={sliderImages[sliderIndex].url}
+                    alt={
+                      sliderImages[sliderIndex].detected_label || "Gallery image"
+                    }
+                    className="max-w-[90vw] max-h-[80vh] object-contain rounded-2xl shadow-2xl bg-gray-900"
+                    style={{
+                      transform: zoomLevel > 1 ? `scale(${zoomLevel})` : "none",
+                      transformOrigin: "center center",
+                    }}
+                  />
+                ) : (
+                  <div className="text-white text-xl">Image not found</div>
+                )}
+
+                {/* Mobile navigation buttons positioned at edges */}
+                {/* Mobile navigation buttons positioned at edges */}
                 <button
                   onClick={() => navigateSlider(-1)}
-                  className="md:hidden absolute left-1/2 top-1/2 -translate-x-16 -translate-y-1/2 text-white text-3xl flex items-center justify-center bg-black rounded-full w-12 h-12 z-[106] disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="md:hidden absolute left-0 top-1/2 -translate-y-1/2 text-white p-4 z-[106] disabled:opacity-30 disabled:cursor-not-allowed drop-shadow-lg hover:opacity-70 transition-opacity"
                   disabled={
+                    currentCategory !== "all" &&
                     sliderIndex === 0 &&
                     categorySequence.indexOf(currentCategory) === 0
                   }
                 >
-                  ‹
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-10 h-10">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                  </svg>
                 </button>
                 <button
                   onClick={() => navigateSlider(1)}
-                  className="md:hidden absolute left-1/2 top-1/2 translate-x-16 -translate-y-1/2 text-white text-3xl flex items-center justify-center bg-black rounded-full w-12 h-12 z-[106] disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 text-white p-4 z-[106] disabled:opacity-30 disabled:cursor-not-allowed drop-shadow-lg hover:opacity-70 transition-opacity"
                   disabled={
+                    currentCategory !== "all" &&
                     sliderIndex === sliderImages.length - 1 &&
                     categorySequence.indexOf(currentCategory) ===
                     categorySequence.length - 1
                   }
                 >
-                  ›
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-10 h-10">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                  </svg>
                 </button>
                 <div className="absolute -top-9 right-0 text-gray-400 text-sm">
                   {sliderIndex + 1} of {sliderImages.length}
@@ -428,6 +460,7 @@ export default function ImageCategorizationModal({
                 onClick={() => navigateSlider(1)}
                 className="text-white text-4xl flex items-center justify-center hover:opacity-70 transition-opacity fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-[105] disabled:opacity-30 disabled:cursor-not-allowed md:bg-transparent bg-black rounded-full w-12 h-12 md:w-auto md:h-auto md:p-2 hidden md:flex"
                 disabled={
+                  currentCategory !== "all" &&
                   sliderIndex === sliderImages.length - 1 &&
                   categorySequence.indexOf(currentCategory) ===
                   categorySequence.length - 1
