@@ -16,12 +16,12 @@ const SearchFilter = ({ onSearch }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     const updatedFilters = { ...filters, [name]: value };
-    
+
     // Reset model when make changes
     if (name === 'make') {
       updatedFilters.model = '';
     }
-    
+
     setFilters(updatedFilters);
   };
 
@@ -96,12 +96,22 @@ const SearchFilter = ({ onSearch }) => {
           onChange={handleChange}
           className="border border-gray-300 min-w-28 rounded-md p-2 w-full sm:w-auto flex-1"
         >
-          <option value="">Select Type</option>
-          <option value="sedan">Sedan</option>
-          <option value="suv">SUV</option>
-          <option value="truck">Truck</option>
-          <option value="coupe">Coupe</option>
-          <option value="convertible">Convertible</option>
+          <option value="">Typ nadwozia</option>
+          <option value="Bus I Van">Bus I Van</option>
+          <option value="Coupe">Coupe</option>
+          <option value="Crossover">Crossover</option>
+          <option value="Hatchback">Hatchback</option>
+          <option value="Kabriolet">Kabriolet</option>
+          <option value="Kamper">Kamper</option>
+          <option value="Klasyk">Klasyk</option>
+          <option value="Kombi">Kombi</option>
+          <option value="Kompakt">Kompakt</option>
+          <option value="Limuzyna">Limuzyna</option>
+          <option value="Pickup">Pickup</option>
+          <option value="Sedan">Sedan</option>
+          <option value="Sportowe">Sportowe</option>
+          <option value="SUV">SUV</option>
+          <option value="Terenowe">Terenowe</option>
         </select>
 
         {/* Search Button */}

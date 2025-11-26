@@ -632,8 +632,8 @@ const Page = () => {
                         src={img}
                         alt={`Thumbnail ${index + 1}`}
                         className={`w-[120px] h-[80px] object-cover rounded-md border-2 transition-all duration-200 cursor-pointer ${currentImageIndex === index
-                            ? "border-blue-500 shadow-lg"
-                            : "border-gray-300 hover:border-gray-400"
+                          ? "border-blue-500 shadow-lg"
+                          : "border-gray-300 hover:border-gray-400"
                           }`}
                       />
                     </SwiperSlide>
@@ -655,18 +655,26 @@ const Page = () => {
             </div>
             <div className="col-span-2 bg-white rounded-md mt-5">
               <div className="gap-2 mb-4 grid grid-cols-2 md:grid-cols-4">
-                {["opis", "stan", "lokalizacja", "finanse"].map((tab) => (
-                  <button
-                    key={tab}
-                    className={`px-4 py-2 border border-gray-200 ${activeTab === tab
+                {["opis", "stan", "lokalizacja", "finanse"].map((tab) => {
+                  // Get the display name for the tab
+                  let displayName = tab.charAt(0).toUpperCase() + tab.slice(1);
+                  if (tab === "stan" && car?.condition === "New") {
+                    displayName = "Gwarancja";
+                  }
+
+                  return (
+                    <button
+                      key={tab}
+                      className={`px-4 py-2 border border-gray-200 ${activeTab === tab
                         ? "bg-blue-500 text-white"
                         : "bg-white text-gray-700"
-                      } rounded-md`}
-                    onClick={() => setActiveTab(tab)}
-                  >
-                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                  </button>
-                ))}
+                        } rounded-md`}
+                      onClick={() => setActiveTab(tab)}
+                    >
+                      {displayName}
+                    </button>
+                  );
+                })}
               </div>
               {renderContent()}
             </div>
@@ -681,7 +689,7 @@ const Page = () => {
                       ? `${basePriceNetto.toLocaleString("pl-PL")} zł`
                       : "N/A"}
                   </p>
-                  <p className="text-sm text-gray-500">Cena podstawowa</p>
+                  {/* <p className="text-sm text-gray-500">Cena podstawowa</p> */}
                   <p className="text-xl text-medium text-gray-600 underline mt-3">
                     {car?.financialInfo?.priceWithVat
                       ? `${car?.financialInfo?.priceWithVat} zł`
@@ -690,7 +698,7 @@ const Page = () => {
                 </div>
               </div>
 
-              {car?.condition === "New" &&
+              {/* {car?.condition === "New" &&
                 Array.isArray(car?.warranties) &&
                 car.warranties.length > 0 && (
                   <div className="mt-2">
@@ -702,7 +710,7 @@ const Page = () => {
                       Wybierz gwarancję
                     </button>
                   </div>
-                )}
+                )} */}
 
               <div className="flex items-center my-4">
                 <div className="flex-grow border-b"></div>
@@ -828,8 +836,8 @@ const Page = () => {
                         setIsWarrantyModalOpen(false);
                       }}
                       className={`w-full text-left border rounded-md px-3 py-2 text-sm transition-colors ${isSelected
-                          ? "border-blue-500 bg-blue-50"
-                          : "border-gray-200 bg-white hover:bg-gray-50"
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-gray-200 bg-white hover:bg-gray-50"
                         }`}
                     >
                       <div className="flex justify-between items-center">

@@ -24,6 +24,27 @@ export default function CarCard({ car, viewMode = 'grid' }) {
 
   const [seller, setSeller] = useState(null);
 
+  // Translation helper functions
+  const translateFuelType = (fuel) => {
+    const translations = {
+      'Petrol': 'Benzyna',
+      'Diesel': 'Diesel',
+      'Hybrid': 'Hybryda',
+      'Electric': 'Elektryk',
+      'LPG': 'LPG',
+      'Wodór': 'Wodór'
+    };
+    return translations[fuel] || fuel;
+  };
+
+  const translateTransmission = (transmission) => {
+    const translations = {
+      'Automatic': 'Automat',
+      'Manual': 'Manual'
+    };
+    return translations[transmission] || transmission;
+  };
+
   const formatImageUrl = (imagePath) => {
     if (!imagePath) return "/website/seller.jpg";
     if (typeof imagePath === "string" && /^(https?:)?\/\//i.test(imagePath)) {
@@ -73,7 +94,7 @@ export default function CarCard({ car, viewMode = 'grid' }) {
   }, [car?.createdBy, car?.financialInfo?.sellerType]);
 
   const firstImage = car?.images && car?.images?.length > 0 ? formatCarImage(car.images[0]) : "https://via.placeholder.com/500";
-  
+
   const getSellerName = () => {
     if (!seller) return "Seller";
     const type = seller?.sellerType || car?.financialInfo?.sellerType;
@@ -186,7 +207,7 @@ export default function CarCard({ car, viewMode = 'grid' }) {
             </div>
             <div className="space-y-1 mb-2">
               <div className="text-[14px] text-gray-700 font-normal leading-[1.5]">
-                {car.mileage || 'N/A'} km, {car.fuel || 'N/A'}, {car.engine || 'N/A'} cm3, {car.transmission || 'N/A'}
+                {car.mileage || 'N/A'} km, {translateFuelType(car.fuel) || 'N/A'}, {car.engine || 'N/A'} cm3, {translateTransmission(car.transmission) || 'N/A'}
               </div>
               <div className="text-[14px] text-gray-500 dark:text-gray-400 font-normal leading-[1.5] flex items-center transition-colors duration-300">
                 {locationDetails.city && locationDetails.state
@@ -218,8 +239,8 @@ export default function CarCard({ car, viewMode = 'grid' }) {
   }
 
   return (
-    <div 
-      className="group cursor-pointer focus:outline-none" 
+    <div
+      className="group cursor-pointer focus:outline-none"
       onClick={handleCardClick}
       role="button"
       tabIndex={0}
@@ -276,16 +297,16 @@ export default function CarCard({ car, viewMode = 'grid' }) {
               </div>
             </div>
           ) : (
-            <img 
-              src={firstImage} 
+            <img
+              src={firstImage}
               alt={`${car.year} ${car.make} ${car.model}`}
               className="w-full h-full object-cover rounded-lg lg:rounded-none"
             />
           )}
           <div className="absolute bottom-2 left-2 bg-gray-900/90 px-2 py-1 rounded-md shadow-lg">
             <div className="text-xs font-bold text-white">
-              {car.financialInfo?.priceNetto ? 
-                `${car.financialInfo.priceNetto.toLocaleString("pl-PL")} zł` : 
+              {car.financialInfo?.priceNetto ?
+                `${car.financialInfo.priceNetto.toLocaleString("pl-PL")} zł` :
                 "Price N/A"
               }
             </div>
@@ -307,7 +328,7 @@ export default function CarCard({ car, viewMode = 'grid' }) {
             </div>
             <div className="space-y-0.5 md:space-y-1 mb-2 md:mb-3">
               <div className="text-xs md:text-[14px] text-gray-700 dark:text-gray-300 font-normal leading-[1.3] md:leading-[1.5] transition-colors duration-300">
-                {car.mileage || "N/A"}, {car.fuel || "N/A"}
+                {car.mileage || "N/A"}, {translateFuelType(car.fuel) || "N/A"}
               </div>
               <div className="text-xs md:text-[14px] text-gray-500 dark:text-gray-400 font-normal leading-[1.3] md:leading-[1.5] flex items-center transition-colors duration-300">
                 {locationDetails.city && locationDetails.state
@@ -318,8 +339,8 @@ export default function CarCard({ car, viewMode = 'grid' }) {
           </div>
           <div className="pt-2 md:pt-3 border-t border-gray-100 dark:border-gray-800 transition-colors duration-300">
             <div className="flex items-center space-x-2 md:space-x-3">
-              <img 
-                src={getSellerImage()} 
+              <img
+                src={getSellerImage()}
                 alt={getSellerName()}
                 className="w-5 h-5 md:w-8 md:h-8 rounded-full object-cover"
               />
