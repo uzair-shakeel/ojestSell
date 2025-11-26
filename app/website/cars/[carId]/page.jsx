@@ -44,6 +44,7 @@ const Page = () => {
   const [selectedWarrantyIndex, setSelectedWarrantyIndex] = useState(null);
   const [isWarrantyModalOpen, setIsWarrantyModalOpen] = useState(false);
   const [isCategorizationModalOpen, setIsCategorizationModalOpen] = useState(false);
+  const [clickedImageUrl, setClickedImageUrl] = useState(null);
   const mainSwiperRef = useRef(null);
   const fullscreenSwiperRef = useRef(null);
 
@@ -502,7 +503,14 @@ const Page = () => {
                   key={index}
                   className="!flex !items-center !justify-center w-full h-full"
                 >
-                  <div className="flex items-center justify-center w-full h-full">
+                  <div 
+                    className="flex items-center justify-center w-full h-full cursor-pointer"
+                    onClick={() => {
+                      setClickedImageUrl(img);
+                      setIsFullscreen(false);
+                      setIsCategorizationModalOpen(true);
+                    }}
+                  >
                     <img
                       src={img}
                       alt={`${car?.make} ${car?.model} - Image ${index + 1}`}
@@ -565,7 +573,10 @@ const Page = () => {
                           alt={`${car?.make} ${car?.model} - Image ${index + 1
                             }`}
                           className="w-full aspect-[5/3] object-cover cursor-pointer rounded-lg lg:rounded-none"
-                          onClick={() => setIsCategorizationModalOpen(true)}
+                          onClick={() => {
+                            setClickedImageUrl(img);
+                            setIsCategorizationModalOpen(true);
+                          }}
                         />
                       </div>
                     </SwiperSlide>
@@ -635,6 +646,12 @@ const Page = () => {
                           ? "border-blue-500 shadow-lg"
                           : "border-gray-300 hover:border-gray-400"
                           }`}
+                        onClick={() => {
+                          setCurrentImageIndex(index);
+                          setMainImage(img);
+                          setClickedImageUrl(img);
+                          setIsCategorizationModalOpen(true);
+                        }}
                       />
                     </SwiperSlide>
                   ))}
@@ -875,19 +892,13 @@ const Page = () => {
       {/* Image Categorization Modal */}
       <ImageCategorizationModal
         isOpen={isCategorizationModalOpen}
-        onClose={() => setIsCategorizationModalOpen(false)}
-        categorizedImages={
-          car?.categorizedImages && car.categorizedImages.length > 0
-            ? car.categorizedImages
-            : images.map((url, index) => ({
-              url,
-              category: "unknown",
-              detected_label: "Unknown",
-              confidence: 0,
-              index,
-            }))
-        }
+        onClose={() => {
+          setIsCategorizationModalOpen(false);
+          setClickedImageUrl(null);
+        }}
+        images={images}
         carId={carId}
+        clickedImageUrl={clickedImageUrl}
       />
     </>
   );
