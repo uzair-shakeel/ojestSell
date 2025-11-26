@@ -43,6 +43,7 @@ const Page = () => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [selectedWarrantyIndex, setSelectedWarrantyIndex] = useState(null);
   const [isWarrantyModalOpen, setIsWarrantyModalOpen] = useState(false);
+  const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
   const [isCategorizationModalOpen, setIsCategorizationModalOpen] = useState(false);
   const [clickedImageUrl, setClickedImageUrl] = useState(null);
   const mainSwiperRef = useRef(null);
@@ -267,41 +268,78 @@ const Page = () => {
   };
 
   const callSeller = () => {
-    // Try multiple possible sources for the seller phone
-    const primaryPhoneFromArray = seller?.phoneNumbers?.[0];
+    // If multiple numbers exist, open modal
+    if (seller?.phoneNumbers && seller.phoneNumbers.length > 0) {
+      setIsPhoneModalOpen(true);
+      return;
+    }
+
+    // Fallback for single number
     const fallbackSinglePhone = seller?.phoneNumber || seller?.phone;
-
-    let raw =
-      primaryPhoneFromArray && typeof primaryPhoneFromArray === "object"
-        ? primaryPhoneFromArray.phone || primaryPhoneFromArray.number || ""
-        : primaryPhoneFromArray;
-
-    if (!raw) {
-      raw = fallbackSinglePhone || "";
-    }
-
-    if (!raw) {
-      if (typeof window !== "undefined") {
-        alert("Numer telefonu sprzedawcy jest niedostępny.");
-      }
-      return;
-    }
-
-    // Sanitize to keep only digits and leading + so tel: works on most devices
-    const sanitized = String(raw).replace(/[^+\d]/g, "");
-    if (!sanitized) {
-      if (typeof window !== "undefined") {
-        alert("Nieprawidłowy numer telefonu sprzedawcy.");
-      }
-      return;
-    }
-
-    try {
+    if (fallbackSinglePhone) {
+      const sanitized = String(fallbackSinglePhone).replace(/[^+\d]/g, "");
       window.location.href = `tel:${sanitized}`;
-    } catch (e) {
-      // Fallback
-      window.open(`tel:${sanitized}`, "_self");
+      return;
     }
+
+    if (typeof window !== "undefined") {
+      alert("Numer telefonu sprzedawcy jest niedostępny.");
+    }
+  };
+
+  const PhoneModal = () => {
+    if (!isPhoneModalOpen) return null;
+
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+          <div className="p-4 border-b flex justify-between items-center bg-gray-50">
+            <h3 className="text-lg font-semibold text-gray-900">Wybierz numer telefonu</h3>
+            <button
+              onClick={() => setIsPhoneModalOpen(false)}
+              className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-200 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <div className="p-4 space-y-3">
+            {seller?.phoneNumbers?.map((phoneObj, index) => {
+              const number = typeof phoneObj === 'object' ? (phoneObj.phone || phoneObj.number) : phoneObj;
+              const countryCode = typeof phoneObj === 'object' ? (phoneObj.countryCode || 'pl') : 'pl';
+
+              if (!number) return null;
+
+              return (
+                <a
+                  key={index}
+                  href={`tel:${String(number).replace(/[^+\d]/g, "")}`}
+                  className="flex items-center justify-between p-4 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">{number}</p>
+                      <p className="text-xs text-gray-500 uppercase">{countryCode}</p>
+                    </div>
+                  </div>
+                  <span className="text-blue-600 font-medium text-sm group-hover:underline">Zadzwoń</span>
+                </a>
+              );
+            })}
+          </div>
+          <div className="p-4 bg-gray-50 border-t">
+            <button
+              onClick={() => setIsPhoneModalOpen(false)}
+              className="w-full py-2.5 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              Anuluj
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   // Open WhatsApp chat to a specific number using wa.me format
@@ -503,7 +541,7 @@ const Page = () => {
                   key={index}
                   className="!flex !items-center !justify-center w-full h-full"
                 >
-                  <div 
+                  <div
                     className="flex items-center justify-center w-full h-full cursor-pointer"
                     onClick={() => {
                       setClickedImageUrl(img);
@@ -900,6 +938,7 @@ const Page = () => {
         carId={carId}
         clickedImageUrl={clickedImageUrl}
       />
+      <PhoneModal />
     </>
   );
 }

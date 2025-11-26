@@ -10,20 +10,22 @@ import { useMakesModels } from "../../hooks/useMakesModels";
 
 // Car types
 const CAR_TYPES = [
-  "All Types",
-  "hatchback",
-  "sedan",
-  "kombi",
-  "coupe",
-  "sports",
-  "limousine",
-  "suv",
-  "convertible",
-  "pickup",
-  "offroad",
-  "bus",
-  "classic",
-  "campers",
+  "Wszystkie",
+  "Bus I Van",
+  "Coupe",
+  "Crossover",
+  "Hatchback",
+  "Kabriolet",
+  "Kamper",
+  "Klasyk",
+  "Kombi",
+  "Kompakt",
+  "Limuzyna",
+  "Pickup",
+  "Sedan",
+  "Sportowe",
+  "SUV",
+  "Terenowe",
 ];
 
 // Generate years for dropdown
@@ -84,7 +86,7 @@ export function FilterSearch() {
                 disabled={loading}
               >
                 <option value="" disabled>
-                Marka
+                  Marka
                 </option>
                 {getMakes().map((makeName) => (
                   <option key={makeName} value={makeName}>
@@ -121,7 +123,7 @@ export function FilterSearch() {
                 className="w-full h-12 px-3 border rounded-md bg-white/70 text-black font-medium "
               >
                 <option value="" disabled>
-                Rok od
+                  Rok od
                 </option>
                 {YEARS.map((year) => (
                   <option key={year} value={year}>
@@ -138,7 +140,7 @@ export function FilterSearch() {
                 className="w-full h-12 px-3 border rounded-md bg-white/70 text-black font-medium "
               >
                 <option value="" disabled>
-                Rok do 
+                  Rok do
                 </option>
                 {YEARS.map((year) => (
                   <option key={year} value={year}>
@@ -220,16 +222,15 @@ export function FilterSearch() {
                   onChange={(e) => {
                     setModel(e.target.value);
                   }}
-                  className={`w-full h-full px-4 border-0 bg-white/70 font-medium focus:ring-0 focus:outline-none appearance-none ${
-                    !make || type !== ""
+                  className={`w-full h-full px-4 border-0 bg-white/70 font-medium focus:ring-0 focus:outline-none appearance-none ${!make || type !== ""
                       ? "text-gray-600 font-light"
                       : "text-black"
-                  }`}
+                    }`}
                   disabled={loading || !make || type !== ""}
                   style={{ height: "100%" }} // Inline style for Safari
                 >
                   <option value="" disabled>
-                      Model
+                    Model
                   </option>
                   {availableModels.map((modelOption) => (
                     <option key={modelOption} value={modelOption}>
