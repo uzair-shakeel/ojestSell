@@ -41,18 +41,18 @@ const MessagesPage = () => {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-  if (!socket.connected) {
-    socket.connect(); // important
-  }
+    if (!socket.connected) {
+      socket.connect();
+    }
 
-  if (authUserId) {
-    socket.emit("join", authUserId);
-  }
+    if (authUserId) {
+      socket.emit("join", authUserId);
+    }
 
-  // return () => {
-  //   socket.disconnect();
-  // };
-}, [authUserId]);
+    // return () => {
+    //   socket.disconnect();
+    // };
+  }, [authUserId]);
 
   // Helper: current user ID across backends (_id or id)
   // Try multiple sources to get the user ID
@@ -94,17 +94,17 @@ const MessagesPage = () => {
     console.log("👤 Current user:", user);
     console.log("🆔 Resolved user ID:", myUserId);
     console.log("🔑 User ID type:", typeof myUserId, "Value:", myUserId);
-    
+
     if (!myUserId) {
       console.error("❌ No valid user ID found! Cannot connect socket.");
       return;
     }
-    
 
-    
+
+
     // Remove all old listeners to prevent duplicates
     socket.removeAllListeners();
-    
+
     // Set new auth for this user
     socket.auth = { userId: myUserId };
     console.log("[Socket] connecting to:", SOCKET_BASE, "with auth:", socket.auth);
@@ -114,9 +114,9 @@ const MessagesPage = () => {
       withCredentials: true,
       timeout: 20000
     });
-    
+
     socket.connect();
-    
+
     // Add timeout to detect if connection is hanging
     const connectionTimeout = setTimeout(() => {
       if (!socket.connected) {
@@ -129,7 +129,7 @@ const MessagesPage = () => {
         console.error("4. Firewall blocking the connection");
       }
     }, 5000);
-    
+
     socket.on("connect", () => {
       clearTimeout(connectionTimeout);
       console.log("✅✅✅ [Socket] CONNECTED SUCCESSFULLY! ✅✅✅");
@@ -137,7 +137,7 @@ const MessagesPage = () => {
       console.log("🔌 Transport:", socket.io.engine.transport.name);
       console.log("⚡ Socket.connected:", socket.connected);
       console.log("🔐 Auth used:", socket.auth);
-      
+
       // Join room after connection is established
       if (myUserId) {
         socket.emit("join", myUserId);
@@ -146,7 +146,7 @@ const MessagesPage = () => {
         console.error("❌ Cannot join room - myUserId is undefined!");
       }
     });
-    
+
     socket.on("connect_error", (err) => {
       console.error("❌❌❌ [Socket] CONNECT ERROR! ❌❌❌");
       console.error("Error:", err);
@@ -155,7 +155,7 @@ const MessagesPage = () => {
       console.error("🔍 Socket URL:", SOCKET_BASE);
       console.error("🔍 Socket path:", SOCKET_PATH);
     });
-    
+
     socket.on("disconnect", (reason) => {
       console.warn("⚠️⚠️⚠️ [Socket] DISCONNECTED! ⚠️⚠️⚠️");
       console.warn("Reason:", reason);
@@ -347,7 +347,7 @@ const MessagesPage = () => {
         text: message.content,
         createdAt: message.timestamp,
       };
-      
+
       console.log("📦 Processed message:", processedMessage);
 
       // Emit notification if message is from someone else
@@ -367,7 +367,7 @@ const MessagesPage = () => {
           console.error("Failed to dispatch notification:", e);
         }
       }
-      
+
       // Add a readable senderName for display
       try {
         if (String(message.sender) === String(myUserId)) {
@@ -418,16 +418,16 @@ const MessagesPage = () => {
       if (selectedChat && selectedChat._id === chatId) {
         setMessages((prev) => {
           console.log("📨 Received newMessage event", { chatId, message, currentMessages: prev.length });
-          
+
           // Check if this is our own message by matching sender
           const isOwnMessage = String(message.sender) === String(myUserId);
-          
+
           if (isOwnMessage) {
             // Find the most recent pending message with matching content
             // Search from end to start to get the latest one
             let pendingIdx = -1;
             const searchText = (processedMessage.text || "").trim();
-            
+
             for (let i = prev.length - 1; i >= 0; i--) {
               const pendingText = (prev[i].text || "").trim();
               if (prev[i].pending && pendingText === searchText) {
@@ -435,34 +435,34 @@ const MessagesPage = () => {
                 break;
               }
             }
-            
+
             if (pendingIdx !== -1) {
               // Replace the optimistic message with the real one
-              console.log("✅ Replacing pending message", { 
-                index: pendingIdx, 
-                tempId: prev[pendingIdx]._id, 
+              console.log("✅ Replacing pending message", {
+                index: pendingIdx,
+                tempId: prev[pendingIdx]._id,
                 realId: processedMessage._id,
-                content: processedMessage.text 
+                content: processedMessage.text
               });
               const copy = [...prev];
               copy[pendingIdx] = { ...processedMessage, pending: false };
               return copy;
             } else {
-              console.log("⚠️ No pending message found", { 
+              console.log("⚠️ No pending message found", {
                 pendingCount: prev.filter(m => m.pending).length,
                 searchingFor: processedMessage.text,
                 allPending: prev.filter(m => m.pending).map(m => ({ id: m._id, text: m.text }))
               });
             }
           }
-          
+
           // Check if message already exists (avoid duplicates)
           const exists = prev.some((m) => m._id === processedMessage._id);
           if (exists) {
             console.log("ℹ️ Message already exists, skipping", processedMessage._id);
             return prev;
           }
-          
+
           // Add new message
           console.log("➕ Adding new message", { id: processedMessage._id, text: processedMessage.text });
           return [...prev, processedMessage];
@@ -525,7 +525,7 @@ const MessagesPage = () => {
     const tempId = generateTempId();
     const messageContent = newMessage;
     const timestamp = new Date();
-    
+
     // Add optimistic message immediately
     const optimisticMessage = {
       _id: tempId,
@@ -540,13 +540,13 @@ const MessagesPage = () => {
       pending: true, // Mark as pending
       tempId: tempId, // Store temp ID for matching
     };
-    
+
     setMessages((prev) => {
       console.log("📤 Adding optimistic message", optimisticMessage);
       return [...prev, optimisticMessage];
     });
     setNewMessage("");
-    
+
     // Check socket connection before sending
     console.log("🔍 Socket state before sending:", {
       connected: socket.connected,
@@ -554,7 +554,7 @@ const MessagesPage = () => {
       id: socket.id,
       auth: socket.auth
     });
-    
+
     if (!socket.connected) {
       console.error("❌❌❌ Socket NOT connected! Attempting to reconnect...");
       console.error("Socket state:", {
@@ -563,26 +563,26 @@ const MessagesPage = () => {
         id: socket.id
       });
       socket.connect();
-      
+
       // Wait a bit for connection
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       if (!socket.connected) {
         console.error("❌ Still not connected after reconnect attempt!");
         alert("Cannot send message - socket connection failed. Please refresh the page.");
         return;
       }
     }
-    
+
     // Emit to backend
-    console.log("🚀 Emitting message to server...", { 
-      socketConnected: socket.connected, 
-      chatId: selectedChat._id, 
-      senderId: myUserId, 
-      content: messageContent, 
-      tempId 
+    console.log("🚀 Emitting message to server...", {
+      socketConnected: socket.connected,
+      chatId: selectedChat._id,
+      senderId: myUserId,
+      content: messageContent,
+      tempId
     });
-    
+
     socket.emit("sendMessage", {
       chatId: selectedChat._id,
       senderId: myUserId,
@@ -688,15 +688,14 @@ const MessagesPage = () => {
   const chatCount = chats.length;
 
   return (
-<div className="flex h-[calc(100vh-70px)] bg-white font-sans overflow-hidden relative">
-  {/* Sidebar */}
+    <div className="flex h-[calc(100vh-70px)] bg-white font-sans overflow-hidden relative">
+      {/* Sidebar */}
       <div
-        className={`absolute md:relative inset-y-0 left-0 z-20 bg-white h-full min-h-0 w-full sm:w-[320px] md:w-[320px] border-r border-gray-300 flex flex-col transform transition-transform duration-300 ${
-          showSidebar ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0`}
+        className={`absolute md:relative inset-y-0 left-0 z-20 bg-white h-full min-h-0 w-full sm:w-[320px] md:w-[320px] border-r border-gray-300 flex flex-col transform transition-transform duration-300 ${showSidebar ? "translate-x-0" : "-translate-x-full"
+          } md:translate-x-0`}
       >
         {/* Sidebar Header */}
-        <div className="p-4 border-b border-gray-300 flex justify-between items-center shrink-0">
+        <div className="p-4 border-b h-[77px] border-gray-300 flex justify-between items-center shrink-0">
           <h2 className="font-semibold text-lg">Wiadomości</h2>
           {totalUnread > 0 && (
             <div className="bg-red-500 text-white rounded-full h-6 w-6 flex items-center justify-center text-xs">
@@ -711,11 +710,10 @@ const MessagesPage = () => {
             chats.map((chat) => (
               <div
                 key={chat._id}
-                className={`flex items-center gap-2 p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg cursor-pointer ${
-                  selectedChat && selectedChat._id === chat._id
-                    ? "bg-blue-50 dark:bg-gray-900"
-                    : ""
-                }`}
+                className={`flex items-center gap-2 p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg cursor-pointer ${selectedChat && selectedChat._id === chat._id
+                  ? "bg-blue-50 dark:bg-gray-900"
+                  : ""
+                  }`}
                 onClick={() => handleSelectChat(chat)}
               >
                 <Avatar
@@ -798,19 +796,17 @@ const MessagesPage = () => {
                 {messages.map((message) => (
                   <div
                     key={message._id}
-                    className={`flex ${
-                      String(message.sender) === String(myUserId) || String(message.senderId) === String(myUserId)
-                        ? "justify-end"
-                        : "justify-start"
-                    }`}
+                    className={`flex ${String(message.sender) === String(myUserId) || String(message.senderId) === String(myUserId)
+                      ? "justify-end"
+                      : "justify-start"
+                      }`}
                   >
                     <div
-                      className={`max-w-[60%] px-4 py-2 rounded-lg text-sm whitespace-pre-line ${
-                        String(message.sender) === String(myUserId) ||
+                      className={`max-w-[60%] px-4 py-2 rounded-lg text-sm whitespace-pre-line ${String(message.sender) === String(myUserId) ||
                         String(message.senderId) === String(myUserId)
-                          ? "bg-blue-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200"
-                          : "bg-white border border-gray-300 dark:border-gray-600"
-                      } ${message.pending ? "opacity-70" : "opacity-100"}`}
+                        ? "bg-blue-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200"
+                        : "bg-white border border-gray-300 dark:border-gray-600"
+                        } ${message.pending ? "opacity-70" : "opacity-100"}`}
                     >
                       {String(message.sender) !== String(myUserId) &&
                         String(message.senderId) !== String(myUserId) && (
@@ -823,16 +819,16 @@ const MessagesPage = () => {
                         {fmtTime(message.createdAt)}
                         {(String(message.sender) === String(myUserId) ||
                           String(message.senderId) === String(myUserId)) && (
-                          <span className="ml-2">
-                            {message.pending ? (
-                              <span className="text-gray-400 italic">Wysyłanie...</span>
-                            ) : message.seenBy && message.seenBy.length > 1 ? (
-                              "Przeczytane"
-                            ) : (
-                              "Wysłane"
-                            )}
-                          </span>
-                        )}
+                            <span className="ml-2">
+                              {message.pending ? (
+                                <span className="text-gray-400 italic">Wysyłanie...</span>
+                              ) : message.seenBy && message.seenBy.length > 1 ? (
+                                "Przeczytane"
+                              ) : (
+                                "Wysłane"
+                              )}
+                            </span>
+                          )}
                       </div>
                     </div>
                   </div>

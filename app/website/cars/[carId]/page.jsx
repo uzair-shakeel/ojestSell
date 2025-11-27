@@ -739,11 +739,22 @@ const Page = () => {
               <div className="py-3 flex flex-col space-y-3">
                 <div className="flex flex-col items-start">
                   <h3 className="text-base font-medium mb-2">Cena</h3>
-                  <p className="text-4xl font-bold text-gray-900 dark:text-white mb-1 transition-colors duration-300">
-                    {basePriceNetto !== null
-                      ? `${basePriceNetto.toLocaleString("pl-PL")} zł`
-                      : "N/A"}
-                  </p>
+                  <div className="flex flex-col">
+                    <p className="text-4xl font-bold text-gray-900 dark:text-white mb-1 transition-colors duration-300">
+                      {basePriceNetto !== null
+                        ? `${basePriceNetto.toLocaleString("pl-PL")} zł`
+                        : "N/A"}
+                      <span className="text-sm font-normal text-gray-500 ml-2">Netto</span>
+                    </p>
+
+                    {car?.financialInfo?.invoiceOptions?.includes("Invoice VAT") && basePriceNetto !== null && (
+                      <p className="text-xl text-gray-600 mt-1">
+                        {(basePriceNetto * 1.23).toLocaleString("pl-PL", { maximumFractionDigits: 0 })} zł
+                        <span className="text-sm font-normal text-gray-500 ml-2">Brutto</span>
+                      </p>
+                    )}
+                  </div>
+
                   {/* <p className="text-sm text-gray-500">Cena podstawowa</p> */}
                   <p className="text-xl text-medium text-gray-600 underline mt-3">
                     {car?.financialInfo?.priceWithVat
