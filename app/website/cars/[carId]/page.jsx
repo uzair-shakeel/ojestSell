@@ -69,6 +69,51 @@ const Page = () => {
     return `https://${trimmed}`;
   };
 
+  // Format phone number with spaces (e.g., "+48 669 993 336")
+  const formatPhoneNumber = (phoneNumber) => {
+    if (!phoneNumber) return "";
+
+    // Convert to string and remove all non-digit characters except +
+    let cleaned = String(phoneNumber).replace(/[^\d+]/g, "");
+
+    // Ensure it starts with +
+    if (!cleaned.startsWith("+")) {
+      cleaned = "+" + cleaned;
+    }
+
+    // Remove the + for processing
+    const digitsOnly = cleaned.substring(1);
+
+    // Common 2-digit country codes (including Poland: 48)
+    const twoDigitCodes = ['48', '49', '44', '33', '39', '34', '41', '43', '31', '32', '30', '45', '46', '47', '90'];
+
+    let countryCode = "";
+    let rest = "";
+
+    // Check if it starts with a 2-digit country code
+    if (digitsOnly.length >= 2 && twoDigitCodes.includes(digitsOnly.substring(0, 2))) {
+      countryCode = digitsOnly.substring(0, 2);
+      rest = digitsOnly.substring(2);
+    }
+    // Otherwise try 3-digit country code
+    else if (digitsOnly.length >= 3) {
+      countryCode = digitsOnly.substring(0, 3);
+      rest = digitsOnly.substring(3);
+    }
+    // Fallback
+    else {
+      return cleaned;
+    }
+
+    // Split the rest into groups of 3
+    const groups = [];
+    for (let i = 0; i < rest.length; i += 3) {
+      groups.push(rest.substring(i, i + 3));
+    }
+
+    return `+${countryCode} ${groups.join(" ")}`;
+  };
+
   const getCityFromCoordinates = async (lat, lon) => {
     try {
       const response = await fetch(
@@ -294,7 +339,7 @@ const Page = () => {
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
         <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
           <div className="p-4 border-b flex justify-between items-center bg-gray-50">
-            <h3 className="text-lg font-semibold text-gray-900">Wybierz numer telefonu</h3>
+            <h3 className="text-lg dark:text-white font-semibold text-gray-900">Wybierz numer telefonu</h3>
             <button
               onClick={() => setIsPhoneModalOpen(false)}
               className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-200 transition-colors"
@@ -320,7 +365,7 @@ const Page = () => {
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">{number}</p>
+                      <p className="font-medium dark:text-gray-400 group-hover:text-blue-600 text-gray-900">{formatPhoneNumber(number)}</p>
                       <p className="text-xs text-gray-500 uppercase">{countryCode}</p>
                     </div>
                   </div>
