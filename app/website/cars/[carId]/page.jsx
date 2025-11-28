@@ -43,6 +43,7 @@ const Page = () => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [selectedWarrantyIndex, setSelectedWarrantyIndex] = useState(null);
   const [isWarrantyModalOpen, setIsWarrantyModalOpen] = useState(false);
+  const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
   const [isCategorizationModalOpen, setIsCategorizationModalOpen] = useState(false);
   const [clickedImageUrl, setClickedImageUrl] = useState(null);
   const mainSwiperRef = useRef(null);
@@ -66,6 +67,51 @@ const Page = () => {
     const trimmed = url.trim();
     if (/^https?:\/\//i.test(trimmed)) return trimmed;
     return `https://${trimmed}`;
+  };
+
+  // Format phone number with spaces (e.g., "+48 669 993 336")
+  const formatPhoneNumber = (phoneNumber) => {
+    if (!phoneNumber) return "";
+
+    // Convert to string and remove all non-digit characters except +
+    let cleaned = String(phoneNumber).replace(/[^\d+]/g, "");
+
+    // Ensure it starts with +
+    if (!cleaned.startsWith("+")) {
+      cleaned = "+" + cleaned;
+    }
+
+    // Remove the + for processing
+    const digitsOnly = cleaned.substring(1);
+
+    // Common 2-digit country codes (including Poland: 48)
+    const twoDigitCodes = ['48', '49', '44', '33', '39', '34', '41', '43', '31', '32', '30', '45', '46', '47', '90'];
+
+    let countryCode = "";
+    let rest = "";
+
+    // Check if it starts with a 2-digit country code
+    if (digitsOnly.length >= 2 && twoDigitCodes.includes(digitsOnly.substring(0, 2))) {
+      countryCode = digitsOnly.substring(0, 2);
+      rest = digitsOnly.substring(2);
+    }
+    // Otherwise try 3-digit country code
+    else if (digitsOnly.length >= 3) {
+      countryCode = digitsOnly.substring(0, 3);
+      rest = digitsOnly.substring(3);
+    }
+    // Fallback
+    else {
+      return cleaned;
+    }
+
+    // Split the rest into groups of 3
+    const groups = [];
+    for (let i = 0; i < rest.length; i += 3) {
+      groups.push(rest.substring(i, i + 3));
+    }
+
+    return `+${countryCode} ${groups.join(" ")}`;
   };
 
   const getCityFromCoordinates = async (lat, lon) => {
@@ -267,41 +313,78 @@ const Page = () => {
   };
 
   const callSeller = () => {
-    // Try multiple possible sources for the seller phone
-    const primaryPhoneFromArray = seller?.phoneNumbers?.[0];
+    // If multiple numbers exist, open modal
+    if (seller?.phoneNumbers && seller.phoneNumbers.length > 0) {
+      setIsPhoneModalOpen(true);
+      return;
+    }
+
+    // Fallback for single number
     const fallbackSinglePhone = seller?.phoneNumber || seller?.phone;
-
-    let raw =
-      primaryPhoneFromArray && typeof primaryPhoneFromArray === "object"
-        ? primaryPhoneFromArray.phone || primaryPhoneFromArray.number || ""
-        : primaryPhoneFromArray;
-
-    if (!raw) {
-      raw = fallbackSinglePhone || "";
-    }
-
-    if (!raw) {
-      if (typeof window !== "undefined") {
-        alert("Numer telefonu sprzedawcy jest niedostępny.");
-      }
-      return;
-    }
-
-    // Sanitize to keep only digits and leading + so tel: works on most devices
-    const sanitized = String(raw).replace(/[^+\d]/g, "");
-    if (!sanitized) {
-      if (typeof window !== "undefined") {
-        alert("Nieprawidłowy numer telefonu sprzedawcy.");
-      }
-      return;
-    }
-
-    try {
+    if (fallbackSinglePhone) {
+      const sanitized = String(fallbackSinglePhone).replace(/[^+\d]/g, "");
       window.location.href = `tel:${sanitized}`;
-    } catch (e) {
-      // Fallback
-      window.open(`tel:${sanitized}`, "_self");
+      return;
     }
+
+    if (typeof window !== "undefined") {
+      alert("Numer telefonu sprzedawcy jest niedostępny.");
+    }
+  };
+
+  const PhoneModal = () => {
+    if (!isPhoneModalOpen) return null;
+
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+          <div className="p-4 border-b flex justify-between items-center bg-gray-50">
+            <h3 className="text-lg dark:text-white font-semibold text-gray-900">Wybierz numer telefonu</h3>
+            <button
+              onClick={() => setIsPhoneModalOpen(false)}
+              className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-200 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <div className="p-4 space-y-3">
+            {seller?.phoneNumbers?.map((phoneObj, index) => {
+              const number = typeof phoneObj === 'object' ? (phoneObj.phone || phoneObj.number) : phoneObj;
+              const countryCode = typeof phoneObj === 'object' ? (phoneObj.countryCode || 'pl') : 'pl';
+
+              if (!number) return null;
+
+              return (
+                <a
+                  key={index}
+                  href={`tel:${String(number).replace(/[^+\d]/g, "")}`}
+                  className="flex items-center justify-between p-4 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    </div>
+                    <div>
+                      <p className="font-medium dark:text-gray-400 group-hover:text-blue-600 text-gray-900">{formatPhoneNumber(number)}</p>
+                      <p className="text-xs text-gray-500 uppercase">{countryCode}</p>
+                    </div>
+                  </div>
+                  <span className="text-blue-600 font-medium text-sm group-hover:underline">Zadzwoń</span>
+                </a>
+              );
+            })}
+          </div>
+          <div className="p-4 bg-gray-50 border-t">
+            <button
+              onClick={() => setIsPhoneModalOpen(false)}
+              className="w-full py-2.5 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              Anuluj
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   // Open WhatsApp chat to a specific number using wa.me format
@@ -503,7 +586,7 @@ const Page = () => {
                   key={index}
                   className="!flex !items-center !justify-center w-full h-full"
                 >
-                  <div 
+                  <div
                     className="flex items-center justify-center w-full h-full cursor-pointer"
                     onClick={() => {
                       setClickedImageUrl(img);
@@ -643,8 +726,8 @@ const Page = () => {
                         src={img}
                         alt={`Thumbnail ${index + 1}`}
                         className={`w-[120px] h-[80px] object-cover rounded-md border-2 transition-all duration-200 cursor-pointer ${currentImageIndex === index
-                            ? "border-blue-500 shadow-lg"
-                            : "border-gray-300 hover:border-gray-400"
+                          ? "border-blue-500 shadow-lg"
+                          : "border-gray-300 hover:border-gray-400"
                           }`}
                         onClick={() => {
                           setCurrentImageIndex(index);
@@ -672,18 +755,26 @@ const Page = () => {
             </div>
             <div className="col-span-2 bg-white rounded-md mt-5">
               <div className="gap-2 mb-4 grid grid-cols-2 md:grid-cols-4">
-                {["opis", "stan", "lokalizacja", "finanse"].map((tab) => (
-                  <button
-                    key={tab}
-                    className={`px-4 py-2 border border-gray-200 ${activeTab === tab
+                {["opis", "stan", "lokalizacja", "finanse"].map((tab) => {
+                  // Get the display name for the tab
+                  let displayName = tab.charAt(0).toUpperCase() + tab.slice(1);
+                  if (tab === "stan" && car?.condition === "New") {
+                    displayName = "Gwarancja";
+                  }
+
+                  return (
+                    <button
+                      key={tab}
+                      className={`px-4 py-2 border border-gray-200 ${activeTab === tab
                         ? "bg-blue-500 text-white"
                         : "bg-white text-gray-700"
-                      } rounded-md`}
-                    onClick={() => setActiveTab(tab)}
-                  >
-                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                  </button>
-                ))}
+                        } rounded-md`}
+                      onClick={() => setActiveTab(tab)}
+                    >
+                      {displayName}
+                    </button>
+                  );
+                })}
               </div>
               {renderContent()}
             </div>
@@ -693,12 +784,23 @@ const Page = () => {
               <div className="py-3 flex flex-col space-y-3">
                 <div className="flex flex-col items-start">
                   <h3 className="text-base font-medium mb-2">Cena</h3>
-                  <p className="text-4xl font-bold text-gray-900 dark:text-white mb-1 transition-colors duration-300">
-                    {basePriceNetto !== null
-                      ? `${basePriceNetto.toLocaleString("pl-PL")} zł`
-                      : "N/A"}
-                  </p>
-                  <p className="text-sm text-gray-500">Cena podstawowa</p>
+                  <div className="flex flex-col">
+                    <p className="text-4xl font-bold text-gray-900 dark:text-white mb-1 transition-colors duration-300">
+                      {basePriceNetto !== null
+                        ? `${basePriceNetto.toLocaleString("pl-PL")} zł`
+                        : "N/A"}
+                      <span className="text-sm font-normal text-gray-500 ml-2">Netto</span>
+                    </p>
+
+                    {car?.financialInfo?.invoiceOptions?.includes("Invoice VAT") && basePriceNetto !== null && (
+                      <p className="text-xl text-gray-600 mt-1">
+                        {(basePriceNetto * 1.23).toLocaleString("pl-PL", { maximumFractionDigits: 0 })} zł
+                        <span className="text-sm font-normal text-gray-500 ml-2">Brutto</span>
+                      </p>
+                    )}
+                  </div>
+
+                  {/* <p className="text-sm text-gray-500">Cena podstawowa</p> */}
                   <p className="text-xl text-medium text-gray-600 underline mt-3">
                     {car?.financialInfo?.priceWithVat
                       ? `${car?.financialInfo?.priceWithVat} zł`
@@ -707,7 +809,7 @@ const Page = () => {
                 </div>
               </div>
 
-              {car?.condition === "New" &&
+              {/* {car?.condition === "New" &&
                 Array.isArray(car?.warranties) &&
                 car.warranties.length > 0 && (
                   <div className="mt-2">
@@ -719,7 +821,7 @@ const Page = () => {
                       Wybierz gwarancję
                     </button>
                   </div>
-                )}
+                )} */}
 
               <div className="flex items-center my-4">
                 <div className="flex-grow border-b"></div>
@@ -845,8 +947,8 @@ const Page = () => {
                         setIsWarrantyModalOpen(false);
                       }}
                       className={`w-full text-left border rounded-md px-3 py-2 text-sm transition-colors ${isSelected
-                          ? "border-blue-500 bg-blue-50"
-                          : "border-gray-200 bg-white hover:bg-gray-50"
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-gray-200 bg-white hover:bg-gray-50"
                         }`}
                     >
                       <div className="flex justify-between items-center">
@@ -892,6 +994,7 @@ const Page = () => {
         carId={carId}
         clickedImageUrl={clickedImageUrl}
       />
+      <PhoneModal />
     </>
   );
 }
