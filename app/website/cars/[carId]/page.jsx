@@ -793,19 +793,51 @@ const Page = () => {
               </div>
               <div className="flex items-center space-x-3 my-5">
                 <div className="relative w-24 h-20 aspect-square overflow-hidden rounded-full">
-                  <Image
-                    src={formatImageUrl(seller?.image)}
-                    alt={sellerName}
-                    fill
-                    className="object-cover"
-                    sizes="96px"
-                  />
+                  <button
+                    onClick={() => {
+                      const sellerId =
+                        seller?._id ||
+                        seller?.id ||
+                        (typeof car?.createdBy === "object"
+                          ? car?.createdBy?._id
+                          : car?.createdBy);
+
+                      if (sellerId) {
+                        // Navigate to profile page with ID query parameter
+                        router.push(`/website/profile?id=${sellerId}`);
+                      }
+                    }}
+                  >
+                    <Image
+                      src={formatImageUrl(seller?.image)}
+                      alt={sellerName}
+                      fill
+                      className="object-cover"
+                      sizes="96px"
+                    />
+                  </button>
                 </div>
 
                 <div className="w-full">
                   <div className="flex justify-between items-center">
-                    <p className="text-black dark:text-white text-lg lg:text-xl transition-colors duration-300">
-                      <strong>{sellerName}</strong>
+                    <p className="text-black dark:text-white text-lg lg:text-xl transition-colors duration-300 hover:underline">
+                      <button
+                        onClick={() => {
+                          const sellerId =
+                            seller?._id ||
+                            seller?.id ||
+                            (typeof car?.createdBy === "object"
+                              ? car?.createdBy?._id
+                              : car?.createdBy);
+
+                          if (sellerId) {
+                            // Navigate to profile page with ID query parameter
+                            router.push(`/website/profile?id=${sellerId}`);
+                          }
+                        }}
+                      >
+                        <strong>{sellerName}</strong>
+                      </button>
                     </p>
                   </div>
                   <p className="text-base text-gray-500">
