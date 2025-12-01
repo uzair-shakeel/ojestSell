@@ -373,7 +373,7 @@ const CarsContent = () => {
   }, [allCars, sortBy, currentPage, itemsPerPage]);
 
 
-  // OLD Logic (Commented out as per instructions to "commit those not working")
+  // OLD Logic
   /* 
   const handleSort = (sortValue) => {
     setSortBy(sortValue);
