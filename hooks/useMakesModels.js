@@ -30,6 +30,10 @@ export const useMakesModels = () => {
   // Get all makes as a simple array
   const getMakes = () => {
     return makesData.map(item => item.make).sort();
+
+    // const makes = makesData.map(item => item.make)
+    //use Set to remove duplicates values
+    // return [...new Set(makes)].sort;
   };
 
   // Get models for a specific make
