@@ -234,7 +234,7 @@ const CarsContent = () => {
     const origin = searchParams.get("origin");
     const startYear = searchParams.get("startYear");
     const endYear = searchParams.get("endYear");
-    const type = searchParams.get("type");
+    const type = searchParams.get("bodyType");
     const countryOfManufacturer = searchParams.get("krajProducenta");
 
     if (make) initialFilters.make = make;
@@ -270,6 +270,11 @@ const CarsContent = () => {
 
     try {
       const queryFilters = { ...activeFilters };
+
+      if (queryFilters.bodyType) {
+        queryFilters.type = queryFilters.bodyType;
+        delete queryFilters.bodyType;
+      }
 
       // Fetch large batch for client-side pagination/sorting
       // This makes the UI feel much faster for sorting
