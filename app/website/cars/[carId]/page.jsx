@@ -360,7 +360,7 @@ const Page = () => {
       exit: { opacity: 0, y: -20, transition: { duration: 0.2 } },
     };
 
-    if (!car) return <p>Loading...</p>;
+    if (!car) return <p>Loading...</p>
 
     switch (activeTab) {
       case "opis":
