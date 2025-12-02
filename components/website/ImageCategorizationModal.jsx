@@ -2,6 +2,13 @@
 import { useState, useEffect, useRef } from "react";
 import { IoClose } from "react-icons/io5";
 
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Zoom, Navigation } from "swiper/modules";
+
+import "swiper/css";
+import "swiper/css/zoom";
+import "swiper/css/navigation";
+
 // Use Next.js API route to proxy requests and handle CORS
 const API_BASE_URL = "/api/detect-image";
 
@@ -41,8 +48,6 @@ const capitalizeWord = (word) => {
   if (!word) return "";
   return word.charAt(0).toUpperCase() + word.slice(1);
 };
-
-const ZOOM_STEPS = [1, 1.5, 2, 2.5, 3];
 
 // Helper function to create a hash from images array
 const createImagesHash = (images) => {
@@ -119,7 +124,9 @@ export default function ImageCategorizationModal({
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingStatus, setProcessingStatus] = useState({});
-  const sliderImageRef = useRef(null);
+  
+  // Swiper Ref
+  const swiperRef = useRef(null);
 
   // Process images through detection API in queue
   const processImagesQueue = async () => {
@@ -178,7 +185,7 @@ export default function ImageCategorizationModal({
           });
           throw new Error(`Invalid JSON response: ${textResponse.substring(0, 100)}`);
         }
-        
+
         console.log(`Image ${i + 1} detection response:`, {
           success: detectData.success,
           category: detectData.category,
@@ -188,11 +195,11 @@ export default function ImageCategorizationModal({
 
         // Check if response is successful
         const isSuccess = detectData.success !== false && (detectData.success || detectData.category || detectData.detected_label);
-        
+
         if (isSuccess) {
           const category = normalizeCategory(detectData.category || detectData.detected_label);
           console.log(`Image ${i + 1} normalized category:`, category);
-          
+
           const imageData = {
             url: item.url,
             category: category,
@@ -272,7 +279,7 @@ export default function ImageCategorizationModal({
         const category = clickedImage.category || "all";
         const categoryImages = organizedImages[category] || [];
         const index = categoryImages.findIndex(img => img.url === clickedImageUrl);
-        
+
         if (index >= 0 && categoryImages.length > 0) {
           setCurrentCategory(category);
           setSliderImages(categoryImages);
@@ -330,7 +337,7 @@ export default function ImageCategorizationModal({
             const category = clickedImage.category || "all";
             const categoryImages = cachedResults[category] || [];
             const index = categoryImages.findIndex(img => img.url === clickedImageUrl);
-            
+
             if (index >= 0 && categoryImages.length > 0) {
               setCurrentCategory(category);
               setSliderImages(categoryImages);
@@ -364,10 +371,20 @@ export default function ImageCategorizationModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, carId, images.length, clickedImageUrl]);
 
+  // Sync Swiper slide when sliderIndex changes (e.g. from category jump)
+  useEffect(() => {
+    if (swiperRef.current && swiperRef.current.swiper) {
+      // If the difference is significant (like a category jump), swipe to it
+      if (swiperRef.current.swiper.activeIndex !== sliderIndex) {
+        swiperRef.current.swiper.slideTo(sliderIndex, 0);
+      }
+    }
+  }, [sliderIndex]);
+
   const handleCategoryClick = (category) => {
     const categoryImages = organizedImages[category] || [];
     setCurrentCategory(category);
-    
+
     if (category === "all") {
       // For "all" category, show gallery view
       setShowSlider(false);
@@ -386,14 +403,14 @@ export default function ImageCategorizationModal({
     // If clicking from "all" category, find which category the image actually belongs to
     let targetCategory = category;
     let categoryImages = organizedImages[category] || [];
-    
+
     if (category === "all") {
       // Find the actual category of this image
       const imageCategory = image.category || "exterior";
       targetCategory = imageCategory;
       categoryImages = organizedImages[imageCategory] || [];
     }
-    
+
     const index = categoryImages.findIndex((img) => img.url === image.url);
     setCurrentCategory(targetCategory);
     setSliderImages(categoryImages);
@@ -453,13 +470,30 @@ export default function ImageCategorizationModal({
     }
   };
 
+  // Handlers for Swiper navigation buttons to support Category jumping
+  const handleSwiperNext = () => {
+    if (!swiperRef.current || !swiperRef.current.swiper) return;
+    if (swiperRef.current.swiper.isEnd) {
+      navigateSlider(1);
+    } else {
+      swiperRef.current.swiper.slideNext();
+    }
+  };
+
+  const handleSwiperPrev = () => {
+    if (!swiperRef.current || !swiperRef.current.swiper) return;
+    if (swiperRef.current.swiper.isBeginning) {
+      navigateSlider(-1);
+    } else {
+      swiperRef.current.swiper.slidePrev();
+    }
+  };
+
   const handleZoom = () => {
     if (!showSlider) return;
-    const currentIndex = ZOOM_STEPS.findIndex(
-      (step) => Math.abs(step - zoomLevel) < 0.05
-    );
-    const nextIndex = (currentIndex + 1) % ZOOM_STEPS.length;
-    setZoomLevel(ZOOM_STEPS[nextIndex]);
+    if (swiperRef.current && swiperRef.current.swiper) {
+      swiperRef.current.swiper.zoom.in();
+    }
   };
 
   const handleFullscreen = async () => {
@@ -493,10 +527,10 @@ export default function ImageCategorizationModal({
       } else if (showSlider) {
         if (e.key === "ArrowLeft") {
           e.preventDefault();
-          navigateSlider(-1);
+          handleSwiperPrev();
         } else if (e.key === "ArrowRight") {
           e.preventDefault();
-          navigateSlider(1);
+          handleSwiperNext();
         }
       }
     };
@@ -504,7 +538,7 @@ export default function ImageCategorizationModal({
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, showSlider, sliderIndex, currentCategory]);
+  }, [isOpen, showSlider, sliderIndex, currentCategory, sliderImages]);
 
   if (!isOpen) return null;
 
@@ -524,194 +558,202 @@ export default function ImageCategorizationModal({
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{__html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         .category-scroll-container::-webkit-scrollbar {
           display: none;
+        }
+        /* Custom Swiper Styles */
+        .modal-swiper {
+            width: 100%;
+            height: 100%;
+        }
+        .modal-swiper .swiper-slide {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        .swiper-zoom-container > img {
+            max-height: 80vh !important;
+            max-width: 100% !important; 
+            object-fit: contain;
         }
       `}} />
       <div className="fixed inset-0 z-[100] bg-black overflow-hidden">
         {/* Navigation Bar */}
         <div className="w-full sticky top-0 left-0 z-[110] bg-black shadow-lg">
-        <div className="max-w-[1600px] mx-auto px-0 md:px-20 py-3.5 flex justify-between items-center gap-0 md:gap-6">
-          {/* Navigation - Inline scrollable on both mobile and desktop */}
-          <div 
-            className="flex gap-3 md:gap-6 md:overflow-x-auto overflow-x-hidden flex-1 category-scroll-container pl-4 pr-4 md:pl-0 md:pr-0"
-            style={{ 
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none',
-              WebkitOverflowScrolling: 'touch'
-            }}
-          >
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => handleCategoryClick(cat)}
-                className={`text-base md:text-sm font-medium pb-1.5 relative transition-colors whitespace-nowrap flex-shrink-0 ${currentCategory === cat
-                  ? "text-white"
-                  : "text-gray-400 hover:text-white"
-                  }`}
-                style={{ paddingTop: '1px' }}
-              >
-                {capitalizeWord(cat)}
-              </button>
-            ))}
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-2 md:gap-4 items-center ml-auto flex-shrink-0 pr-4 md:pr-0">
-            {showSlider && (
-              <div className="hidden md:flex gap-4">
-                <button
-                  onClick={handleZoom}
-                  className="text-white flex items-center justify-center hover:opacity-70 transition-opacity text-xl p-2"
-                  title="Zoom"
-                >
-                  +
-                </button>
-                <button
-                  onClick={handleFullscreen}
-                  className="text-white flex items-center justify-center hover:opacity-70 transition-opacity text-xl p-2"
-                  title="Full Screen"
-                >
-                  ⛶
-                </button>
-              </div>
-            )}
-            <button
-              onClick={handleClose}
-              className="text-white flex items-center justify-center hover:opacity-70 transition-opacity text-2xl p-2"
-              style={{ marginTop: '-8px' }}
-              title="Close"
+          <div className="max-w-[1600px] mx-auto px-0 md:px-20 py-3.5 flex justify-between items-center gap-0 md:gap-6">
+            {/* Navigation - Inline scrollable on both mobile and desktop */}
+            <div
+              className="flex gap-3 md:gap-6 md:overflow-x-auto overflow-x-scroll flex-1 category-scroll-container pl-4 pr-4 md:pl-0 md:pr-0"
+              style={{
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+                WebkitOverflowScrolling: 'touch'
+              }}
             >
-              ×
-            </button>
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => handleCategoryClick(cat)}
+                  className={`text-base md:text-sm font-medium pb-1.5 relative transition-colors whitespace-nowrap flex-shrink-0 ${currentCategory === cat
+                    ? "text-white"
+                    : "text-gray-400 hover:text-white"
+                    }`}
+                  style={{ paddingTop: '1px' }}
+                >
+                  {capitalizeWord(cat)}
+                </button>
+              ))}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-2 md:gap-4 items-center ml-auto flex-shrink-0 pr-4 md:pr-0">
+              {showSlider && (
+                <div className="hidden md:flex gap-4">
+                  <button
+                    onClick={handleZoom}
+                    className="text-white flex items-center justify-center hover:opacity-70 transition-opacity text-xl p-2"
+                    title="Zoom"
+                  >
+                    +
+                  </button>
+                  <button
+                    onClick={handleFullscreen}
+                    className="text-white flex items-center justify-center hover:opacity-70 transition-opacity text-xl p-2"
+                    title="Full Screen"
+                  >
+                    ⛶
+                  </button>
+                </div>
+              )}
+              <button
+                onClick={handleClose}
+                className="text-white flex items-center justify-center hover:opacity-70 transition-opacity text-2xl p-2"
+                style={{ marginTop: '-8px' }}
+                title="Close"
+              >
+                ×
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-[1600px] mx-auto px-0 md:px-20 py-5">
-        {/* Processing Status */}
-        {isProcessing && (
-          <div className="mb-5 text-center text-white">
-            <div className="inline-block w-10 h-10 border-4 border-gray-600 border-t-white rounded-full animate-spin mb-2"></div>
-            <p className="text-sm">
-              Processing image {processingStatus.current} of {processingStatus.total}...
-            </p>
-          </div>
-        )}
-
-        {/* Gallery View */}
-        {!showSlider && (
-          <>
-            <div className="fixed bottom-4 right-4 md:relative md:bottom-auto md:right-auto mb-5 md:text-right text-gray-400 text-sm z-10 bg-black bg-opacity-50 px-2 py-1 rounded">
-              {currentCategory === "all"
-                ? `Total photos: ${currentImages.length}`
-                : `${capitalizeWord(currentCategory)}: ${currentImages.length
-                } photo${currentImages.length === 1 ? "" : "s"}`}
+        {/* Main Content */}
+        <div className="max-w-[1600px] mx-auto px-0 md:px-20 py-5 h-full">
+          {/* Processing Status */}
+          {isProcessing && (
+            <div className="mb-5 text-center text-white">
+              <div className="inline-block w-10 h-10 border-4 border-gray-600 border-t-white rounded-full animate-spin mb-2"></div>
+              <p className="text-sm">
+                Processing image {processingStatus.current} of {processingStatus.total}...
+              </p>
             </div>
+          )}
 
-            {currentImages.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-3">
-                {currentImages.map((image, index) => (
-                  <div
-                    key={index}
-                    onClick={() => handleImageClick(image, currentCategory)}
-                    className="bg-gray-900 rounded-none overflow-hidden cursor-pointer transition-all hover:scale-105 hover:shadow-lg aspect-[1.2]"
+          {/* Gallery View */}
+          {!showSlider && (
+            <>
+              <div className="fixed bottom-4 right-4 md:relative md:bottom-auto md:right-auto mb-5 md:text-right text-gray-400 text-sm z-10 bg-black bg-opacity-50 px-2 py-1 rounded">
+                {currentCategory === "all"
+                  ? `Total photos: ${currentImages.length}`
+                  : `${capitalizeWord(currentCategory)}: ${currentImages.length
+                  } photo${currentImages.length === 1 ? "" : "s"}`}
+              </div>
+
+              {currentImages.length > 0 ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-3">
+                  {currentImages.map((image, index) => (
+                    <div
+                      key={index}
+                      onClick={() => handleImageClick(image, currentCategory)}
+                      className="bg-gray-900 rounded-none overflow-hidden cursor-pointer transition-all hover:scale-105 hover:shadow-lg aspect-[1.2]"
+                    >
+                      <img
+                        src={image.url}
+                        alt={image.detected_label || "Car image"}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-gray-900 rounded-xl p-16 text-center border border-gray-700">
+                  <div className="text-6xl mb-5 opacity-30">📷</div>
+                  <div className="text-xl text-gray-400">
+                    No photos found in this category
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Slider View */}
+          {showSlider && sliderImages.length > 0 && (
+            <>
+              <div className="flex items-center justify-center gap-0 md:gap-10 my-1 relative h-[80vh] w-full">
+                <button
+                  onClick={handleSwiperPrev}
+                  className="hidden md:flex text-white text-4xl items-center justify-center hover:opacity-70 transition-opacity fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-[105] disabled:opacity-30 disabled:cursor-not-allowed"
+                  disabled={
+                    currentCategory !== "all" &&
+                    sliderIndex === 0 &&
+                    categorySequence.indexOf(currentCategory) === 0
+                  }
+                >
+                  ‹
+                </button>
+
+                <div className="flex items-center justify-center relative w-full h-full">
+                  {/* Swiper Implementation */}
+                  <Swiper
+                    ref={swiperRef}
+                    modules={[Zoom, Navigation]}
+                    zoom={{ maxRatio: 3, toggle: true }} // Double tap to zoom
+                    spaceBetween={10}
+                    slidesPerView={1}
+                    grabCursor={true}
+                    initialSlide={sliderIndex}
+                    onSlideChange={(swiper) => setSliderIndex(swiper.activeIndex)}
+                    className="modal-swiper"
                   >
-                    <img
-                      src={image.url}
-                      alt={image.detected_label || "Car image"}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
+                    {sliderImages.map((img, index) => (
+                      <SwiperSlide key={`${img.url}-${index}`}>
+                        <div className="swiper-zoom-container">
+                          <img
+                            src={img.url}
+                            alt={img.detected_label || "Gallery image"}
+                            className="rounded-none md:rounded-2xl shadow-2xl bg-gray-900"
+                          />
+                        </div>
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+
+                  <div className="fixed bottom-4 right-4 text-white text-lg md:text-base font-medium z-[110] bg-black bg-opacity-70 px-3 py-2 rounded">
+                    {sliderIndex + 1} of {sliderImages.length}
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="bg-gray-900 rounded-xl p-16 text-center border border-gray-700">
-                <div className="text-6xl mb-5 opacity-30">📷</div>
-                <div className="text-xl text-gray-400">
-                  No photos found in this category
                 </div>
+
+                <button
+                  onClick={handleSwiperNext}
+                  className="hidden md:flex text-white text-4xl items-center justify-center hover:opacity-70 transition-opacity fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-[105] disabled:opacity-30 disabled:cursor-not-allowed"
+                  disabled={
+                    currentCategory !== "all" &&
+                    sliderIndex === sliderImages.length - 1 &&
+                    categorySequence.indexOf(currentCategory) ===
+                    categorySequence.length - 1
+                  }
+                >
+                  ›
+                </button>
               </div>
-            )}
-          </>
-        )}
-
-        {/* Slider View */}
-        {showSlider && sliderImages.length > 0 && (
-          <>
-            <div className="flex items-center justify-center gap-10 my-10 relative">
-              <button
-                onClick={() => navigateSlider(-1)}
-                className="hidden md:flex text-white text-4xl items-center justify-center hover:opacity-70 transition-opacity fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-[105] disabled:opacity-30 disabled:cursor-not-allowed"
-                disabled={
-                  currentCategory !== "all" &&
-                  sliderIndex === 0 &&
-                  categorySequence.indexOf(currentCategory) === 0
-                }
-              >
-                ‹
-              </button>
-
-              <div className="flex items-center justify-center max-w-full relative w-full h-[80vh]">
-                {sliderImages[sliderIndex] ? (
-                  <div className="relative w-full h-full flex items-center justify-center">
-                    {/* Image with click handlers for mobile */}
-                    <img
-                      key={sliderImages[sliderIndex].url} // Force re-render on image change
-                      ref={sliderImageRef}
-                      src={sliderImages[sliderIndex].url}
-                      alt={
-                        sliderImages[sliderIndex].detected_label || "Gallery image"
-                      }
-                      className="max-w-[90vw] max-h-[80vh] object-contain rounded-none md:rounded-2xl shadow-2xl bg-gray-900 md:pointer-events-auto"
-                      style={{
-                        transform: zoomLevel > 1 ? `scale(${zoomLevel})` : "none",
-                        transformOrigin: "center center",
-                      }}
-                      onClick={(e) => {
-                        // On mobile, detect if click is on left or right side of image
-                        if (window.innerWidth < 768) {
-                          const rect = e.currentTarget.getBoundingClientRect();
-                          const clickX = e.clientX - rect.left;
-                          const imageCenter = rect.width / 2;
-                          if (clickX < imageCenter) {
-                            navigateSlider(-1);
-                          } else {
-                            navigateSlider(1);
-                          }
-                        }
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <div className="text-white text-xl">Image not found</div>
-                )}
-
-                <div className="fixed bottom-4 right-4 text-white text-lg md:text-base font-medium z-[110] bg-black bg-opacity-70 px-3 py-2 rounded">
-                  {sliderIndex + 1} of {sliderImages.length}
-                </div>
-              </div>
-
-              <button
-                onClick={() => navigateSlider(1)}
-                className="hidden md:flex text-white text-4xl items-center justify-center hover:opacity-70 transition-opacity fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-[105] disabled:opacity-30 disabled:cursor-not-allowed"
-                disabled={
-                  currentCategory !== "all" &&
-                  sliderIndex === sliderImages.length - 1 &&
-                  categorySequence.indexOf(currentCategory) ===
-                  categorySequence.length - 1
-                }
-              >
-                ›
-              </button>
-            </div>
-          </>
-        )}
+            </>
+          )}
+        </div>
       </div>
-    </div>
     </>
   );
 }
