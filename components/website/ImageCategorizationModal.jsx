@@ -9,8 +9,6 @@ import "swiper/css";
 import "swiper/css/zoom";
 import "swiper/css/navigation";
 
-// Use Next.js API route to proxy requests and handle CORS
-const API_BASE_URL = "/api/detect-image";
 
 const categorySequence = [
   "exterior",
@@ -49,56 +47,6 @@ const capitalizeWord = (word) => {
   return word.charAt(0).toUpperCase() + word.slice(1);
 };
 
-// Helper function to create a hash from images array
-const createImagesHash = (images) => {
-  if (!images || images.length === 0) return "";
-  return images.join("|");
-};
-
-// Helper function to get cache key
-const getCacheKey = (carId) => {
-  return `car_categorization_${carId}`;
-};
-
-// Helper function to load cached data
-const loadCachedData = (carId, imagesHash) => {
-  if (typeof window === "undefined") return null;
-
-  try {
-    const cacheKey = getCacheKey(carId);
-    const cached = localStorage.getItem(cacheKey);
-    if (!cached) return null;
-
-    const parsed = JSON.parse(cached);
-    // Check if images hash matches (images haven't changed)
-    if (parsed.imagesHash === imagesHash && parsed.results) {
-      return parsed.results;
-    }
-    // Images have changed, clear old cache
-    localStorage.removeItem(cacheKey);
-    return null;
-  } catch (error) {
-    console.error("Error loading cached data:", error);
-    return null;
-  }
-};
-
-// Helper function to save cached data
-const saveCachedData = (carId, imagesHash, results) => {
-  if (typeof window === "undefined") return;
-
-  try {
-    const cacheKey = getCacheKey(carId);
-    const data = {
-      imagesHash,
-      results,
-      timestamp: Date.now(),
-    };
-    localStorage.setItem(cacheKey, JSON.stringify(data));
-  } catch (error) {
-    console.error("Error saving cached data:", error);
-  }
-};
 
 export default function ImageCategorizationModal({
   isOpen,
@@ -106,6 +54,7 @@ export default function ImageCategorizationModal({
   images = [],
   carId,
   clickedImageUrl = null, // Optional: URL of the image that was clicked
+  categorizedImages = [], // Categorized images from database
 }) {
   const [organizedImages, setOrganizedImages] = useState({
     all: [],
@@ -128,13 +77,35 @@ export default function ImageCategorizationModal({
   // Swiper Ref
   const swiperRef = useRef(null);
 
-  // Process images through detection API in queue
-  const processImagesQueue = async () => {
-    if (images.length === 0 || !carId) return;
+  // Process images using existing categorizedImages data from database
+  const processImagesFromDatabase = (categorizedImagesData) => {
+    if (!categorizedImagesData || categorizedImagesData.length === 0) {
+      // If no categorized data exists, create default structure with all images as exterior
+      const results = {
+        all: [],
+        interior: [],
+        exterior: [],
+        dashboard: [],
+        wheel: [],
+        engine: [],
+        documents: [],
+        keys: [],
+      };
 
-    setIsProcessing(true);
-    const queue = images.map((img, index) => ({ url: img, index }));
-    setProcessingStatus({ current: 0, total: queue.length });
+      images.forEach((img, index) => {
+        const imageData = {
+          url: img,
+          category: "exterior",
+          detected_label: "Unknown",
+          confidence: 0,
+          index: index,
+        };
+        results.all.push(imageData);
+        results.exterior.push(imageData);
+      });
+
+      return results;
+    }
 
     const results = {
       all: [],
@@ -147,100 +118,26 @@ export default function ImageCategorizationModal({
       keys: [],
     };
 
-    // Process images one by one
-    for (let i = 0; i < queue.length; i++) {
-      const item = queue[i];
-      setProcessingStatus({ current: i + 1, total: queue.length, imageIndex: i });
+    // Process categorized images from database
+    categorizedImagesData.forEach((imgData) => {
+      const category = normalizeCategory(imgData.category || "exterior");
 
-      try {
-        // Create FormData with image URL
-        const formData = new FormData();
-        formData.append("image_url", item.url);
+      const imageData = {
+        url: imgData.url,
+        category: category,
+        detected_label: imgData.detected_label || "Unknown",
+        confidence: imgData.confidence || 0,
+        index: imgData.index !== undefined ? imgData.index : 0,
+      };
 
-        // Call our Next.js API route which proxies to the detection API
-        const detectResponse = await fetch(API_BASE_URL, {
-          method: "POST",
-          body: formData,
-        });
+      // Add to all
+      results.all.push(imageData);
 
-        if (!detectResponse.ok) {
-          const errorText = await detectResponse.text();
-          console.error(`API Error for image ${i}:`, {
-            status: detectResponse.status,
-            statusText: detectResponse.statusText,
-            error: errorText,
-            url: item.url,
-          });
-          throw new Error(`HTTP error! status: ${detectResponse.status} - ${errorText}`);
-        }
-
-        let detectData;
-        try {
-          detectData = await detectResponse.json();
-        } catch (jsonError) {
-          const textResponse = await detectResponse.text();
-          console.error(`Failed to parse JSON response for image ${i + 1}:`, {
-            error: jsonError,
-            responseText: textResponse,
-          });
-          throw new Error(`Invalid JSON response: ${textResponse.substring(0, 100)}`);
-        }
-
-        console.log(`Image ${i + 1} detection response:`, {
-          success: detectData.success,
-          category: detectData.category,
-          detected_label: detectData.detected_label,
-          confidence: detectData.confidence,
-        });
-
-        // Check if response is successful
-        const isSuccess = detectData.success !== false && (detectData.success || detectData.category || detectData.detected_label);
-
-        if (isSuccess) {
-          const category = normalizeCategory(detectData.category || detectData.detected_label);
-          console.log(`Image ${i + 1} normalized category:`, category);
-
-          const imageData = {
-            url: item.url,
-            category: category,
-            detected_label: detectData.detected_label,
-            confidence: detectData.confidence,
-            index: item.index,
-          };
-
-          // Add to all
-          results.all.push(imageData);
-
-          // Add to specific category
-          if (results[category]) {
-            results[category].push(imageData);
-          }
-        } else {
-          console.warn(`Detection failed for image ${i + 1}:`, detectData);
-          // Add to 'all' even if detection fails
-          results.all.push({
-            url: item.url,
-            category: "exterior",
-            detected_label: detectData.detected_label || "Unknown",
-            confidence: detectData.confidence || 0,
-            index: item.index,
-          });
-        }
-      } catch (error) {
-        console.error(`Error processing image ${i + 1}:`, {
-          error: error.message,
-          url: item.url,
-        });
-        // Add to 'all' even if detection fails
-        results.all.push({
-          url: item.url,
-          category: "exterior",
-          detected_label: "Unknown",
-          confidence: 0,
-          index: item.index,
-        });
+      // Add to specific category
+      if (results[category]) {
+        results[category].push(imageData);
       }
-    }
+    });
 
     // Sort images by category order
     Object.keys(results).forEach((key) => {
@@ -252,7 +149,7 @@ export default function ImageCategorizationModal({
       });
     });
 
-    console.log("Final categorized results:", {
+    console.log("Loaded categorized images from database:", {
       totalImages: results.all.length,
       byCategory: Object.keys(results).reduce((acc, key) => {
         acc[key] = results[key].length;
@@ -260,15 +157,7 @@ export default function ImageCategorizationModal({
       }, {}),
     });
 
-    setOrganizedImages(results);
-    setProcessingStatus({});
-    setIsProcessing(false);
-
-    // Save results to cache
-    if (carId) {
-      const imagesHash = createImagesHash(images);
-      saveCachedData(carId, imagesHash, results);
-    }
+    return results;
   };
 
   // Handle clicked image after organizedImages is updated
@@ -300,68 +189,46 @@ export default function ImageCategorizationModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [organizedImages.all.length, clickedImageUrl, isProcessing]);
 
-  // Initialize and check cache before processing
+  // Initialize using categorizedImages from database
   useEffect(() => {
-    if (isOpen && images.length > 0 && carId) {
-      const initialCategories = {
-        all: [],
-        interior: [],
-        exterior: [],
-        dashboard: [],
-        wheel: [],
-        engine: [],
-        documents: [],
-        keys: [],
-      };
-
+    if (isOpen && images.length > 0) {
       setCurrentCategory("all");
       setSliderImages([]);
       setSliderIndex(0);
       setShowSlider(false);
       setZoomLevel(1);
+      setIsProcessing(false);
 
-      // Check cache first
-      const imagesHash = createImagesHash(images);
-      const cachedResults = loadCachedData(carId, imagesHash);
+      // Process images from database categorizedImages
+      const results = processImagesFromDatabase(categorizedImages);
+      setOrganizedImages(results);
 
-      if (cachedResults) {
-        // Use cached results
-        console.log("Using cached categorization results for car:", carId);
-        setOrganizedImages(cachedResults);
-        setIsProcessing(false);
+      // If a specific image was clicked, find its category and show it in slider
+      if (clickedImageUrl) {
+        const clickedImage = results.all.find(img => img.url === clickedImageUrl);
+        if (clickedImage) {
+          const category = clickedImage.category || "all";
+          const categoryImages = results[category] || [];
+          const index = categoryImages.findIndex(img => img.url === clickedImageUrl);
 
-        // If a specific image was clicked, find its category and show it in slider
-        if (clickedImageUrl) {
-          const clickedImage = cachedResults.all.find(img => img.url === clickedImageUrl);
-          if (clickedImage) {
-            const category = clickedImage.category || "all";
-            const categoryImages = cachedResults[category] || [];
-            const index = categoryImages.findIndex(img => img.url === clickedImageUrl);
-
-            if (index >= 0 && categoryImages.length > 0) {
-              setCurrentCategory(category);
-              setSliderImages(categoryImages);
-              setSliderIndex(index);
+          if (index >= 0 && categoryImages.length > 0) {
+            setCurrentCategory(category);
+            setSliderImages(categoryImages);
+            setSliderIndex(index);
+            setShowSlider(true);
+          } else {
+            // If not found in category, show in "all"
+            const allIndex = results.all.findIndex(img => img.url === clickedImageUrl);
+            if (allIndex >= 0) {
+              setCurrentCategory("all");
+              setSliderImages(results.all);
+              setSliderIndex(allIndex);
               setShowSlider(true);
             } else {
-              // If not found in category, show in "all"
-              const allIndex = cachedResults.all.findIndex(img => img.url === clickedImageUrl);
-              if (allIndex >= 0) {
-                setCurrentCategory("all");
-                setSliderImages(cachedResults.all);
-                setSliderIndex(allIndex);
-                setShowSlider(true);
-              } else {
-                setCurrentCategory(category);
-              }
+              setCurrentCategory(category);
             }
           }
         }
-      } else {
-        // No cache, process images
-        console.log("No cache found, processing images for car:", carId);
-        setOrganizedImages(initialCategories);
-        processImagesQueue();
       }
     } else if (!isOpen) {
       // Reset processing state when modal closes
@@ -369,7 +236,7 @@ export default function ImageCategorizationModal({
       setProcessingStatus({});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, carId, images.length, clickedImageUrl]);
+  }, [isOpen, images.length, clickedImageUrl, categorizedImages]);
 
   // Sync Swiper slide when sliderIndex changes (e.g. from category jump)
   useEffect(() => {

@@ -1025,6 +1025,7 @@ const Page = () => {
         images={images}
         carId={carId}
         clickedImageUrl={clickedImageUrl}
+        categorizedImages={car?.categorizedImages || []}
       />
       <PhoneModal />
     </>
