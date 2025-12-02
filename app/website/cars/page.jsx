@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, Suspense, useRef } from "react";
+import { useState, useEffect, Suspense, useRef, useCallback } from "react";
 import FilterSidebar from "../../../components/website/FilterSidebar";
 import FilterNavbar from "../../../components/website/FilterNavbar";
 import CarCard from "../../../components/website/CarCard";
@@ -7,7 +7,7 @@ import HeroFeaturedCarousel from "../../../components/website/HeroFeaturedCarous
 import Pagination from "../../../components/website/Pagination";
 import Image from "next/image";
 import { getAllCars, searchCars } from "../../../services/carService";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 const SLUG_TO_COUNTRY = {
@@ -90,16 +90,32 @@ const SLUG_TO_ORIGIN = {
 const CarsContent = () => {
   const { t } = useLanguage();
   const [view, setView] = useState("list");
-  const [cars, setCars] = useState([]);
-  const [allCars, setAllCars] = useState([]); // Store all cars for pagination
+
+  // Original state declarations commented out where replaced by functional logic
+  // const [cars, setCars] = useState([]);
+  // const [allCars, setAllCars] = useState([]); 
+
+  // Functional State
+  const [cars, setCars] = useState([]); // Displayed cars (paginated)
+  const [allCars, setAllCars] = useState([]); // All fetched cars (for client-side sort)
+  const [totalItems, setTotalItems] = useState(0);
+
   const [showMobileFilter, setShowMobileFilter] = useState(false);
   const [sortBy, setSortBy] = useState("best-match");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [viewMode, setViewMode] = useState("grid"); // Add view mode state
+  const [viewMode, setViewMode] = useState("grid");
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
+
+  // Filter State
+  const [activeFilters, setActiveFilters] = useState({});
+
+  const router = useRouter();
+  const pathname = usePathname();
+
   const searchParams = useSearchParams();
   const sortListRef = useRef(null);
 
@@ -186,6 +202,7 @@ const CarsContent = () => {
     window.addEventListener('ojest:viewMode', onViewMode);
     return () => window.removeEventListener('ojest:viewMode', onViewMode);
   }, []);
+
   // Control body scrolling based on filter visibility
   useEffect(() => {
     if (showMobileFilter) {
@@ -202,335 +219,234 @@ const CarsContent = () => {
     };
   }, [showMobileFilter]);
 
-  // Handle URL parameters and initial load
+  // FUNCTIONAL LOGIC: URL Params Initialization
   useEffect(() => {
-    const fetchCarsWithFilters = async () => {
-      setIsLoading(true);
-      setError(null);
+    const initialFilters = {};
+    const make = searchParams.get("make");
+    const model = searchParams.get("model");
+    const minPrice = searchParams.get("minPrice");
+    const maxPrice = searchParams.get("maxPrice");
+    const minYear = searchParams.get("minYear");
+    const maxYear = searchParams.get("maxYear");
+    const fuel = searchParams.get("fuel");
+    const transmission = searchParams.get("transmission");
+    const location = searchParams.get("location");
+    const origin = searchParams.get("origin");
+    const startYear = searchParams.get("startYear");
+    const endYear = searchParams.get("endYear");
+    const type = searchParams.get("bodyType");
+    const countryOfManufacturer = searchParams.get("krajProducenta");
 
-      try {
-        const searchQuery = searchParams.get("search");
-        const make = searchParams.get("make");
-        const model = searchParams.get("model");
-        const minPrice = searchParams.get("minPrice");
-        const maxPrice = searchParams.get("maxPrice");
-        const minYear = searchParams.get("minYear");
-        const maxYear = searchParams.get("maxYear");
-        const fuel = searchParams.get("fuel");
-        const transmission = searchParams.get("transmission");
-        const location = searchParams.get("location");
-        const origin = searchParams.get("origin");
-        const startYear = searchParams.get("startYear");
-        const endYear = searchParams.get("endYear");
-        const type = searchParams.get("type");
-        const countryOfManufacturer = searchParams.get("krajProducenta");
+    if (make) initialFilters.make = make;
+    if (model) initialFilters.model = model;
+    if (type) initialFilters.bodyType = type;
+    if (minPrice || searchParams.get("priceFrom")) initialFilters.priceFrom = minPrice || searchParams.get("priceFrom");
+    if (maxPrice || searchParams.get("priceTo")) initialFilters.priceTo = maxPrice || searchParams.get("priceTo");
+    if (minYear || startYear) initialFilters.yearFrom = minYear || startYear;
+    if (maxYear || endYear) initialFilters.yearTo = maxYear || endYear;
+    if (fuel) initialFilters.fuel = fuel;
+    if (transmission) initialFilters.transmission = transmission;
+    if (location) initialFilters.location = location;
 
-        let carsData;
-
-        if (
-          searchQuery ||
-          make ||
-          model ||
-          minPrice ||
-          maxPrice ||
-          minYear ||
-          maxYear ||
-          fuel ||
-          transmission ||
-          location ||
-          startYear ||
-          endYear ||
-          type ||
-          countryOfManufacturer
-        ) {
-          // Use search with filters - map to service interface
-          const searchParams_obj = {
-            make: make || undefined,
-            model: model || undefined,
-            yearFrom: minYear || startYear || undefined,
-            yearTo: maxYear || endYear || undefined,
-            transmission: transmission || undefined,
-            fuel: fuel || undefined,
-            location: location || undefined,
-            bodyType: type || undefined,
-            countryOfManufacturer: SLUG_TO_COUNTRY[countryOfManufacturer] || countryOfManufacturer || undefined,
-          };
-
-          // Remove undefined values
-          Object.keys(searchParams_obj).forEach((key) => {
-            if (searchParams_obj[key] === undefined) {
-              delete searchParams_obj[key];
-            }
-          });
-
-          carsData = await searchCars(searchParams_obj);
-        } else {
-          // Use getAllCars for initial load
-          carsData = await getAllCars();
-        }
-
-        // Apply frontend filter for origin (country of origin)
-        if (origin) {
-          const targetCountry = SLUG_TO_ORIGIN[origin] || origin;
-          carsData = (Array.isArray(carsData) ? carsData : []).filter((car) => {
-            return car?.country === targetCountry;
-          });
-        }
-
-        setAllCars(carsData);
-        setCurrentPage(1); // Reset to first page when data changes
-      } catch (err) {
-        console.error("Error fetching cars:", err);
-        setError("Failed to load cars. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCarsWithFilters();
-  }, [searchParams]);
-
-  // Handle sorting
-  const handleSort = (sortValue) => {
-    setSortBy(sortValue);
-
-    let sortedCars = [...cars];
-
-    switch (sortValue) {
-      case "lowest-price":
-        sortedCars.sort(
-          (a, b) =>
-            (a.financialInfo?.priceNetto || 0) -
-            (b.financialInfo?.priceNetto || 0)
-        );
-        break;
-      case "highest-price":
-        sortedCars.sort(
-          (a, b) =>
-            (b.financialInfo?.priceNetto || 0) -
-            (a.financialInfo?.priceNetto || 0)
-        );
-        break;
-      case "lowest-mileage":
-        sortedCars.sort((a, b) => {
-          const mileageA = parseInt(a.mileage?.replace(/[^\d]/g, "") || "0");
-          const mileageB = parseInt(b.mileage?.replace(/[^\d]/g, "") || "0");
-          return mileageA - mileageB;
-        });
-        break;
-      case "highest-mileage":
-        sortedCars.sort((a, b) => {
-          const mileageA = parseInt(a.mileage?.replace(/[^\d]/g, "") || "0");
-          const mileageB = parseInt(b.mileage?.replace(/[^\d]/g, "") || "0");
-          return mileageB - mileageA;
-        });
-        break;
-      case "newest-year":
-        sortedCars.sort((a, b) => (b.year || 0) - (a.year || 0));
-        break;
-      case "oldest-year":
-        sortedCars.sort((a, b) => (a.year || 0) - (b.year || 0));
-        break;
-      case "newest-listed":
-        sortedCars.sort(
-          (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
-        );
-        break;
-      case "oldest-listed":
-        sortedCars.sort(
-          (a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0)
-        );
-        break;
-      default:
-        // best-match - keep original order
-        break;
+    if (countryOfManufacturer) {
+      initialFilters.countryOfManufacturer = SLUG_TO_COUNTRY[countryOfManufacturer] || countryOfManufacturer;
     }
 
-    setAllCars(sortedCars);
-    setCurrentPage(1); // Reset to first page when sorting
-  };
+    if (origin) {
+      initialFilters.krajPochodzenia = SLUG_TO_ORIGIN[origin] || origin;
+    }
 
-  // Handle filter application
-  const handleApplyFilters = async (filters) => {
+    // Only update if we found params to avoid unnecessary re-renders
+    if (Object.keys(initialFilters).length > 0) {
+      setActiveFilters(prev => ({ ...prev, ...initialFilters }));
+    }
+  }, [searchParams]);
+
+  // FUNCTIONAL LOGIC: Data Fetching
+  // Replaces old fetchCarsWithFilters to support client-side pagination for speed
+  const fetchData = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // DEBUG: Log country filter
-      console.log("🔍 handleApplyFilters - krajProducenta:", filters.krajProducenta);
-      const mappedCountry = SLUG_TO_COUNTRY[filters.krajProducenta] || filters.krajProducenta;
-      console.log("🔍 handleApplyFilters - mapped country:", mappedCountry);
+      const queryFilters = { ...activeFilters };
 
-      // Map filter parameters to match the searchCars service interface
-      const searchParams_obj = {
-        make: filters.make || undefined,
-        model: filters.model || undefined,
-        yearFrom: filters.yearFrom || undefined,
-        yearTo: filters.yearTo || undefined,
-        bodyType: filters.bodyType || filters.type || undefined,
-        // Only pass condition to backend if it's the backend-supported values
-        condition:
-          filters.condition === "New" || filters.condition === "Used"
-            ? filters.condition
-            : undefined,
-        mileageMin: filters.minMileage
-          ? parseInt(filters.minMileage)
-          : undefined,
-        mileageMax: filters.maxMileage
-          ? parseInt(filters.maxMileage)
-          : undefined,
-        drivetrain: filters.drivetrain || undefined,
-        transmission: filters.transmission || undefined,
-        fuel: filters.fuel || undefined,
-        engine: filters.engine || undefined,
-        serviceHistory: filters.serviceHistory || undefined,
-        serviceHistory: filters.serviceHistory || undefined,
-        accidentHistory: filters.accidentHistory || undefined,
-        countryOfManufacturer: mappedCountry || undefined,
-        // Location params (if needed)
-        ...(filters.latitude && filters.longitude
-          ? {
-            latitude: filters.latitude,
-            longitude: filters.longitude,
-            maxDistance: filters.maxDistance,
-          }
-          : {}),
-      };
+      if (queryFilters.bodyType) {
+        queryFilters.type = queryFilters.bodyType;
+        delete queryFilters.bodyType;
+      }
 
-      // Remove undefined values
-      Object.keys(searchParams_obj).forEach((key) => {
-        if (searchParams_obj[key] === undefined) {
-          delete searchParams_obj[key];
-        }
+      // Fetch large batch for client-side pagination/sorting
+      // This makes the UI feel much faster for sorting
+      queryFilters.limit = 1000;
+      queryFilters.page = 1;
+
+      // Clean undefined values
+      Object.keys(queryFilters).forEach(key => {
+        if (queryFilters[key] === undefined || queryFilters[key] === "") delete queryFilters[key];
       });
 
-      let carsData = await searchCars(searchParams_obj);
+      // Use searchCars instead of getAllCars to handle filters at API level
+      let response = await searchCars(queryFilters);
 
-      // Apply frontend filter for origin (country of origin) from UI or URL
-      const originFromUI = filters.krajPochodzenia;
-      const originFromURL = searchParams.get("origin");
-      const origin = originFromUI || originFromURL;
-
-      if (origin) {
-        const targetCountry = SLUG_TO_ORIGIN[origin] || origin;
-        carsData = (Array.isArray(carsData) ? carsData : []).filter((car) => car?.country === targetCountry);
+      // Normalize response (handle array vs object {cars:[]})
+      let fetchedCars = [];
+      if (Array.isArray(response)) {
+        fetchedCars = response;
+      } else if (response?.cars && Array.isArray(response.cars)) {
+        fetchedCars = response.cars;
       }
 
-      // Ensure carsData is an array
-      if (!Array.isArray(carsData)) {
-        console.error("searchCars returned non-array data:", carsData);
-        carsData = [];
+      // Client-side filter for Origin (Country) if needed
+      // (Some backends might not support this field in search yet)
+      const originParam = activeFilters.krajPochodzenia;
+      if (originParam) {
+        fetchedCars = fetchedCars.filter(c => c?.country === originParam);
       }
 
-      // Apply frontend price filtering (support priceFrom/priceTo from FilterNavbar)
-      const priceMin =
-        filters.minPrice !== undefined && filters.minPrice !== ""
-          ? Number(filters.minPrice)
-          : filters.priceFrom !== undefined && filters.priceFrom !== ""
-            ? Number(filters.priceFrom)
-            : undefined;
-      const priceMax =
-        filters.maxPrice !== undefined && filters.maxPrice !== ""
-          ? Number(filters.maxPrice)
-          : filters.priceTo !== undefined && filters.priceTo !== ""
-            ? Number(filters.priceTo)
-            : undefined;
-
-      if (priceMin !== undefined || priceMax !== undefined) {
-        carsData = carsData.filter((car) => {
-          const price = Number(car.financialInfo?.priceNetto || 0);
-          const min = priceMin ?? 0;
-          const max = priceMax ?? Infinity;
+      // Client-side filter for Price (double check in case backend missed it)
+      if (activeFilters.priceFrom || activeFilters.priceTo) {
+        const min = activeFilters.priceFrom ? Number(activeFilters.priceFrom) : 0;
+        const max = activeFilters.priceTo ? Number(activeFilters.priceTo) : Infinity;
+        fetchedCars = fetchedCars.filter(c => {
+          const price = Number(c.financialInfo?.priceNetto || 0);
           return price >= min && price <= max;
         });
       }
 
-      // Apply frontend mileage filtering (supports minMileage/maxMileage from FilterNavbar)
-      const uiMileageMin =
-        filters.minMileage !== undefined && filters.minMileage !== ""
-          ? parseInt(filters.minMileage, 10)
-          : undefined;
-      const uiMileageMax =
-        filters.maxMileage !== undefined && filters.maxMileage !== ""
-          ? parseInt(filters.maxMileage, 10)
-          : undefined;
+      setAllCars(fetchedCars);
+      setTotalItems(fetchedCars.length);
 
-      if (uiMileageMin !== undefined || uiMileageMax !== undefined) {
-        carsData = carsData.filter((car) => {
-          // car.mileage may be a string like "120,000 km"; extract digits
-          const numeric = parseInt(String(car.mileage || "0").replace(/[^\d]/g, ""), 10) || 0;
-          const min = uiMileageMin ?? 0;
-          const max = uiMileageMax ?? Number.MAX_SAFE_INTEGER;
-          return numeric >= min && numeric <= max;
-        });
-      }
+      // Logic moved to useEffect below for setting 'cars' based on sort/page
 
-      // Apply frontend engine capacity filtering (supports engineCapacity ranges from FilterNavbar)
-      if (filters.engineCapacity) {
-        let engineMin = 0;
-        let engineMax = Number.MAX_SAFE_INTEGER;
-
-        switch (filters.engineCapacity) {
-          case "0-1000":
-            engineMin = 0;
-            engineMax = 1000;
-            break;
-          case "0-2000":
-            engineMin = 0;
-            engineMax = 2000;
-            break;
-          case "2000-3000":
-            engineMin = 2000;
-            engineMax = 3000;
-            break;
-          case "2900+":
-            engineMin = 2900;
-            engineMax = Number.MAX_SAFE_INTEGER;
-            break;
-          default:
-            engineMin = 0;
-            engineMax = Number.MAX_SAFE_INTEGER;
-        }
-
-        carsData = carsData.filter((car) => {
-          // car.engine may be a string like "1900", "1900 cm3" etc.; extract digits
-          const numeric = parseInt(String(car.engine || "0").replace(/[^\d]/g, ""), 10) || 0;
-          return numeric >= engineMin && numeric <= engineMax;
-        });
-      }
-
-      // Apply frontend filtering for other unsupported filters
-      if (filters.doors) {
-        carsData = carsData.filter((car) => car.doors === filters.doors);
-      }
-      if (filters.color) {
-        carsData = carsData.filter((car) => car.color === filters.color);
-      }
-      if (filters.horsepower) {
-        carsData = carsData.filter(
-          (car) => car.horsepower === filters.horsepower
-        );
-      }
-      if (filters.seats) {
-        carsData = carsData.filter((car) => car.seats === filters.seats);
-      }
-
-      // Apply frontend condition filtering for UI values (Excellent/Very Good/Good/Fair/Poor)
-      const overallValues = ["Excellent", "Very Good", "Good", "Fair", "Poor"];
-      if (overallValues.includes(filters.condition)) {
-        carsData = carsData.filter(
-          (car) => car?.carCondition?.overall === filters.condition
-        );
-      }
-
-      setAllCars(carsData);
-      setCurrentPage(1); // Reset to first page when filters change
     } catch (err) {
-      console.error("Error applying filters:", err);
-      setError("Failed to apply filters. Please try again.");
+      console.error("Error fetching cars:", err);
+      setError("Failed to load cars. Please try again.");
+      setAllCars([]);
+      setCars([]);
     } finally {
       setIsLoading(false);
     }
+  }, [activeFilters]);
+
+  // Trigger fetch when filters change
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+
+  // FUNCTIONAL LOGIC: Sorting & Pagination (Client Side)
+  useEffect(() => {
+    let data = [...allCars];
+
+    // 1. Sorting logic
+    if (sortBy !== 'best-match') {
+      data.sort((a, b) => {
+        switch (sortBy) {
+          case "lowest-price":
+            return (a.financialInfo?.priceNetto || 0) - (b.financialInfo?.priceNetto || 0);
+          case "highest-price":
+            return (b.financialInfo?.priceNetto || 0) - (a.financialInfo?.priceNetto || 0);
+          case "lowest-mileage":
+            const mA = parseInt(String(a.mileage || "0").replace(/[^\d]/g, ""), 10);
+            const mB = parseInt(String(b.mileage || "0").replace(/[^\d]/g, ""), 10);
+            return mA - mB;
+          case "highest-mileage":
+            const mHA = parseInt(String(a.mileage || "0").replace(/[^\d]/g, ""), 10);
+            const mHB = parseInt(String(b.mileage || "0").replace(/[^\d]/g, ""), 10);
+            return mHB - mHA;
+          case "newest-year":
+            return (b.year || 0) - (a.year || 0);
+          case "oldest-year":
+            return (a.year || 0) - (b.year || 0);
+          case "newest-listed":
+            return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+          case "oldest-listed":
+            return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+          default:
+            return 0;
+        }
+      });
+    }
+
+    // 2. Pagination Logic
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedCars = data.slice(startIndex, endIndex);
+
+    setCars(paginatedCars);
+  }, [allCars, sortBy, currentPage, itemsPerPage]);
+
+
+  // OLD Logic
+  /* 
+  const handleSort = (sortValue) => {
+    setSortBy(sortValue);
+    // Old logic tried to sort 'cars' directly, which broke when fetching new data
+    // let sortedCars = [...cars]; 
+    // ... switch statement ...
+    // setAllCars(sortedCars);
+    // setCurrentPage(1); 
+  };
+
+  const handleApplyFilters = async (filters) => {
+    // Old logic called API directly here, causing duped logic with useEffect
+    // ... setIsLoading(true); ... try { ... } ...
+  };
+  */
+
+  // NEW Logic Handlers
+
+  const handleSort = (sortValue) => {
+    setSortBy(sortValue);
+    setCurrentPage(1); // Reset to first page on sort
+  };
+
+  const handleApplyFilters = (newFilters) => {
+    // Map incoming filter structure to activeFilters state
+    const mappedFilters = {
+      ...activeFilters,
+      make: newFilters.make,
+      model: newFilters.model,
+      bodyType: newFilters.bodyType || newFilters.type,
+      yearFrom: newFilters.yearFrom,
+      yearTo: newFilters.yearTo,
+      condition: newFilters.condition === "New" || newFilters.condition === "Used" ? newFilters.condition : undefined,
+      minMileage: newFilters.minMileage ? parseInt(newFilters.minMileage) : undefined,
+      maxMileage: newFilters.maxMileage ? parseInt(newFilters.maxMileage) : undefined,
+      drivetrain: newFilters.drivetrain,
+      transmission: newFilters.transmission,
+      fuel: newFilters.fuel,
+      engine: newFilters.engine,
+      serviceHistory: newFilters.serviceHistory,
+      accidentHistory: newFilters.accidentHistory,
+      krajPochodzenia: newFilters.krajPochodzenia,
+      priceFrom: newFilters.priceFrom,
+      priceTo: newFilters.priceTo,
+      engineCapacity: newFilters.engineCapacity,
+      // Handle special country mappings
+      countryOfManufacturer: SLUG_TO_COUNTRY[newFilters.krajProducenta] || newFilters.krajProducenta,
+    };
+
+    // Remove empty keys
+    Object.keys(mappedFilters).forEach(key => {
+      if (mappedFilters[key] === undefined || mappedFilters[key] === "") delete mappedFilters[key];
+    });
+
+    const params = new URLSearchParams();
+    Object.entries(mappedFilters).forEach(([key, value]) => {
+      if (value) {
+        params.set(key, value)
+      }
+    })
+
+    //Update the URL without reloading the page
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+
+
+    setActiveFilters(mappedFilters);
+    setCurrentPage(1); // Reset page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Pagination handlers
@@ -544,16 +460,6 @@ const CarsContent = () => {
     setItemsPerPage(newItemsPerPage);
     setCurrentPage(1); // Reset to first page when changing items per page
   };
-
-  // Calculate paginated cars
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedCars = allCars.slice(startIndex, endIndex);
-
-  // Update cars state when pagination changes
-  useEffect(() => {
-    setCars(paginatedCars);
-  }, [allCars, currentPage, itemsPerPage]);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-800">
@@ -733,8 +639,8 @@ const CarsContent = () => {
                 </button>
               </div>
             ) : cars.length > 0 ? (
-              cars.map((car) => (
-                <CarCard key={car._id} car={car} viewMode={viewMode} />
+              cars.map((car, index) => (
+                <CarCard key={`${index} ${car._id}`} car={car} viewMode={viewMode} />
               ))
             ) : (
               <div className="text-center py-12">
@@ -749,10 +655,10 @@ const CarsContent = () => {
           </div>
 
           {/* Pagination */}
-          {!isLoading && !error && allCars.length > 0 && (
+          {!isLoading && !error && totalItems > 0 && (
             <Pagination
               currentPage={currentPage}
-              totalItems={allCars.length}
+              totalItems={totalItems}
               itemsPerPage={itemsPerPage}
               onPageChange={handlePageChange}
               onItemsPerPageChange={handleItemsPerPageChange}

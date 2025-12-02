@@ -270,8 +270,8 @@ export default function FilterSidebar({
                 disabled={loading}
               >
                 <option value="">All</option>
-                {getMakes().map((make) => (
-                  <option key={make} value={make}>
+                {getMakes().map((make, index) => (
+                  <option key={`${index}, ${make}`} value={make}>
                     {make}
                   </option>
                 ))}
@@ -301,8 +301,8 @@ export default function FilterSidebar({
                 disabled={loading || !filters.make}
               >
                 <option value="">All</option>
-                {filters.make && getModelsForMake(filters.make).map((model) => (
-                  <option key={model} value={model}>
+                {filters.make && getModelsForMake(filters.make).map((model, index) => (
+                  <option key={`${index}, ${model}`} value={model}>
                     {model}
                   </option>
                 ))}
