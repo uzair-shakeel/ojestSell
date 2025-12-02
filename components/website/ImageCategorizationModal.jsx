@@ -124,7 +124,7 @@ export default function ImageCategorizationModal({
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingStatus, setProcessingStatus] = useState({});
-  
+
   // Swiper Ref
   const swiperRef = useRef(null);
 
@@ -492,7 +492,19 @@ export default function ImageCategorizationModal({
   const handleZoom = () => {
     if (!showSlider) return;
     if (swiperRef.current && swiperRef.current.swiper) {
-      swiperRef.current.swiper.zoom.in();
+      const swiper = swiperRef.current.swiper;
+      const currentScale = swiper.zoom.scale;
+
+
+      if (currentScale < 1.5) {
+        swiper.zoom.in(2);
+      }
+      else if (currentScale < 2.5) {
+        swiper.zoom.in(3);
+      }
+      else {
+        swiper.zoom.out();
+      }
     }
   };
 
