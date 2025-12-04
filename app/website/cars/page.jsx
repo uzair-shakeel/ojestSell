@@ -374,7 +374,7 @@ const CarsContent = () => {
   useEffect(() => {
     let data = [...allCars];
 
-    // 1. Sorting logic
+    // Sorting logic
     if (sortBy !== 'best-match') {
       data.sort((a, b) => {
         switch (sortBy) {
@@ -404,7 +404,7 @@ const CarsContent = () => {
       });
     }
 
-    // 2. Pagination Logic
+    // Pagination Logic
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const paginatedCars = data.slice(startIndex, endIndex);
