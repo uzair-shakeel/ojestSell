@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 
 import { useMakesModels } from "../../hooks/useMakesModels";
 import { createPortal } from "react-dom";
+import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 const COUNTRY_OPTIONS = [
   { value: "albania", label: "Albania" },
@@ -108,12 +109,14 @@ export default function FilterNavbar({ onApplyFilters }) {
   const searchParams = useSearchParams();
 
   const [showMoreFilters, setShowMoreFilters] = useState(false);
+  const [isDesktopExpanded, setIsDesktopExpanded] = useState(false);
   const [mobileViewMode, setMobileViewMode] = useState('grid');
   const [isSticky, setIsSticky] = useState(false);
   const [navbarHeight, setNavbarHeight] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
   const dropdownRef = useRef(null);
   const filterRef = useRef(null);
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -122,34 +125,43 @@ export default function FilterNavbar({ onApplyFilters }) {
   useEffect(() => {
     if (!searchParams) return;
 
-    const qpMake = searchParams.get("make");
-    const qpModel = searchParams.get("model");
-    const qpStartYear = searchParams.get("startYear");
-    const qpEndYear = searchParams.get("endYear");
-    const qpType = searchParams.get("type");
-    const qpOrigin = searchParams.get("origin");
+    // Helper to get param or default to empty string
+    const getParam = (key) => searchParams.get(key) || "";
 
-    // If there are no relevant query params, do nothing
-    if (!qpMake && !qpModel && !qpStartYear && !qpEndYear && !qpType && !qpOrigin) {
-      return;
-    }
+    const newFilters = {
+      location: getParam("location"),
+      distance: getParam("maxDistance"), // URL usually uses maxDistance
+      make: getParam("make"),
+      model: getParam("model"),
+      bodyType: getParam("bodyType") || getParam("type"), // Handle both
+      yearFrom: getParam("yearFrom") || getParam("startYear") || getParam("minYear"),
+      yearTo: getParam("yearTo") || getParam("endYear") || getParam("maxYear"),
+      stan: getParam("stan") || getParam("condition"),
+      mileage: getParam("mileageRange") || "", // We store the combined range string here if available
+      drivetrain: getParam("drivetrain"),
+      transmission: getParam("transmission"),
+      fuel: getParam("fuel"),
+      engineCapacity: getParam("engineCapacityRange") || "",
+      color: getParam("color"),
+      krajProducenta: getParam("krajProducenta") || getParam("countryOfManufacturer"),
+      krajPochodzenia: getParam("krajPochodzenia") || getParam("origin"),
+      serviceHistory: getParam("serviceHistory"),
+      accidentHistory: getParam("accidentHistory"),
+      priceFrom: getParam("priceFrom") || getParam("minPrice"),
+      priceTo: getParam("priceTo") || getParam("maxPrice"),
+    };
 
     setFilters((prev) => {
-      const next = {
-        ...prev,
-        make: qpMake || prev.make,
-        model: qpModel || prev.model,
-        yearFrom: qpStartYear || prev.yearFrom,
-        yearTo: qpEndYear || prev.yearTo,
-        bodyType: qpType || prev.bodyType,
-        krajPochodzenia: qpOrigin || prev.krajPochodzenia,
-      };
-
-      onApplyFilters(next);
-      return next;
+      // Only update if something changed to avoid loops
+      if (JSON.stringify(prev) !== JSON.stringify(newFilters)) {
+        // We don't call onApplyFilters here to avoid double-fetching on initial load,
+        // as the Page component also reads the URL.
+        return { ...prev, ...newFilters };
+      }
+      return prev;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchParams]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -272,6 +284,7 @@ export default function FilterNavbar({ onApplyFilters }) {
     }
   }, [isSticky]);
 
+  // Helper functions for display text (optional for UI, logic preserved)
   const getYearDisplayText = () => {
     if (filters.yearFrom && filters.yearTo) {
       return `${filters.yearFrom} - ${filters.yearTo}`;
@@ -281,32 +294,6 @@ export default function FilterNavbar({ onApplyFilters }) {
     return "Rok";
   };
 
-  const getMileageDisplayText = () => {
-    if (filters.mileage) {
-      const mileageOptions = {
-        "0": "0 km",
-        "0-30000": "do 30 000 km",
-        "30000-50000": "od 30 000 km do 50 000 km",
-        "50000-100000": "od 50 000 km do 100 000 km",
-        "100000+": "powyżej 100 000 km",
-        "100000-200000": "od 100 000 km do 200 000 km",
-        "200000+": "powyżej 200 000 km"
-      };
-      return mileageOptions[filters.mileage] || "Przebieg";
-    }
-    return "Przebieg";
-  };
-
-  const getPriceDisplayText = () => {
-    if (filters.priceFrom && filters.priceTo) {
-      return `${filters.priceFrom} - ${filters.priceTo}`;
-    } else if (filters.priceFrom) {
-      return `Od ${filters.priceFrom}`;
-    } else if (filters.priceTo) {
-      return `Do ${filters.priceTo}`;
-    }
-    return "Cena";
-  };
   return (
     <>
       <div
@@ -331,7 +318,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                   aria-label="Grid view"
                 >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                   </svg>
                 </button>
                 <button
@@ -594,6 +581,114 @@ export default function FilterNavbar({ onApplyFilters }) {
                 </div>
               </div>
 
+              {/* Collapsible Section: Third and Fourth Lines */}
+              {isDesktopExpanded && (
+                <>
+                  {/* Third Row: Mileage, Fuel, Transmission, Engine Capacity */}
+                  <div className="flex items-center justify-between w-full gap-1 overflow-visible relative">
+
+                    {/* Mileage (Przebieg) */}
+                    <div className="relative flex-1">
+                      <select name="mileage" value={filters.mileage} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
+                        <option value="">Przebieg</option>
+                        <option value="0">0 km</option>
+                        <option value="0-30000">do 30 000 km</option>
+                        <option value="30000-50000">od 30 000 km do 50 000 km</option>
+                        <option value="50000-100000">od 50 000 km do 100 000 km</option>
+                        <option value="100000+">powyżej 100 000 km</option>
+                        <option value="100000-200000">od 100 000 km do 200 000 km</option>
+                        <option value="200000+">powyżej 200 000 km</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                        <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                      </div>
+                    </div>
+
+                    {/* Fuel (Typ Paliwa) */}
+                    <div className="relative flex-1">
+                      <select name="fuel" value={filters.fuel} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
+                        <option value="">Typ Paliwa</option>
+                        <option value="Benzyna">Benzyna</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="Elektryk">Elektryk</option>
+                        <option value="Hybryda">Hybryda</option>
+                        <option value="LPG">LPG</option>
+                        <option value="Wodór">Wodór</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                        <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                      </div>
+                    </div>
+
+                    {/* Transmission (Skrzynia Biegów) */}
+                    <div className="relative flex-1">
+                      <select name="transmission" value={filters.transmission} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
+                        <option value="">Skrzynia Biegów</option>
+                        <option value="Automatic">Automat</option>
+                        <option value="Manual">Manual</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                        <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                      </div>
+                    </div>
+
+                    {/* Engine Capacity (Pojemność) */}
+                    <div className="relative flex-1">
+                      <select name="engineCapacity" value={filters.engineCapacity} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
+                        <option value="">Pojemność</option>
+                        <option value="0-1000">do 1000 cm³</option>
+                        <option value="0-2000">do 2000 cm³</option>
+                        <option value="2000-3000">od 2000 cm³ do 3000 cm³</option>
+                        <option value="2900+">powyżej 2900 cm³</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                        <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Fourth Row: Drivetrain, Condition, Price From, Price To */}
+                  <div className="flex items-center justify-between w-full gap-1 overflow-visible relative">
+
+                    {/* Drivetrain (Napęd) */}
+                    <div className="relative flex-1">
+                      <select name="drivetrain" value={filters.drivetrain} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
+                        <option value="">Napęd</option>
+                        <option value="Przód">Przód</option>
+                        <option value="Tył">Tył</option>
+                        <option value="4x4/AWD">4x4/AWD</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                        <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                      </div>
+                    </div>
+
+                    {/* Condition (Stan) */}
+                    <div className="relative flex-1">
+                      <select name="stan" value={filters.stan} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
+                        <option value="">Stan</option>
+                        <option value="Demo">Demo</option>
+                        <option value="New">Nowy</option>
+                        <option value="Used">Używany</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                        <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                      </div>
+                    </div>
+
+                    {/* Price From (Cena od) */}
+                    <div className="relative flex-1">
+                      <input type="number" name="priceFrom" value={filters.priceFrom} onChange={handleInputChange} placeholder="Cena od" className="px-2 py-1.5 text-sm lg:px-4 lg:py-3 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 w-full" />
+                    </div>
+
+                    {/* Price To (Cena do) */}
+                    <div className="relative flex-1">
+                      <input type="number" name="priceTo" value={filters.priceTo} onChange={handleInputChange} placeholder="Cena do" className="px-2 py-1.5 text-sm lg:px-4 lg:py-3 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 w-full" />
+                    </div>
+                  </div>
+                </>
+              )}
+
               {/* Reset + Show More buttons (hidden when expanded) */}
               {!showMoreFilters && (
                 <div className="hidden md:flex items-center justify-center w-full gap-1">
@@ -616,6 +711,33 @@ export default function FilterNavbar({ onApplyFilters }) {
                   </button>
                 </div>
               )}
+
+              {/* Reset + Show More/Less buttons (Visible always on Desktop) */}
+              <div className="hidden md:flex w-full justify-end items-end">
+                <button
+                  onClick={() => setIsDesktopExpanded(!isDesktopExpanded)}
+                  aria-expanded={isDesktopExpanded}
+                  aria-label="Toggle filters"
+                  className="
+      group flex items-center gap-2 text-base font-medium
+      focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500
+      transition-all hover:text-blue-500
+    "
+                >
+                  <span>
+                    {isDesktopExpanded ? "Mniej filtrów" : "Więcej filtrów"}
+                  </span>
+
+                  <span className="transition-transform duration-300 group-hover:text-blue-500">
+                    {isDesktopExpanded ? (
+                      <MdKeyboardArrowUp className="w-5 h-5" />
+                    ) : (
+                      <MdKeyboardArrowDown className="w-5 h-5" />
+                    )}
+                  </span>
+                </button>
+              </div>
+
             </div>
 
             {/* Mobile Layout: Single row with Make, Model, Show More + View Toggle */}
