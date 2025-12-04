@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import { FaMapMarkerAlt, FaPhoneAlt, FaGlobe, FaInstagram, FaFacebook, FaCar, FaCalendar, FaGasPump, FaCog } from "react-icons/fa";
@@ -103,7 +103,7 @@ function ProfileContent({ sellerId }) {
                     <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
                     <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
 
-                    <div className="relative z-10 flex  items-start md:items-center gap-6">
+                    <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-6">
                         <motion.div whileHover={{ scale: 1.05, rotate: 5 }} transition={{ type: "spring", stiffness: 300 }} className="w-28 h-28 rounded-full overflow-hidden bg-white shadow-2xl flex-shrink-0 ring-4 ring-white/50">
                             <Image src={formatImageUrl(user?.image || user?.profilePicture)} alt={displayName} width={112} height={112} className="object-cover w-full h-full" />
                         </motion.div>
@@ -125,7 +125,7 @@ function ProfileContent({ sellerId }) {
                             {uniqueBrands.length > 0 && (
                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="flex flex-wrap gap-2 mt-4">
                                     {uniqueBrands.map((brand) => (
-                                        <span key={brand} className="hidden md:block bg-white/10 hover:bg-white/20 transition-colors px-3 py-1 rounded-full text-xs font-medium text-blue-50 border border-white/10">
+                                        <span key={brand} className="bg-white/10 hover:bg-white/20 transition-colors px-3 py-1 rounded-full text-xs font-medium text-blue-50 border border-white/10">
                                             {brand}
                                         </span>
                                     ))}
@@ -133,16 +133,6 @@ function ProfileContent({ sellerId }) {
                             )}
                         </div>
                     </div>
-
-                    {uniqueBrands.length > 0 && (
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="flex flex-wrap gap-2 mt-4">
-                            {uniqueBrands.map((brand) => (
-                                <span key={brand} className=" md:hidden bg-white/10 hover:bg-white/20 transition-colors px-3 py-1 rounded-full text-xs font-medium text-blue-50 border border-white/10">
-                                    {brand}
-                                </span>
-                            ))}
-                        </motion.div>
-                    )}
                 </motion.div>
 
                 {/* Tabs */}
@@ -246,10 +236,18 @@ function ProfileContent({ sellerId }) {
     );
 }
 
-export default function ProfilePage({ params }) {
-    const unwrappedParams = React.use(params);
+function ProfileDataWrapper({ params }) {
+    const unwrappedParams = params;
     const searchParams = useSearchParams();
     const sellerId = unwrappedParams?.profile || unwrappedParams?.id || searchParams.get("id");
 
     return <ProfileContent sellerId={sellerId} />;
+}
+
+export default function ProfilePage({ params }) {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex justify-center items-center"><div className="w-12 h-12 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin" /></div>}>
+            <ProfileDataWrapper params={params} />
+        </Suspense>
+    );
 }
