@@ -316,7 +316,7 @@ export default function MultiStepForm() {
           // Coerce non-file values to string for FormData
           const value =
             typeof carData[key] === "number" ||
-            typeof carData[key] === "boolean"
+              typeof carData[key] === "boolean"
               ? String(carData[key])
               : (carData[key] as any) ?? "";
           formDataToSend.append(key, value);
@@ -357,7 +357,7 @@ export default function MultiStepForm() {
             },
           })
         );
-      } catch {}
+      } catch { }
       setShowSuccessModal(true);
     } catch (err) {
       setError(err.message || "Failed to create car. Please try again.");
@@ -383,6 +383,7 @@ export default function MultiStepForm() {
               nextStep={nextStep}
               updateFormData={updateFormData}
               formData={formData}
+              makesModelsData={makesModelsData}
             />
           )}
           {step === 2 && (

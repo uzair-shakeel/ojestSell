@@ -20,8 +20,6 @@ export default function StepTwo({
   const { getToken } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [localData, setLocalData] = useState({
-    make: formData.make || "",
-    model: formData.model || "",
     trim: formData.trim || "",
     type: formData.type || "",
     year: formData.year || "",
@@ -38,7 +36,6 @@ export default function StepTwo({
     country: formData.country || "",
   });
 
-  const [models, setModels] = useState<string[]>([]); // State for car models
   const currentYear = new Date().getFullYear();
   const startYear = 1900;
   const years = Array.from(
@@ -141,37 +138,10 @@ export default function StepTwo({
   const colorSelectedValue = colors.includes(localData.color)
     ? localData.color
     : localData.color
-    ? "__OTHER__"
-    : "";
-
-  // Get makes from the hook data
-  const makes = makesModelsData?.getMakes() || [];
-
-  // Update models when a make is selected
-  useEffect(() => {
-    if (localData.make && makesModelsData) {
-      let modelsList = makesModelsData.getModelsForMake(localData.make) || [];
-
-      // If we have a model from VIN lookup that's not in the list, add it
-      if (localData.model && !modelsList.includes(localData.model)) {
-        modelsList = [...modelsList, localData.model];
-      }
-
-      setModels(modelsList);
-    } else {
-      setModels([]); // Reset models if no make is selected
-    }
-  }, [localData.make, localData.model, makesModelsData]);
+      ? "__OTHER__"
+      : "";
 
   const handleNext = () => {
-    if (!localData.make) {
-      alert("Make is required.");
-      return;
-    }
-    if (!localData.model) {
-      alert("Model is required.");
-      return;
-    }
     if (!localData.type) {
       alert("Type is required.");
       return;
@@ -194,11 +164,9 @@ export default function StepTwo({
       const carDetails = await getCarDetailsByVin(localData.vin, getToken);
       console.log("VIN lookup response:", carDetails);
 
-      // Create updated data object with all the fetched details
+      // Create updated data object with all the fetched details (excluding make/model as they're in Step 1)
       const updatedData = {
         ...localData,
-        make: carDetails.make || localData.make,
-        model: carDetails.model || localData.model,
         year: carDetails.year || localData.year,
         engine: carDetails.engine || localData.engine,
         fuel: carDetails.fuel || localData.fuel,
@@ -601,46 +569,6 @@ export default function StepTwo({
     <div className="bg-white rounded-lg">
       <h2 className="text-xl font-bold mb-4">Krok 3: Dane Auta</h2>
       <div className="grid grid-cols-2 gap-4">
-        {/* Make */}
-        <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Marka</label>
-          <select
-            className="border p-3 w-full rounded h-12"
-            value={localData.make}
-            onChange={(e) =>
-              setLocalData({ ...localData, make: e.target.value, model: "" })
-            }
-            disabled={makesModelsData?.loading}
-          >
-            <option value="">Wybierz Marka</option>
-            {makes.map((make, index) => (
-              <option key={index} value={make}>
-                {make}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Model */}
-        <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Model</label>
-          <select
-            className="border p-3 w-full rounded h-12"
-            value={localData.model}
-            onChange={(e) =>
-              setLocalData({ ...localData, model: e.target.value })
-            }
-            disabled={makesModelsData?.loading || !localData.make}
-          >
-            <option value="">Wybierz Model</option>
-            {models.map((model, index) => (
-              <option key={index} value={model}>
-                {model}
-              </option>
-            ))}
-          </select>
-        </div>
-
         {/* Trim */}
         <div className="col-span-2 md:col-span-1">
           <label className="block text-gray-700 mb-1">Wersja</label>
@@ -941,6 +869,6 @@ export default function StepTwo({
           Następna
         </button>
       </div>
-    </div>
+    </div >
   );
 }

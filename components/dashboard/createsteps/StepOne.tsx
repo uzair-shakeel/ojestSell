@@ -11,7 +11,7 @@ import {
 } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 
-export default function StepOne({ nextStep, updateFormData, formData }) {
+export default function StepOne({ nextStep, updateFormData, formData, makesModelsData }) {
   const router = useRouter();
   const { getToken } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -22,6 +22,8 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
     description: formData.description || "",
     images: formData.images || [],
     vin: formData.vin || "",
+    make: formData.make || "",
+    model: formData.model || "",
     location: formData.location || {
       type: "Point",
       coordinates: [51.5074, -0.1278], // Default to London
@@ -31,6 +33,28 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
   // Drag & drop reordering state
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+  // State for car models
+  const [models, setModels] = useState<string[]>([]);
+
+  // Get makes from the hook data
+  const makes = makesModelsData?.getMakes() || [];
+
+  // Update models when a make is selected
+  useEffect(() => {
+    if (localData.make && makesModelsData) {
+      let modelsList = makesModelsData.getModelsForMake(localData.make) || [];
+
+      // If we have a model from VIN lookup that's not in the list, add it
+      if (localData.model && !modelsList.includes(localData.model)) {
+        modelsList = [...modelsList, localData.model];
+      }
+
+      setModels(modelsList);
+    } else {
+      setModels([]); // Reset models if no make is selected
+    }
+  }, [localData.make, localData.model, makesModelsData]);
 
   // Check for edited images when component mounts or when returning from photo enhancer
   useEffect(() => {
@@ -254,8 +278,15 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
             : carDetails.driveType,
         engine: carDetails.engine,
         horsepower: carDetails.horsepower,
-        country: carDetails.country,
       });
+
+      // Also update local state with make and model
+      setLocalData((prev) => ({
+        ...prev,
+        vin: carDetails.vin,
+        make: carDetails.make,
+        model: carDetails.model
+      }));
 
       // Show success message
       alert(
@@ -295,6 +326,14 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
     }
     if (!localData.description.trim()) {
       alert("Opis jest wymagany.");
+      return;
+    }
+    if (!localData.make) {
+      alert("Marka jest wymagana.");
+      return;
+    }
+    if (!localData.model) {
+      alert("Model jest wymagany.");
       return;
     }
     updateFormData({
@@ -381,7 +420,45 @@ export default function StepOne({ nextStep, updateFormData, formData }) {
           </div>
         </div>
 
+        {/* Make */}
+        <div className="col-span-2 md:col-span-1">
+          <label className="block text-gray-700 mb-1">Marka</label>
+          <select
+            className="border p-3 w-full rounded h-12"
+            value={localData.make}
+            onChange={(e) =>
+              setLocalData({ ...localData, make: e.target.value, model: "" })
+            }
+            disabled={makesModelsData?.loading}
+          >
+            <option value="">Wybierz Marka</option>
+            {makes.map((make, index) => (
+              <option key={index} value={make}>
+                {make}
+              </option>
+            ))}
+          </select>
+        </div>
 
+        {/* Model */}
+        <div className="col-span-2 md:col-span-1">
+          <label className="block text-gray-700 mb-1">Model</label>
+          <select
+            className="border p-3 w-full rounded h-12"
+            value={localData.model}
+            onChange={(e) =>
+              setLocalData({ ...localData, model: e.target.value })
+            }
+            disabled={makesModelsData?.loading || !localData.make}
+          >
+            <option value="">Wybierz Model</option>
+            {models.map((model, index) => (
+              <option key={index} value={model}>
+                {model}
+              </option>
+            ))}
+          </select>
+        </div>
 
         <div className="col-span-2">
           <label className="block text-gray-700 mb-1">Opis</label>
