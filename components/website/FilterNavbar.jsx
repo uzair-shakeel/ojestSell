@@ -130,14 +130,14 @@ export default function FilterNavbar({ onApplyFilters }) {
 
     const newFilters = {
       location: getParam("location"),
-      distance: getParam("maxDistance"), // URL usually uses maxDistance
+      distance: getParam("maxDistance"),
       make: getParam("make"),
       model: getParam("model"),
       bodyType: getParam("bodyType") || getParam("type"), // Handle both
       yearFrom: getParam("yearFrom") || getParam("startYear") || getParam("minYear"),
       yearTo: getParam("yearTo") || getParam("endYear") || getParam("maxYear"),
       stan: getParam("stan") || getParam("condition"),
-      mileage: getParam("mileageRange") || "", // We store the combined range string here if available
+      mileage: getParam("mileageRange") || "",
       drivetrain: getParam("drivetrain"),
       transmission: getParam("transmission"),
       fuel: getParam("fuel"),
@@ -154,13 +154,10 @@ export default function FilterNavbar({ onApplyFilters }) {
     setFilters((prev) => {
       // Only update if something changed to avoid loops
       if (JSON.stringify(prev) !== JSON.stringify(newFilters)) {
-        // We don't call onApplyFilters here to avoid double-fetching on initial load,
-        // as the Page component also reads the URL.
         return { ...prev, ...newFilters };
       }
       return prev;
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   const handleInputChange = (e) => {
@@ -223,7 +220,7 @@ export default function FilterNavbar({ onApplyFilters }) {
     let ticking = false;
     let lastScrollY = 0;
     let isStickyState = false;
-    const threshold = 10; // Increased threshold for more stability
+    const threshold = 10;
 
     const update = () => {
       ticking = false;
@@ -246,11 +243,8 @@ export default function FilterNavbar({ onApplyFilters }) {
 
       if (filterRef.current && isInitialized) {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-        // Stick when scrolled past original position, unstick when back to original position
         const shouldStick = scrollTop > originalTop + threshold;
 
-        // Only update state if it actually changed to prevent blinking
         if (shouldStick !== isStickyState) {
           setIsSticky(shouldStick);
           isStickyState = shouldStick;
@@ -278,21 +272,10 @@ export default function FilterNavbar({ onApplyFilters }) {
   // Update navbar height when sticky state changes
   useEffect(() => {
     if (filterRef.current && !isSticky) {
-      // Measure height when returning to normal position
       const currentHeight = filterRef.current.offsetHeight;
       setNavbarHeight(currentHeight);
     }
   }, [isSticky]);
-
-  // Helper functions for display text (optional for UI, logic preserved)
-  const getYearDisplayText = () => {
-    if (filters.yearFrom && filters.yearTo) {
-      return `${filters.yearFrom} - ${filters.yearTo}`;
-    } else if (filters.yearFrom) {
-      return `From ${filters.yearFrom}`;
-    }
-    return "Rok";
-  };
 
   return (
     <>
@@ -318,7 +301,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                   aria-label="Grid view"
                 >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                   </svg>
                 </button>
                 <button
@@ -328,7 +311,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                   aria-label="List view"
                 >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+                    <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
                   </svg>
                 </button>
               </div>

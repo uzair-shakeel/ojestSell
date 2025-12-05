@@ -2,11 +2,8 @@
 
 import { useState } from "react";
 import { cn } from "../../lib/utils";
-import { RotateCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMakesModels } from "../../hooks/useMakesModels";
-
-// Car makes and models are now loaded from the JSON file via useMakesModels hook
 
 // Car types
 const CAR_TYPES = [
@@ -37,6 +34,8 @@ const YEARS = Array.from({ length: 30 }, (_, i) =>
 export function FilterSearch() {
   const router = useRouter();
   const { getMakes, getModelsForMake, loading } = useMakesModels();
+  
+  // State
   const [make, setMake] = useState("");
   const [model, setModel] = useState("");
   const [type, setType] = useState("");
@@ -47,23 +46,59 @@ export function FilterSearch() {
   const availableModels = make ? getModelsForMake(make) : [];
 
   const handleSearch = () => {
-    console.log("Searching with params:", {
-      make,
-      model,
-      type,
-      startYear,
-      endYear,
-    });
+    const params = new URLSearchParams();
 
-    router.push(
-      `/website/cars?make=${make}&model=${model}&type=${type}&startYear=${startYear}&endYear=${endYear}`
-    );
-    // TODO: Implement actual search functionality
+    if (make) params.set("make", make);
+    if (model) params.set("model", model);
+    
+    // Map "type" to "bodyType" for the receiving page
+    if (type && type !== "Wszystkie") params.set("bodyType", type);
+    
+    // Map years to standard API keys
+    if (startYear) params.set("yearFrom", startYear);
+    if (endYear) params.set("yearTo", endYear);
+
+    // Navigate
+    router.push(`/website/cars?${params.toString()}`);
   };
 
-  const validateEndDate = (endDate) => {
-    if (startYear && endDate < startYear) {
-      setEndYear("");
+  const handleMakeChange = (e) => {
+    setMake(e.target.value);
+    setModel(""); // Reset model when make changes
+    // We do NOT reset Type here, allowing "Audi" + "SUV" combinations
+  };
+
+  const handleModelChange = (e) => {
+    const val = e.target.value;
+    setModel(val);
+    
+    // If a specific model is selected, we usually clear generic type
+    // to prevent conflicting logic (UI disables Type dropdown anyway)
+    if (val) {
+      setType("");
+    }
+  };
+
+  const handleTypeChange = (e) => {
+    const val = e.target.value;
+    setType(val);
+
+    // If a Body Type is selected (and not "Wszystkie"), we must clear Model
+    // because the UI disables the Model dropdown.
+    // However, we KEEP the Make, so users can search "Toyota" + "SUV".
+    if (val && val !== "Wszystkie") {
+      setModel("");
+    }
+  };
+
+  const validateEndDate = (newEndYear) => {
+    // Only validate if both are numbers
+    const start = parseInt(startYear);
+    const end = parseInt(newEndYear);
+    
+    if (!isNaN(start) && !isNaN(end) && end < start) {
+      // If end year is less than start year, reset end year
+      setEndYear(""); 
     }
   };
 
@@ -78,16 +113,11 @@ export function FilterSearch() {
               {/* Make Dropdown */}
               <select
                 value={make}
-                onChange={(e) => {
-                  setMake(e.target.value);
-                  setModel(""); // Reset model when make changes
-                }}
+                onChange={handleMakeChange}
                 className="w-full h-12 px-3 border  rounded-md bg-white/70 text-black font-medium "
                 disabled={loading}
               >
-                <option value="" disabled>
-                  Marka
-                </option>
+                <option value="">Marka</option>
                 {getMakes().map((makeName) => (
                   <option key={makeName} value={makeName}>
                     {makeName}
@@ -98,15 +128,11 @@ export function FilterSearch() {
               {/* Model Dropdown */}
               <select
                 value={model}
-                onChange={(e) => {
-                  setModel(e.target.value);
-                }}
+                onChange={handleModelChange}
                 className="w-full h-12 px-3 border rounded-md bg-white/70 text-black font-medium "
-                disabled={loading || !make || type !== ""}
+                disabled={loading || !make || (type !== "" && type !== "Wszystkie")}
               >
-                <option value="" disabled>
-                  Model
-                </option>
+                <option value="">Model</option>
                 {availableModels.map((modelOption) => (
                   <option key={modelOption} value={modelOption}>
                     {modelOption}
@@ -122,9 +148,7 @@ export function FilterSearch() {
                 onChange={(e) => setStartYear(e.target.value)}
                 className="w-full h-12 px-3 border rounded-md bg-white/70 text-black font-medium "
               >
-                <option value="" disabled>
-                  Rok od
-                </option>
+                <option value="">Rok od</option>
                 {YEARS.map((year) => (
                   <option key={year} value={year}>
                     {year}
@@ -139,9 +163,7 @@ export function FilterSearch() {
                 }}
                 className="w-full h-12 px-3 border rounded-md bg-white/70 text-black font-medium "
               >
-                <option value="" disabled>
-                  Rok do
-                </option>
+                <option value="">Rok do</option>
                 {YEARS.map((year) => (
                   <option key={year} value={year}>
                     {year}
@@ -155,19 +177,14 @@ export function FilterSearch() {
             {/* Type Dropdown - Moved to just before search button */}
             <select
               value={type}
-              onChange={(e) => {
-                setType(e.target.value);
-                setModel("");
-              }}
+              onChange={handleTypeChange}
               className={cn(
                 "w-full h-12 px-3 border bg-gray-200 rounded-md font-medium ",
                 model ? "bg-gray-200 text-gray-500" : " text-black"
               )}
-              disabled={model}
+              disabled={!!model}
             >
-              <option value="" disabled>
-                Typ
-              </option>
+              <option value="">Typ</option>
               {CAR_TYPES.map((carType) => (
                 <option key={carType} value={carType}>
                   {carType}
@@ -197,17 +214,12 @@ export function FilterSearch() {
               <div className="  h-full flex">
                 <select
                   value={make}
-                  onChange={(e) => {
-                    setMake(e.target.value);
-                    setModel(""); // Reset model when make changes
-                  }}
+                  onChange={handleMakeChange}
                   className="w-full h-full px-4 font-semibold border-0 bg-white/70 text-black  focus:ring-0 focus:outline-none appearance-none"
                   style={{ height: "100%" }} // Inline style for Safari
                   disabled={loading}
                 >
-                  <option value="" disabled>
-                    Marka
-                  </option>
+                  <option value="">Marka</option>
                   {getMakes().map((makeName) => (
                     <option key={makeName} value={makeName}>
                       {makeName}
@@ -219,19 +231,15 @@ export function FilterSearch() {
               <div className="  h-full flex">
                 <select
                   value={model}
-                  onChange={(e) => {
-                    setModel(e.target.value);
-                  }}
-                  className={`w-full h-full px-4 border-0 bg-white/70 font-medium focus:ring-0 focus:outline-none appearance-none ${!make || type !== ""
+                  onChange={handleModelChange}
+                  className={`w-full h-full px-4 border-0 bg-white/70 font-medium focus:ring-0 focus:outline-none appearance-none ${!make || (type !== "" && type !== "Wszystkie")
                       ? "text-gray-600 font-light"
                       : "text-black"
                     }`}
-                  disabled={loading || !make || type !== ""}
+                  disabled={loading || !make || (type !== "" && type !== "Wszystkie")}
                   style={{ height: "100%" }} // Inline style for Safari
                 >
-                  <option value="" disabled>
-                    Model
-                  </option>
+                  <option value="">Model</option>
                   {availableModels.map((modelOption) => (
                     <option key={modelOption} value={modelOption}>
                       {modelOption}
@@ -243,20 +251,15 @@ export function FilterSearch() {
               <div className="h-full flex">
                 <select
                   value={type}
-                  onChange={(e) => {
-                    setType(e.target.value);
-                    setModel("");
-                  }}
+                  onChange={handleTypeChange}
                   className={cn(
                     "w-full h-full px-4 border-0 font-semibold bg-gray-200  focus:ring-0 focus:outline-none appearance-none",
                     model ? "bg-gray-200 text-gray-500" : " text-black"
                   )}
-                  disabled={model}
+                  disabled={!!model}
                   style={{ height: "100%" }} // Inline style for Safari
                 >
-                  <option value="" disabled>
-                    Typ
-                  </option>
+                  <option value="">Typ</option>
                   {CAR_TYPES.map((carType) => (
                     <option key={carType} value={carType}>
                       {carType}
@@ -276,9 +279,7 @@ export function FilterSearch() {
                   className="w-full h-full px-4 font-semibold border-0   bg-white/70 text-black  focus:ring-0 focus:outline-none appearance-none"
                   style={{ height: "100%" }} // Inline style for Safari
                 >
-                  <option value="" disabled>
-                    Rok od
-                  </option>
+                  <option value="">Rok od</option>
                   {YEARS.map((year) => (
                     <option key={year} value={year}>
                       {year}
@@ -297,9 +298,7 @@ export function FilterSearch() {
                   className="w-full h-full px-4 border-0  font-semibold bg-white/70 text-black  focus:ring-0 focus:outline-none appearance-none"
                   style={{ height: "100%" }} // Inline style for Safari
                 >
-                  <option value="" disabled>
-                    Rok do
-                  </option>
+                  <option value="">Rok do</option>
                   {YEARS.map((year) => (
                     <option key={year} value={year}>
                       {year}
