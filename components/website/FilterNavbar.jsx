@@ -432,7 +432,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 </div>
 
                 {/* Manufacturer Country (Kraj Producenta) */}
-                <div className="relative flex-1">
+                {/* <div className="relative flex-1">
                   <select
                     name="krajProducenta"
                     value={filters.krajProducenta}
@@ -451,78 +451,9 @@ export default function FilterNavbar({ onApplyFilters }) {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </div>
-                </div>
+                </div> */}
 
-              </div>
-              <div className="flex items-center justify-between w-full gap-1 overflow-visible relative">
-
-
-                {/* Origin Country (Kraj Pochodzenia) */}
-                <div className="relative flex-1">
-                  <select
-                    name="krajPochodzenia"
-                    value={filters.krajPochodzenia}
-                    onChange={handleInputChange}
-                    className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                  >
-                    <option value="">Kraj Pochodzenia</option>
-                    {ORIGIN_COUNTRY_OPTIONS.map(({ value, label }) => (
-                      <option key={value} value={value}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                    <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                </div>
-
-                {/* Year From */}
-                <div className="relative flex-1">
-                  <select
-                    name="yearFrom"
-                    value={filters.yearFrom}
-                    onChange={handleInputChange}
-                    className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                  >
-                    <option value="">Rok od</option>
-                    <option value="2025">2025</option>
-                    <option value="2024">2024</option>
-                    <option value="2023">2023</option>
-                    <option value="2022">2022</option>
-                    <option value="2021">2021</option>
-                    <option value="2020">2020</option>
-                    <option value="2019">2019</option>
-                    <option value="2018">2018</option>
-                    <option value="2017">2017</option>
-                    <option value="2016">2016</option>
-                    <option value="2015">2015</option>
-                    <option value="2014">2014</option>
-                    <option value="2013">2013</option>
-                    <option value="2012">2012</option>
-                    <option value="2011">2011</option>
-                    <option value="2010">2010</option>
-                    <option value="2009">2009</option>
-                    <option value="2008">2008</option>
-                    <option value="2007">2007</option>
-                    <option value="2006">2006</option>
-                    <option value="2005">2005</option>
-                    <option value="2004">2004</option>
-                    <option value="2003">2003</option>
-                    <option value="2002">2002</option>
-                    <option value="2001">2001</option>
-                    <option value="2000">2000</option>
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                    <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                </div>
-
-                {/* Year To */}
+                {/* Year To remove from here please */}
                 <div className="relative flex-1">
                   <select
                     name="yearTo"
@@ -565,8 +496,120 @@ export default function FilterNavbar({ onApplyFilters }) {
                   </div>
                 </div>
 
+              </div>
+              <div className="flex items-center justify-between w-full gap-1 overflow-visible relative">
+
+
+                {/* Origin Country (Kraj Pochodzenia) */}
+                {/* <div className="relative flex-1">
+                  <select
+                    name="krajPochodzenia"
+                    value={filters.krajPochodzenia}
+                    onChange={handleInputChange}
+                    className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                  >
+                    <option value="">Kraj Pochodzenia</option>
+                    {ORIGIN_COUNTRY_OPTIONS.map(({ value, label }) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                    <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div> */}
+
+                {/* Year From */}
+                {/* <div className="relative flex-1">
+                  <select
+                    name="yearFrom"
+                    value={filters.yearFrom}
+                    onChange={handleInputChange}
+                    className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                  >
+                    <option value="">Rok od</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                    <option value="2019">2019</option>
+                    <option value="2018">2018</option>
+                    <option value="2017">2017</option>
+                    <option value="2016">2016</option>
+                    <option value="2015">2015</option>
+                    <option value="2014">2014</option>
+                    <option value="2013">2013</option>
+                    <option value="2012">2012</option>
+                    <option value="2011">2011</option>
+                    <option value="2010">2010</option>
+                    <option value="2009">2009</option>
+                    <option value="2008">2008</option>
+                    <option value="2007">2007</option>
+                    <option value="2006">2006</option>
+                    <option value="2005">2005</option>
+                    <option value="2004">2004</option>
+                    <option value="2003">2003</option>
+                    <option value="2002">2002</option>
+                    <option value="2001">2001</option>
+                    <option value="2000">2000</option>
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                    <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div> */}
+
+                {/* Year To */}
+                {/* <div className="relative flex-1">
+                  <select
+                    name="yearTo"
+                    value={filters.yearTo}
+                    onChange={handleInputChange}
+                    className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                  >
+                    <option value="">Rok do</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                    <option value="2019">2019</option>
+                    <option value="2018">2018</option>
+                    <option value="2017">2017</option>
+                    <option value="2016">2016</option>
+                    <option value="2015">2015</option>
+                    <option value="2014">2014</option>
+                    <option value="2013">2013</option>
+                    <option value="2012">2012</option>
+                    <option value="2011">2011</option>
+                    <option value="2010">2010</option>
+                    <option value="2009">2009</option>
+                    <option value="2008">2008</option>
+                    <option value="2007">2007</option>
+                    <option value="2006">2006</option>
+                    <option value="2005">2005</option>
+                    <option value="2004">2004</option>
+                    <option value="2003">2003</option>
+                    <option value="2002">2002</option>
+                    <option value="2001">2001</option>
+                    <option value="2000">2000</option>
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                    <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div> */}
+
                 {/* Color Filter */}
-                <div className="flex flex-1 items-center justify-between ">
+                {/* <div className="flex flex-1 items-center justify-between ">
                   <div className="relative flex-1 ">
                     <select
                       name="color"
@@ -597,7 +640,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                       </svg>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
 
@@ -1074,95 +1117,7 @@ export default function FilterNavbar({ onApplyFilters }) {
             )}
             {showMoreFilters && (
               <div className="hidden md:block">
-                {/* Second Line: Location Distance Condition Mileage */}
-                <div className="space-y-0.5 md:space-y-0">
-                  {/* Mobile: Two selectors per row, Desktop: All in one row */}
-                  <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-between w-full gap-0">
-                    {/* Row 1 Mobile: Location + Distance, Desktop: All in one row */}
-                    <div className="flex items-center justify-between w-full gap-1 md:gap-0">
-                      {/* Location Filter */}
-                      <div className="relative flex-1 mx-0.5 my-0.5">
-                        <input
-                          type="text"
-                          name="location"
-                          value={filters.location}
-                          onChange={handleInputChange}
-                          placeholder="Lokalizacja"
-                          className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 w-full"
-                        />
-                      </div>
 
-                      {/* Distance Filter */}
-                      <div className="relative flex-1 mx-0.5 my-0.5">
-                        <select
-                          name="distance"
-                          value={filters.distance}
-                          onChange={handleInputChange}
-                          className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                        >
-                          <option value="">Dystans</option>
-                          <option value="100">Do 100 km</option>
-                          <option value="200">Do 200 km</option>
-                          <option value="300">Do 300 km</option>
-                          <option value="500">Do 500 km</option>
-                          <option value="nationwide">Cały Kraj</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                          <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Row 2 Mobile: Condition + Mileage, Desktop: All in one row */}
-                    <div className="flex items-center justify-between w-full gap-1 md:gap-0">
-                      {/* Condition Filter */}
-                      <div className="relative flex-1 mx-0.5 my-0.5">
-                        <select
-                          name="stan"
-                          value={filters.stan}
-                          onChange={handleInputChange}
-                          className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                        >
-                          <option value="">Stan</option>
-                          <option value="Demo">Demo</option>
-                          <option value="New">Nowy</option>
-                          <option value="Used">Używany</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                          <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                      </div>
-
-                      {/* Mileage Filter */}
-                      <div className="relative flex-1 mx-0.5 my-0.5">
-                        <select
-                          name="mileage"
-                          value={filters.mileage}
-                          onChange={handleInputChange}
-                          className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                        >
-                          <option value="">Przebieg</option>
-                          <option value="0">0 km</option>
-                          <option value="0-30000">do 30 000 km</option>
-                          <option value="30000-50000">od 30 000 km do 50 000 km</option>
-                          <option value="50000-100000">od 50 000 km do 100 000 km</option>
-                          <option value="100000+">powyżej 100 000 km</option>
-                          <option value="100000-200000">od 100 000 km do 200 000 km</option>
-                          <option value="200000+">powyżej 200 000 km</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                          <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
 
                 {/* Third Line: Fuel Engine Color Transmission Drivetrain */}
                 <div className="space-y-2 md:space-y-0">
