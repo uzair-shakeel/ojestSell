@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 
 import { useMakesModels } from "../../hooks/useMakesModels";
 import { createPortal } from "react-dom";
+import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 const COUNTRY_OPTIONS = [
   { value: "germany", label: "Niemcy" },
@@ -108,12 +109,14 @@ export default function FilterNavbar({ onApplyFilters }) {
   const searchParams = useSearchParams();
 
   const [showMoreFilters, setShowMoreFilters] = useState(false);
+  const [isDesktopExpanded, setIsDesktopExpanded] = useState(false);
   const [mobileViewMode, setMobileViewMode] = useState('grid');
   const [isSticky, setIsSticky] = useState(false);
   const [navbarHeight, setNavbarHeight] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
   const dropdownRef = useRef(null);
   const filterRef = useRef(null);
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -122,34 +125,40 @@ export default function FilterNavbar({ onApplyFilters }) {
   useEffect(() => {
     if (!searchParams) return;
 
-    const qpMake = searchParams.get("make");
-    const qpModel = searchParams.get("model");
-    const qpStartYear = searchParams.get("startYear");
-    const qpEndYear = searchParams.get("endYear");
-    const qpType = searchParams.get("type");
-    const qpOrigin = searchParams.get("origin");
+    // Helper to get param or default to empty string
+    const getParam = (key) => searchParams.get(key) || "";
 
-    // If there are no relevant query params, do nothing
-    if (!qpMake && !qpModel && !qpStartYear && !qpEndYear && !qpType && !qpOrigin) {
-      return;
-    }
+    const newFilters = {
+      location: getParam("location"),
+      distance: getParam("maxDistance"),
+      make: getParam("make"),
+      model: getParam("model"),
+      bodyType: getParam("bodyType") || getParam("type"), // Handle both
+      yearFrom: getParam("yearFrom") || getParam("startYear") || getParam("minYear"),
+      yearTo: getParam("yearTo") || getParam("endYear") || getParam("maxYear"),
+      stan: getParam("stan") || getParam("condition"),
+      mileage: getParam("mileageRange") || "",
+      drivetrain: getParam("drivetrain"),
+      transmission: getParam("transmission"),
+      fuel: getParam("fuel"),
+      engineCapacity: getParam("engineCapacityRange") || "",
+      color: getParam("color"),
+      krajProducenta: getParam("krajProducenta") || getParam("countryOfManufacturer"),
+      krajPochodzenia: getParam("krajPochodzenia") || getParam("origin"),
+      serviceHistory: getParam("serviceHistory"),
+      accidentHistory: getParam("accidentHistory"),
+      priceFrom: getParam("priceFrom") || getParam("minPrice"),
+      priceTo: getParam("priceTo") || getParam("maxPrice"),
+    };
 
     setFilters((prev) => {
-      const next = {
-        ...prev,
-        make: qpMake || prev.make,
-        model: qpModel || prev.model,
-        yearFrom: qpStartYear || prev.yearFrom,
-        yearTo: qpEndYear || prev.yearTo,
-        bodyType: qpType || prev.bodyType,
-        krajPochodzenia: qpOrigin || prev.krajPochodzenia,
-      };
-
-      onApplyFilters(next);
-      return next;
+      // Only update if something changed to avoid loops
+      if (JSON.stringify(prev) !== JSON.stringify(newFilters)) {
+        return { ...prev, ...newFilters };
+      }
+      return prev;
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchParams]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -211,7 +220,7 @@ export default function FilterNavbar({ onApplyFilters }) {
     let ticking = false;
     let lastScrollY = 0;
     let isStickyState = false;
-    const threshold = 10; // Increased threshold for more stability
+    const threshold = 10;
 
     const update = () => {
       ticking = false;
@@ -234,11 +243,8 @@ export default function FilterNavbar({ onApplyFilters }) {
 
       if (filterRef.current && isInitialized) {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-        // Stick when scrolled past original position, unstick when back to original position
         const shouldStick = scrollTop > originalTop + threshold;
 
-        // Only update state if it actually changed to prevent blinking
         if (shouldStick !== isStickyState) {
           setIsSticky(shouldStick);
           isStickyState = shouldStick;
@@ -266,47 +272,11 @@ export default function FilterNavbar({ onApplyFilters }) {
   // Update navbar height when sticky state changes
   useEffect(() => {
     if (filterRef.current && !isSticky) {
-      // Measure height when returning to normal position
       const currentHeight = filterRef.current.offsetHeight;
       setNavbarHeight(currentHeight);
     }
   }, [isSticky]);
 
-  const getYearDisplayText = () => {
-    if (filters.yearFrom && filters.yearTo) {
-      return `${filters.yearFrom} - ${filters.yearTo}`;
-    } else if (filters.yearFrom) {
-      return `From ${filters.yearFrom}`;
-    }
-    return "Rok";
-  };
-
-  const getMileageDisplayText = () => {
-    if (filters.mileage) {
-      const mileageOptions = {
-        "0": "0 km",
-        "0-30000": "do 30 000 km",
-        "30000-50000": "od 30 000 km do 50 000 km",
-        "50000-100000": "od 50 000 km do 100 000 km",
-        "100000+": "powyżej 100 000 km",
-        "100000-200000": "od 100 000 km do 200 000 km",
-        "200000+": "powyżej 200 000 km"
-      };
-      return mileageOptions[filters.mileage] || "Przebieg";
-    }
-    return "Przebieg";
-  };
-
-  const getPriceDisplayText = () => {
-    if (filters.priceFrom && filters.priceTo) {
-      return `${filters.priceFrom} - ${filters.priceTo}`;
-    } else if (filters.priceFrom) {
-      return `Od ${filters.priceFrom}`;
-    } else if (filters.priceTo) {
-      return `Do ${filters.priceTo}`;
-    }
-    return "Cena";
-  };
   return (
     <>
       <div
@@ -341,7 +311,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                   aria-label="List view"
                 >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+                    <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
                   </svg>
                 </button>
               </div>
@@ -371,9 +341,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                     ))}
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                    <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
+                    <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
                   </div>
                 </div>
 
@@ -394,9 +362,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                     ))}
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                    <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
+                    <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
                   </div>
                 </div>
 
@@ -425,14 +391,36 @@ export default function FilterNavbar({ onApplyFilters }) {
                     <option value="Crossover">Crossover</option>
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                    <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
+                    <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
                   </div>
                 </div>
 
-                {/* Manufacturer Country (Kraj Producenta) */}
-                {/* <div className="relative flex-1">
+                {/* Origin Country (Kraj Pochodzenia) - Swapped to Row 1 */}
+                <div className="relative flex-1">
+                  <select
+                    name="krajPochodzenia"
+                    value={filters.krajPochodzenia}
+                    onChange={handleInputChange}
+                    className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                  >
+                    <option value="">Kraj Pochodzenia</option>
+                    {ORIGIN_COUNTRY_OPTIONS.map(({ value, label }, idx) => (
+                      <option key={`${idx}-${value}`} value={value}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                    <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Second Line: Manufacturer Country, Year From, Year To, Color */}
+              <div className="flex items-center justify-between w-full gap-1 overflow-visible relative">
+
+                {/* Manufacturer Country (Kraj Producenta) - Swapped to Row 2 */}
+                <div className="relative flex-1">
                   <select
                     name="krajProducenta"
                     value={filters.krajProducenta}
@@ -440,20 +428,34 @@ export default function FilterNavbar({ onApplyFilters }) {
                     className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                   >
                     <option value="">Kraj Producenta</option>
-                    {COUNTRY_OPTIONS.map(({ value, label }) => (
-                      <option key={value} value={value}>
+                    {COUNTRY_OPTIONS.map(({ value, label }, idx) => (
+                      <option key={`${idx}-${value}`} value={value}>
                         {label}
                       </option>
                     ))}
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                    <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
+                    <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
                   </div>
                 </div> */}
 
-                {/* Year To remove from here please */}
+                {/* Year From */}
+                <div className="relative flex-1">
+                  <select
+                    name="yearFrom"
+                    value={filters.yearFrom}
+                    onChange={handleInputChange}
+                    className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                  >
+                    <option value="">Rok od</option>
+                    {Array.from({ length: 30 }, (_, i) => 2025 - i).map(y => <option key={y} value={y}>{y}</option>)}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                    <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                  </div>
+                </div>
+
+                {/* Year To */}
                 <div className="relative flex-1">
                   <select
                     name="yearTo"
@@ -462,37 +464,10 @@ export default function FilterNavbar({ onApplyFilters }) {
                     className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                   >
                     <option value="">Rok do</option>
-                    <option value="2025">2025</option>
-                    <option value="2024">2024</option>
-                    <option value="2023">2023</option>
-                    <option value="2022">2022</option>
-                    <option value="2021">2021</option>
-                    <option value="2020">2020</option>
-                    <option value="2019">2019</option>
-                    <option value="2018">2018</option>
-                    <option value="2017">2017</option>
-                    <option value="2016">2016</option>
-                    <option value="2015">2015</option>
-                    <option value="2014">2014</option>
-                    <option value="2013">2013</option>
-                    <option value="2012">2012</option>
-                    <option value="2011">2011</option>
-                    <option value="2010">2010</option>
-                    <option value="2009">2009</option>
-                    <option value="2008">2008</option>
-                    <option value="2007">2007</option>
-                    <option value="2006">2006</option>
-                    <option value="2005">2005</option>
-                    <option value="2004">2004</option>
-                    <option value="2003">2003</option>
-                    <option value="2002">2002</option>
-                    <option value="2001">2001</option>
-                    <option value="2000">2000</option>
+                    {Array.from({ length: 30 }, (_, i) => 2025 - i).map(y => <option key={y} value={y}>{y}</option>)}
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                    <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
+                    <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
                   </div>
                 </div>
 
@@ -508,851 +483,822 @@ export default function FilterNavbar({ onApplyFilters }) {
                     onChange={handleInputChange}
                     className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                   >
-                    <option value="">Kraj Pochodzenia</option>
-                    {ORIGIN_COUNTRY_OPTIONS.map(({ value, label }) => (
-                      <option key={value} value={value}>
-                        {label}
-                      </option>
-                    ))}
+                    <option value="">Kolor</option>
+                    <option value="Biały">Biały</option>
+                    <option value="Czarny">Czarny</option>
+                    <option value="Srebrny">Srebrny</option>
+                    <option value="Szary">Szary</option>
+                    <option value="Czerwony">Czerwony</option>
+                    <option value="Niebieski">Niebieski</option>
+                    <option value="Zielony">Zielony</option>
+                    <option value="Żółty">Żółty</option>
+                    <option value="Brązowy">Brązowy</option>
+                    <option value="Beżowy">Beżowy</option>
+                    <option value="Złoty">Złoty</option>
+                    <option value="Inny">Inny</option>
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                    <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
+                    <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
                   </div>
                 </div> */}
 
-                {/* Year From */}
-                {/* <div className="relative flex-1">
-                  <select
-                    name="yearFrom"
-                    value={filters.yearFrom}
-                    onChange={handleInputChange}
-                    className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                  >
-                    <option value="">Rok od</option>
-                    <option value="2025">2025</option>
-                    <option value="2024">2024</option>
-                    <option value="2023">2023</option>
-                    <option value="2022">2022</option>
-                    <option value="2021">2021</option>
-                    <option value="2020">2020</option>
-                    <option value="2019">2019</option>
-                    <option value="2018">2018</option>
-                    <option value="2017">2017</option>
-                    <option value="2016">2016</option>
-                    <option value="2015">2015</option>
-                    <option value="2014">2014</option>
-                    <option value="2013">2013</option>
-                    <option value="2012">2012</option>
-                    <option value="2011">2011</option>
-                    <option value="2010">2010</option>
-                    <option value="2009">2009</option>
-                    <option value="2008">2008</option>
-                    <option value="2007">2007</option>
-                    <option value="2006">2006</option>
-                    <option value="2005">2005</option>
-                    <option value="2004">2004</option>
-                    <option value="2003">2003</option>
-                    <option value="2002">2002</option>
-                    <option value="2001">2001</option>
-                    <option value="2000">2000</option>
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                    <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                </div> */}
+                {/* Collapsible Section: Third and Fourth Lines */}
+                {isDesktopExpanded && (
+                  <>
+                    {/* Third Row: Mileage, Fuel, Transmission, Engine Capacity */}
+                    <div className="flex items-center justify-between w-full gap-1 overflow-visible relative">
 
-                {/* Year To */}
-                {/* <div className="relative flex-1">
-                  <select
-                    name="yearTo"
-                    value={filters.yearTo}
-                    onChange={handleInputChange}
-                    className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                  >
-                    <option value="">Rok do</option>
-                    <option value="2025">2025</option>
-                    <option value="2024">2024</option>
-                    <option value="2023">2023</option>
-                    <option value="2022">2022</option>
-                    <option value="2021">2021</option>
-                    <option value="2020">2020</option>
-                    <option value="2019">2019</option>
-                    <option value="2018">2018</option>
-                    <option value="2017">2017</option>
-                    <option value="2016">2016</option>
-                    <option value="2015">2015</option>
-                    <option value="2014">2014</option>
-                    <option value="2013">2013</option>
-                    <option value="2012">2012</option>
-                    <option value="2011">2011</option>
-                    <option value="2010">2010</option>
-                    <option value="2009">2009</option>
-                    <option value="2008">2008</option>
-                    <option value="2007">2007</option>
-                    <option value="2006">2006</option>
-                    <option value="2005">2005</option>
-                    <option value="2004">2004</option>
-                    <option value="2003">2003</option>
-                    <option value="2002">2002</option>
-                    <option value="2001">2001</option>
-                    <option value="2000">2000</option>
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                    <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                </div> */}
-
-                {/* Color Filter */}
-                {/* <div className="flex flex-1 items-center justify-between ">
-                  <div className="relative flex-1 ">
-                    <select
-                      name="color"
-                      value={filters.color}
-                      onChange={handleInputChange}
-                      className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                    >
-                      <option value="">Kolor</option>
-                      <option value="bezowy">Beżowy</option>
-                      <option value="bialy">Biały</option>
-                      <option value="bordowy">Bordowy</option>
-                      <option value="brzyzowy">Brązowy</option>
-                      <option value="czarny">Czarny</option>
-                      <option value="czerwony">Czerwony</option>
-                      <option value="fioletowy">Fioletowy</option>
-                      <option value="granatowy">Granatowy</option>
-                      <option value="niebieski">Niebieski</option>
-                      <option value="pomaranczowy">Pomarańczowy</option>
-                      <option value="srebrny">Srebrny</option>
-                      <option value="szary">Szary</option>
-                      <option value="zielony">Zielony</option>
-                      <option value="zlony">Złoty</option>
-                      <option value="zolty">Żółty</option>
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                      <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </div>
-                  </div>
-                </div> */}
-              </div>
-            </div>
-
-            {/* Desktop Layout: Second Line - Reset + Show More buttons (hidden when expanded) */}
-            {!showMoreFilters && (
-              <div className="hidden md:flex items-center justify-center w-full gap-1">
-                {/* Reset Button - Desktop only */}
-                <button
-                  onClick={handleReset}
-                  className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 rounded-md lg:rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex-1 justify-center"
-                >
-                  Resetuj
-                </button>
-
-                {/* Show More Button - Desktop only */}
-                <button
-                  onClick={() => setShowMoreFilters(true)}
-                  className="flex items-center gap-1 lg:gap-2 px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-blue-500 rounded-md lg:rounded-lg focus:outline-none whitespace-nowrap shadow-sm flex-1 justify-center text-white bg-blue-500"
-                >
-                  <span className="flex items-center gap-1">
-                    Filtry
-                  </span>
-                  <svg className="w-3 h-3 lg:w-4 lg:h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-              </div>
-            )}
-
-            {/* Mobile Layout: Single row with Make, Model, Show More + View Toggle */}
-            <div className="md:hidden">
-              <div className={`flex items-center justify-between w-[calc(100%-18px)] gap-2 mx-[10px] ${isSticky ? 'mb-0' : 'mb-[10px]'
-                }`}>
-                {/* Make */}
-                <div className="relative flex-1">
-                  <select
-                    name="make"
-                    value={filters.make}
-                    onChange={handleInputChange}
-                    className="px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none w-full leading-[17px]"
-                  >
-                    <option value="">Marka</option>
-                    <option value="BMW">BMW</option>
-                    <option value="Mercedes-Benz">Mercedes-Benz</option>
-                    <option value="Audi">Audi</option>
-                    <option value="Volkswagen">Volkswagen</option>
-                    <option value="Toyota">Toyota</option>
-                    <option value="Honda">Honda</option>
-                    <option value="Ford">Ford</option>
-                    <option value="Nissan">Nissan</option>
-                    <option value="Hyundai">Hyundai</option>
-                    <option value="Kia">Kia</option>
-                    <option value="Mazda">Mazda</option>
-                    <option value="Subaru">Subaru</option>
-                    <option value="Lexus">Lexus</option>
-                    <option value="Infiniti">Infiniti</option>
-                    <option value="Acura">Acura</option>
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                    <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                </div>
-
-                {/* Model */}
-                <div className="relative flex-1">
-                  <select
-                    name="model"
-                    value={filters.model}
-                    onChange={handleInputChange}
-                    className="px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm appearance-none w-full leading-[17px] transition-all duration-200 hover:border-gray-300"
-                  >
-                    <option value="">Model</option>
-                    <option value="Sedan">Sedan</option>
-                    <option value="SUV">SUV</option>
-                    <option value="Hatchback">Hatchback</option>
-                    <option value="Coupe">Coupe</option>
-                    <option value="Convertible">Convertible</option>
-                    <option value="Wagon">Wagon</option>
-                    <option value="Pickup">Pickup</option>
-                    <option value="Crossover">Crossover</option>
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                    <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                </div>
-
-                {/* Show More - Mobile; hidden when expanded */}
-                {!showMoreFilters && (
-                  <div className="relative flex-1">
-                    <button
-                      onClick={() => setShowMoreFilters(true)}
-                      className="w-full px-3 h-10 pr-6 text-sm font-medium border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 whitespace-nowrap shadow-sm flex items-center justify-start text-white bg-blue-500 leading-[17px] transition-all duration-200 hover:bg-blue-600 hover:shadow-md"
-                    >
-                      <span className="flex items-center text-left">Filtry</span>
-                    </button>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-
-            </div>
-
-            {/* Additional Filters - Show/Hide */}
-            {/* Mobile overlay for filters */}
-            {showMoreFilters && isMounted && createPortal(
-              <div className="md:hidden fixed inset-0 z-[2147483647]">
-                <div className="fixed inset-0 bg-black/40" onClick={() => setShowMoreFilters(false)}></div>
-                <div className="fixed inset-0 bg-white shadow-xl p-4 overflow-y-auto">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-lg font-semibold text-gray-900">Filtry</h3>
-                    <button onClick={() => setShowMoreFilters(false)} className="text-sm text-gray-600 border border-gray-200 rounded-md px-2 py-1">Zamknij</button>
-                  </div>
-                  <div className="space-y-3">
-                    {/* Make + Model */}
-                    <div className="flex items-center justify-between w-full gap-1">
+                      {/* Mileage (Przebieg) */}
                       <div className="relative flex-1">
-                        <select
-                          name="make"
-                          value={filters.make}
-                          onChange={handleInputChange}
-                          className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
-                          disabled={loading}
-                        >
-                          <option value="">Marka</option>
-                          {getMakes().map((make) => (
-                            <option key={make} value={make}>
-                              {make}
-                            </option>
-                          ))}
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                          <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                      </div>
-                      <div className="relative flex-1">
-                        <select
-                          name="model"
-                          value={filters.model}
-                          onChange={handleInputChange}
-                          className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
-                          disabled={loading || !filters.make}
-                        >
-                          <option value="">Model</option>
-                          {filters.make && getModelsForMake(filters.make).map((model) => (
-                            <option key={model} value={model}>
-                              {model}
-                            </option>
-                          ))}
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                          <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                    {/* Location + Distance */}
-                    <div className="flex items-center justify-between w-full gap-1">
-                      <div className="relative flex-1">
-                        <input type="text" name="location" value={filters.location} onChange={handleInputChange} placeholder="Lokalizacja" className="w-full px-3 h-10 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm" />
-                      </div>
-                      <div className="relative flex-1">
-                        <select name="maxDistance" value={filters.maxDistance} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                          <option value="">Dystans</option>
-                          <option value="10">Within 10 miles</option>
-                          <option value="25">Within 25 miles</option>
-                          <option value="50">Within 50 miles</option>
-                          <option value="100">Within 100 miles</option>
-                          <option value="200">Within 200 miles</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                          <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                    {/* Body Type + Manufacturer Country */}
-                    <div className="flex items-center justify-between w-full gap-1">
-                      <div className="relative flex-1">
-                        <select name="yearFrom" value={filters.yearFrom} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                          <option value="">Rok od</option>
-                          <option value="2025">2025</option>
-                          <option value="2024">2024</option>
-                          <option value="2023">2023</option>
-                          <option value="2022">2022</option>
-                          <option value="2021">2021</option>
-                          <option value="2020">2020</option>
-                          <option value="2019">2019</option>
-                          <option value="2018">2018</option>
-                          <option value="2017">2017</option>
-                          <option value="2016">2016</option>
-                          <option value="2015">2015</option>
-                          <option value="2014">2014</option>
-                          <option value="2013">2013</option>
-                          <option value="2012">2012</option>
-                          <option value="2011">2011</option>
-                          <option value="2010">2010</option>
-                          <option value="2009">2009</option>
-                          <option value="2008">2008</option>
-                          <option value="2007">2007</option>
-                          <option value="2006">2006</option>
-                          <option value="2005">2005</option>
-                          <option value="2004">2004</option>
-                          <option value="2003">2003</option>
-                          <option value="2002">2002</option>
-                          <option value="2001">2001</option>
-                          <option value="2000">2000</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
-                      </div>
-                      <div className="relative flex-1">
-                        <select name="yearTo" value={filters.yearTo} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                          <option value="">Rok do</option>
-                          <option value="2025">2025</option>
-                          <option value="2024">2024</option>
-                          <option value="2023">2023</option>
-                          <option value="2022">2022</option>
-                          <option value="2021">2021</option>
-                          <option value="2020">2020</option>
-                          <option value="2019">2019</option>
-                          <option value="2018">2018</option>
-                          <option value="2017">2017</option>
-                          <option value="2016">2016</option>
-                          <option value="2015">2015</option>
-                          <option value="2014">2014</option>
-                          <option value="2013">2013</option>
-                          <option value="2012">2012</option>
-                          <option value="2011">2011</option>
-                          <option value="2010">2010</option>
-                          <option value="2009">2009</option>
-                          <option value="2008">2008</option>
-                          <option value="2007">2007</option>
-                          <option value="2006">2006</option>
-                          <option value="2005">2005</option>
-                          <option value="2004">2004</option>
-                          <option value="2003">2003</option>
-                          <option value="2002">2002</option>
-                          <option value="2001">2001</option>
-                          <option value="bus">Bus</option>
-                          <option value="classic">Classic</option>
-                          <option value="campers">Campers</option>
-
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                          <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                      </div>
-
-                    </div>
-                    {/* Origin Country (Kraj Pochodzenia) - mobile overlay */}
-                    <div className="flex items-center justify-between w-full gap-1">
-                      <div className="relative flex-1">
-                        <select
-                          name="krajPochodzenia"
-                          value={filters.krajPochodzenia}
-                          onChange={handleInputChange}
-                          className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
-                        >
-                          <option value="">Kraj Pochodzenia</option>
-                          {ORIGIN_COUNTRY_OPTIONS.map(({ value, label }) => (
-                            <option key={value} value={value}>
-                              {label}
-                            </option>
-                          ))}
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                          <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                      </div>
-
-                      <div className="relative flex-1">
-                        <select name="krajProducenta" value={filters.krajProducenta} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                          <option value="">Kraj Producenta</option>
-                          {COUNTRY_OPTIONS.map(({ value, label }) => (
-                            <option key={value} value={value}>
-                              {label}
-                            </option>
-                          ))}
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                          <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                      </div>
-
-                    </div>
-
-                    <div className="flex items-center justify-between w-full gap-1">
-                      {/* Body Type Filter */}
-                      <div className="relative flex-1">
-                        <select
-                          name="bodyType"
-                          value={filters.bodyType}
-                          onChange={handleInputChange}
-                          className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                        >
-                          <option value="">Typ nadwozia</option>
-                          <option value="Bus I Van">Bus I Van</option>
-                          <option value="Coupe">Coupe</option>
-                          <option value="Crossover">Crossover</option>
-                          <option value="Hatchback">Hatchback</option>
-                          <option value="Kabriolet">Kabriolet</option>
-                          <option value="Kamper">Kamper</option>
-                          <option value="Klasyk">Klasyk</option>
-                          <option value="Kombi">Kombi</option>
-                          <option value="Kompakt">Kompakt</option>
-                          <option value="Limuzyna">Limuzyna</option>
-                          <option value="Pickup">Pickup</option>
-                          <option value="Sedan">Sedan</option>
-                          <option value="Sportowe">Sportowe</option>
-                          <option value="SUV">SUV</option>
-                          <option value="Terenowe">Terenowe</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                          <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                      </div>
-                      {/* Color (Kolor) */}
-                      <div className="relative flex-1">
-                        <select
-                          name="color"
-                          value={filters.color}
-                          onChange={handleInputChange}
-                          className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
-                        >
-                          <option value="">Kolor</option>
-                          <option value="bialy">Biały</option>
-                          <option value="czarny">Czarny</option>
-                          <option value="srebrny">Srebrny</option>
-                          <option value="szary">Szary</option>
-                          <option value="czerwony">Czerwony</option>
-                          <option value="niebieski">Niebieski</option>
-                          <option value="zielony">Zielony</option>
-                          <option value="zolty">Żółty</option>
-                          <option value="brazowy">Brązowy</option>
-                          <option value="inny">Inny</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                          <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Condition + Mileage */}
-                    <div className="flex items-center justify-between w-full gap-1">
-                      <div className="relative flex-1">
-                        <select name="stan" value={filters.stan} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                          <option value="">Stan</option>
-                          <option value="Demo">Demo</option>
-                          <option value="New">Nowy</option>
-                          <option value="Used">Używany</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                          <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                        </div>
-                      </div>
-                      <div className="relative flex-1">
-                        <select name="mileage" value={filters.mileage} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                        <select name="mileage" value={filters.mileage} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
                           <option value="">Przebieg</option>
-                          <option value="0">0 km</option>
                           <option value="0-30000">do 30 000 km</option>
                           <option value="30000-50000">od 30 000 km do 50 000 km</option>
                           <option value="50000-100000">od 50 000 km do 100 000 km</option>
-                          <option value="100000+">powyżej 100 000 km</option>
                           <option value="100000-200000">od 100 000 km do 200 000 km</option>
                           <option value="200000+">powyżej 200 000 km</option>
                         </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                          <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                        </div>
                       </div>
-                    </div>
-                    {/* Fuel + Engine */}
-                    <div className="flex items-center justify-between w-full gap-2">
-                      <div className="relative flex-1">
-                        <select name="fuel" value={filters.fuel} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                          <option value="">Typ Paliwa</option>
-                          <option value="Benzyna">Benzyna</option>
-                          <option value="Diesel">Diesel</option>
-                          <option value="Elektryk">Elektryk</option>
-                          <option value="Hybryda">Hybryda</option>
-                          <option value="LPG">LPG</option>
-                          <option value="Wodór">Wodór</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
-                      </div>
-                      <div className="relative flex-1">
-                        <select name="engineCapacity" value={filters.engineCapacity} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                          <option value="">Pojemność</option>
-                          <option value="0-1000">do 1000 cm³</option>
-                          <option value="0-2000">do 2000 cm³</option>
-                          <option value="2000-3000">od 2000 cm³ do 3000 cm³</option>
-                          <option value="2900+">powyżej 2900 cm³</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
-                      </div>
-                    </div>
-                    {/* Transmission + Drivetrain */}
-                    <div className="flex items-center justify-between w-full gap-2">
-                      <div className="relative flex-1">
-                        <select name="transmission" value={filters.transmission} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                          <option value="">Skrzynia Biegów</option>
-                          <option value="Automatic">Automat</option>
-                          <option value="Manual">Manual</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
-                      </div>
-                      <div className="relative flex-1">
-                        <select name="drivetrain" value={filters.drivetrain} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                          <option value="">Napęd</option>
-                          <option value="Przód">Przód</option>
-                          <option value="Tył">Tył</option>
-                          <option value="4x4/AWD">4x4/AWD</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
-                      </div>
-                    </div>
-                    {/* Service + Accident */}
-                    <div className="flex items-center justify-between w-full gap-2">
-                      <div className="relative flex-1">
-                        <select name="serviceHistory" value={filters.serviceHistory} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                          <option value="">Historia Serwisowa</option>
-                          <option value="Yes">Tak</option>
-                          <option value="No">Nie</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
-                      </div>
-                      <div className="relative flex-1">
-                        <select name="accidentHistory" value={filters.accidentHistory} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                          <option value="">Bezwypadkowość</option>
-                          <option value="Yes">Tak</option>
-                          <option value="No">Nie</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
-                      </div>
-                    </div>
-                    {/* Price From + Price To */}
-                    <div className="flex items-center justify-between w-full gap-2">
-                      <div className="relative flex-1">
-                        <input type="number" name="priceFrom" value={filters.priceFrom} onChange={handleInputChange} placeholder="Cena od" className="w-full px-3 h-10 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm" />
-                      </div>
-                      <div className="relative flex-1">
-                        <input type="number" name="priceTo" value={filters.priceTo} onChange={handleInputChange} placeholder="Cena do" className="w-full px-3 h-10 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm" />
-                      </div>
-                    </div>
-                    {/* Actions */}
-                    <div className="flex items-center gap-2 pt-2">
-                      <button onClick={handleReset} className="flex-1 px-3 h-10 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg">Resetuj</button>
-                      <button onClick={() => setShowMoreFilters(false)} className="flex-1 px-3 h-10 text-sm font-medium text-white bg-blue-500 border border-blue-500 rounded-lg">Zastosuj</button>
-                    </div>
-                  </div>
-                </div>
-              </div>,
-              typeof window !== 'undefined' ? document.body : null
-            )}
-            {showMoreFilters && (
-              <div className="hidden md:block">
 
-
-                {/* Third Line: Fuel Engine Color Transmission Drivetrain */}
-                <div className="space-y-2 md:space-y-0">
-                  {/* Mobile: Two selectors per row, Desktop: All in one row */}
-                  <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-between w-full ">
-                    {/* Row 1 Mobile: Fuel + Engine, Desktop: All in one row */}
-                    <div className="flex items-center justify-between w-full gap-2 md:gap-0">
-                      {/* Fuel Filter */}
-                      <div className="relative flex-1 mx-0.5 my-0.5">
-                        <select
-                          name="fuel"
-                          value={filters.fuel}
-                          onChange={handleInputChange}
-                          className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                        >
+                      {/* Fuel (Typ Paliwa) */}
+                      <div className="relative flex-1">
+                        <select name="fuel" value={filters.fuel} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
                           <option value="">Typ Paliwa</option>
-                          <option value="Benzyna">Benzyna</option>
+                          <option value="Petrol">Benzyna</option>
                           <option value="Diesel">Diesel</option>
-                          <option value="Elektryk">Elektryk</option>
-                          <option value="Hybryda">Hybryda</option>
+                          <option value="Electric">Elektryk</option>
+                          <option value="Hybrid">Hybryda</option>
                           <option value="LPG">LPG</option>
                           <option value="Wodór">Wodór</option>
                         </select>
                         <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                          <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
+                          <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
                         </div>
                       </div>
 
-                      {/* Engine Capacity Filter (Pojemność) */}
-                      <div className="relative flex-1 mx-0.5 my-0.5">
-                        <select
-                          name="engineCapacity"
-                          value={filters.engineCapacity}
-                          onChange={handleInputChange}
-                          className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                        >
-                          <option value="">Pojemność</option>
-                          <option value="0-1000">do 1000 cm³</option>
-                          <option value="0-2000">do 2000 cm³</option>
-                          <option value="2000-3000">od 2000 cm³ do 3000 cm³</option>
-                          <option value="2900+">powyżej 2900 cm³</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                          <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-
-
-
-                    {/* Row 2 Mobile: Transmission + Drivetrain, Desktop: All in one row */}
-                    <div className="flex items-center justify-between w-full gap-2 md:gap-0">
-                      {/* Transmission Filter */}
-                      <div className="relative flex-1 mx-0.5 my-0.5">
-                        <select
-                          name="transmission"
-                          value={filters.transmission}
-                          onChange={handleInputChange}
-                          className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                        >
+                      {/* Transmission (Skrzynia Biegów) */}
+                      <div className="relative flex-1">
+                        <select name="transmission" value={filters.transmission} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
                           <option value="">Skrzynia Biegów</option>
                           <option value="Automatic">Automat</option>
                           <option value="Manual">Manual</option>
                         </select>
                         <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                          <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
+                          <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
                         </div>
                       </div>
 
-                      {/* Drivetrain Filter */}
-                      <div className="relative flex-1 mx-0.5 my-0.5">
-                        <select
-                          name="drivetrain"
-                          value={filters.drivetrain}
-                          onChange={handleInputChange}
-                          className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                        >
+                      {/* Engine Capacity (Pojemność) */}
+                      <div className="relative flex-1">
+                        <select name="engineCapacity" value={filters.engineCapacity} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
+                          <option value="">Pojemność</option>
+                          <option value="0-1000">do 1000 cm³</option>
+                          <option value="1000-2000">1000 - 2000 cm³</option>
+                          <option value="2000-3000">2000 - 3000 cm³</option>
+                          <option value="3000+">powyżej 3000 cm³</option>
+                        </select>
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                          <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Fourth Row: Drivetrain, Condition, Price From, Price To */}
+                    <div className="flex items-center justify-between w-full gap-1 overflow-visible relative">
+
+                      {/* Drivetrain (Napęd) */}
+                      <div className="relative flex-1">
+                        <select name="drivetrain" value={filters.drivetrain} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
                           <option value="">Napęd</option>
-                          <option value="Przód">Przód</option>
-                          <option value="Tył">Tył</option>
-                          <option value="4x4/AWD">4x4/AWD</option>
+                          <option value="FWD">Przód (FWD)</option>
+                          <option value="RWD">Tył (RWD)</option>
+                          <option value="AWD">4x4 (AWD)</option>
+                          <option value="4WD">4x4 (4WD)</option>
                         </select>
                         <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                          <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
+                          <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
                         </div>
                       </div>
+
+                      {/* Condition (Stan) */}
+                      <div className="relative flex-1">
+                        <select name="stan" value={filters.stan} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
+                          <option value="">Stan</option>
+                          <option value="Used">Używany</option>
+                          <option value="New">Nowy</option>
+                        </select>
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                          <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                        </div>
+                      </div>
+
+                      {/* Price From (Cena od) */}
+                      <div className="relative flex-1">
+                        <input type="number" name="priceFrom" value={filters.priceFrom} onChange={handleInputChange} placeholder="Cena od" className="px-2 py-1.5 text-sm lg:px-4 lg:py-3 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 w-full" />
+                      </div>
+
+                      {/* Price To (Cena do) */}
+                      <div className="relative flex-1">
+                        <input type="number" name="priceTo" value={filters.priceTo} onChange={handleInputChange} placeholder="Cena do" className="px-2 py-1.5 text-sm lg:px-4 lg:py-3 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 w-full" />
+                      </div>
                     </div>
+                  </>
+                )}
+
+                {/* Reset + Show More buttons (hidden when expanded) */}
+                {!showMoreFilters && (
+                  <div className="hidden md:flex items-center justify-center w-full gap-1">
+                    <button
+                      onClick={handleReset}
+                      className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 rounded-md lg:rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex-1 justify-center"
+                    >
+                      Resetuj
+                    </button>
+                    <button
+                      onClick={() => setShowMoreFilters(true)}
+                      className="flex items-center gap-1 lg:gap-2 px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-blue-500 rounded-md lg:rounded-lg focus:outline-none whitespace-nowrap shadow-sm flex-1 justify-center text-white bg-blue-500"
+                    >
+                      <span className="flex items-center gap-1">
+                        Filtry
+                      </span>
+                      <MdKeyboardArrowDown className="w-5 h-5" />
+                    </button>
                   </div>
+                )}
+
+                {/* Reset + Show More/Less buttons (Visible always on Desktop) */}
+                <div className="hidden md:flex w-full justify-end items-end">
+                  <button
+                    onClick={() => setIsDesktopExpanded(!isDesktopExpanded)}
+                    aria-expanded={isDesktopExpanded}
+                    aria-label="Toggle filters"
+                    className="
+      group flex items-center gap-2 text-base font-medium
+      focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500
+      transition-all hover:text-blue-500
+    "
+                  >
+                    <span>
+                      {isDesktopExpanded ? "Mniej filtrów" : "Więcej filtrów"}
+                    </span>
+
+                    <span className="transition-transform duration-300 group-hover:text-blue-500">
+                      {isDesktopExpanded ? (
+                        <MdKeyboardArrowUp className="w-5 h-5" />
+                      ) : (
+                        <MdKeyboardArrowDown className="w-5 h-5" />
+                      )}
+                    </span>
+                  </button>
                 </div>
 
-                {/* New Line: Kraj Pochodzenia (Origin Country) */}
-                <div className="md:hidden space-y-2 md:space-y-0 mt-1">
-                  <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-between w-full gap-2">
-                    <div className="flex items-center justify-between w-full gap-2 md:gap-0">
-                      <div className="relative flex-1 mx-0.5 my-0.5">
-                        <select
-                          name="krajPochodzenia"
-                          value={filters.krajPochodzenia}
-                          onChange={handleInputChange}
-                          className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                        >
-                          <option value="">Kraj Pochodzenia</option>
-                          {ORIGIN_COUNTRY_OPTIONS.map(({ value, label }) => (
-                            <option key={value} value={value}>
-                              {label}
-                            </option>
-                          ))}
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                          <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              </div>
 
-                {/* Fourth Line: Service History Accident History Price */}
-                <div className="space-y-2 md:space-y-0">
-                  {/* Mobile: Two selectors per row, Desktop: All in one row */}
-                  <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-between w-full ">
-                    {/* Row 1 Mobile: Service History + Accident History, Desktop: All in one row */}
-                    <div className="flex items-center justify-between w-full gap-2 md:gap-0">
-                      {/* Service History Filter */}
-                      <div className="relative flex-1 mx-0.5 my-0.5">
-                        <select
-                          name="serviceHistory"
-                          value={filters.serviceHistory}
-                          onChange={handleInputChange}
-                          className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                        >
-                          <option value="">Historia Serwisowa</option>
-                          <option value="Yes">Tak</option>
-                          <option value="No">Nie</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                          <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                      </div>
-
-                      {/* Accident History Filter */}
-                      <div className="relative flex-1 mx-0.5 my-0.5">
-                        <select
-                          name="accidentHistory"
-                          value={filters.accidentHistory}
-                          onChange={handleInputChange}
-                          className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                        >
-                          <option value="">Bezwypadkowość</option>
-                          <option value="Yes">Tak</option>
-                          <option value="No">Nie</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                          <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Row 2 Mobile: Price From + Price To, Desktop: All in one row */}
-                    <div className="flex items-center justify-between w-full gap-2 md:gap-0">
-                      {/* Price From */}
-                      <div className="relative flex-1 mx-0.5 my-0.5">
-                        <input
-                          type="number"
-                          name="priceFrom"
-                          value={filters.priceFrom}
-                          onChange={handleInputChange}
-                          placeholder="Cena od"
-                          className="w-full px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200"
-                        />
-                      </div>
-
-                      {/* Price To */}
-                      <div className="relative flex-1 mx-0.5 my-0.5">
-                        <input
-                          type="number"
-                          name="priceTo"
-                          value={filters.priceTo}
-                          onChange={handleInputChange}
-                          placeholder="Cena do"
-                          className="w-full px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200"
-                        />
-                      </div>
-
-                    </div>
-                  </div>
-                </div>
-
-                {/* Reset and Show Less Buttons - At the end of additional filters */}
-                <div className="flex items-center justify-center w-full gap-2 mt-2">
-                  {/* Reset Button */}
+              {/* Desktop Layout: Second Line - Reset + Show More buttons (hidden when expanded) */}
+              {!showMoreFilters && (
+                <div className="hidden md:flex items-center justify-center w-full gap-1">
+                  {/* Reset Button - Desktop only */}
                   <button
                     onClick={handleReset}
-                    className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 rounded-md lg:rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex-1 justify-center"
+                    className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 rounded-md lg:rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex-1 justify-center"
                   >
                     Resetuj
                   </button>
 
-                  {/* Show Less Button */}
+                  {/* Show More Button - Desktop only */}
                   <button
-                    onClick={() => setShowMoreFilters(false)}
-                    className="flex items-center gap-1 lg:gap-2 px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-blue-500 rounded-md lg:rounded-lg focus:outline-none whitespace-nowrap shadow-sm flex-1 justify-center text-white bg-blue-500"
+                    onClick={() => setShowMoreFilters(true)}
+                    className="flex items-center gap-1 lg:gap-2 px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-blue-500 rounded-md lg:rounded-lg focus:outline-none whitespace-nowrap shadow-sm flex-1 justify-center text-white bg-blue-500"
                   >
                     <span className="flex items-center gap-1">
-                      Pokaż mniej
+                      Filtry
                     </span>
-                    <svg className="w-3 h-3 lg:w-4 lg:h-4 transition-transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3 h-3 lg:w-4 lg:h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
                 </div>
+              )}
+
+              {/* Mobile Layout: Single row with Make, Model, Show More + View Toggle */}
+              <div className="md:hidden">
+                <div className={`flex items-center justify-between w-[calc(100%-18px)] gap-2 mx-[10px] ${isSticky ? 'mb-0' : 'mb-[10px]'
+                  }`}>
+                  {/* Make */}
+                  <div className="relative flex-1">
+                    <select
+                      name="make"
+                      value={filters.make}
+                      onChange={handleInputChange}
+                      className="px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none w-full leading-[17px]"
+                    >
+                      <option value="">Marka</option>
+                      <option value="BMW">BMW</option>
+                      <option value="Mercedes-Benz">Mercedes-Benz</option>
+                      <option value="Audi">Audi</option>
+                      <option value="Volkswagen">Volkswagen</option>
+                      <option value="Toyota">Toyota</option>
+                      <option value="Honda">Honda</option>
+                      <option value="Ford">Ford</option>
+                      <option value="Nissan">Nissan</option>
+                      <option value="Hyundai">Hyundai</option>
+                      <option value="Kia">Kia</option>
+                      <option value="Mazda">Mazda</option>
+                      <option value="Subaru">Subaru</option>
+                      <option value="Lexus">Lexus</option>
+                      <option value="Infiniti">Infiniti</option>
+                      <option value="Acura">Acura</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                      <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                    </div>
+                  </div>
+
+                  {/* Model */}
+                  <div className="relative flex-1">
+                    <select
+                      name="model"
+                      value={filters.model}
+                      onChange={handleInputChange}
+                      className="px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm appearance-none w-full leading-[17px] transition-all duration-200 hover:border-gray-300"
+                    >
+                      <option value="">Model</option>
+                      <option value="Sedan">Sedan</option>
+                      <option value="SUV">SUV</option>
+                      <option value="Hatchback">Hatchback</option>
+                      <option value="Coupe">Coupe</option>
+                      <option value="Convertible">Convertible</option>
+                      <option value="Wagon">Wagon</option>
+                      <option value="Pickup">Pickup</option>
+                      <option value="Crossover">Crossover</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                      <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                    </div>
+                  </div>
+
+                  {/* Show More - Mobile; hidden when expanded */}
+                  {!showMoreFilters && (
+                    <div className="relative flex-1">
+                      <button
+                        onClick={() => setShowMoreFilters(true)}
+                        className="w-full px-3 h-10 pr-6 text-sm font-medium border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 whitespace-nowrap shadow-sm flex items-center justify-start text-white bg-blue-500 leading-[17px] transition-all duration-200 hover:bg-blue-600 hover:shadow-md"
+                      >
+                        <span className="flex items-center text-left">Filtry</span>
+                      </button>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                        <MdKeyboardArrowDown className="w-5 h-5 text-white" />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
 
               </div>
+
+              {/* Mobile overlay for filters */}
+              {showMoreFilters && isMounted && createPortal(
+                <div className="md:hidden fixed inset-0 z-[2147483647]">
+                  <div className="fixed inset-0 bg-black/40" onClick={() => setShowMoreFilters(false)}></div>
+                  <div className="fixed inset-0 bg-white shadow-xl p-4 overflow-y-auto">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-lg font-semibold text-gray-900">Filtry</h3>
+                      <button onClick={() => setShowMoreFilters(false)} className="text-sm text-gray-600 border border-gray-200 rounded-md px-2 py-1">Zamknij</button>
+                    </div>
+                    <div className="space-y-3">
+                      {/* Make + Model */}
+                      <div className="flex items-center justify-between w-full gap-1">
+                        <div className="relative flex-1">
+                          <select
+                            name="make"
+                            value={filters.make}
+                            onChange={handleInputChange}
+                            className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
+                            disabled={loading}
+                          >
+                            <option value="">Marka</option>
+                            {getMakes().map((make, index) => (
+                              <option key={`${index}, ${make}`} value={make}>
+                                {make}
+                              </option>
+                            ))}
+                          </select>
+                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                            <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                          </div>
+                        </div>
+                        <div className="relative flex-1">
+                          <select
+                            name="model"
+                            value={filters.model}
+                            onChange={handleInputChange}
+                            className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
+                            disabled={loading || !filters.make}
+                          >
+                            <option value="">Model</option>
+                            {filters.make && getModelsForMake(filters.make).map((model, index) => (
+                              <option key={`${index}, ${model}`} value={model}>
+                                {model}
+                              </option>
+                            ))}
+                          </select>
+                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                            <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                          </div>
+                        </div>
+                      </div>
+                      {/* Location + Distance */}
+                      <div className="flex items-center justify-between w-full gap-1">
+                        <div className="relative flex-1">
+                          <input type="text" name="location" value={filters.location} onChange={handleInputChange} placeholder="Lokalizacja" className="w-full px-3 h-10 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm" />
+                        </div>
+                        <div className="relative flex-1">
+                          <select name="maxDistance" value={filters.maxDistance} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                            <option value="">Dystans</option>
+                            <option value="10">Within 10 miles</option>
+                            <option value="25">Within 25 miles</option>
+                            <option value="50">Within 50 miles</option>
+                            <option value="100">Within 100 miles</option>
+                            <option value="200">Within 200 miles</option>
+                          </select>
+                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                            <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                          </div>
+                        </div>
+                      </div>
+                      {/* Year From + Year To */}
+                      <div className="flex items-center justify-between w-full gap-1">
+                        <div className="relative flex-1">
+                          <select name="yearFrom" value={filters.yearFrom} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                            <option value="">Rok od</option>
+                            {Array.from({ length: 30 }, (_, i) => 2025 - i).map(y => <option key={y} value={y}>{y}</option>)}
+                          </select>
+                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
+                        </div>
+                        <div className="relative flex-1">
+                          <select name="yearTo" value={filters.yearTo} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                            <option value="">Rok do</option>
+                            {Array.from({ length: 30 }, (_, i) => 2025 - i).map(y => <option key={y} value={y}>{y}</option>)}
+                          </select>
+                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                            <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                          </div>
+                        </div>
+                      </div>
+                      {/* Origin Country (Kraj Pochodzenia) - mobile overlay */}
+                      <div className="flex items-center justify-between w-full gap-1">
+                        {/* Kraj Pochodzenia (Swapped to first) */}
+                        <div className="relative flex-1">
+                          <select
+                            name="krajPochodzenia"
+                            value={filters.krajPochodzenia}
+                            onChange={handleInputChange}
+                            className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
+                          >
+                            <option value="">Kraj Pochodzenia</option>
+                            {ORIGIN_COUNTRY_OPTIONS.map(({ value, label }, idx) => (
+                              <option key={`${idx}-${value}`} value={value}>
+                                {label}
+                              </option>
+                            ))}
+                          </select>
+                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                            <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                          </div>
+                        </div>
+
+                        {/* Kraj Producenta (Swapped to second) */}
+                        <div className="relative flex-1">
+                          <select name="krajProducenta" value={filters.krajProducenta} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                            <option value="">Kraj Producenta</option>
+                            {COUNTRY_OPTIONS.map(({ value, label }, idx) => (
+                              <option key={`${idx}-${value}`} value={value}>
+                                {label}
+                              </option>
+                            ))}
+                          </select>
+                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                            <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between w-full gap-1">
+                        {/* Body Type Filter */}
+                        <div className="relative flex-1">
+                          <select
+                            name="bodyType"
+                            value={filters.bodyType}
+                            onChange={handleInputChange}
+                            className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                          >
+                            <option value="">Typ nadwozia</option>
+                            <option value="Bus I Van">Bus I Van</option>
+                            <option value="Coupe">Coupe</option>
+                            <option value="Crossover">Crossover</option>
+                            <option value="Hatchback">Hatchback</option>
+                            <option value="Kabriolet">Kabriolet</option>
+                            <option value="Kamper">Kamper</option>
+                            <option value="Klasyk">Klasyk</option>
+                            <option value="Kombi">Kombi</option>
+                            <option value="Kompakt">Kompakt</option>
+                            <option value="Limuzyna">Limuzyna</option>
+                            <option value="Pickup">Pickup</option>
+                            <option value="Sedan">Sedan</option>
+                            <option value="Sportowe">Sportowe</option>
+                            <option value="SUV">SUV</option>
+                            <option value="Terenowe">Terenowe</option>
+                          </select>
+                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                            <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                          </div>
+                        </div>
+                        {/* Color (Kolor) */}
+                        <div className="relative flex-1">
+                          <select
+                            name="color"
+                            value={filters.color}
+                            onChange={handleInputChange}
+                            className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
+                          >
+                            <option value="">Kolor</option>
+                            <option value="Biały">Biały</option>
+                            <option value="Czarny">Czarny</option>
+                            <option value="Srebrny">Srebrny</option>
+                            <option value="Szary">Szary</option>
+                            <option value="Czerwony">Czerwony</option>
+                            <option value="Niebieski">Niebieski</option>
+                            <option value="Zielony">Zielony</option>
+                            <option value="Żółty">Żółty</option>
+                            <option value="Brązowy">Brązowy</option>
+                            <option value="Beżowy">Beżowy</option>
+                            <option value="Złoty">Złoty</option>
+                            <option value="Inny">Inny</option>
+                          </select>
+                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                            <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Condition + Mileage */}
+                      <div className="flex items-center justify-between w-full gap-1">
+                        <div className="relative flex-1">
+                          <select name="stan" value={filters.stan} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                            <option value="">Stan</option>
+                            <option value="Demo">Demo</option>
+                            <option value="New">Nowy</option>
+                            <option value="Used">Używany</option>
+                          </select>
+                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                            <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                          </div>
+                        </div>
+                        <div className="relative flex-1">
+                          <select name="mileage" value={filters.mileage} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                            <option value="">Przebieg</option>
+                            <option value="0-30000">do 30 000 km</option>
+                            <option value="30000-50000">od 30 000 km do 50 000 km</option>
+                            <option value="50000-100000">od 50 000 km do 100 000 km</option>
+                            <option value="100000-200000">od 100 000 km do 200 000 km</option>
+                            <option value="200000+">powyżej 200 000 km</option>
+                          </select>
+                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
+                        </div>
+                      </div>
+                      {/* Fuel + Engine */}
+                      <div className="flex items-center justify-between w-full gap-2">
+                        <div className="relative flex-1">
+                          <select name="fuel" value={filters.fuel} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                            <option value="">Typ Paliwa</option>
+                            <option value="Petrol">Benzyna</option>
+                            <option value="Diesel">Diesel</option>
+                            <option value="Electric">Elektryk</option>
+                            <option value="Hybrid">Hybryda</option>
+                            <option value="LPG">LPG</option>
+                            <option value="Wodór">Wodór</option>
+                          </select>
+                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
+                        </div>
+                        <div className="relative flex-1">
+                          <select name="engineCapacity" value={filters.engineCapacity} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                            <option value="">Pojemność</option>
+                            <option value="0-1000">do 1000 cm³</option>
+                            <option value="1000-2000">1000 - 2000 cm³</option>
+                            <option value="2000-3000">2000 - 3000 cm³</option>
+                            <option value="3000+">powyżej 3000 cm³</option>
+                          </select>
+                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
+                        </div>
+                      </div>
+                      {/* Transmission + Drivetrain */}
+                      <div className="flex items-center justify-between w-full gap-2">
+                        <div className="relative flex-1">
+                          <select name="transmission" value={filters.transmission} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                            <option value="">Skrzynia Biegów</option>
+                            <option value="Automatic">Automat</option>
+                            <option value="Manual">Manual</option>
+                          </select>
+                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
+                        </div>
+                        {/* Drivetrain (Napęd) */}
+                        <div className="relative flex-1">
+                          <select
+                            name="drivetrain"
+                            value={filters.drivetrain}
+                            onChange={handleInputChange}
+                            className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                          >
+                            <option value="">Napęd</option>
+                            {/* FIX: Values changed to match Database Enums */}
+                            <option value="FWD">Przód (FWD)</option>
+                            <option value="RWD">Tył (RWD)</option>
+                            <option value="AWD">4x4 (AWD)</option>
+                            <option value="4WD">4x4 (4WD)</option>
+                          </select>
+                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                            <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                          </div>
+                        </div>
+                      </div>
+                      {/* Service + Accident */}
+                      <div className="flex items-center justify-between w-full gap-2">
+                        <div className="relative flex-1">
+                          <select name="serviceHistory" value={filters.serviceHistory} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                            <option value="">Historia Serwisowa</option>
+                            <option value="Yes">Tak</option>
+                            <option value="No">Nie</option>
+                          </select>
+                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
+                        </div>
+                        <div className="relative flex-1">
+                          <select name="accidentHistory" value={filters.accidentHistory} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                            <option value="">Bezwypadkowość</option>
+                            <option value="Yes">Tak</option>
+                            <option value="No">Nie</option>
+                          </select>
+                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
+                        </div>
+                      </div>
+                      {/* Price From + Price To */}
+                      <div className="flex items-center justify-between w-full gap-2">
+                        <div className="relative flex-1">
+                          <input type="number" name="priceFrom" value={filters.priceFrom} onChange={handleInputChange} placeholder="Cena od" className="w-full px-3 h-10 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm" />
+                        </div>
+                        <div className="relative flex-1">
+                          <input type="number" name="priceTo" value={filters.priceTo} onChange={handleInputChange} placeholder="Cena do" className="w-full px-3 h-10 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm" />
+                        </div>
+                      </div>
+                      {/* Actions */}
+                      <div className="flex items-center gap-2 pt-2">
+                        <button onClick={handleReset} className="flex-1 px-3 h-10 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg">Resetuj</button>
+                        <button onClick={() => setShowMoreFilters(false)} className="flex-1 px-3 h-10 text-sm font-medium text-white bg-blue-500 border border-blue-500 rounded-lg">Zastosuj</button>
+                      </div>
+                    </div>
+                  </div>,
+                  typeof window !== 'undefined' ? document.body : null
             )}
+                  {showMoreFilters && (
+                    <div className="hidden md:block">
 
 
-          </div>
+                      {/* Third Line: Fuel Engine Color Transmission Drivetrain */}
+                      <div className="space-y-2 md:space-y-0">
+                        {/* Mobile: Two selectors per row, Desktop: All in one row */}
+                        <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-between w-full ">
+                          {/* Row 1 Mobile: Fuel + Engine, Desktop: All in one row */}
+                          <div className="flex items-center justify-between w-full gap-2 md:gap-0">
+                            {/* Fuel Filter */}
+                            <div className="relative flex-1 mx-0.5 my-0.5">
+                              <select
+                                name="fuel"
+                                value={filters.fuel}
+                                onChange={handleInputChange}
+                                className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                              >
+                                <option value="">Typ Paliwa</option>
+                                <option value="Benzyna">Benzyna</option>
+                                <option value="Diesel">Diesel</option>
+                                <option value="Elektryk">Elektryk</option>
+                                <option value="Hybryda">Hybryda</option>
+                                <option value="LPG">LPG</option>
+                                <option value="Wodór">Wodór</option>
+                              </select>
+                              <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                                <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                              </div>
+                            </div>
+
+                            {/* Engine Capacity Filter (Pojemność) */}
+                            <div className="relative flex-1 mx-0.5 my-0.5">
+                              <select
+                                name="engineCapacity"
+                                value={filters.engineCapacity}
+                                onChange={handleInputChange}
+                                className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                              >
+                                <option value="">Pojemność</option>
+                                <option value="0-1000">do 1000 cm³</option>
+                                <option value="0-2000">do 2000 cm³</option>
+                                <option value="2000-3000">od 2000 cm³ do 3000 cm³</option>
+                                <option value="2900+">powyżej 2900 cm³</option>
+                              </select>
+                              <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                                <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                              </div>
+                            </div>
+                          </div>
+
+
+
+                          {/* Row 2 Mobile: Transmission + Drivetrain, Desktop: All in one row */}
+                          <div className="flex items-center justify-between w-full gap-2 md:gap-0">
+                            {/* Transmission Filter */}
+                            <div className="relative flex-1 mx-0.5 my-0.5">
+                              <select
+                                name="transmission"
+                                value={filters.transmission}
+                                onChange={handleInputChange}
+                                className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                              >
+                                <option value="">Skrzynia Biegów</option>
+                                <option value="Automatic">Automat</option>
+                                <option value="Manual">Manual</option>
+                              </select>
+                              <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                                <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                              </div>
+                            </div>
+
+                            {/* Drivetrain Filter */}
+                            <div className="relative flex-1 mx-0.5 my-0.5">
+                              <select
+                                name="drivetrain"
+                                value={filters.drivetrain}
+                                onChange={handleInputChange}
+                                className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                              >
+                                <option value="">Napęd</option>
+                                <option value="Przód">Przód</option>
+                                <option value="Tył">Tył</option>
+                                <option value="4x4/AWD">4x4/AWD</option>
+                              </select>
+                              <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                                <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* New Line: Kraj Pochodzenia (Origin Country) */}
+                      <div className="md:hidden space-y-2 md:space-y-0 mt-1">
+                        <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-between w-full gap-2">
+                          <div className="flex items-center justify-between w-full gap-2 md:gap-0">
+                            <div className="relative flex-1 mx-0.5 my-0.5">
+                              <select
+                                name="krajPochodzenia"
+                                value={filters.krajPochodzenia}
+                                onChange={handleInputChange}
+                                className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                              >
+                                <option value="">Kraj Pochodzenia</option>
+                                {ORIGIN_COUNTRY_OPTIONS.map(({ value, label }) => (
+                                  <option key={value} value={value}>
+                                    {label}
+                                  </option>
+                                ))}
+                              </select>
+                              <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                                <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Fourth Line: Service History Accident History Price */}
+                      <div className="space-y-2 md:space-y-0">
+                        {/* Mobile: Two selectors per row, Desktop: All in one row */}
+                        <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-between w-full ">
+                          {/* Row 1 Mobile: Service History + Accident History, Desktop: All in one row */}
+                          <div className="flex items-center justify-between w-full gap-2 md:gap-0">
+                            {/* Service History Filter */}
+                            <div className="relative flex-1 mx-0.5 my-0.5">
+                              <select
+                                name="serviceHistory"
+                                value={filters.serviceHistory}
+                                onChange={handleInputChange}
+                                className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                              >
+                                <option value="">Historia Serwisowa</option>
+                                <option value="Yes">Tak</option>
+                                <option value="No">Nie</option>
+                              </select>
+                              <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                                <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                              </div>
+                            </div>
+
+                            {/* Accident History Filter */}
+                            <div className="relative flex-1 mx-0.5 my-0.5">
+                              <select
+                                name="accidentHistory"
+                                value={filters.accidentHistory}
+                                onChange={handleInputChange}
+                                className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                              >
+                                <option value="">Bezwypadkowość</option>
+                                <option value="Yes">Tak</option>
+                                <option value="No">Nie</option>
+                              </select>
+                              <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                                <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Row 2 Mobile: Price From + Price To, Desktop: All in one row */}
+                          <div className="flex items-center justify-between w-full gap-2 md:gap-0">
+                            {/* Price From */}
+                            <div className="relative flex-1 mx-0.5 my-0.5">
+                              <input
+                                type="number"
+                                name="priceFrom"
+                                value={filters.priceFrom}
+                                onChange={handleInputChange}
+                                placeholder="Cena od"
+                                className="w-full px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200"
+                              />
+                            </div>
+
+                            {/* Price To */}
+                            <div className="relative flex-1 mx-0.5 my-0.5">
+                              <input
+                                type="number"
+                                name="priceTo"
+                                value={filters.priceTo}
+                                onChange={handleInputChange}
+                                placeholder="Cena do"
+                                className="w-full px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200"
+                              />
+                            </div>
+
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Reset and Show Less Buttons - At the end of additional filters */}
+                      <div className="flex items-center justify-center w-full gap-2 mt-2">
+                        {/* Reset Button */}
+                        <button
+                          onClick={handleReset}
+                          className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 rounded-md lg:rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex-1 justify-center"
+                        >
+                          Resetuj
+                        </button>
+
+                        {/* Show Less Button */}
+                        <button
+                          onClick={() => setShowMoreFilters(false)}
+                          className="flex items-center gap-1 lg:gap-2 px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-blue-500 rounded-md lg:rounded-lg focus:outline-none whitespace-nowrap shadow-sm flex-1 justify-center text-white bg-blue-500"
+                        >
+                          <span className="flex items-center gap-1">
+                            Pokaż mniej
+                          </span>
+                          <svg className="w-3 h-3 lg:w-4 lg:h-4 transition-transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                      </div>
+
+                    </div>
+                  )}
+
+
+                </div>
         </div>
-      </div>
-      {isSticky && (
-        <div style={{ height: navbarHeight }} />
-      )}
-    </>
-  );
+          </div>
+          {isSticky && (
+            <div style={{ height: navbarHeight }} />
+          )}
+        </>
+        );
 }
