@@ -344,6 +344,16 @@ const CarsContent = () => {
           fetchedCars = fetchedCars.filter(c => c.country === filters.country);
         }
 
+        // 5. Engine Capacity Filtering (Client Side Fallback)
+        if (filters.minEngine !== undefined || filters.maxEngine !== undefined) {
+          fetchedCars = fetchedCars.filter(c => {
+             const carEngine = parseInt(c.engine || "0", 10);
+             if (filters.minEngine !== undefined && carEngine < filters.minEngine) return false;
+             if (filters.maxEngine !== undefined && carEngine > filters.maxEngine) return false;
+             return true;
+          });
+        }
+
         setAllCars(fetchedCars);
         setTotalItems(fetchedCars.length);
 

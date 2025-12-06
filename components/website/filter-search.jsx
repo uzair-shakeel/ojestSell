@@ -95,10 +95,21 @@ export function FilterSearch() {
     // Only validate if both are numbers
     const start = parseInt(startYear);
     const end = parseInt(newEndYear);
-    
+
+    // If both parsed values are valid numbers and end < start, clear endYear
     if (!isNaN(start) && !isNaN(end) && end < start) {
-      // If end year is less than start year, reset end year
-      setEndYear(""); 
+      setEndYear("");
+    }
+  };
+
+  // Validate when start year changes — if start > existing end, clear start
+  const validateStartDate = (newStartYear) => {
+    const start = parseInt(newStartYear);
+    const end = parseInt(endYear);
+
+    // If both parsed values are valid numbers and start > end, clear startYear
+    if (!isNaN(start) && !isNaN(end) && start > end) {
+      setStartYear("");
     }
   };
 
@@ -145,7 +156,10 @@ export function FilterSearch() {
             <div className="grid grid-cols-2 gap-3">
               <select
                 value={startYear}
-                onChange={(e) => setStartYear(e.target.value)}
+                onChange={(e) => {
+                  setStartYear(e.target.value);
+                  validateStartDate(e.target.value);
+                }}
                 className="w-full h-12 px-3 border rounded-md bg-white/70 text-black font-medium "
               >
                 <option value="">Rok od</option>
@@ -275,7 +289,10 @@ export function FilterSearch() {
               <div className=" h-full flex">
                 <select
                   value={startYear}
-                  onChange={(e) => setStartYear(e.target.value)}
+                    onChange={(e) => {
+                      setStartYear(e.target.value);
+                      validateStartDate(e.target.value);
+                    }}
                   className="w-full h-full px-4 font-semibold border-0   bg-white/70 text-black  focus:ring-0 focus:outline-none appearance-none"
                   style={{ height: "100%" }} // Inline style for Safari
                 >

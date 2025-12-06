@@ -405,8 +405,8 @@ export default function FilterNavbar({ onApplyFilters }) {
                     className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                   >
                     <option value="">Kraj Pochodzenia</option>
-                    {ORIGIN_COUNTRY_OPTIONS.map(({ value, label, index }) => (
-                      <option key={`${index}, ${value}`} value={value}>
+                    {ORIGIN_COUNTRY_OPTIONS.map(({ value, label }, idx) => (
+                      <option key={`${idx}-${value}`} value={value}>
                         {label}
                       </option>
                     ))}
@@ -429,8 +429,8 @@ export default function FilterNavbar({ onApplyFilters }) {
                     className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                   >
                     <option value="">Kraj Producenta</option>
-                    {COUNTRY_OPTIONS.map(({ value, label, index }) => (
-                      <option key={`${index}, ${value}`} value={value}>
+                    {COUNTRY_OPTIONS.map(({ value, label }, idx) => (
+                      <option key={`${idx}-${value}`} value={value}>
                         {label}
                       </option>
                     ))}
@@ -816,8 +816,8 @@ export default function FilterNavbar({ onApplyFilters }) {
                         className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
                       >
                         <option value="">Kraj Pochodzenia</option>
-                        {ORIGIN_COUNTRY_OPTIONS.map(({ value, label, index }) => (
-                          <option key={`${index}, ${value}`} value={value}>
+                        {ORIGIN_COUNTRY_OPTIONS.map(({ value, label }, idx) => (
+                          <option key={`${idx}-${value}`} value={value}>
                             {label}
                           </option>
                         ))}
@@ -831,8 +831,8 @@ export default function FilterNavbar({ onApplyFilters }) {
                     <div className="relative flex-1">
                       <select name="krajProducenta" value={filters.krajProducenta} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
                         <option value="">Kraj Producenta</option>
-                        {COUNTRY_OPTIONS.map(({ value, label, index }) => (
-                          <option key={`${index} ${value}`} value={value}>
+                        {COUNTRY_OPTIONS.map(({ value, label }, idx) => (
+                          <option key={`${idx}-${value}`} value={value}>
                             {label}
                           </option>
                         ))}
