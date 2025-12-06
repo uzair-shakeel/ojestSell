@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect, Suspense, useRef, useCallback } from "react";
 import FilterSidebar from "../../../components/website/FilterSidebar";
 import FilterNavbar from "../../../components/website/FilterNavbar";
@@ -9,6 +10,8 @@ import Image from "next/image";
 import { getAllCars, searchCars } from "../../../services/carService";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
+
+// Constants
 
 const SLUG_TO_COUNTRY = {
   "germany": "Niemcy",
@@ -87,17 +90,21 @@ const SLUG_TO_ORIGIN = {
   "italy": "Włochy"
 };
 
+// Main Content Component
+
 const CarsContent = () => {
   const { t } = useLanguage();
+
+  // State Management
   
-  // --- STATE MANAGEMENT ---
-  const [viewMode, setViewMode] = useState("grid"); // 'grid' or 'list'
-  
+  // View Mode (Default is Grid)
+  const [viewMode, setViewMode] = useState("grid");
+
   // Data State
-  const [allCars, setAllCars] = useState([]); // All cars fetched from API matching filters
-  const [cars, setCars] = useState([]); // Cars currently displayed (sliced by pagination)
+  const [allCars, setAllCars] = useState([]);
+  const [cars, setCars] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
-  
+
   // UI State
   const [showMobileFilter, setShowMobileFilter] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -114,21 +121,24 @@ const CarsContent = () => {
   const searchParams = useSearchParams();
   const sortListRef = useRef(null);
 
-  // --- 1. HANDLE RESIZE (Responsive View) ---
+  // Effects
+
+  // 1. Handle Resize: Ensure View Mode logic
   useEffect(() => {
     const handleResize = () => {
+      // Force grid on mobile
       if (window.innerWidth < 768) {
         setViewMode("grid");
-      } else {
-        setViewMode("list");
       }
+      // Note: We removed the 'else { setViewMode("list") }' block 
+      // to respect the user's preference or default "grid" on desktop.
     };
-    handleResize(); 
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // --- 2. HANDLE DRAG SCROLL (Sort List) ---
+  // 2. Handle Drag Scroll for Sort List (Desktop/Mobile touch)
   useEffect(() => {
     const el = sortListRef.current;
     if (!el) return;
@@ -147,7 +157,7 @@ const CarsContent = () => {
     const onPointerMove = (e) => {
       if (!isDown) return;
       const x = (e.touches ? e.touches[0].pageX : e.pageX) - el.offsetLeft;
-      const walk = (x - startX) * 1; 
+      const walk = (x - startX) * 1;
       el.scrollLeft = startScrollLeft - walk;
     };
 
@@ -175,7 +185,7 @@ const CarsContent = () => {
     };
   }, []);
 
-  // --- 3. HANDLE VIEW EVENTS ---
+  // 3. Listen for Custom View Mode Events
   useEffect(() => {
     const onViewMode = (e) => {
       const mode = e.detail;
@@ -185,7 +195,7 @@ const CarsContent = () => {
     return () => window.removeEventListener('ojest:viewMode', onViewMode);
   }, []);
 
-  // --- 4. LOCK SCROLL WHEN MOBILE FILTER OPEN ---
+  // 4. Lock Scroll when Mobile Filter is Open
   useEffect(() => {
     if (showMobileFilter) {
       document.body.style.overflow = "hidden";
@@ -197,8 +207,7 @@ const CarsContent = () => {
     };
   }, [showMobileFilter]);
 
-  // --- 5. PARSE URL TO API FILTERS (Logic Fix) ---
-  // This helper reads the URL and creates the object expected by the API
+  // Helper: Parse URL to API Filters
   const getFiltersFromUrl = useCallback(() => {
     const params = new URLSearchParams(searchParams);
     const apiFilters = {};
@@ -211,51 +220,70 @@ const CarsContent = () => {
     if (get("model")) apiFilters.model = get("model");
     if (get("bodyType") || get("type")) apiFilters.type = get("bodyType") || get("type");
     if (get("fuel")) apiFilters.fuel = get("fuel");
+    
+    // FIX: Drivetrain (Frontend now sends English values like FWD, RWD)
+    if (get("drivetrain")) apiFilters.drivetrain = get("drivetrain"); 
+    
     if (get("transmission")) apiFilters.transmission = get("transmission");
     if (get("location")) apiFilters.location = get("location");
     if (get("condition") || get("stan")) apiFilters.condition = get("condition") || get("stan");
-    if (get("drivetrain")) apiFilters.drivetrain = get("drivetrain");
     if (get("color")) apiFilters.color = get("color");
     if (get("serviceHistory")) apiFilters.serviceHistory = get("serviceHistory");
     if (get("accidentHistory")) apiFilters.accidentHistory = get("accidentHistory");
-
-    // Number Mappings
+    
+    // Numeric Mappings
     if (get("priceFrom")) apiFilters.minPrice = Number(get("priceFrom"));
     if (get("priceTo")) apiFilters.maxPrice = Number(get("priceTo"));
-    if (get("yearFrom") || get("minYear")) apiFilters.minYear = Number(get("yearFrom") || get("minYear"));
-    if (get("yearTo") || get("maxYear")) apiFilters.maxYear = Number(get("yearTo") || get("maxYear"));
+    
+    // Year Mapping
+    if (get("yearFrom") || get("minYear")) apiFilters.yearFrom = Number(get("yearFrom") || get("minYear"));
+    if (get("yearTo") || get("maxYear")) apiFilters.yearTo = Number(get("yearTo") || get("maxYear"));
+
+    // Default Years logic to ensure valid range for backend
+    if (apiFilters.yearFrom && !apiFilters.yearTo) {
+      apiFilters.yearTo = new Date().getFullYear() + 1;
+    }
+    if (!apiFilters.yearFrom && apiFilters.yearTo) {
+      apiFilters.yearFrom = 1900;
+    }
+
     if (get("maxDistance") || get("distance")) apiFilters.maxDistance = Number(get("maxDistance") || get("distance"));
 
-    // Range Parsing (Mileage)
+    // Mileage Range Mapping
     const mileageRange = get("mileageRange");
     if (mileageRange) {
       if (mileageRange.includes("+")) {
-         apiFilters.minMileage = parseInt(mileageRange.replace("+", ""), 10);
+        apiFilters.minMileage = parseInt(mileageRange.replace("+", ""), 10);
       } else if (mileageRange.includes("-")) {
-         const [min, max] = mileageRange.split("-");
-         apiFilters.minMileage = parseInt(min, 10);
-         apiFilters.maxMileage = parseInt(max, 10);
+        const [min, max] = mileageRange.split("-");
+        apiFilters.minMileage = parseInt(min, 10);
+        apiFilters.mileage = parseInt(max, 10); // Map 'max' to API's 'mileage' param
       }
     }
 
-    // Range Parsing (Engine)
+    // FIX: Engine Capacity Range Mapping (Parsing ranges like "2000-3000")
     const engineRange = get("engineCapacityRange");
     if (engineRange) {
       if (engineRange.includes("+")) {
-        apiFilters.minEngineCapacity = parseInt(engineRange.replace("+", ""), 10);
+        apiFilters.minEngine = parseInt(engineRange.replace("+", ""), 10);
       } else if (engineRange.includes("-")) {
         const [min, max] = engineRange.split("-");
-        apiFilters.minEngineCapacity = parseInt(min, 10);
-        apiFilters.maxEngineCapacity = parseInt(max, 10);
+        apiFilters.minEngine = parseInt(min, 10);
+        apiFilters.maxEngine = parseInt(max, 10);
       }
     }
 
-    // Country Mappings
-    const origin = get("krajPochodzenia") || get("origin");
-    if (origin) apiFilters.krajPochodzenia = SLUG_TO_ORIGIN[origin] || origin;
+    // FIX: Country/Origin Mapping (Checks for 'krajPochodzenia' and maps slug)
+    const origin = get("krajPochodzenia") || get("country") || get("origin");
+    if (origin) {
+        apiFilters.country = SLUG_TO_ORIGIN[origin] || origin;
+    }
 
+    // Manufacturer Country Mapping
     const manufacturer = get("krajProducenta") || get("countryOfManufacturer");
-    if (manufacturer) apiFilters.countryOfManufacturer = SLUG_TO_COUNTRY[manufacturer] || manufacturer;
+    if (manufacturer) {
+        apiFilters.countryOfManufacturer = SLUG_TO_COUNTRY[manufacturer] || manufacturer;
+    }
 
     // Page Sync
     const pageParam = get("page");
@@ -264,30 +292,29 @@ const CarsContent = () => {
     return apiFilters;
   }, [searchParams]);
 
-  // --- 6. FETCH DATA EFFECT (Triggered by URL changes) ---
+  // 5. Fetch Data Effect
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       setError(null);
-      
+
       try {
         const filters = getFiltersFromUrl();
-        
+
         // Strategy: Fetch a large batch to allow client-side sorting/pagination accuracy
-        // Since we are slicing data in the frontend (as per your sorting logic), 
-        // we request a high limit here.
-        filters.limit = 1000; 
+        filters.limit = 1000;
         filters.page = 1;
 
-        // Cleanup empty keys
-        Object.keys(filters).forEach(key => {
-          if (filters[key] === undefined || filters[key] === "" || Number.isNaN(filters[key])) {
-            delete filters[key];
+        // Cleanup empty keys before sending
+        const apiPayload = { ...filters };
+        Object.keys(apiPayload).forEach(key => {
+          if (apiPayload[key] === undefined || apiPayload[key] === "" || Number.isNaN(apiPayload[key])) {
+            delete apiPayload[key];
           }
         });
 
-        const response = await searchCars(filters);
-        
+        const response = await searchCars(apiPayload);
+
         // Normalize API response
         let fetchedCars = [];
         if (Array.isArray(response)) {
@@ -296,9 +323,26 @@ const CarsContent = () => {
           fetchedCars = response.cars;
         }
 
-        // Optional: Extra Client-Side Filtering if API is loose
+        // Client-Side Filtering (for fields backend might ignore)
+
+        // 1. Price Filtering (Safety net)
         if (filters.minPrice) fetchedCars = fetchedCars.filter(c => (c.financialInfo?.priceNetto || 0) >= filters.minPrice);
         if (filters.maxPrice) fetchedCars = fetchedCars.filter(c => (c.financialInfo?.priceNetto || 0) <= filters.maxPrice);
+
+        // 2. Color Filtering
+        if (filters.color) {
+          fetchedCars = fetchedCars.filter(c => c.color && c.color.toLowerCase() === filters.color.toLowerCase());
+        }
+
+        // 3. Min Mileage Filtering
+        if (filters.minMileage !== undefined) {
+          fetchedCars = fetchedCars.filter(c => (c.mileage || 0) >= filters.minMileage);
+        }
+
+        // 4. Origin/Country Filtering
+        if (filters.country) {
+          fetchedCars = fetchedCars.filter(c => c.country === filters.country);
+        }
 
         setAllCars(fetchedCars);
         setTotalItems(fetchedCars.length);
@@ -315,18 +359,18 @@ const CarsContent = () => {
     };
 
     fetchData();
-  }, [getFiltersFromUrl, t]); // Depends on URL params
+  }, [getFiltersFromUrl, t]);
 
-  // --- 7. SORTING & PAGINATION EFFECT (Client Side) ---
+  // 6. Sorting & Pagination Effect (Client Side)
   useEffect(() => {
     let data = [...allCars];
 
-    // 1. Sorting
+    // Sorting
     if (sortBy !== 'best-match') {
       data.sort((a, b) => {
         const priceA = Number(a.financialInfo?.priceNetto || 0);
         const priceB = Number(b.financialInfo?.priceNetto || 0);
-        
+
         // Clean mileage strings for sorting
         const getMileage = (car) => Number(String(car.mileage || "0").replace(/\D/g, ""));
         const mileA = getMileage(a);
@@ -334,7 +378,7 @@ const CarsContent = () => {
 
         const yearA = Number(a.year || 0);
         const yearB = Number(b.year || 0);
-        
+
         const dateA = new Date(a.createdAt || 0);
         const dateB = new Date(b.createdAt || 0);
 
@@ -352,7 +396,7 @@ const CarsContent = () => {
       });
     }
 
-    // 2. Pagination
+    // Pagination Slicing
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const paginatedCars = data.slice(startIndex, endIndex);
@@ -360,20 +404,18 @@ const CarsContent = () => {
     setCars(paginatedCars);
   }, [allCars, sortBy, currentPage, itemsPerPage]);
 
-  // --- HANDLERS ---
+  // Event Handlers
 
   const handleSort = (sortValue) => {
     setSortBy(sortValue);
     setCurrentPage(1);
-    // Optional: Scroll to top of grid
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleApplyFilters = (newFilters) => {
-    // Convert UI Filter Object -> URL Search Params
     const params = new URLSearchParams();
-    
-    // UI Keys mapped to URL Keys
+
+    // Map UI Keys to URL Keys
     const mapping = {
       make: newFilters.make,
       model: newFilters.model,
@@ -391,10 +433,8 @@ const CarsContent = () => {
       color: newFilters.color,
       serviceHistory: newFilters.serviceHistory,
       accidentHistory: newFilters.accidentHistory,
-      // Dropdown ranges
-      mileageRange: newFilters.mileage, 
+      mileageRange: newFilters.mileage,
       engineCapacityRange: newFilters.engineCapacity,
-      // Country
       krajPochodzenia: newFilters.krajPochodzenia,
       krajProducenta: newFilters.krajProducenta,
     };
@@ -405,54 +445,50 @@ const CarsContent = () => {
       }
     });
 
-    // Reset to page 1 on new filter
     params.set("page", "1");
     setCurrentPage(1);
 
-    // Push new URL (this triggers Step 6: Fetch Data Effect)
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-    
-    // Close mobile menu if open
     setShowMobileFilter(false);
   };
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    
-    // Update URL to keep shareable links valid
     const params = new URLSearchParams(searchParams);
     params.set("page", page);
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-    
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleItemsPerPageChange = (newItemsPerPage) => {
     setItemsPerPage(newItemsPerPage);
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
+
+  // Render
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-800">
-      {/* Header */}
+      {/* Hero Section */}
       <HeroFeaturedCarousel />
 
       {/* Horizontal Filter Navbar */}
-      <div className="w-full ">
+      <div className="w-full">
         <FilterNavbar onApplyFilters={handleApplyFilters} />
       </div>
 
       <div className="max-w-screen-2xl mx-auto sm:py-12 flex flex-row lg:space-x-4 h-full mt-4">
-        {/* Aside (Desktop Filter Sidebar) - Hidden in favor of horizontal navbar */}
+        {/* Desktop Sidebar (Hidden in favor of navbar) */}
         <aside className="w-[380px] hidden sticky top-0 self-start h-fit">
           <FilterSidebar onApplyFilters={handleApplyFilters} />
         </aside>
 
-        {/* Main Content */}
+        {/* Main Content Area */}
         <main className="h-full w-full px-0 sm:px-4">
-          {/* Header Cards (View Toggle and Sort Options) */}
+          {/* Controls: View Toggle & Sort */}
           <div className="bg-white dark:bg-gray-800 flex flex-col lg:flex-row justify-between items-center py-1 pb-2 px-[10px] sm:px-2 gap-2 lg:gap-4">
-            {/* Top on Mobile, Right on Desktop - View Toggle Buttons */}
+            
+            {/* View Toggle Buttons */}
             <div className="hidden lg:flex justify-center lg:justify-end w-full lg:w-auto order-1 lg:order-2">
               <div className="bg-white rounded-lg p-1 shadow-sm border flex gap-1">
                 <button
@@ -463,11 +499,8 @@ const CarsContent = () => {
                     : "text-gray-600 dark:text-gray-300 hover:text-gray-900 hover:bg-gray-100 dark:hover:text-gray-300 dark:hover:bg-transparent"
                     }`}
                 >
-                  <svg
-                    className="w-4 h-4 lg:w-5 lg:h-5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  {/* Grid Icon */}
+                  <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                   </svg>
                 </button>
@@ -479,23 +512,16 @@ const CarsContent = () => {
                     : "text-gray-600 dark:text-gray-300 hover:text-gray-900 hover:bg-gray-100 dark:hover:text-gray-300 dark:hover:bg-transparent"
                     }`}
                 >
-                  <svg
-                    className="w-4 h-4 lg:w-5 lg:h-5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                      clipRule="evenodd"
-                    />
+                  {/* List Icon */}
+                  <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
                   </svg>
                 </button>
               </div>
             </div>
 
-            {/* Bottom on Mobile, Left on Desktop - Sort Inline List */}
-            <div className="order-2  lg:order-1 w-full -mt-[28px] lg:mt-4 lg:w-auto">
+            {/* Sort Options List */}
+            <div className="order-2 lg:order-1 w-full -mt-[28px] lg:mt-4 lg:w-auto">
               <ul ref={sortListRef} className="filter-sorts flex flex-nowrap items-center overflow-x-scroll scroll-x-touch scrollbar-hide whitespace-nowrap -mx-2 px-2 pr-4 gap-2 lg:gap-4 cursor-grab select-none active:cursor-grabbing">
                 <li className="sort-option pr-3 flex-none">
                   <button
@@ -508,69 +534,34 @@ const CarsContent = () => {
                     Najlepsze dopasowanie
                   </button>
                 </li>
+                {/* Additional Sort Options */}
                 <li className="sort-option pr-3 flex-none">
-                  <button
-                    onClick={() => handleSort("lowest-price")}
-                    className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "lowest-price"
-                      ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
-                      : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"
-                      } bg-transparent focus:outline-none appearance-none`}
-                  >
+                  <button onClick={() => handleSort("lowest-price")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "lowest-price" ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"} bg-transparent focus:outline-none appearance-none`}>
                     Najniższa cena
                   </button>
                 </li>
                 <li className="sort-option pr-3 flex-none">
-                  <button
-                    onClick={() => handleSort("highest-price")}
-                    className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "highest-price"
-                      ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
-                      : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"
-                      } bg-transparent focus:outline-none appearance-none`}
-                  >
+                  <button onClick={() => handleSort("highest-price")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "highest-price" ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"} bg-transparent focus:outline-none appearance-none`}>
                     Najwyższa cena
                   </button>
                 </li>
                 <li className="sort-option pr-3 flex-none">
-                  <button
-                    onClick={() => handleSort("lowest-mileage")}
-                    className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "lowest-mileage"
-                      ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
-                      : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"
-                      } bg-transparent focus:outline-none appearance-none`}
-                  >
+                  <button onClick={() => handleSort("lowest-mileage")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "lowest-mileage" ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"} bg-transparent focus:outline-none appearance-none`}>
                     Najniższy przebieg
                   </button>
                 </li>
                 <li className="sort-option pr-3 flex-none">
-                  <button
-                    onClick={() => handleSort("highest-mileage")}
-                    className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "highest-mileage"
-                      ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
-                      : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"
-                      } bg-transparent focus:outline-none appearance-none`}
-                  >
+                  <button onClick={() => handleSort("highest-mileage")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "highest-mileage" ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"} bg-transparent focus:outline-none appearance-none`}>
                     Najwyższy przebieg
                   </button>
                 </li>
                 <li className="sort-option pr-3 flex-none">
-                  <button
-                    onClick={() => handleSort("newest-year")}
-                    className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "newest-year"
-                      ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
-                      : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"
-                      } bg-transparent focus:outline-none appearance-none`}
-                  >
+                  <button onClick={() => handleSort("newest-year")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "newest-year" ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"} bg-transparent focus:outline-none appearance-none`}>
                     Najnowszy rok
                   </button>
                 </li>
                 <li className="sort-option pr-3 flex-none">
-                  <button
-                    onClick={() => handleSort("oldest-year")}
-                    className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "oldest-year"
-                      ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
-                      : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"
-                      } bg-transparent focus:outline-none appearance-none`}
-                  >
+                  <button onClick={() => handleSort("oldest-year")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "oldest-year" ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"} bg-transparent focus:outline-none appearance-none`}>
                     Najstarszy rok
                   </button>
                 </li>
@@ -578,8 +569,7 @@ const CarsContent = () => {
             </div>
           </div>
 
-
-          {/* Car Cards - Responsive grid/list layout */}
+          {/* Car Listing Grid/List */}
           <div
             className={
               viewMode === "grid"
@@ -638,7 +628,7 @@ const CarsContent = () => {
             />
           )}
 
-          {/* Mobile Filter Sidebar */}
+          {/* Mobile Filter Sidebar Overlay */}
           {showMobileFilter && (
             <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
               <FilterSidebar
@@ -653,6 +643,8 @@ const CarsContent = () => {
     </div>
   );
 };
+
+// Page Wrapper
 
 const Page = () => {
   return (
