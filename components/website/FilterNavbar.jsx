@@ -7,59 +7,59 @@ import { createPortal } from "react-dom";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 const COUNTRY_OPTIONS = [
-  { value: "germany", label: "Niemcy" },
-  { value: "france", label: "Francja" },
-  { value: "belgium", label: "Belgia" },
-  { value: "netherlands", label: "Holandia" },
-  { value: "italy", label: "Włochy" },
+  { value: "albania", label: "Albania" },
+  { value: "saudi-arabia", label: "Arabia Saudyjska" },
+  { value: "armenia", label: "Armenia" },
   { value: "australia", label: "Australia" },
   { value: "austria", label: "Austria" },
+  { value: "azerbaijan", label: "Azerbejdżan" },
+  { value: "bahrain", label: "Bahrajn" },
+  { value: "belgium", label: "Belgia" },
+  { value: "belarus", label: "Białoruś" },
+  { value: "bulgaria", label: "Bułgaria" },
+  { value: "china", label: "Chiny" },
+  { value: "croatia", label: "Chorwacja" },
+  { value: "montenegro", label: "Czarnogóra" },
+  { value: "czech-republic", label: "Czechy" },
+  { value: "denmark", label: "Dania" },
+  { value: "dubai", label: "Dubaj" },
+  { value: "estonia", label: "Estonia" },
+  { value: "finland", label: "Finlandia" },
+  { value: "france", label: "Francja" },
+  { value: "georgia", label: "Gruzja" },
+  { value: "spain", label: "Hiszpania" },
+  { value: "netherlands", label: "Holandia" },
+  { value: "india", label: "Indie" },
+  { value: "ireland", label: "Irlandia" },
+  { value: "iceland", label: "Islandia" },
+  { value: "israel", label: "Izrael" },
+  { value: "japan", label: "Japonia" },
+  { value: "canada", label: "Kanada" },
+  { value: "qatar", label: "Katar" },
+  { value: "kazakhstan", label: "Kazachstan" },
+  { value: "south-korea", label: "Korea Południowa" },
+  { value: "kuwait", label: "Kuwejt" },
+  { value: "lithuania", label: "Litwa" },
+  { value: "luxembourg", label: "Luksemburg" },
+  { value: "latvia", label: "Łotwa" },
+  { value: "north-macedonia", label: "Macedonia Północna" },
+  { value: "germany", label: "Niemcy" },
+  { value: "norway", label: "Norwegia" },
+  { value: "oman", label: "Oman" },
+  { value: "portugal", label: "Portugalia" },
+  { value: "romania", label: "Rumunia" },
+  { value: "serbia", label: "Serbia" },
+  { value: "slovakia", label: "Słowacja" },
+  { value: "slovenia", label: "Słowenia" },
+  { value: "united-states", label: "Stany Zjednoczone" },
   { value: "switzerland", label: "Szwajcaria" },
   { value: "sweden", label: "Szwecja" },
-  { value: "denmark", label: "Dania" },
-  { value: "czech-republic", label: "Czechy" },
-  { value: "slovakia", label: "Słowacja" },
-  { value: "spain", label: "Hiszpania" },
-  { value: "portugal", label: "Portugalia" },
-  { value: "united-kingdom", label: "Wielka Brytania" },
-  { value: "ireland", label: "Irlandia" },
-  { value: "luxembourg", label: "Luksemburg" },
-  { value: "finland", label: "Finlandia" },
-  { value: "norway", label: "Norwegia" },
-  { value: "iceland", label: "Islandia" },
-  { value: "hungary", label: "Węgry" },
-  { value: "romania", label: "Rumunia" },
-  { value: "bulgaria", label: "Bułgaria" },
-  { value: "croatia", label: "Chorwacja" },
-  { value: "slovenia", label: "Słowenia" },
-  { value: "serbia", label: "Serbia" },
-  { value: "montenegro", label: "Czarnogóra" },
-  { value: "north-macedonia", label: "Macedonia Północna" },
-  { value: "albania", label: "Albania" },
-  { value: "lithuania", label: "Litwa" },
-  { value: "latvia", label: "Łotwa" },
-  { value: "estonia", label: "Estonia" },
-  { value: "belarus", label: "Białoruś" },
-  { value: "ukraine", label: "Ukraina" },
-  { value: "united-states", label: "Stany Zjednoczone" },
-  { value: "canada", label: "Kanada" },
-  { value: "japan", label: "Japonia" },
-  { value: "south-korea", label: "Korea Południowa" },
-  { value: "china", label: "Chiny" },
-  { value: "united-arab-emirates", label: "Zjednoczone Emiraty Arabskie" },
-  { value: "dubai", label: "Dubaj" },
-  { value: "qatar", label: "Katar" },
-  { value: "kuwait", label: "Kuwejt" },
-  { value: "saudi-arabia", label: "Arabia Saudyjska" },
-  { value: "oman", label: "Oman" },
-  { value: "bahrain", label: "Bahrajn" },
-  { value: "israel", label: "Izrael" },
   { value: "turkey", label: "Turcja" },
-  { value: "kazakhstan", label: "Kazachstan" },
-  { value: "georgia", label: "Gruzja" },
-  { value: "armenia", label: "Armenia" },
-  { value: "azerbaijan", label: "Azerbejdżan" },
-  { value: "india", label: "Indie" },
+  { value: "ukraine", label: "Ukraina" },
+  { value: "hungary", label: "Węgry" },
+  { value: "united-kingdom", label: "Wielka Brytania" },
+  { value: "italy", label: "Włochy" },
+  { value: "united-arab-emirates", label: "Zjednoczone Emiraty Arabskie" },
 ];
 
 const ORIGIN_COUNTRY_OPTIONS = [
@@ -321,7 +321,7 @@ export default function FilterNavbar({ onApplyFilters }) {
           <div className="space-y-1">
             {/* Desktop Layout: First Line - Make Model Type Year */}
             <div className="hidden md:block space-y-1 lg:w-full">
-              {/* First row: Make, Model, Type, Country, Year */}
+              {/* First row: Make, Model, Body Type, Origin Country (Swapped) */}
               <div className="flex items-center justify-between w-full gap-1 overflow-visible relative">
 
                 {/* Make Filter */}
@@ -334,8 +334,8 @@ export default function FilterNavbar({ onApplyFilters }) {
                     disabled={loading}
                   >
                     <option value="">Marka</option>
-                    {getMakes().map((make) => (
-                      <option key={make} value={make}>
+                    {getMakes().map((make, index) => (
+                      <option key={`${index}, ${make}`} value={make}>
                         {make}
                       </option>
                     ))}
@@ -355,8 +355,8 @@ export default function FilterNavbar({ onApplyFilters }) {
                     disabled={loading || !filters.make}
                   >
                     <option value="">Model</option>
-                    {filters.make && getModelsForMake(filters.make).map((model) => (
-                      <option key={model} value={model}>
+                    {filters.make && getModelsForMake(filters.make).map((model, index) => (
+                      <option key={`${index}, ${model}`} value={model}>
                         {model}
                       </option>
                     ))}
@@ -375,20 +375,21 @@ export default function FilterNavbar({ onApplyFilters }) {
                     className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                   >
                     <option value="">Typ nadwozia</option>
-                    <option value="Hatchback">hatchback</option>
-                    <option value="Sedan">sedan</option>
-                    <option value="Kombi">kombi</option>
-                    <option value="Coupe">coupe</option>
-                    <option value="Sports">sports</option>
-                    <option value="Limousine">limousine</option>
-                    <option value="SUV">suv</option>
-                    <option value="Convertible">convertible</option>
-                    <option value="Pickup">pickup</option>
-                    <option value="Offroad">offroad</option>
-                    <option value="Bus">bus</option>
-                    <option value="Classic">classic</option>
-                    <option value="Campers">campers</option>
+                    <option value="Bus I Van">Bus I Van</option>
+                    <option value="Coupe">Coupe</option>
                     <option value="Crossover">Crossover</option>
+                    <option value="Hatchback">Hatchback</option>
+                    <option value="Kabriolet">Kabriolet</option>
+                    <option value="Kamper">Kamper</option>
+                    <option value="Klasyk">Klasyk</option>
+                    <option value="Kombi">Kombi</option>
+                    <option value="Kompakt">Kompakt</option>
+                    <option value="Limuzyna">Limuzyna</option>
+                    <option value="Pickup">Pickup</option>
+                    <option value="Sedan">Sedan</option>
+                    <option value="Sportowe">Sportowe</option>
+                    <option value="SUV">SUV</option>
+                    <option value="Terenowe">Terenowe</option>
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
                     <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
@@ -437,7 +438,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
                     <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
                   </div>
-                </div> */}
+                </div>
 
                 {/* Year From */}
                 <div className="relative flex-1">
@@ -471,15 +472,11 @@ export default function FilterNavbar({ onApplyFilters }) {
                   </div>
                 </div>
 
-              </div>
-              <div className="flex items-center justify-between w-full gap-1 overflow-visible relative">
-
-
-                {/* Origin Country (Kraj Pochodzenia) */}
-                {/* <div className="relative flex-1">
+                {/* Color Filter */}
+                <div className="relative flex-1">
                   <select
-                    name="krajPochodzenia"
-                    value={filters.krajPochodzenia}
+                    name="color"
+                    value={filters.color}
                     onChange={handleInputChange}
                     className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                   >
@@ -500,175 +497,124 @@ export default function FilterNavbar({ onApplyFilters }) {
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
                     <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
                   </div>
-                </div> */}
-
-                {/* Collapsible Section: Third and Fourth Lines */}
-                {isDesktopExpanded && (
-                  <>
-                    {/* Third Row: Mileage, Fuel, Transmission, Engine Capacity */}
-                    <div className="flex items-center justify-between w-full gap-1 overflow-visible relative">
-
-                      {/* Mileage (Przebieg) */}
-                      <div className="relative flex-1">
-                        <select name="mileage" value={filters.mileage} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
-                          <option value="">Przebieg</option>
-                          <option value="0-30000">do 30 000 km</option>
-                          <option value="30000-50000">od 30 000 km do 50 000 km</option>
-                          <option value="50000-100000">od 50 000 km do 100 000 km</option>
-                          <option value="100000-200000">od 100 000 km do 200 000 km</option>
-                          <option value="200000+">powyżej 200 000 km</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                          <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
-                        </div>
-                      </div>
-
-                      {/* Fuel (Typ Paliwa) */}
-                      <div className="relative flex-1">
-                        <select name="fuel" value={filters.fuel} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
-                          <option value="">Typ Paliwa</option>
-                          <option value="Petrol">Benzyna</option>
-                          <option value="Diesel">Diesel</option>
-                          <option value="Electric">Elektryk</option>
-                          <option value="Hybrid">Hybryda</option>
-                          <option value="LPG">LPG</option>
-                          <option value="Wodór">Wodór</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                          <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
-                        </div>
-                      </div>
-
-                      {/* Transmission (Skrzynia Biegów) */}
-                      <div className="relative flex-1">
-                        <select name="transmission" value={filters.transmission} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
-                          <option value="">Skrzynia Biegów</option>
-                          <option value="Automatic">Automat</option>
-                          <option value="Manual">Manual</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                          <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
-                        </div>
-                      </div>
-
-                      {/* Engine Capacity (Pojemność) */}
-                      <div className="relative flex-1">
-                        <select name="engineCapacity" value={filters.engineCapacity} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
-                          <option value="">Pojemność</option>
-                          <option value="0-1000">do 1000 cm³</option>
-                          <option value="1000-2000">1000 - 2000 cm³</option>
-                          <option value="2000-3000">2000 - 3000 cm³</option>
-                          <option value="3000+">powyżej 3000 cm³</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                          <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Fourth Row: Drivetrain, Condition, Price From, Price To */}
-                    <div className="flex items-center justify-between w-full gap-1 overflow-visible relative">
-
-                      {/* Drivetrain (Napęd) */}
-                      <div className="relative flex-1">
-                        <select name="drivetrain" value={filters.drivetrain} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
-                          <option value="">Napęd</option>
-                          <option value="FWD">Przód (FWD)</option>
-                          <option value="RWD">Tył (RWD)</option>
-                          <option value="AWD">4x4 (AWD)</option>
-                          <option value="4WD">4x4 (4WD)</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                          <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
-                        </div>
-                      </div>
-
-                      {/* Condition (Stan) */}
-                      <div className="relative flex-1">
-                        <select name="stan" value={filters.stan} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
-                          <option value="">Stan</option>
-                          <option value="Used">Używany</option>
-                          <option value="New">Nowy</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                          <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
-                        </div>
-                      </div>
-
-                      {/* Price From (Cena od) */}
-                      <div className="relative flex-1">
-                        <input type="number" name="priceFrom" value={filters.priceFrom} onChange={handleInputChange} placeholder="Cena od" className="px-2 py-1.5 text-sm lg:px-4 lg:py-3 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 w-full" />
-                      </div>
-
-                      {/* Price To (Cena do) */}
-                      <div className="relative flex-1">
-                        <input type="number" name="priceTo" value={filters.priceTo} onChange={handleInputChange} placeholder="Cena do" className="px-2 py-1.5 text-sm lg:px-4 lg:py-3 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 w-full" />
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {/* Reset + Show More buttons (hidden when expanded) */}
-                {!showMoreFilters && (
-                  <div className="hidden md:flex items-center justify-center w-full gap-1">
-                    <button
-                      onClick={handleReset}
-                      className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 rounded-md lg:rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex-1 justify-center"
-                    >
-                      Resetuj
-                    </button>
-                    <button
-                      onClick={() => setShowMoreFilters(true)}
-                      className="flex items-center gap-1 lg:gap-2 px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-blue-500 rounded-md lg:rounded-lg focus:outline-none whitespace-nowrap shadow-sm flex-1 justify-center text-white bg-blue-500"
-                    >
-                      <span className="flex items-center gap-1">
-                        Filtry
-                      </span>
-                      <MdKeyboardArrowDown className="w-5 h-5" />
-                    </button>
-                  </div>
-                )}
-
-                {/* Reset + Show More/Less buttons (Visible always on Desktop) */}
-                <div className="hidden md:flex w-full justify-end items-end">
-                  <button
-                    onClick={() => setIsDesktopExpanded(!isDesktopExpanded)}
-                    aria-expanded={isDesktopExpanded}
-                    aria-label="Toggle filters"
-                    className="
-      group flex items-center gap-2 text-base font-medium
-      focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500
-      transition-all hover:text-blue-500
-    "
-                  >
-                    <span>
-                      {isDesktopExpanded ? "Mniej filtrów" : "Więcej filtrów"}
-                    </span>
-
-                    <span className="transition-transform duration-300 group-hover:text-blue-500">
-                      {isDesktopExpanded ? (
-                        <MdKeyboardArrowUp className="w-5 h-5" />
-                      ) : (
-                        <MdKeyboardArrowDown className="w-5 h-5" />
-                      )}
-                    </span>
-                  </button>
                 </div>
-
               </div>
 
-              {/* Desktop Layout: Second Line - Reset + Show More buttons (hidden when expanded) */}
+              {/* Collapsible Section: Third and Fourth Lines */}
+              {isDesktopExpanded && (
+                <>
+                  {/* Third Row: Mileage, Fuel, Transmission, Engine Capacity */}
+                  <div className="flex items-center justify-between w-full gap-1 overflow-visible relative">
+
+                    {/* Mileage (Przebieg) */}
+                    <div className="relative flex-1">
+                      <select name="mileage" value={filters.mileage} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
+                        <option value="">Przebieg</option>
+                        <option value="0-30000">do 30 000 km</option>
+                        <option value="30000-50000">od 30 000 km do 50 000 km</option>
+                        <option value="50000-100000">od 50 000 km do 100 000 km</option>
+                        <option value="100000-200000">od 100 000 km do 200 000 km</option>
+                        <option value="200000+">powyżej 200 000 km</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                        <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                      </div>
+                    </div>
+
+                    {/* Fuel (Typ Paliwa) */}
+                    <div className="relative flex-1">
+                      <select name="fuel" value={filters.fuel} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
+                        <option value="">Typ Paliwa</option>
+                        <option value="Petrol">Benzyna</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="Electric">Elektryk</option>
+                        <option value="Hybrid">Hybryda</option>
+                        <option value="LPG">LPG</option>
+                        <option value="Wodór">Wodór</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                        <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                      </div>
+                    </div>
+
+                    {/* Transmission (Skrzynia Biegów) */}
+                    <div className="relative flex-1">
+                      <select name="transmission" value={filters.transmission} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
+                        <option value="">Skrzynia Biegów</option>
+                        <option value="Automatic">Automat</option>
+                        <option value="Manual">Manual</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                        <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                      </div>
+                    </div>
+
+                    {/* Engine Capacity (Pojemność) */}
+                    <div className="relative flex-1">
+                      <select name="engineCapacity" value={filters.engineCapacity} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
+                        <option value="">Pojemność</option>
+                        <option value="0-1000">do 1000 cm³</option>
+                        <option value="1000-2000">1000 - 2000 cm³</option>
+                        <option value="2000-3000">2000 - 3000 cm³</option>
+                        <option value="3000+">powyżej 3000 cm³</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                        <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Fourth Row: Drivetrain, Condition, Price From, Price To */}
+                  <div className="flex items-center justify-between w-full gap-1 overflow-visible relative">
+
+                    {/* Drivetrain (Napęd) */}
+                    <div className="relative flex-1">
+                      <select name="drivetrain" value={filters.drivetrain} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
+                        <option value="">Napęd</option>
+                        <option value="FWD">Przód (FWD)</option>
+                        <option value="RWD">Tył (RWD)</option>
+                        <option value="AWD">4x4 (AWD)</option>
+                        <option value="4WD">4x4 (4WD)</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                        <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                      </div>
+                    </div>
+
+                    {/* Condition (Stan) */}
+                    <div className="relative flex-1">
+                      <select name="stan" value={filters.stan} onChange={handleInputChange} className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full">
+                        <option value="">Stan</option>
+                        <option value="Used">Używany</option>
+                        <option value="New">Nowy</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                        <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                      </div>
+                    </div>
+
+                    {/* Price From (Cena od) */}
+                    <div className="relative flex-1">
+                      <input type="number" name="priceFrom" value={filters.priceFrom} onChange={handleInputChange} placeholder="Cena od" className="px-2 py-1.5 text-sm lg:px-4 lg:py-3 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 w-full" />
+                    </div>
+
+                    {/* Price To (Cena do) */}
+                    <div className="relative flex-1">
+                      <input type="number" name="priceTo" value={filters.priceTo} onChange={handleInputChange} placeholder="Cena do" className="px-2 py-1.5 text-sm lg:px-4 lg:py-3 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 w-full" />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Reset + Show More buttons (hidden when expanded) */}
               {!showMoreFilters && (
                 <div className="hidden md:flex items-center justify-center w-full gap-1">
-                  {/* Reset Button - Desktop only */}
                   <button
                     onClick={handleReset}
                     className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 rounded-md lg:rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex-1 justify-center"
                   >
                     Resetuj
                   </button>
-
-                  {/* Show More Button - Desktop only */}
                   <button
                     onClick={() => setShowMoreFilters(true)}
                     className="flex items-center gap-1 lg:gap-2 px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-blue-500 rounded-md lg:rounded-lg focus:outline-none whitespace-nowrap shadow-sm flex-1 justify-center text-white bg-blue-500"
@@ -676,629 +622,408 @@ export default function FilterNavbar({ onApplyFilters }) {
                     <span className="flex items-center gap-1">
                       Filtry
                     </span>
-                    <svg className="w-3 h-3 lg:w-4 lg:h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
+                    <MdKeyboardArrowDown className="w-5 h-5" />
                   </button>
                 </div>
               )}
 
-              {/* Mobile Layout: Single row with Make, Model, Show More + View Toggle */}
-              <div className="md:hidden">
-                <div className={`flex items-center justify-between w-[calc(100%-18px)] gap-2 mx-[10px] ${isSticky ? 'mb-0' : 'mb-[10px]'
-                  }`}>
-                  {/* Make */}
-                  <div className="relative flex-1">
-                    <select
-                      name="make"
-                      value={filters.make}
-                      onChange={handleInputChange}
-                      className="px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none w-full leading-[17px]"
-                    >
-                      <option value="">Marka</option>
-                      <option value="BMW">BMW</option>
-                      <option value="Mercedes-Benz">Mercedes-Benz</option>
-                      <option value="Audi">Audi</option>
-                      <option value="Volkswagen">Volkswagen</option>
-                      <option value="Toyota">Toyota</option>
-                      <option value="Honda">Honda</option>
-                      <option value="Ford">Ford</option>
-                      <option value="Nissan">Nissan</option>
-                      <option value="Hyundai">Hyundai</option>
-                      <option value="Kia">Kia</option>
-                      <option value="Mazda">Mazda</option>
-                      <option value="Subaru">Subaru</option>
-                      <option value="Lexus">Lexus</option>
-                      <option value="Infiniti">Infiniti</option>
-                      <option value="Acura">Acura</option>
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                      <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
-                    </div>
-                  </div>
+              {/* Reset + Show More/Less buttons (Visible always on Desktop) */}
+              <div className="hidden md:flex w-full justify-end items-end">
+                <button
+                  onClick={() => setIsDesktopExpanded(!isDesktopExpanded)}
+                  aria-expanded={isDesktopExpanded}
+                  aria-label="Toggle filters"
+                  className="
+      group flex items-center gap-2 text-base font-medium
+      focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500
+      transition-all hover:text-blue-500
+    "
+                >
+                  <span>
+                    {isDesktopExpanded ? "Mniej filtrów" : "Więcej filtrów"}
+                  </span>
 
-                  {/* Model */}
-                  <div className="relative flex-1">
-                    <select
-                      name="model"
-                      value={filters.model}
-                      onChange={handleInputChange}
-                      className="px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm appearance-none w-full leading-[17px] transition-all duration-200 hover:border-gray-300"
-                    >
-                      <option value="">Model</option>
-                      <option value="Sedan">Sedan</option>
-                      <option value="SUV">SUV</option>
-                      <option value="Hatchback">Hatchback</option>
-                      <option value="Coupe">Coupe</option>
-                      <option value="Convertible">Convertible</option>
-                      <option value="Wagon">Wagon</option>
-                      <option value="Pickup">Pickup</option>
-                      <option value="Crossover">Crossover</option>
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                      <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
-                    </div>
-                  </div>
-
-                  {/* Show More - Mobile; hidden when expanded */}
-                  {!showMoreFilters && (
-                    <div className="relative flex-1">
-                      <button
-                        onClick={() => setShowMoreFilters(true)}
-                        className="w-full px-3 h-10 pr-6 text-sm font-medium border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 whitespace-nowrap shadow-sm flex items-center justify-start text-white bg-blue-500 leading-[17px] transition-all duration-200 hover:bg-blue-600 hover:shadow-md"
-                      >
-                        <span className="flex items-center text-left">Filtry</span>
-                      </button>
-                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                        <MdKeyboardArrowDown className="w-5 h-5 text-white" />
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-
+                  <span className="transition-transform duration-300 group-hover:text-blue-500">
+                    {isDesktopExpanded ? (
+                      <MdKeyboardArrowUp className="w-5 h-5" />
+                    ) : (
+                      <MdKeyboardArrowDown className="w-5 h-5" />
+                    )}
+                  </span>
+                </button>
               </div>
 
-              {/* Mobile overlay for filters */}
-              {showMoreFilters && isMounted && createPortal(
-                <div className="md:hidden fixed inset-0 z-[2147483647]">
-                  <div className="fixed inset-0 bg-black/40" onClick={() => setShowMoreFilters(false)}></div>
-                  <div className="fixed inset-0 bg-white shadow-xl p-4 overflow-y-auto">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-lg font-semibold text-gray-900">Filtry</h3>
-                      <button onClick={() => setShowMoreFilters(false)} className="text-sm text-gray-600 border border-gray-200 rounded-md px-2 py-1">Zamknij</button>
-                    </div>
-                    <div className="space-y-3">
-                      {/* Make + Model */}
-                      <div className="flex items-center justify-between w-full gap-1">
-                        <div className="relative flex-1">
-                          <select
-                            name="make"
-                            value={filters.make}
-                            onChange={handleInputChange}
-                            className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
-                            disabled={loading}
-                          >
-                            <option value="">Marka</option>
-                            {getMakes().map((make, index) => (
-                              <option key={`${index}, ${make}`} value={make}>
-                                {make}
-                              </option>
-                            ))}
-                          </select>
-                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                            <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
-                          </div>
-                        </div>
-                        <div className="relative flex-1">
-                          <select
-                            name="model"
-                            value={filters.model}
-                            onChange={handleInputChange}
-                            className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
-                            disabled={loading || !filters.make}
-                          >
-                            <option value="">Model</option>
-                            {filters.make && getModelsForMake(filters.make).map((model, index) => (
-                              <option key={`${index}, ${model}`} value={model}>
-                                {model}
-                              </option>
-                            ))}
-                          </select>
-                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                            <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
-                          </div>
-                        </div>
-                      </div>
-                      {/* Location + Distance */}
-                      <div className="flex items-center justify-between w-full gap-1">
-                        <div className="relative flex-1">
-                          <input type="text" name="location" value={filters.location} onChange={handleInputChange} placeholder="Lokalizacja" className="w-full px-3 h-10 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm" />
-                        </div>
-                        <div className="relative flex-1">
-                          <select name="maxDistance" value={filters.maxDistance} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                            <option value="">Dystans</option>
-                            <option value="10">Within 10 miles</option>
-                            <option value="25">Within 25 miles</option>
-                            <option value="50">Within 50 miles</option>
-                            <option value="100">Within 100 miles</option>
-                            <option value="200">Within 200 miles</option>
-                          </select>
-                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                            <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
-                          </div>
-                        </div>
-                      </div>
-                      {/* Year From + Year To */}
-                      <div className="flex items-center justify-between w-full gap-1">
-                        <div className="relative flex-1">
-                          <select name="yearFrom" value={filters.yearFrom} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                            <option value="">Rok od</option>
-                            {Array.from({ length: 30 }, (_, i) => 2025 - i).map(y => <option key={y} value={y}>{y}</option>)}
-                          </select>
-                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
-                        </div>
-                        <div className="relative flex-1">
-                          <select name="yearTo" value={filters.yearTo} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                            <option value="">Rok do</option>
-                            {Array.from({ length: 30 }, (_, i) => 2025 - i).map(y => <option key={y} value={y}>{y}</option>)}
-                          </select>
-                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                            <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
-                          </div>
-                        </div>
-                      </div>
-                      {/* Origin Country (Kraj Pochodzenia) - mobile overlay */}
-                      <div className="flex items-center justify-between w-full gap-1">
-                        {/* Kraj Pochodzenia (Swapped to first) */}
-                        <div className="relative flex-1">
-                          <select
-                            name="krajPochodzenia"
-                            value={filters.krajPochodzenia}
-                            onChange={handleInputChange}
-                            className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
-                          >
-                            <option value="">Kraj Pochodzenia</option>
-                            {ORIGIN_COUNTRY_OPTIONS.map(({ value, label }, idx) => (
-                              <option key={`${idx}-${value}`} value={value}>
-                                {label}
-                              </option>
-                            ))}
-                          </select>
-                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                            <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
-                          </div>
-                        </div>
+            </div>
 
-                        {/* Kraj Producenta (Swapped to second) */}
-                        <div className="relative flex-1">
-                          <select name="krajProducenta" value={filters.krajProducenta} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                            <option value="">Kraj Producenta</option>
-                            {COUNTRY_OPTIONS.map(({ value, label }, idx) => (
-                              <option key={`${idx}-${value}`} value={value}>
-                                {label}
-                              </option>
-                            ))}
-                          </select>
-                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                            <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between w-full gap-1">
-                        {/* Body Type Filter */}
-                        <div className="relative flex-1">
-                          <select
-                            name="bodyType"
-                            value={filters.bodyType}
-                            onChange={handleInputChange}
-                            className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                          >
-                            <option value="">Typ nadwozia</option>
-                            <option value="Bus I Van">Bus I Van</option>
-                            <option value="Coupe">Coupe</option>
-                            <option value="Crossover">Crossover</option>
-                            <option value="Hatchback">Hatchback</option>
-                            <option value="Kabriolet">Kabriolet</option>
-                            <option value="Kamper">Kamper</option>
-                            <option value="Klasyk">Klasyk</option>
-                            <option value="Kombi">Kombi</option>
-                            <option value="Kompakt">Kompakt</option>
-                            <option value="Limuzyna">Limuzyna</option>
-                            <option value="Pickup">Pickup</option>
-                            <option value="Sedan">Sedan</option>
-                            <option value="Sportowe">Sportowe</option>
-                            <option value="SUV">SUV</option>
-                            <option value="Terenowe">Terenowe</option>
-                          </select>
-                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                            <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
-                          </div>
-                        </div>
-                        {/* Color (Kolor) */}
-                        <div className="relative flex-1">
-                          <select
-                            name="color"
-                            value={filters.color}
-                            onChange={handleInputChange}
-                            className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
-                          >
-                            <option value="">Kolor</option>
-                            <option value="Biały">Biały</option>
-                            <option value="Czarny">Czarny</option>
-                            <option value="Srebrny">Srebrny</option>
-                            <option value="Szary">Szary</option>
-                            <option value="Czerwony">Czerwony</option>
-                            <option value="Niebieski">Niebieski</option>
-                            <option value="Zielony">Zielony</option>
-                            <option value="Żółty">Żółty</option>
-                            <option value="Brązowy">Brązowy</option>
-                            <option value="Beżowy">Beżowy</option>
-                            <option value="Złoty">Złoty</option>
-                            <option value="Inny">Inny</option>
-                          </select>
-                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                            <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Condition + Mileage */}
-                      <div className="flex items-center justify-between w-full gap-1">
-                        <div className="relative flex-1">
-                          <select name="stan" value={filters.stan} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                            <option value="">Stan</option>
-                            <option value="Demo">Demo</option>
-                            <option value="New">Nowy</option>
-                            <option value="Used">Używany</option>
-                          </select>
-                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                            <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
-                          </div>
-                        </div>
-                        <div className="relative flex-1">
-                          <select name="mileage" value={filters.mileage} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                            <option value="">Przebieg</option>
-                            <option value="0-30000">do 30 000 km</option>
-                            <option value="30000-50000">od 30 000 km do 50 000 km</option>
-                            <option value="50000-100000">od 50 000 km do 100 000 km</option>
-                            <option value="100000-200000">od 100 000 km do 200 000 km</option>
-                            <option value="200000+">powyżej 200 000 km</option>
-                          </select>
-                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
-                        </div>
-                      </div>
-                      {/* Fuel + Engine */}
-                      <div className="flex items-center justify-between w-full gap-2">
-                        <div className="relative flex-1">
-                          <select name="fuel" value={filters.fuel} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                            <option value="">Typ Paliwa</option>
-                            <option value="Petrol">Benzyna</option>
-                            <option value="Diesel">Diesel</option>
-                            <option value="Electric">Elektryk</option>
-                            <option value="Hybrid">Hybryda</option>
-                            <option value="LPG">LPG</option>
-                            <option value="Wodór">Wodór</option>
-                          </select>
-                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
-                        </div>
-                        <div className="relative flex-1">
-                          <select name="engineCapacity" value={filters.engineCapacity} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                            <option value="">Pojemność</option>
-                            <option value="0-1000">do 1000 cm³</option>
-                            <option value="1000-2000">1000 - 2000 cm³</option>
-                            <option value="2000-3000">2000 - 3000 cm³</option>
-                            <option value="3000+">powyżej 3000 cm³</option>
-                          </select>
-                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
-                        </div>
-                      </div>
-                      {/* Transmission + Drivetrain */}
-                      <div className="flex items-center justify-between w-full gap-2">
-                        <div className="relative flex-1">
-                          <select name="transmission" value={filters.transmission} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                            <option value="">Skrzynia Biegów</option>
-                            <option value="Automatic">Automat</option>
-                            <option value="Manual">Manual</option>
-                          </select>
-                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
-                        </div>
-                        {/* Drivetrain (Napęd) */}
-                        <div className="relative flex-1">
-                          <select
-                            name="drivetrain"
-                            value={filters.drivetrain}
-                            onChange={handleInputChange}
-                            className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                          >
-                            <option value="">Napęd</option>
-                            {/* FIX: Values changed to match Database Enums */}
-                            <option value="FWD">Przód (FWD)</option>
-                            <option value="RWD">Tył (RWD)</option>
-                            <option value="AWD">4x4 (AWD)</option>
-                            <option value="4WD">4x4 (4WD)</option>
-                          </select>
-                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                            <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
-                          </div>
-                        </div>
-                      </div>
-                      {/* Service + Accident */}
-                      <div className="flex items-center justify-between w-full gap-2">
-                        <div className="relative flex-1">
-                          <select name="serviceHistory" value={filters.serviceHistory} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                            <option value="">Historia Serwisowa</option>
-                            <option value="Yes">Tak</option>
-                            <option value="No">Nie</option>
-                          </select>
-                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
-                        </div>
-                        <div className="relative flex-1">
-                          <select name="accidentHistory" value={filters.accidentHistory} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
-                            <option value="">Bezwypadkowość</option>
-                            <option value="Yes">Tak</option>
-                            <option value="No">Nie</option>
-                          </select>
-                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
-                        </div>
-                      </div>
-                      {/* Price From + Price To */}
-                      <div className="flex items-center justify-between w-full gap-2">
-                        <div className="relative flex-1">
-                          <input type="number" name="priceFrom" value={filters.priceFrom} onChange={handleInputChange} placeholder="Cena od" className="w-full px-3 h-10 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm" />
-                        </div>
-                        <div className="relative flex-1">
-                          <input type="number" name="priceTo" value={filters.priceTo} onChange={handleInputChange} placeholder="Cena do" className="w-full px-3 h-10 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm" />
-                        </div>
-                      </div>
-                      {/* Actions */}
-                      <div className="flex items-center gap-2 pt-2">
-                        <button onClick={handleReset} className="flex-1 px-3 h-10 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg">Resetuj</button>
-                        <button onClick={() => setShowMoreFilters(false)} className="flex-1 px-3 h-10 text-sm font-medium text-white bg-blue-500 border border-blue-500 rounded-lg">Zastosuj</button>
-                      </div>
-                    </div>
-                  </div>,
-                  typeof window !== 'undefined' ? document.body : null
-            )}
-                  {showMoreFilters && (
-                    <div className="hidden md:block">
-
-
-                      {/* Third Line: Fuel Engine Color Transmission Drivetrain */}
-                      <div className="space-y-2 md:space-y-0">
-                        {/* Mobile: Two selectors per row, Desktop: All in one row */}
-                        <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-between w-full ">
-                          {/* Row 1 Mobile: Fuel + Engine, Desktop: All in one row */}
-                          <div className="flex items-center justify-between w-full gap-2 md:gap-0">
-                            {/* Fuel Filter */}
-                            <div className="relative flex-1 mx-0.5 my-0.5">
-                              <select
-                                name="fuel"
-                                value={filters.fuel}
-                                onChange={handleInputChange}
-                                className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                              >
-                                <option value="">Typ Paliwa</option>
-                                <option value="Benzyna">Benzyna</option>
-                                <option value="Diesel">Diesel</option>
-                                <option value="Elektryk">Elektryk</option>
-                                <option value="Hybryda">Hybryda</option>
-                                <option value="LPG">LPG</option>
-                                <option value="Wodór">Wodór</option>
-                              </select>
-                              <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                                <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                              </div>
-                            </div>
-
-                            {/* Engine Capacity Filter (Pojemność) */}
-                            <div className="relative flex-1 mx-0.5 my-0.5">
-                              <select
-                                name="engineCapacity"
-                                value={filters.engineCapacity}
-                                onChange={handleInputChange}
-                                className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                              >
-                                <option value="">Pojemność</option>
-                                <option value="0-1000">do 1000 cm³</option>
-                                <option value="0-2000">do 2000 cm³</option>
-                                <option value="2000-3000">od 2000 cm³ do 3000 cm³</option>
-                                <option value="2900+">powyżej 2900 cm³</option>
-                              </select>
-                              <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                                <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-
-
-
-                          {/* Row 2 Mobile: Transmission + Drivetrain, Desktop: All in one row */}
-                          <div className="flex items-center justify-between w-full gap-2 md:gap-0">
-                            {/* Transmission Filter */}
-                            <div className="relative flex-1 mx-0.5 my-0.5">
-                              <select
-                                name="transmission"
-                                value={filters.transmission}
-                                onChange={handleInputChange}
-                                className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                              >
-                                <option value="">Skrzynia Biegów</option>
-                                <option value="Automatic">Automat</option>
-                                <option value="Manual">Manual</option>
-                              </select>
-                              <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                                <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                              </div>
-                            </div>
-
-                            {/* Drivetrain Filter */}
-                            <div className="relative flex-1 mx-0.5 my-0.5">
-                              <select
-                                name="drivetrain"
-                                value={filters.drivetrain}
-                                onChange={handleInputChange}
-                                className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                              >
-                                <option value="">Napęd</option>
-                                <option value="Przód">Przód</option>
-                                <option value="Tył">Tył</option>
-                                <option value="4x4/AWD">4x4/AWD</option>
-                              </select>
-                              <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                                <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* New Line: Kraj Pochodzenia (Origin Country) */}
-                      <div className="md:hidden space-y-2 md:space-y-0 mt-1">
-                        <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-between w-full gap-2">
-                          <div className="flex items-center justify-between w-full gap-2 md:gap-0">
-                            <div className="relative flex-1 mx-0.5 my-0.5">
-                              <select
-                                name="krajPochodzenia"
-                                value={filters.krajPochodzenia}
-                                onChange={handleInputChange}
-                                className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                              >
-                                <option value="">Kraj Pochodzenia</option>
-                                {ORIGIN_COUNTRY_OPTIONS.map(({ value, label }) => (
-                                  <option key={value} value={value}>
-                                    {label}
-                                  </option>
-                                ))}
-                              </select>
-                              <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                                <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Fourth Line: Service History Accident History Price */}
-                      <div className="space-y-2 md:space-y-0">
-                        {/* Mobile: Two selectors per row, Desktop: All in one row */}
-                        <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-between w-full ">
-                          {/* Row 1 Mobile: Service History + Accident History, Desktop: All in one row */}
-                          <div className="flex items-center justify-between w-full gap-2 md:gap-0">
-                            {/* Service History Filter */}
-                            <div className="relative flex-1 mx-0.5 my-0.5">
-                              <select
-                                name="serviceHistory"
-                                value={filters.serviceHistory}
-                                onChange={handleInputChange}
-                                className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                              >
-                                <option value="">Historia Serwisowa</option>
-                                <option value="Yes">Tak</option>
-                                <option value="No">Nie</option>
-                              </select>
-                              <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                                <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                              </div>
-                            </div>
-
-                            {/* Accident History Filter */}
-                            <div className="relative flex-1 mx-0.5 my-0.5">
-                              <select
-                                name="accidentHistory"
-                                value={filters.accidentHistory}
-                                onChange={handleInputChange}
-                                className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
-                              >
-                                <option value="">Bezwypadkowość</option>
-                                <option value="Yes">Tak</option>
-                                <option value="No">Nie</option>
-                              </select>
-                              <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
-                                <svg className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Row 2 Mobile: Price From + Price To, Desktop: All in one row */}
-                          <div className="flex items-center justify-between w-full gap-2 md:gap-0">
-                            {/* Price From */}
-                            <div className="relative flex-1 mx-0.5 my-0.5">
-                              <input
-                                type="number"
-                                name="priceFrom"
-                                value={filters.priceFrom}
-                                onChange={handleInputChange}
-                                placeholder="Cena od"
-                                className="w-full px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200"
-                              />
-                            </div>
-
-                            {/* Price To */}
-                            <div className="relative flex-1 mx-0.5 my-0.5">
-                              <input
-                                type="number"
-                                name="priceTo"
-                                value={filters.priceTo}
-                                onChange={handleInputChange}
-                                placeholder="Cena do"
-                                className="w-full px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200"
-                              />
-                            </div>
-
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Reset and Show Less Buttons - At the end of additional filters */}
-                      <div className="flex items-center justify-center w-full gap-2 mt-2">
-                        {/* Reset Button */}
-                        <button
-                          onClick={handleReset}
-                          className="px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 rounded-md lg:rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex-1 justify-center"
-                        >
-                          Resetuj
-                        </button>
-
-                        {/* Show Less Button */}
-                        <button
-                          onClick={() => setShowMoreFilters(false)}
-                          className="flex items-center gap-1 lg:gap-2 px-3 py-3 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-blue-500 rounded-md lg:rounded-lg focus:outline-none whitespace-nowrap shadow-sm flex-1 justify-center text-white bg-blue-500"
-                        >
-                          <span className="flex items-center gap-1">
-                            Pokaż mniej
-                          </span>
-                          <svg className="w-3 h-3 lg:w-4 lg:h-4 transition-transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </button>
-                      </div>
-
-                    </div>
-                  )}
-
-
+            {/* Mobile Layout: Single row with Make, Model, Show More + View Toggle */}
+            <div className="md:hidden">
+              <div className={`flex items-center justify-between w-[calc(100%-18px)] gap-2 mx-[10px] ${isSticky ? 'mb-0' : 'mb-[10px]'}`}>
+                {/* Make */}
+                <div className="relative flex-1">
+                  <select
+                    name="make"
+                    value={filters.make}
+                    onChange={handleInputChange}
+                    className="px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none w-full leading-[17px]"
+                  >
+                    <option value="">Marka</option>
+                    {getMakes().map((make, index) => (
+                      <option key={`${index}, ${make}`} value={make}>
+                        {make}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                    <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                  </div>
                 </div>
-        </div>
+
+                {/* Model */}
+                <div className="relative flex-1">
+                  <select
+                    name="model"
+                    value={filters.model}
+                    onChange={handleInputChange}
+                    className="px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm appearance-none w-full leading-[17px] transition-all duration-200 hover:border-gray-300"
+                  >
+                    <option value="">Model</option>
+                    {filters.make && getModelsForMake(filters.make).map((model, index) => (
+                      <option key={`${index},${model}`} value={model}>
+                        {model}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                    <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                  </div>
+                </div>
+
+                {/* Show More - Mobile; hidden when expanded */}
+                {!showMoreFilters && (
+                  <div className="relative flex-1">
+                    <button
+                      onClick={() => setShowMoreFilters(true)}
+                      className="w-full px-3 h-10 pr-6 text-sm font-medium border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 whitespace-nowrap shadow-sm flex items-center justify-start text-white bg-blue-500 leading-[17px] transition-all duration-200 hover:bg-blue-600 hover:shadow-md"
+                    >
+                      <span className="flex items-center text-left">Filtry</span>
+                    </button>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                      <MdKeyboardArrowDown className="w-5 h-5 text-white" />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
-          {isSticky && (
-            <div style={{ height: navbarHeight }} />
+
+          {/* Mobile overlay for filters */}
+          {showMoreFilters && isMounted && createPortal(
+            <div className="md:hidden fixed inset-0 z-[2147483647]">
+              <div className="fixed inset-0 bg-black/40" onClick={() => setShowMoreFilters(false)}></div>
+              <div className="fixed inset-0 bg-white shadow-xl p-4 overflow-y-auto">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-lg font-semibold text-gray-900">Filtry</h3>
+                  <button onClick={() => setShowMoreFilters(false)} className="text-sm text-gray-600 border border-gray-200 rounded-md px-2 py-1">Zamknij</button>
+                </div>
+                <div className="space-y-3">
+                  {/* Make + Model */}
+                  <div className="flex items-center justify-between w-full gap-1">
+                    <div className="relative flex-1">
+                      <select
+                        name="make"
+                        value={filters.make}
+                        onChange={handleInputChange}
+                        className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
+                        disabled={loading}
+                      >
+                        <option value="">Marka</option>
+                        {getMakes().map((make, index) => (
+                          <option key={`${index}, ${make}`} value={make}>
+                            {make}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                        <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                      </div>
+                    </div>
+                    <div className="relative flex-1">
+                      <select
+                        name="model"
+                        value={filters.model}
+                        onChange={handleInputChange}
+                        className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
+                        disabled={loading || !filters.make}
+                      >
+                        <option value="">Model</option>
+                        {filters.make && getModelsForMake(filters.make).map((model, index) => (
+                          <option key={`${index}, ${model}`} value={model}>
+                            {model}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                        <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                      </div>
+                    </div>
+                  </div>
+                  {/* Location + Distance */}
+                  <div className="flex items-center justify-between w-full gap-1">
+                    <div className="relative flex-1">
+                      <input type="text" name="location" value={filters.location} onChange={handleInputChange} placeholder="Lokalizacja" className="w-full px-3 h-10 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm" />
+                    </div>
+                    <div className="relative flex-1">
+                      <select name="maxDistance" value={filters.maxDistance} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                        <option value="">Dystans</option>
+                        <option value="10">Within 10 miles</option>
+                        <option value="25">Within 25 miles</option>
+                        <option value="50">Within 50 miles</option>
+                        <option value="100">Within 100 miles</option>
+                        <option value="200">Within 200 miles</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                        <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                      </div>
+                    </div>
+                  </div>
+                  {/* Year From + Year To */}
+                  <div className="flex items-center justify-between w-full gap-1">
+                    <div className="relative flex-1">
+                      <select name="yearFrom" value={filters.yearFrom} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                        <option value="">Rok od</option>
+                        {Array.from({ length: 30 }, (_, i) => 2025 - i).map(y => <option key={y} value={y}>{y}</option>)}
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
+                    </div>
+                    <div className="relative flex-1">
+                      <select name="yearTo" value={filters.yearTo} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                        <option value="">Rok do</option>
+                        {Array.from({ length: 30 }, (_, i) => 2025 - i).map(y => <option key={y} value={y}>{y}</option>)}
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                        <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                      </div>
+                    </div>
+                  </div>
+                  {/* Origin Country (Kraj Pochodzenia) - mobile overlay */}
+                  <div className="flex items-center justify-between w-full gap-1">
+                    {/* Kraj Pochodzenia (Swapped to first) */}
+                    <div className="relative flex-1">
+                      <select
+                        name="krajPochodzenia"
+                        value={filters.krajPochodzenia}
+                        onChange={handleInputChange}
+                        className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
+                      >
+                        <option value="">Kraj Pochodzenia</option>
+                        {ORIGIN_COUNTRY_OPTIONS.map(({ value, label }, idx) => (
+                          <option key={`${idx}-${value}`} value={value}>
+                            {label}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                        <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                      </div>
+                    </div>
+
+                    {/* Kraj Producenta (Swapped to second) */}
+                    <div className="relative flex-1">
+                      <select name="krajProducenta" value={filters.krajProducenta} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                        <option value="">Kraj Producenta</option>
+                        {COUNTRY_OPTIONS.map(({ value, label }, idx) => (
+                          <option key={`${idx}-${value}`} value={value}>
+                            {label}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                        <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between w-full gap-1">
+                    {/* Body Type Filter */}
+                    <div className="relative flex-1">
+                      <select
+                        name="bodyType"
+                        value={filters.bodyType}
+                        onChange={handleInputChange}
+                        className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                      >
+                        <option value="">Typ nadwozia</option>
+                        <option value="Bus I Van">Bus I Van</option>
+                        <option value="Coupe">Coupe</option>
+                        <option value="Crossover">Crossover</option>
+                        <option value="Hatchback">Hatchback</option>
+                        <option value="Kabriolet">Kabriolet</option>
+                        <option value="Kamper">Kamper</option>
+                        <option value="Klasyk">Klasyk</option>
+                        <option value="Kombi">Kombi</option>
+                        <option value="Kompakt">Kompakt</option>
+                        <option value="Limuzyna">Limuzyna</option>
+                        <option value="Pickup">Pickup</option>
+                        <option value="Sedan">Sedan</option>
+                        <option value="Sportowe">Sportowe</option>
+                        <option value="SUV">SUV</option>
+                        <option value="Terenowe">Terenowe</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                        <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                      </div>
+                    </div>
+                    {/* Color (Kolor) */}
+                    <div className="relative flex-1">
+                      <select
+                        name="color"
+                        value={filters.color}
+                        onChange={handleInputChange}
+                        className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
+                      >
+                        <option value="">Kolor</option>
+                        <option value="Biały">Biały</option>
+                        <option value="Czarny">Czarny</option>
+                        <option value="Srebrny">Srebrny</option>
+                        <option value="Szary">Szary</option>
+                        <option value="Czerwony">Czerwony</option>
+                        <option value="Niebieski">Niebieski</option>
+                        <option value="Zielony">Zielony</option>
+                        <option value="Żółty">Żółty</option>
+                        <option value="Brązowy">Brązowy</option>
+                        <option value="Beżowy">Beżowy</option>
+                        <option value="Złoty">Złoty</option>
+                        <option value="Inny">Inny</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                        <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Condition + Mileage */}
+                  <div className="flex items-center justify-between w-full gap-1">
+                    <div className="relative flex-1">
+                      <select name="stan" value={filters.stan} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                        <option value="">Stan</option>
+                        <option value="Demo">Demo</option>
+                        <option value="New">Nowy</option>
+                        <option value="Used">Używany</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                        <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                      </div>
+                    </div>
+                    <div className="relative flex-1">
+                      <select name="mileage" value={filters.mileage} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                        <option value="">Przebieg</option>
+                        <option value="0-30000">do 30 000 km</option>
+                        <option value="30000-50000">od 30 000 km do 50 000 km</option>
+                        <option value="50000-100000">od 50 000 km do 100 000 km</option>
+                        <option value="100000-200000">od 100 000 km do 200 000 km</option>
+                        <option value="200000+">powyżej 200 000 km</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
+                    </div>
+                  </div>
+                  {/* Fuel + Engine */}
+                  <div className="flex items-center justify-between w-full gap-2">
+                    <div className="relative flex-1">
+                      <select name="fuel" value={filters.fuel} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                        <option value="">Typ Paliwa</option>
+                        <option value="Petrol">Benzyna</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="Electric">Elektryk</option>
+                        <option value="Hybrid">Hybryda</option>
+                        <option value="LPG">LPG</option>
+                        <option value="Wodór">Wodór</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
+                    </div>
+                    <div className="relative flex-1">
+                      <select name="engineCapacity" value={filters.engineCapacity} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                        <option value="">Pojemność</option>
+                        <option value="0-1000">do 1000 cm³</option>
+                        <option value="1000-2000">1000 - 2000 cm³</option>
+                        <option value="2000-3000">2000 - 3000 cm³</option>
+                        <option value="3000+">powyżej 3000 cm³</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
+                    </div>
+                  </div>
+                  {/* Transmission + Drivetrain */}
+                  <div className="flex items-center justify-between w-full gap-2">
+                    <div className="relative flex-1">
+                      <select name="transmission" value={filters.transmission} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                        <option value="">Skrzynia Biegów</option>
+                        <option value="Automatic">Automat</option>
+                        <option value="Manual">Manual</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
+                    </div>
+                    {/* Drivetrain (Napęd) */}
+                    <div className="relative flex-1">
+                      <select
+                        name="drivetrain"
+                        value={filters.drivetrain}
+                        onChange={handleInputChange}
+                        className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                      >
+                        <option value="">Napęd</option>
+                        {/* FIX: Values changed to match Database Enums */}
+                        <option value="FWD">Przód (FWD)</option>
+                        <option value="RWD">Tył (RWD)</option>
+                        <option value="AWD">4x4 (AWD)</option>
+                        <option value="4WD">4x4 (4WD)</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
+                        <MdKeyboardArrowDown className="w-5 h-5 text-gray-500" />
+                      </div>
+                    </div>
+                  </div>
+                  {/* Service + Accident */}
+                  <div className="flex items-center justify-between w-full gap-2">
+                    <div className="relative flex-1">
+                      <select name="serviceHistory" value={filters.serviceHistory} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                        <option value="">Historia Serwisowa</option>
+                        <option value="Yes">Tak</option>
+                        <option value="No">Nie</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
+                    </div>
+                    <div className="relative flex-1">
+                      <select name="accidentHistory" value={filters.accidentHistory} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                        <option value="">Bezwypadkowość</option>
+                        <option value="Yes">Tak</option>
+                        <option value="No">Nie</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
+                    </div>
+                  </div>
+                  {/* Price From + Price To */}
+                  <div className="flex items-center justify-between w-full gap-2">
+                    <div className="relative flex-1">
+                      <input type="number" name="priceFrom" value={filters.priceFrom} onChange={handleInputChange} placeholder="Cena od" className="w-full px-3 h-10 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm" />
+                    </div>
+                    <div className="relative flex-1">
+                      <input type="number" name="priceTo" value={filters.priceTo} onChange={handleInputChange} placeholder="Cena do" className="w-full px-3 h-10 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm" />
+                    </div>
+                  </div>
+                  {/* Actions */}
+                  <div className="flex items-center gap-2 pt-2">
+                    <button onClick={handleReset} className="flex-1 px-3 h-10 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg">Resetuj</button>
+                    <button onClick={() => setShowMoreFilters(false)} className="flex-1 px-3 h-10 text-sm font-medium text-white bg-blue-500 border border-blue-500 rounded-lg">Zastosuj</button>
+                  </div>
+                </div>
+              </div>
+            </div>,
+            typeof window !== 'undefined' ? document.body : null
           )}
-        </>
-        );
+        </div>
+      </div>
+      {isSticky && (
+        <div style={{ height: navbarHeight }} />
+      )}
+    </>
+  );
 }
