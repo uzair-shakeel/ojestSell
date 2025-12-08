@@ -69,10 +69,10 @@ const SimilarVehicles = () => {
         </Swiper>
 
         {/* Custom Navigation Buttons */}
-        <button className="similar-swiper-prev absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors duration-200 -ml-4">
+        <button className="similar-swiper-prev absolute left-3 md:left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors duration-200 -ml-4">
           <FaChevronLeft size={20} className="text-gray-600" />
         </button>
-        <button className="similar-swiper-next absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors duration-200 -mr-4">
+        <button className="similar-swiper-next absolute right-3 md:right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors duration-200 -mr-4">
           <FaChevronRight size={20} className="text-gray-600" />
         </button>
       </div>

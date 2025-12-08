@@ -684,7 +684,8 @@ const Page = () => {
               </div>
 
               {/* Thumbnail Swiper */}
-              <div className="col-span-2 relative mt-4">
+              {/* Thumbnail Swiper */}
+              <div className="col-span-2 relative mt-4 overflow-hidden w-full">
                 <Swiper
                   modules={[Navigation, A11y]}
                   onSwiper={setThumbsSwiper}
@@ -700,25 +701,7 @@ const Page = () => {
                     prevEl: ".thumb-swiper-prev",
                     nextEl: ".thumb-swiper-next",
                   }}
-                  className="thumbnail-swiper"
-                  breakpoints={{
-                    320: {
-                      slidesPerView: 3,
-                      spaceBetween: 8,
-                    },
-                    640: {
-                      slidesPerView: 4,
-                      spaceBetween: 8,
-                    },
-                    768: {
-                      slidesPerView: 5,
-                      spaceBetween: 8,
-                    },
-                    1024: {
-                      slidesPerView: 6,
-                      spaceBetween: 8,
-                    },
-                  }}
+                  className="thumbnail-swiper w-full"
                 >
                   {images.map((img, index) => (
                     <SwiperSlide key={index} className="!w-[120px]">
@@ -726,14 +709,13 @@ const Page = () => {
                         src={img}
                         alt={`Thumbnail ${index + 1}`}
                         className={`w-[120px] h-[80px] object-cover rounded-md border-2 transition-all duration-200 cursor-pointer ${currentImageIndex === index
-                          ? "border-blue-500 shadow-lg"
-                          : "border-gray-300 hover:border-gray-400"
+                            ? "border-blue-500 shadow-lg"
+                            : "border-gray-300 hover:border-gray-400"
                           }`}
                         onClick={() => {
                           setCurrentImageIndex(index);
                           setMainImage(img);
                           setClickedImageUrl(img);
-                          setIsCategorizationModalOpen(true);
                         }}
                       />
                     </SwiperSlide>
@@ -743,15 +725,17 @@ const Page = () => {
                 {/* Thumbnail Navigation */}
                 {images.length > 6 && (
                   <>
-                    <button className="thumb-swiper-prev absolute left-0 top-1/2 transform -translate-y-1/2 bg-white shadow-md rounded-full p-1.5 md:p-2 z-10 -ml-3 hover:bg-gray-50 transition-colors">
-                      <IoIosArrowBack className="w-3 h-3 md:w-5 md:h-5 text-gray-600" />
+                    <button className="thumb-swiper-prev absolute left-2 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-1.5 md:p-2 z-10 hover:bg-gray-50 transition">
+                      <IoIosArrowBack className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
                     </button>
-                    <button className="thumb-swiper-next absolute right-0 top-1/2 transform -translate-y-1/2 bg-white shadow-md rounded-full p-1.5 md:p-2 z-10 -mr-3 hover:bg-gray-50 transition-colors">
-                      <IoIosArrowForward className="w-3 h-3 md:w-5 md:h-5 text-gray-600" />
+
+                    <button className="thumb-swiper-next absolute right-2 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-1.5 md:p-2 z-10 hover:bg-gray-50 transition">
+                      <IoIosArrowForward className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
                     </button>
                   </>
                 )}
               </div>
+
             </div>
             <div className="col-span-2 bg-white rounded-md mt-5">
               <div className="gap-2 mb-4 grid grid-cols-2 md:grid-cols-4">
