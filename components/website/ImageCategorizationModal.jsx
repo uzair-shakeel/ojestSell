@@ -238,6 +238,23 @@ export default function ImageCategorizationModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, images.length, clickedImageUrl, categorizedImages]);
 
+  // FIX: Lock body scroll when modal is open to prevent background scrolling/shifting
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      // To prevent content from jumping when scrollbar is removed, 
+      // you might also need to set document.body.style.paddingRight 
+      // equal to the scrollbar width, but for simplicity, we'll rely on overflow: hidden.
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    // Cleanup function to ensure scroll is restored if the component unmounts
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   // Sync Swiper slide when sliderIndex changes (e.g. from category jump)
   useEffect(() => {
     if (swiperRef.current && swiperRef.current.swiper) {
@@ -436,13 +453,19 @@ export default function ImageCategorizationModal({
   const currentImages = organizedImages[currentCategory] || [];
 
   return (
-    <>
+    <div className="fixed inset-0 z-[100] bg-black overflow-y-auto overflow-x-hidden h-screen w-screen">
       <style dangerouslySetInnerHTML={{
         __html: `
-        .category-scroll-container::-webkit-scrollbar {
+        /* FIX 2: CSS for category scrollbar hiding */
+        .scrollbar-hide::-webkit-scrollbar {
           display: none;
         }
-        /* Custom Swiper Styles */
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+
+        /* FIX 4: Custom Swiper Styles */
         .modal-swiper {
             width: 100%;
             height: 100%;
@@ -451,188 +474,192 @@ export default function ImageCategorizationModal({
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100%;
+            height: 100% !important; /* Added !important */
         }
         .swiper-zoom-container > img {
-            max-height: 80vh !important;
-            max-width: 100% !important; 
+            max-height: 85vh !important; /* Adjusted from 80vh */
+            width: auto !important; /* Changed from max-width: 100% */
             object-fit: contain;
         }
       `}} />
-      <div className="fixed inset-0 z-[100] bg-black overflow-hidden">
-        {/* Navigation Bar */}
-        <div className="w-full sticky top-0 left-0 z-[110] bg-black shadow-lg">
-          <div className="max-w-[1600px] mx-auto px-0 md:px-20 py-3.5 flex justify-between items-center gap-0 md:gap-6">
-            {/* Navigation - Inline scrollable on both mobile and desktop */}
-            <div
-              className="flex gap-3 md:gap-6 md:overflow-x-auto overflow-x-scroll flex-1 category-scroll-container pl-4 pr-4 md:pl-0 md:pr-0"
-              style={{
-                scrollbarWidth: 'none',
-                msOverflowStyle: 'none',
-                WebkitOverflowScrolling: 'touch'
-              }}
-            >
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => handleCategoryClick(cat)}
-                  className={`text-base md:text-sm font-medium pb-1.5 relative transition-colors whitespace-nowrap flex-shrink-0 ${currentCategory === cat
-                    ? "text-white"
-                    : "text-gray-400 hover:text-white"
-                    }`}
-                  style={{ paddingTop: '1px' }}
-                >
-                  {capitalizeWord(cat)}
-                </button>
-              ))}
-            </div>
 
-            {/* Action Buttons */}
-            <div className="flex gap-2 md:gap-4 items-center ml-auto flex-shrink-0 pr-4 md:pr-0">
-              {showSlider && (
-                <div className="hidden md:flex gap-4">
-                  <button
-                    onClick={handleZoom}
-                    className="text-white flex items-center justify-center hover:opacity-70 transition-opacity text-xl p-2"
-                    title="Zoom"
-                  >
-                    +
-                  </button>
-                  <button
-                    onClick={handleFullscreen}
-                    className="text-white flex items-center justify-center hover:opacity-70 transition-opacity text-xl p-2"
-                    title="Full Screen"
-                  >
-                    ⛶
-                  </button>
-                </div>
-              )}
+      {/* Navigation Bar */}
+      <div className="w-full sticky top-0 left-0 z-[110] bg-black shadow-lg">
+        <div className="max-w-[1600px] mx-auto px-0 md:px-20 py-3.5 flex justify-between items-center gap-0 md:gap-6">
+          {/* Navigation - Inline scrollable on both mobile and desktop */}
+          {/* FIX 2: Replaced category scroll class names */}
+          <div
+            className="flex gap-4 overflow-x-auto whitespace-nowrap flex-1 scrollbar-hide px-4"
+            style={{ WebkitOverflowScrolling: 'touch' }}
+          >
+            {categories.map((cat) => (
               <button
-                onClick={handleClose}
-                className="text-white flex items-center justify-center hover:opacity-70 transition-opacity text-2xl p-2"
-                style={{ marginTop: '-8px' }}
-                title="Close"
+                key={cat}
+                onClick={() => handleCategoryClick(cat)}
+                className={`text-base md:text-sm font-medium pb-1.5 relative transition-colors whitespace-nowrap flex-shrink-0 ${currentCategory === cat
+                  ? "text-white"
+                  : "text-gray-400 hover:text-white"
+                  }`}
+                style={{ paddingTop: '1px' }}
               >
-                ×
+                {capitalizeWord(cat)}
               </button>
-            </div>
+            ))}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-2 md:gap-4 items-center ml-auto flex-shrink-0 pr-4 md:pr-0">
+            {showSlider && (
+              <div className="hidden md:flex gap-4">
+                <button
+                  onClick={handleZoom}
+                  className="text-white flex items-center justify-center hover:opacity-70 transition-opacity text-xl p-2"
+                  title="Zoom"
+                >
+                  +
+                </button>
+                <button
+                  onClick={handleFullscreen}
+                  className="text-white flex items-center justify-center hover:opacity-70 transition-opacity text-xl p-2"
+                  title="Full Screen"
+                >
+                  ⛶
+                </button>
+              </div>
+            )}
+            <button
+              onClick={handleClose}
+              className="text-white flex items-center justify-center hover:opacity-70 transition-opacity text-2xl p-2"
+              style={{ marginTop: '-8px' }}
+              title="Close"
+            >
+              ×
+            </button>
           </div>
         </div>
-
-        {/* Main Content */}
-        <div className="max-w-[1600px] mx-auto px-0 md:px-20 py-5 h-full">
-          {/* Processing Status */}
-          {isProcessing && (
-            <div className="mb-5 text-center text-white">
-              <div className="inline-block w-10 h-10 border-4 border-gray-600 border-t-white rounded-full animate-spin mb-2"></div>
-              <p className="text-sm">
-                Processing image {processingStatus.current} of {processingStatus.total}...
-              </p>
-            </div>
-          )}
-
-          {/* Gallery View */}
-          {!showSlider && (
-            <>
-              <div className="fixed bottom-4 right-4 md:relative md:bottom-auto md:right-auto mb-5 md:text-right text-gray-400 text-sm z-10 bg-black bg-opacity-50 px-2 py-1 rounded">
-                {currentCategory === "all"
-                  ? `Total photos: ${currentImages.length}`
-                  : `${capitalizeWord(currentCategory)}: ${currentImages.length
-                  } photo${currentImages.length === 1 ? "" : "s"}`}
-              </div>
-
-              {currentImages.length > 0 ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-3">
-                  {currentImages.map((image, index) => (
-                    <div
-                      key={index}
-                      onClick={() => handleImageClick(image, currentCategory)}
-                      className="bg-gray-900 rounded-none overflow-hidden cursor-pointer transition-all hover:scale-105 hover:shadow-lg aspect-[1.2]"
-                    >
-                      <img
-                        src={image.url}
-                        alt={image.detected_label || "Car image"}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="bg-gray-900 rounded-xl p-16 text-center border border-gray-700">
-                  <div className="text-6xl mb-5 opacity-30">📷</div>
-                  <div className="text-xl text-gray-400">
-                    No photos found in this category
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-
-          {/* Slider View */}
-          {showSlider && sliderImages.length > 0 && (
-            <>
-              <div className="flex items-center justify-center gap-0 md:gap-10 my-1 relative h-[80vh] w-full">
-                <button
-                  onClick={handleSwiperPrev}
-                  className="hidden md:flex text-white text-4xl items-center justify-center hover:opacity-70 transition-opacity fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-[105] disabled:opacity-30 disabled:cursor-not-allowed"
-                  disabled={
-                    currentCategory !== "all" &&
-                    sliderIndex === 0 &&
-                    categorySequence.indexOf(currentCategory) === 0
-                  }
-                >
-                  ‹
-                </button>
-
-                <div className="flex items-center justify-center relative w-full h-full">
-                  {/* Swiper Implementation */}
-                  <Swiper
-                    ref={swiperRef}
-                    modules={[Zoom, Navigation]}
-                    zoom={{ maxRatio: 3, toggle: true }} // Double tap to zoom
-                    spaceBetween={10}
-                    slidesPerView={1}
-                    grabCursor={true}
-                    initialSlide={sliderIndex}
-                    onSlideChange={(swiper) => setSliderIndex(swiper.activeIndex)}
-                    className="modal-swiper"
-                  >
-                    {sliderImages.map((img, index) => (
-                      <SwiperSlide key={`${img.url}-${index}`}>
-                        <div className="swiper-zoom-container">
-                          <img
-                            src={img.url}
-                            alt={img.detected_label || "Gallery image"}
-                            className="rounded-none md:rounded-2xl shadow-2xl bg-gray-900"
-                          />
-                        </div>
-                      </SwiperSlide>
-                    ))}
-                  </Swiper>
-
-                  <div className="fixed bottom-4 right-4 text-white text-lg md:text-base font-medium z-[110] bg-black bg-opacity-70 px-3 py-2 rounded">
-                    {sliderIndex + 1} of {sliderImages.length}
-                  </div>
-                </div>
-
-                <button
-                  onClick={handleSwiperNext}
-                  className="hidden md:flex text-white text-4xl items-center justify-center hover:opacity-70 transition-opacity fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-[105] disabled:opacity-30 disabled:cursor-not-allowed"
-                  disabled={
-                    currentCategory !== "all" &&
-                    sliderIndex === sliderImages.length - 1 &&
-                    categorySequence.indexOf(currentCategory) ===
-                    categorySequence.length - 1
-                  }
-                >
-                  ›
-                </button>
-              </div>
-            </>
-          )}
-        </div>
       </div>
-    </>
+
+      {/* Main Content */}
+      <div className="max-w-[1600px] mx-auto px-0 md:px-20 py-5">
+        {/* Processing Status */}
+        {isProcessing && (
+          <div className="mb-5 text-center text-white">
+            <div className="inline-block w-10 h-10 border-4 border-gray-600 border-t-white rounded-full animate-spin mb-2"></div>
+            <p className="text-sm">
+              Processing image {processingStatus.current} of {processingStatus.total}...
+            </p>
+          </div>
+        )}
+
+        {/* Gallery Grid View */}
+        {!showSlider && (
+          <>
+            <div className="flex justify-end mb-4 px-2">
+              <span className="text-gray-400 text-sm bg-gray-900/50 px-3 py-1 rounded-full">
+                {currentCategory === "all"
+                  ? `Total: ${currentImages.length}`
+                  : `${capitalizeWord(currentCategory)}: ${currentImages.length}`}
+              </span>
+            </div>
+
+            {currentImages.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-3 p-3">
+                {currentImages.map((image, index) => (
+                  <div
+                    key={index}
+                    onClick={() => handleImageClick(image, currentCategory)}
+                    className="bg-gray-900 rounded-lg overflow-hidden cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg aspect-[3/2] relative group"
+                  >
+                    <img
+                      src={image.url}
+                      alt={image.detected_label || "Car image"}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-gray-900 rounded-xl p-16 text-center border border-gray-800 m-3 my-auto">
+                <div className="text-6xl mb-5 opacity-30">📷</div>
+                <div className="text-xl text-gray-400">
+                  No photos found in this category
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Slider View */}
+        {showSlider && sliderImages.length > 0 && (
+          <>
+            {/* FIX 3: Replaced container with correct height and overflow properties */}
+            <div className="flex items-center justify-center my-1 relative h-[85vh] w-full overflow-hidden">
+              <div className="flex items-center justify-center relative w-full h-full">
+                {/* Swiper Implementation */}
+                <Swiper
+                  ref={swiperRef}
+                  modules={[Zoom, Navigation]}
+                  zoom={{ maxRatio: 3, toggle: true }} // Double tap to zoom
+                  spaceBetween={10}
+                  slidesPerView={1}
+                  grabCursor={true}
+                  initialSlide={sliderIndex}
+                  onSlideChange={(swiper) => setSliderIndex(swiper.activeIndex)}
+                  className="modal-swiper !h-full !w-full"
+                  loop={true}
+                >
+                  {sliderImages.map((img, index) => (
+                    <SwiperSlide key={`${img.url}-${index}`}>
+                      <div className="swiper-zoom-container">
+                        <img
+                          src={img.url}
+                          alt={img.detected_label || "Gallery image"}
+                          className="rounded-none md:rounded-2xl shadow-2xl bg-gray-900"
+                        />
+                      </div>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+
+                <div className="fixed bottom-4 right-4 text-white text-lg md:text-base font-medium z-[110] bg-black bg-opacity-70 px-3 py-2 rounded">
+                  {sliderIndex + 1} of {sliderImages.length}
+                </div>
+              </div>
+
+              {sliderImages.length > 1 && (
+                <>
+                  <button
+                    onClick={handleSwiperPrev}
+                    className="flex text-white text-3xl md:text-4xl items-center justify-center hover:opacity-70 transition-opacity fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-[105] disabled:opacity-30 disabled:cursor-not-allowed p-4"
+                    disabled={
+                      currentCategory !== "all" &&
+                      sliderIndex === 0 &&
+                      categorySequence.indexOf(currentCategory) === 0
+                    }
+                  >
+                    ‹
+                  </button>
+
+                  <button
+                    onClick={handleSwiperNext}
+                    className="flex text-white text-3xl md:text-4xl items-center justify-center hover:opacity-70 transition-opacity fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-[105] disabled:opacity-30 disabled:cursor-not-allowed p-4"
+                    disabled={
+                      currentCategory !== "all" &&
+                      sliderIndex === sliderImages.length - 1 &&
+                      categorySequence.indexOf(currentCategory) ===
+                      categorySequence.length - 1
+                    }
+                  >
+                    ›
+                  </button>
+                </>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
   );
 }
