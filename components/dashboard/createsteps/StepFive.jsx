@@ -38,6 +38,82 @@ export default function StepFive({
     }
   }, [formData.location, isLoaded, getGeocodingData]);
 
+  // Translation maps for all values
+  const conditionKeyMap = {
+    interior: "Stan Wnętrza",
+    mechanical: "Stan Mechaniczny",
+    paintandBody: "Stan Lakieru i Karoserii",
+    frameandUnderbody: "Stan Ramy i Podwozia",
+    overall: "Stan Ogólny",
+  };
+
+  const conditionValueMap = {
+    "Excellent": "Doskonały",
+    "Very Good": "Bardzo Dobry",
+    "Good": "Dobry",
+    "Fair": "Dostateczny",
+    "Poor": "Słaby",
+  };
+
+  const transmissionMap = {
+    "Automatic": "Automat",
+    "Manual": "Manualna",
+    "Semi-Automatic": "Półautomat",
+    "CVT": "CVT",
+  };
+
+  const fuelMap = {
+    "Petrol": "Benzyna",
+    "Diesel": "Diesel",
+    "Electric": "Elektryczny",
+    "Hybrid": "Hybrydowy",
+    "Plug-in Hybrid": "Hybryda Plug-in",
+    "Hydrogen": "Wodór",
+    "LPG": "LPG",
+    "CNG": "CNG",
+  };
+
+  const drivetrainMap = {
+    "FWD": "Przedni",
+    "RWD": "Tylny",
+    "AWD": "Napęd na wszystkie koła",
+    "4WD": "4x4",
+  };
+
+  const yesNoMap = {
+    "Yes": "Tak",
+    "No": "Nie",
+  };
+
+  const sellerTypeMap = {
+    "private": "Prywatny",
+    "dealer": "Dealer",
+    "company": "Firma",
+  };
+
+  const sellOptionsMap = {
+    "Long term rental": "Wynajem długoterminowy",
+    "Short term rental": "Wynajem krótkoterminowy",
+    "Lease": "Leasing",
+    "Cash only": "Tylko gotówka",
+  };
+
+  const invoiceOptionsMap = {
+    "Selling Agreement": "Umowa Sprzedaży",
+    "Invoice": "Faktura",
+    "VAT Invoice": "Faktura VAT",
+    "Receipt": "Paragon",
+  };
+
+  // Helper function to translate values
+  const translateValue = (value, map) => {
+    if (!value) return "N/A";
+    if (Array.isArray(value)) {
+      return value.map(v => map[v] || v).join(", ");
+    }
+    return map[value] || value;
+  };
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg transition-colors duration-300">
       <h2 className="text-xl font-bold mb-6 text-gray-900 dark:text-white transition-colors duration-300">
@@ -100,19 +176,19 @@ export default function StepFive({
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Napęd</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {formData.drivetrain || "N/A"}
+            {translateValue(formData.drivetrain, drivetrainMap)}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Skrzynia Biegów</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {formData.transmission || "N/A"}
+            {translateValue(formData.transmission, transmissionMap)}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Paliwo</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {formData.fuel || "N/A"}
+            {translateValue(formData.fuel, fuelMap)}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
@@ -130,13 +206,13 @@ export default function StepFive({
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Historia Bezwypadkowość</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {formData.accidentHistory || "N/A"}
+            {translateValue(formData.accidentHistory, yesNoMap)}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
           <p className="text-xs uppercase">Historia Serwisowa</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {formData.serviceHistory || "N/A"}
+            {translateValue(formData.serviceHistory, yesNoMap)}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
@@ -154,62 +230,61 @@ export default function StepFive({
 
         {/* Car Condition */}
         <div className="col-span-2 text-lg font-bold mt-4 text-gray-900 dark:text-white transition-colors duration-300">
-          Condition
+          Stan
         </div>
         {Object.entries(formData.condition).map(([key, value], index) => (
           <div key={index} className="grid grid-cols-2 sm:grid-cols-1 w-full">
             <p className="text-xs uppercase">
-              {key.replace(/([A-Z])/g, " $1").trim()}
+              {conditionKeyMap[key] || key.replace(/([A-Z])/g, " $1").trim()}
             </p>
             <p className="font-medium text-black dark:text-white transition-colors duration-300">
-              {value || "N/A"}
+              {translateValue(value, conditionValueMap)}
             </p>
           </div>
         ))}
 
         {/* Financial Information */}
         <div className="col-span-2 text-lg font-bold mt-4 text-gray-900 dark:text-white transition-colors duration-300">
-          Financial Information
+          Informacje Finansowe
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Sell Options</p>
+          <p className="text-xs uppercase">Opcje Sprzedaży</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {formData.financialInfo.sellOptions.join(", ") || "N/A"}
+            {translateValue(formData.financialInfo.sellOptions, sellOptionsMap)}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Invoice Options</p>
+          <p className="text-xs uppercase">Sposób Sprzedaży</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {formData.financialInfo.invoiceOptions.join(", ") || "N/A"}
+            {translateValue(formData.financialInfo.invoiceOptions, invoiceOptionsMap)}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Seller Type</p>
+          <p className="text-xs uppercase">Typ Sprzedawcy</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {formData.financialInfo.sellerType}
+            {translateValue(formData.financialInfo.sellerType, sellerTypeMap)}
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Price</p>
+          <p className="text-xs uppercase">Cena</p>
           <p className="font-medium text-black dark:text-white transition-colors duration-300">
             {formData.financialInfo.invoiceOptions.includes("Invoice VAT")
-              ? `Netto: ${formData.financialInfo.priceNetto} €, With VAT: ${
-                  formData.financialInfo.priceWithVat || "Auto-calculated"
-                } €`
+              ? `Netto: ${formData.financialInfo.priceNetto} €, Z VAT: ${formData.financialInfo.priceWithVat || "Obliczone Automatycznie"
+              } €`
               : `${formData.financialInfo.priceNetto} €`}
           </p>
         </div>
 
         {/* Location Information */}
         <div className="col-span-2 text-lg font-bold mt-4 text-gray-900 dark:text-white transition-colors duration-300">
-          Location
+          Lokalizacja
         </div>
         {locationDetails.city && (
           <div className="col-span-2 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-lg mb-3 flex items-center transition-colors duration-300">
             <FaMapMarkerAlt className="text-blue-500 dark:text-blue-400 mr-2 flex-shrink-0 transition-colors duration-300" />
             <div>
               <span className="font-medium text-gray-900 dark:text-white transition-colors duration-300">
-                Car Location:
+                Lokalizacja Samochodu:
               </span>{" "}
               <span className="text-gray-900 dark:text-white transition-colors duration-300">
                 {locationDetails.city}
