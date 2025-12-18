@@ -1,14 +1,11 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { IoClose } from "react-icons/io5";
-
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Zoom, Navigation } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/zoom";
 import "swiper/css/navigation";
-
 
 const categorySequence = [
   "exterior",
@@ -19,6 +16,7 @@ const categorySequence = [
   "keys",
   "documents",
 ];
+
 const categoryOrder = {
   exterior: 0,
   interior: 1,
@@ -47,14 +45,13 @@ const capitalizeWord = (word) => {
   return word.charAt(0).toUpperCase() + word.slice(1);
 };
 
-
 export default function ImageCategorizationModal({
   isOpen,
   onClose,
   images = [],
   carId,
-  clickedImageUrl = null, // Optional: URL of the image that was clicked
-  categorizedImages = [], // Categorized images from database
+  clickedImageUrl = null,
+  categorizedImages = [],
 }) {
   const [organizedImages, setOrganizedImages] = useState({
     all: [],
@@ -74,13 +71,10 @@ export default function ImageCategorizationModal({
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingStatus, setProcessingStatus] = useState({});
 
-  // Swiper Ref
   const swiperRef = useRef(null);
 
-  // Process images using existing categorizedImages data from database
   const processImagesFromDatabase = (categorizedImagesData) => {
     if (!categorizedImagesData || categorizedImagesData.length === 0) {
-      // If no categorized data exists, create default structure with all images as exterior
       const results = {
         all: [],
         interior: [],
@@ -118,10 +112,8 @@ export default function ImageCategorizationModal({
       keys: [],
     };
 
-    // Process categorized images from database
     categorizedImagesData.forEach((imgData) => {
       const category = normalizeCategory(imgData.category || "exterior");
-
       const imageData = {
         url: imgData.url,
         category: category,
@@ -129,38 +121,24 @@ export default function ImageCategorizationModal({
         confidence: imgData.confidence || 0,
         index: imgData.index !== undefined ? imgData.index : 0,
       };
-
-      // Add to all
       results.all.push(imageData);
-
-      // Add to specific category
       if (results[category]) {
         results[category].push(imageData);
       }
     });
 
-    // Sort images by category order
     Object.keys(results).forEach((key) => {
       results[key] = results[key].sort((a, b) => {
         const orderA = categoryOrder[normalizeCategory(a.category)] ?? 999;
         const orderB = categoryOrder[normalizeCategory(b.category)] ?? 999;
         if (orderA !== orderB) return orderA - orderB;
-        return b.index - a.index;
+        return a.index - b.index;
       });
-    });
-
-    console.log("Loaded categorized images from database:", {
-      totalImages: results.all.length,
-      byCategory: Object.keys(results).reduce((acc, key) => {
-        acc[key] = results[key].length;
-        return acc;
-      }, {}),
     });
 
     return results;
   };
 
-  // Handle clicked image after organizedImages is updated
   useEffect(() => {
     if (clickedImageUrl && organizedImages.all.length > 0 && !isProcessing) {
       const clickedImage = organizedImages.all.find(img => img.url === clickedImageUrl);
@@ -175,7 +153,6 @@ export default function ImageCategorizationModal({
           setSliderIndex(index);
           setShowSlider(true);
         } else {
-          // If not found in category, show in "all"
           const allIndex = organizedImages.all.findIndex(img => img.url === clickedImageUrl);
           if (allIndex >= 0) {
             setCurrentCategory("all");
@@ -186,10 +163,8 @@ export default function ImageCategorizationModal({
         }
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [organizedImages.all.length, clickedImageUrl, isProcessing]);
 
-  // Initialize using categorizedImages from database
   useEffect(() => {
     if (isOpen && images.length > 0) {
       setCurrentCategory("all");
@@ -199,11 +174,9 @@ export default function ImageCategorizationModal({
       setZoomLevel(1);
       setIsProcessing(false);
 
-      // Process images from database categorizedImages
       const results = processImagesFromDatabase(categorizedImages);
       setOrganizedImages(results);
 
-      // If a specific image was clicked, find its category and show it in slider
       if (clickedImageUrl) {
         const clickedImage = results.all.find(img => img.url === clickedImageUrl);
         if (clickedImage) {
@@ -217,7 +190,6 @@ export default function ImageCategorizationModal({
             setSliderIndex(index);
             setShowSlider(true);
           } else {
-            // If not found in category, show in "all"
             const allIndex = results.all.findIndex(img => img.url === clickedImageUrl);
             if (allIndex >= 0) {
               setCurrentCategory("all");
@@ -231,65 +203,50 @@ export default function ImageCategorizationModal({
         }
       }
     } else if (!isOpen) {
-      // Reset processing state when modal closes
       setIsProcessing(false);
       setProcessingStatus({});
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, images.length, clickedImageUrl, categorizedImages]);
 
-  // FIX: Lock body scroll when modal is open to prevent background scrolling/shifting
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
-      // To prevent content from jumping when scrollbar is removed, 
-      // you might also need to set document.body.style.paddingRight 
-      // equal to the scrollbar width, but for simplicity, we'll rely on overflow: hidden.
     } else {
       document.body.style.overflow = '';
     }
-
-    // Cleanup function to ensure scroll is restored if the component unmounts
     return () => {
       document.body.style.overflow = '';
     };
   }, [isOpen]);
 
-  // Sync Swiper slide when sliderIndex changes (e.g. from category jump)
   useEffect(() => {
     if (swiperRef.current && swiperRef.current.swiper) {
-      // If the difference is significant (like a category jump), swipe to it
       if (swiperRef.current.swiper.activeIndex !== sliderIndex) {
         swiperRef.current.swiper.slideTo(sliderIndex, 0);
       }
     }
-  }, [sliderIndex]);
+  }, [sliderIndex, sliderImages]);
 
   const handleCategoryClick = (category) => {
     const categoryImages = organizedImages[category] || [];
     setCurrentCategory(category);
 
     if (category === "all") {
-      // For "all" category, show gallery view
       setShowSlider(false);
     } else if (categoryImages.length > 0) {
-      // For other categories, open first image in slider view
       setSliderImages(categoryImages);
       setSliderIndex(0);
       setShowSlider(true);
     } else {
-      // If no images, just show the category (empty gallery)
       setShowSlider(false);
     }
   };
 
   const handleImageClick = (image, category) => {
-    // If clicking from "all" category, find which category the image actually belongs to
     let targetCategory = category;
     let categoryImages = organizedImages[category] || [];
 
     if (category === "all") {
-      // Find the actual category of this image
       const imageCategory = image.category || "exterior";
       targetCategory = imageCategory;
       categoryImages = organizedImages[imageCategory] || [];
@@ -307,7 +264,6 @@ export default function ImageCategorizationModal({
 
     const newIndex = sliderIndex + step;
 
-    // Special handling for "all" category - just loop within the list
     if (currentCategory === "all") {
       if (newIndex < 0) {
         setSliderIndex(sliderImages.length - 1);
@@ -319,42 +275,64 @@ export default function ImageCategorizationModal({
       return;
     }
 
+    // Categorized Logic
     if (newIndex < 0) {
-      // Go to previous category
+      // GOING PREVIOUS
       const currentIdx = categorySequence.indexOf(currentCategory);
-      if (currentIdx > 0) {
-        const prevCategory = categorySequence[currentIdx - 1];
-        const prevImages = organizedImages[prevCategory] || [];
-        if (prevImages.length > 0) {
-          setCurrentCategory(prevCategory);
-          setSliderImages(prevImages);
-          setSliderIndex(prevImages.length - 1);
-          setZoomLevel(1); // Reset zoom when changing category
-          return;
+      let foundCategory = null;
+      let foundImages = [];
+
+      for (let i = 1; i < categorySequence.length; i++) {
+        const targetIdx = (currentIdx - i + categorySequence.length) % categorySequence.length;
+        const cat = categorySequence[targetIdx];
+        if (organizedImages[cat] && organizedImages[cat].length > 0) {
+          foundCategory = cat;
+          foundImages = organizedImages[cat];
+          break;
         }
       }
-      setSliderIndex(sliderImages.length - 1);
+
+      if (foundCategory) {
+        setCurrentCategory(foundCategory);
+        setSliderImages(foundImages);
+        setSliderIndex(foundImages.length - 1);
+        setZoomLevel(1);
+      } else {
+        // Fallback if no other categories have images
+        setSliderIndex(sliderImages.length - 1);
+      }
+
     } else if (newIndex >= sliderImages.length) {
-      // Go to next category
+      // GOING NEXT
       const currentIdx = categorySequence.indexOf(currentCategory);
-      if (currentIdx < categorySequence.length - 1) {
-        const nextCategory = categorySequence[currentIdx + 1];
-        const nextImages = organizedImages[nextCategory] || [];
-        if (nextImages.length > 0) {
-          setCurrentCategory(nextCategory);
-          setSliderImages(nextImages);
-          setSliderIndex(0);
-          setZoomLevel(1); // Reset zoom when changing category
-          return;
+      let foundCategory = null;
+      let foundImages = [];
+
+      for (let i = 1; i < categorySequence.length; i++) {
+        const targetIdx = (currentIdx + i) % categorySequence.length;
+        const cat = categorySequence[targetIdx];
+        if (organizedImages[cat] && organizedImages[cat].length > 0) {
+          foundCategory = cat;
+          foundImages = organizedImages[cat];
+          break;
         }
       }
-      setSliderIndex(0);
+
+      if (foundCategory) {
+        setCurrentCategory(foundCategory);
+        setSliderImages(foundImages);
+        setSliderIndex(0);
+        setZoomLevel(1);
+      } else {
+        // Fallback
+        setSliderIndex(0);
+      }
+
     } else {
       setSliderIndex(newIndex);
     }
   };
 
-  // Handlers for Swiper navigation buttons to support Category jumping
   const handleSwiperNext = () => {
     if (!swiperRef.current || !swiperRef.current.swiper) return;
     if (swiperRef.current.swiper.isEnd) {
@@ -378,27 +356,16 @@ export default function ImageCategorizationModal({
     if (swiperRef.current && swiperRef.current.swiper) {
       const swiper = swiperRef.current.swiper;
       const currentScale = swiper.zoom.scale;
-
-
-      if (currentScale < 1.5) {
-        swiper.zoom.in(2);
-      }
-      else if (currentScale < 2.5) {
-        swiper.zoom.in(3);
-      }
-      else {
-        swiper.zoom.out();
-      }
+      if (currentScale < 1.5) swiper.zoom.in(2);
+      else if (currentScale < 2.5) swiper.zoom.in(3);
+      else swiper.zoom.out();
     }
   };
 
   const handleFullscreen = async () => {
     try {
-      if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen();
-      } else {
-        await document.exitFullscreen();
-      }
+      if (!document.fullscreenElement) await document.documentElement.requestFullscreen();
+      else await document.exitFullscreen();
     } catch (err) {
       console.error("Fullscreen request failed:", err);
     }
@@ -407,16 +374,12 @@ export default function ImageCategorizationModal({
   const handleClose = () => {
     setShowSlider(false);
     setZoomLevel(1);
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
-    }
+    if (document.fullscreenElement) document.exitFullscreen();
     onClose();
   };
 
-  // Keyboard navigation
   useEffect(() => {
     if (!isOpen) return;
-
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
         handleClose();
@@ -430,10 +393,8 @@ export default function ImageCategorizationModal({
         }
       }
     };
-
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, showSlider, sliderIndex, currentCategory, sliderImages]);
 
   if (!isOpen) return null;
@@ -449,45 +410,21 @@ export default function ImageCategorizationModal({
     "keys",
   ];
 
-  // Get images for current category
   const currentImages = organizedImages[currentCategory] || [];
 
   return (
     <div className="fixed inset-0 z-[100] bg-black overflow-y-auto overflow-x-hidden h-screen w-screen">
       <style dangerouslySetInnerHTML={{
         __html: `
-        /* FIX 2: CSS for category scrollbar hiding */
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-
-        /* FIX 4: Custom Swiper Styles */
-        .modal-swiper {
-            width: 100%;
-            height: 100%;
-        }
-        .modal-swiper .swiper-slide {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100% !important; /* Added !important */
-        }
-        .swiper-zoom-container > img {
-            max-height: 85vh !important; /* Adjusted from 80vh */
-            width: auto !important; /* Changed from max-width: 100% */
-            object-fit: contain;
-        }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .modal-swiper { width: 100%; height: 100%; }
+        .modal-swiper .swiper-slide { display: flex; align-items: center; justify-content: center; height: 100% !important; }
+        .swiper-zoom-container > img { max-height: 85vh !important; width: auto !important; object-fit: contain; }
       `}} />
 
-      {/* Navigation Bar */}
       <div className="w-full sticky top-0 left-0 z-[110] bg-black shadow-lg">
         <div className="max-w-[1600px] mx-auto px-0 md:px-20 py-3.5 flex justify-between items-center gap-0 md:gap-6">
-          {/* Navigation - Inline scrollable on both mobile and desktop */}
-          {/* FIX 2: Replaced category scroll class names */}
           <div
             className="flex gap-4 overflow-x-auto whitespace-nowrap flex-1 scrollbar-hide px-4"
             style={{ WebkitOverflowScrolling: 'touch' }}
@@ -497,7 +434,7 @@ export default function ImageCategorizationModal({
                 key={cat}
                 onClick={() => handleCategoryClick(cat)}
                 className={`text-base md:text-sm font-medium pb-1.5 relative transition-colors whitespace-nowrap flex-shrink-0 ${currentCategory === cat
-                  ? "text-white"
+                  ? "text-white underline underline-offset-2"
                   : "text-gray-400 hover:text-white"
                   }`}
                 style={{ paddingTop: '1px' }}
@@ -507,7 +444,6 @@ export default function ImageCategorizationModal({
             ))}
           </div>
 
-          {/* Action Buttons */}
           <div className="flex gap-2 md:gap-4 items-center ml-auto flex-shrink-0 pr-4 md:pr-0">
             {showSlider && (
               <div className="hidden md:flex gap-4">
@@ -539,9 +475,7 @@ export default function ImageCategorizationModal({
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="max-w-[1600px] mx-auto px-0 md:px-20 py-5">
-        {/* Processing Status */}
         {isProcessing && (
           <div className="mb-5 text-center text-white">
             <div className="inline-block w-10 h-10 border-4 border-gray-600 border-t-white rounded-full animate-spin mb-2"></div>
@@ -551,7 +485,6 @@ export default function ImageCategorizationModal({
           </div>
         )}
 
-        {/* Gallery Grid View */}
         {!showSlider && (
           <>
             <div className="flex justify-end mb-4 px-2">
@@ -591,24 +524,22 @@ export default function ImageCategorizationModal({
           </>
         )}
 
-        {/* Slider View */}
         {showSlider && sliderImages.length > 0 && (
           <>
-            {/* FIX 3: Replaced container with correct height and overflow properties */}
             <div className="flex items-center justify-center my-1 relative h-[85vh] w-full overflow-hidden">
               <div className="flex items-center justify-center relative w-full h-full">
-                {/* Swiper Implementation */}
                 <Swiper
                   ref={swiperRef}
+                  key={currentCategory}
                   modules={[Zoom, Navigation]}
-                  zoom={{ maxRatio: 3, toggle: true }} // Double tap to zoom
+                  zoom={{ maxRatio: 3, toggle: true }}
                   spaceBetween={10}
                   slidesPerView={1}
                   grabCursor={true}
                   initialSlide={sliderIndex}
                   onSlideChange={(swiper) => setSliderIndex(swiper.activeIndex)}
                   className="modal-swiper !h-full !w-full"
-                  loop={true}
+                  loop={false}
                 >
                   {sliderImages.map((img, index) => (
                     <SwiperSlide key={`${img.url}-${index}`}>
@@ -628,34 +559,20 @@ export default function ImageCategorizationModal({
                 </div>
               </div>
 
-              {sliderImages.length > 1 && (
-                <>
-                  <button
-                    onClick={handleSwiperPrev}
-                    className="flex text-white text-3xl md:text-4xl items-center justify-center hover:opacity-70 transition-opacity fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-[105] disabled:opacity-30 disabled:cursor-not-allowed p-4"
-                    disabled={
-                      currentCategory !== "all" &&
-                      sliderIndex === 0 &&
-                      categorySequence.indexOf(currentCategory) === 0
-                    }
-                  >
-                    ‹
-                  </button>
+              {/* FIX: Removed {sliderImages.length > 1 && ...} check so buttons always appear */}
+              <button
+                onClick={handleSwiperPrev}
+                className="flex text-white text-3xl md:text-4xl items-center justify-center hover:opacity-70 transition-opacity fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-[105] p-4"
+              >
+                ‹
+              </button>
 
-                  <button
-                    onClick={handleSwiperNext}
-                    className="flex text-white text-3xl md:text-4xl items-center justify-center hover:opacity-70 transition-opacity fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-[105] disabled:opacity-30 disabled:cursor-not-allowed p-4"
-                    disabled={
-                      currentCategory !== "all" &&
-                      sliderIndex === sliderImages.length - 1 &&
-                      categorySequence.indexOf(currentCategory) ===
-                      categorySequence.length - 1
-                    }
-                  >
-                    ›
-                  </button>
-                </>
-              )}
+              <button
+                onClick={handleSwiperNext}
+                className="flex text-white text-3xl md:text-4xl items-center justify-center hover:opacity-70 transition-opacity fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-[105] p-4"
+              >
+                ›
+              </button>
             </div>
           </>
         )}
