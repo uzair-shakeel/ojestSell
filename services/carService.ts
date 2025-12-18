@@ -10,9 +10,8 @@ console.log("Using API URL:", API_BASE_URL);
 
 // Backend base for admin endpoints (bypass Next API if no proxies exist)
 const BACKEND_BASE =
-  process.env.NEXT_PUBLIC_BACKEND_URL ||
-  process.env.BACKEND_URL ||
-  "https://ojest-ap-is.vercel.app";
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  "https://ojest.pl/api";
 
 // Interface for the Car data as returned by the backend
 interface CarData {

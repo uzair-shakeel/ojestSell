@@ -1,12 +1,12 @@
 "use client";
 const handlePreviewError = () => {
-    try {
-      if (selectedImage) {
-        const fallback = URL.createObjectURL(selectedImage);
-        setPreviewUrl(fallback);
-      }
-    } catch (_) {}
-  };
+  try {
+    if (selectedImage) {
+      const fallback = URL.createObjectURL(selectedImage);
+      setPreviewUrl(fallback);
+    }
+  } catch (_) { }
+};
 
 
 import { useState, useRef, useEffect } from "react";
@@ -157,7 +157,7 @@ export default function PhotoEnhancer() {
   // Professional filter presets
   const filterPresets = {
     none: {
-      name: "None",
+      name: "Brak",
       adjustments: {
         brightness: 100,
         contrast: 100,
@@ -179,7 +179,7 @@ export default function PhotoEnhancer() {
       },
     },
     showroom: {
-      name: "Showroom",
+      name: "Salon",
       adjustments: {
         brightness: 105,
         contrast: 115,
@@ -201,7 +201,7 @@ export default function PhotoEnhancer() {
       },
     },
     sportsCar: {
-      name: "Sports Car",
+      name: "Samochód Sportowy",
       adjustments: {
         brightness: 102,
         contrast: 125,
@@ -245,7 +245,7 @@ export default function PhotoEnhancer() {
       },
     },
     luxury: {
-      name: "Luxury",
+      name: "Luksusowy",
       adjustments: {
         brightness: 102,
         contrast: 110,
@@ -267,7 +267,7 @@ export default function PhotoEnhancer() {
       },
     },
     dramatic: {
-      name: "Dramatic",
+      name: "Dramatyczny",
       adjustments: {
         brightness: 95,
         contrast: 140,
@@ -289,7 +289,7 @@ export default function PhotoEnhancer() {
       },
     },
     neon: {
-      name: "Neon Night",
+      name: "Neonowa Noc",
       adjustments: {
         brightness: 95,
         contrast: 120,
@@ -333,7 +333,7 @@ export default function PhotoEnhancer() {
       },
     },
     blackWhite: {
-      name: "Classic B&W",
+      name: "Czarno-Biały",
       adjustments: {
         brightness: 105,
         contrast: 125,
@@ -355,7 +355,7 @@ export default function PhotoEnhancer() {
       },
     },
     dealershipPro: {
-      name: "Dealership Pro",
+      name: "Dealer Pro",
       adjustments: {
         brightness: 108,
         contrast: 118,
@@ -377,7 +377,7 @@ export default function PhotoEnhancer() {
       },
     },
     sunset: {
-      name: "Sunset Drive",
+      name: "Zachód Słońca",
       adjustments: {
         brightness: 100,
         contrast: 110,
@@ -617,7 +617,7 @@ export default function PhotoEnhancer() {
                 working = new File([out], file.name.replace(/\.(heic|heif)$/i, ".jpg") || "image.jpg", { type: "image/jpeg", lastModified: Date.now() });
               }
             }
-          } catch (__) {}
+          } catch (__) { }
         }
       }
 
@@ -1104,12 +1104,10 @@ export default function PhotoEnhancer() {
       grayscale(${adjustments.grayscale}%)
       sepia(${adjustments.sepia}%)
       hue-rotate(${adjustments.hueRotate}deg)
-      ${
-        adjustments.sharpen > 0
-          ? `contrast(${100 + adjustments.sharpen * 0.3}%) brightness(${
-              100 + adjustments.sharpen * 0.1
-            }%)`
-          : ""
+      ${adjustments.sharpen > 0
+        ? `contrast(${100 + adjustments.sharpen * 0.3}%) brightness(${100 + adjustments.sharpen * 0.1
+        }%)`
+        : ""
       }
     `;
 
@@ -1316,12 +1314,10 @@ export default function PhotoEnhancer() {
       ctx.globalCompositeOperation = "overlay";
       ctx.fillStyle =
         adjustments.temperature > 0
-          ? `rgba(255,${255 - adjustments.temperature * 2},${
-              255 - adjustments.temperature * 4
-            },${adjustments.temperature / 100})`
-          : `rgba(${255 + adjustments.temperature * 4},${
-              255 + adjustments.temperature * 2
-            },255,${Math.abs(adjustments.temperature) / 100})`;
+          ? `rgba(255,${255 - adjustments.temperature * 2},${255 - adjustments.temperature * 4
+          },${adjustments.temperature / 100})`
+          : `rgba(${255 + adjustments.temperature * 4},${255 + adjustments.temperature * 2
+          },255,${Math.abs(adjustments.temperature) / 100})`;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
     }
@@ -1332,12 +1328,10 @@ export default function PhotoEnhancer() {
       ctx.globalCompositeOperation = "overlay";
       ctx.fillStyle =
         adjustments.tint > 0
-          ? `rgba(${255 - adjustments.tint * 2},255,${
-              255 - adjustments.tint * 2
-            },${adjustments.tint / 100})`
-          : `rgba(255,${255 + adjustments.tint * 2},255,${
-              Math.abs(adjustments.tint) / 100
-            })`;
+          ? `rgba(${255 - adjustments.tint * 2},255,${255 - adjustments.tint * 2
+          },${adjustments.tint / 100})`
+          : `rgba(255,${255 + adjustments.tint * 2},255,${Math.abs(adjustments.tint) / 100
+          })`;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
     }
@@ -1532,19 +1526,19 @@ export default function PhotoEnhancer() {
             // Include information about the adjustments in the download page
             const adjustmentInfo = `
               <div style="background: #f5f5f5; padding: 10px; border-radius: 8px; margin-bottom: 20px; text-align: left; font-size: 12px;">
-                <h3 style="margin: 0 0 8px 0;">Applied Adjustments</h3>
+                <h3 style="margin: 0 0 8px 0;">Zastosowane Ustawienia</h3>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                   <div>
-                    <p style="margin: 4px 0;"><strong>Exposure:</strong> ${adjustments.exposure}%</p>
-                    <p style="margin: 4px 0;"><strong>Shadows:</strong> ${adjustments.shadows}</p>
-                    <p style="margin: 4px 0;"><strong>Highlights:</strong> ${adjustments.highlights}</p>
-                    <p style="margin: 4px 0;"><strong>Contrast:</strong> ${adjustments.contrast}%</p>
+                    <p style="margin: 4px 0;"><strong>Ekspozycja:</strong> ${adjustments.exposure}%</p>
+                    <p style="margin: 4px 0;"><strong>Cienie:</strong> ${adjustments.shadows}</p>
+                    <p style="margin: 4px 0;"><strong>Podświetlenia:</strong> ${adjustments.highlights}</p>
+                    <p style="margin: 4px 0;"><strong>Kontrast:</strong> ${adjustments.contrast}%</p>
                   </div>
                   <div>
-                    <p style="margin: 4px 0;"><strong>Brightness:</strong> ${adjustments.brightness}%</p>
-                    <p style="margin: 4px 0;"><strong>Saturation:</strong> ${adjustments.saturation}%</p>
-                    <p style="margin: 4px 0;"><strong>Sharpness:</strong> ${adjustments.sharpen}</p>
-                    <p style="margin: 4px 0;"><strong>Temperature:</strong> ${adjustments.temperature}</p>
+                    <p style="margin: 4px 0;"><strong>Jasność:</strong> ${adjustments.brightness}%</p>
+                    <p style="margin: 4px 0;"><strong>Nasycenie:</strong> ${adjustments.saturation}%</p>
+                    <p style="margin: 4px 0;"><strong>Ostrość:</strong> ${adjustments.sharpen}</p>
+                    <p style="margin: 4px 0;"><strong>Temperatura:</strong> ${adjustments.temperature}</p>
                   </div>
                 </div>
               </div>
@@ -1553,7 +1547,7 @@ export default function PhotoEnhancer() {
             win.document.write(`
               <html>
                 <head>
-                  <title>Download Enhanced Image</title>
+                  <title>Pobierz Ulepszone Zdjęcie</title>
                   <meta name="viewport" content="width=device-width, initial-scale=1.0">
                   <style>
                     body { margin: 0; padding: 20px; font-family: system-ui, -apple-system, sans-serif; text-align: center; }
@@ -1580,16 +1574,16 @@ export default function PhotoEnhancer() {
                   </style>
                 </head>
                 <body>
-                  <h2>Your Enhanced Image</h2>
+                  <h2>Twoje Ulepszone Zdjęcie</h2>
                   ${adjustmentInfo}
                   <img src="${dataUrl}" alt="Enhanced image">
-                  <a href="${dataUrl}" download="${filename}" class="download-btn">Download Image</a>
+                  <a href="${dataUrl}" download="${filename}" class="download-btn">Pobierz Zdjęcie</a>
                   <div class="instructions">
-                    <p><strong>To save on iOS:</strong></p>
+                    <p><strong>Aby zapisać na iOS:</strong></p>
                     <ol style="padding-left: 20px; margin: 5px 0;">
-                      <li>Press and hold the image above</li>
-                      <li>Select "Save to Photos" from the menu</li>
-                      <li>Or tap the blue Download button</li>
+                      <li>Naciśnij i przytrzymaj powyższe zdjęcie</li>
+                      <li>Wybierz "Zapisz w Zdjęciach" z menu</li>
+                      <li>Lub dotknij niebieskiego przycisku Pobierz</li>
                     </ol>
                   </div>
                 </body>
@@ -1631,12 +1625,10 @@ export default function PhotoEnhancer() {
       grayscale(${adjustments.grayscale}%)
       sepia(${adjustments.sepia}%)
       hue-rotate(${adjustments.hueRotate}deg)
-      ${
-        adjustments.sharpen > 0
-          ? `contrast(${100 + adjustments.sharpen * 0.3}%) brightness(${
-              100 + adjustments.sharpen * 0.1
-            }%)`
-          : ""
+      ${adjustments.sharpen > 0
+        ? `contrast(${100 + adjustments.sharpen * 0.3}%) brightness(${100 + adjustments.sharpen * 0.1
+        }%)`
+        : ""
       }
     `;
 
@@ -1647,13 +1639,12 @@ export default function PhotoEnhancer() {
       pointerEvents: "none",
       mixBlendMode: "multiply",
       background: `
-        ${
-          adjustments.vignette > 0
-            ? `radial-gradient(
+        ${adjustments.vignette > 0
+          ? `radial-gradient(
             circle, 
             transparent 30%, 
             rgba(0,0,0,${adjustments.vignette / 100}) 100%)`
-            : "none"
+          : "none"
         }
       `,
       opacity: adjustments.vignette > 0 ? 1 : 0,
@@ -1671,12 +1662,10 @@ export default function PhotoEnhancer() {
       pointerEvents: "none",
       background:
         adjustments.temperature > 0
-          ? `rgba(255,${255 - adjustments.temperature * 2},${
-              255 - adjustments.temperature * 4
-            },${adjustments.temperature / 100})`
-          : `rgba(${255 + adjustments.temperature * 4},${
-              255 + adjustments.temperature * 2
-            },255,${Math.abs(adjustments.temperature) / 100})`,
+          ? `rgba(255,${255 - adjustments.temperature * 2},${255 - adjustments.temperature * 4
+          },${adjustments.temperature / 100})`
+          : `rgba(${255 + adjustments.temperature * 4},${255 + adjustments.temperature * 2
+          },255,${Math.abs(adjustments.temperature) / 100})`,
       mixBlendMode: "overlay",
       opacity: Math.abs(adjustments.temperature) > 0 ? 1 : 0,
       borderRadius: "inherit",
@@ -1689,12 +1678,10 @@ export default function PhotoEnhancer() {
       pointerEvents: "none",
       background:
         adjustments.tint > 0
-          ? `rgba(${255 - adjustments.tint * 2},255,${
-              255 - adjustments.tint * 2
-            },${adjustments.tint / 100})`
-          : `rgba(255,${255 + adjustments.tint * 2},255,${
-              Math.abs(adjustments.tint) / 100
-            })`,
+          ? `rgba(${255 - adjustments.tint * 2},255,${255 - adjustments.tint * 2
+          },${adjustments.tint / 100})`
+          : `rgba(255,${255 + adjustments.tint * 2},255,${Math.abs(adjustments.tint) / 100
+          })`,
       mixBlendMode: "overlay",
       opacity: Math.abs(adjustments.tint) > 0 ? 1 : 0,
       borderRadius: "inherit",
@@ -1785,18 +1772,18 @@ export default function PhotoEnhancer() {
 
   // Common background color options
   const backgroundColorOptions = [
-    { name: "White", color: "#ffffff" },
-    { name: "Black", color: "#000000" },
-    { name: "Light Gray", color: "#f0f0f0" },
-    { name: "Dark Gray", color: "#333333" },
-    { name: "Red", color: "#ff0000" },
-    { name: "Green", color: "#00ff00" },
-    { name: "Blue", color: "#0000ff" },
-    { name: "Yellow", color: "#ffff00" },
-    { name: "Orange", color: "#ff9900" },
-    { name: "Purple", color: "#9900ff" },
-    { name: "Pink", color: "#ff66cc" },
-    { name: "Teal", color: "#009999" },
+    { name: "Biały", color: "#ffffff" },
+    { name: "Czarny", color: "#000000" },
+    { name: "Jasnoszary", color: "#f0f0f0" },
+    { name: "Ciemnoszary", color: "#333333" },
+    { name: "Czerwony", color: "#ff0000" },
+    { name: "Zielony", color: "#00ff00" },
+    { name: "Niebieski", color: "#0000ff" },
+    { name: "Żółty", color: "#ffff00" },
+    { name: "Pomarańczowy", color: "#ff9900" },
+    { name: "Fioletowy", color: "#9900ff" },
+    { name: "Różowy", color: "#ff66cc" },
+    { name: "Morski", color: "#009999" },
   ];
 
   // Check if image has transparency after background removal
@@ -2046,8 +2033,8 @@ export default function PhotoEnhancer() {
         // Calculate color similarity to background
         const colorDistance = Math.sqrt(
           Math.pow(r - avgColor.r, 2) +
-            Math.pow(g - avgColor.g, 2) +
-            Math.pow(b - avgColor.b, 2)
+          Math.pow(g - avgColor.g, 2) +
+          Math.pow(b - avgColor.b, 2)
         );
 
         // If pixel is similar to background, make it transparent
@@ -2125,8 +2112,8 @@ export default function PhotoEnhancer() {
       // Calculate color similarity to background
       const colorDistance = Math.sqrt(
         Math.pow(r - bgColor.r, 2) +
-          Math.pow(g - bgColor.g, 2) +
-          Math.pow(b - bgColor.b, 2)
+        Math.pow(g - bgColor.g, 2) +
+        Math.pow(b - bgColor.b, 2)
       );
 
       // If pixel is similar to background, make it transparent
@@ -2648,7 +2635,7 @@ export default function PhotoEnhancer() {
   // Add function to blur number plate by calling external API directly (no internal /api route)
   const blurNumberPlate = async () => {
     if (!selectedImage) {
-      alert("Please select an image first");
+      alert("Najpierw wybierz zdjęcie");
       return;
     }
 
@@ -2693,7 +2680,7 @@ export default function PhotoEnhancer() {
                 baseFile = new File([out], baseFile.name.replace(/\.(heic|heif)$/i, ".jpg") || "image.jpg", { type: "image/jpeg", lastModified: Date.now() });
               }
             }
-          } catch (__) {}
+          } catch (__) { }
         }
       }
       const optimized = await compressImage(baseFile, 1000 * 1000, 1920, 0.5);
@@ -2725,7 +2712,7 @@ export default function PhotoEnhancer() {
       setOriginalImage(file);
     } catch (error) {
       console.error("Error blurring number plate (external API):", error);
-      setPlateBlurError(error.message || "Failed to blur number plate. Please try again.");
+      setPlateBlurError(error.message || "Nie udało się zamazać tablicy. Spróbuj ponownie.");
     } finally {
       setIsBlurringPlate(false);
     }
@@ -2744,7 +2731,7 @@ export default function PhotoEnhancer() {
         }
       `}</style>
 
-      <h1 className="text-3xl font-bold mb-6">Photo Enhancer</h1>
+      <h1 className="text-3xl font-bold mb-6">Ulepszanie Zdjęć</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Image Preview Section */}
@@ -2901,8 +2888,8 @@ export default function PhotoEnhancer() {
               ) : (
                 <div className="flex flex-col items-center justify-center text-gray-400">
                   <BsFillImageFill className="w-16 h-16 mb-4" />
-                  <p className="text-lg">No image selected</p>
-                  <p className="text-sm mt-2">Upload an image to enhance</p>
+                  <p className="text-lg">Nie wybrano zdjęcia</p>
+                  <p className="text-sm mt-2">Prześlij zdjęcie, aby je ulepszyć</p>
                 </div>
               )}
             </div>
@@ -2912,7 +2899,7 @@ export default function PhotoEnhancer() {
                 onClick={() => fileInputRef.current?.click()}
                 className="btn btn-primary flex items-center gap-2"
               >
-                <FiUpload /> Upload Image
+                <FiUpload /> Wgraj Zdjęcie
               </button>
 
               <button
@@ -2920,7 +2907,7 @@ export default function PhotoEnhancer() {
                 className="btn btn-outline flex items-center gap-2"
                 disabled={!selectedImage}
               >
-                <FiDownload /> Download
+                <FiDownload /> Pobierz
               </button>
 
               <button
@@ -2928,7 +2915,7 @@ export default function PhotoEnhancer() {
                 className="btn btn-outline flex items-center gap-2"
                 disabled={!selectedImage}
               >
-                <FiRefreshCw /> Reset
+                <FiRefreshCw /> Resetuj
               </button>
 
               <button
@@ -2936,7 +2923,7 @@ export default function PhotoEnhancer() {
                 className="btn btn-accent flex items-center gap-2"
                 disabled={!selectedImage}
               >
-                <MdAutoFixHigh /> Auto Enhance
+                <MdAutoFixHigh /> Automatyczne Ulepszanie
               </button>
 
               <button
@@ -2944,7 +2931,7 @@ export default function PhotoEnhancer() {
                 className="btn btn-outline flex items-center gap-2"
                 disabled={!selectedImage}
               >
-                <MdCrop /> Crop
+                <MdCrop /> Przytnij
               </button>
 
               <button
@@ -2952,7 +2939,7 @@ export default function PhotoEnhancer() {
                 className="btn btn-outline btn-info flex items-center gap-2"
                 disabled={!selectedImage || isBlurringPlate}
               >
-                <FaCar /> {isBlurringPlate ? "Blurring..." : "Blur Plate"}
+                <FaCar /> {isBlurringPlate ? "Zamazuję..." : "Zamaż Tablicę"}
               </button>
 
               {/* <button
@@ -2994,25 +2981,24 @@ export default function PhotoEnhancer() {
               <div className="mt-4 w-full max-w-md bg-white p-4 rounded-md shadow">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium flex items-center gap-2">
-                    <MdBlurOn className="w-5 h-5" /> Number Plate Blur
+                    <MdBlurOn className="w-5 h-5" /> Rozmycie Tablicy Rejestracyjnej
                   </span>
                 </div>
                 <p className="text-sm text-gray-600 mb-3">
-                  Position the blur box over the license plate and click "Apply
-                  Blur" when ready.
+                  Umieść ramkę rozmycia nad tablicą rejestracyjną i kliknij "Zastosuj Rozmycie", gdy będziesz gotowy.
                 </p>
                 <div className="flex justify-end gap-2">
                   <button
                     onClick={() => setShowBlurBox(false)}
                     className="px-3 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
                   >
-                    Cancel
+                    Anuluj
                   </button>
                   <button
                     onClick={applyBlurBox}
                     className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
                   >
-                    Apply Blur
+                    Zastosuj Rozmycie
                   </button>
                 </div>
               </div>
@@ -3028,10 +3014,10 @@ export default function PhotoEnhancer() {
                 <>
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
                   <h3 className="text-lg font-semibold mb-2">
-                    Removing Background
+                    Usuwam Tło
                   </h3>
                   <p className="text-gray-600">
-                    This may take a few moments...
+                    To może zająć chwilę...
                   </p>
                 </>
               ) : bgRemovalError ? (
@@ -3043,7 +3029,7 @@ export default function PhotoEnhancer() {
                       <MdClose className="mx-auto" />
                     )}
                   </div>
-                  <h3 className="text-lg font-semibold mb-2">Error</h3>
+                  <h3 className="text-lg font-semibold mb-2">Błąd</h3>
                   <p className="text-gray-600 mb-4">{bgRemovalError}</p>
                   <div className="flex flex-col gap-2">
                     {networkError ? (
@@ -3055,7 +3041,7 @@ export default function PhotoEnhancer() {
                           }}
                           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center justify-center gap-2"
                         >
-                          <MdRefresh /> Retry Connection
+                          <MdRefresh /> Ponów Połączenie
                         </button>
                         <button
                           onClick={() => {
@@ -3064,11 +3050,10 @@ export default function PhotoEnhancer() {
                           }}
                           className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 flex items-center justify-center gap-2"
                         >
-                          <RiScissorsCutLine /> Use Simple Fallback Method
+                          <RiScissorsCutLine /> Użyj Prostej Metody Zapasowej
                         </button>
                         <p className="text-xs text-gray-500 mt-1 mb-2">
-                          Note: The fallback method is very basic and works best
-                          with solid color backgrounds.
+                          Uwaga: Metoda zapasowa jest bardzo podstawowa i działa najlepiej przy jednolitym tle.
                         </p>
                       </>
                     ) : null}
@@ -3076,7 +3061,7 @@ export default function PhotoEnhancer() {
                       onClick={() => setShowBgRemovalModal(false)}
                       className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
                     >
-                      Close
+                      Zamknij
                     </button>
                   </div>
                 </>
@@ -3090,7 +3075,7 @@ export default function PhotoEnhancer() {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center border-b p-4">
-                <h3 className="text-lg font-semibold">Car Photo Presets</h3>
+                <h3 className="text-lg font-semibold">Presety Zdjęć Samochodowych</h3>
                 <button
                   onClick={() => setShowPresetsModal(false)}
                   className="text-gray-500 hover:text-gray-700"
@@ -3120,11 +3105,10 @@ export default function PhotoEnhancer() {
                       applyFilterPreset(presetKey);
                       setShowPresetsModal(false);
                     }}
-                    className={`p-4 rounded-md border transition-all duration-200 flex flex-col items-center ${
-                      activeFilter === presetKey
+                    className={`p-4 rounded-md border transition-all duration-200 flex flex-col items-center ${activeFilter === presetKey
                         ? "border-blue-500 bg-blue-50"
                         : "border-gray-200 hover:border-blue-300 hover:bg-blue-50"
-                    }`}
+                      }`}
                   >
                     <div className="w-full pb-[56.25%] relative mb-2 bg-gray-100 rounded overflow-hidden">
                       <div className="absolute inset-0 flex items-center justify-center">
@@ -3167,7 +3151,7 @@ export default function PhotoEnhancer() {
             <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
               <div className="flex justify-between items-center border-b p-4">
                 <h3 className="text-lg font-semibold">
-                  Crop Image (3:2 Ratio)
+                  Przytnij Zdjęcie (Format 3:2)
                 </h3>
                 <button
                   onClick={() => setShowCropModal(false)}
@@ -3369,8 +3353,7 @@ export default function PhotoEnhancer() {
               <div className="border-t p-3 sm:p-4 flex flex-col sm:flex-row justify-between items-center gap-3">
                 <div className="text-sm text-gray-600 text-center sm:text-left">
                   <p>
-                    Drag to position • Use handles to resize • Use vertical
-                    controls for fine adjustments
+                    Przeciągnij, aby ustawić • Użyj uchwytów, aby zmienić rozmiar • Użyj pionowych kontrolek do precyzyjnej regulacji
                   </p>
                 </div>
                 <div className="flex gap-2 w-full sm:w-auto">
@@ -3378,13 +3361,13 @@ export default function PhotoEnhancer() {
                     onClick={() => setShowCropModal(false)}
                     className="flex-1 sm:flex-none px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
                   >
-                    Cancel
+                    Anuluj
                   </button>
                   <button
                     onClick={applyCrop}
                     className="flex-1 sm:flex-none px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center justify-center gap-2"
                   >
-                    <MdCheck size={18} /> Apply Crop
+                    <MdCheck size={18} /> Zastosuj Przycięcie
                   </button>
                 </div>
               </div>
@@ -3394,20 +3377,20 @@ export default function PhotoEnhancer() {
 
         {/* Controls Section */}
         <div className="bg-gray-50 rounded-lg p-6 shadow-md overflow-y-auto max-h-[800px]">
-          <h2 className="text-xl font-semibold mb-4">Adjust Image</h2>
+          <h2 className="text-xl font-semibold mb-4">Dostosuj Zdjęcie</h2>
 
           <div className="space-y-6">
             {/* Basic Adjustments */}
             <div>
               <h3 className="text-md font-medium mb-3 border-b pb-1">
-                Basic Adjustments
+                Podstawowe Ustawienia
               </h3>
 
               {/* Brightness */}
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <label className="flex items-center gap-2 text-sm font-medium">
-                    <MdBrightness6 className="w-5 h-5" /> Brightness
+                    <MdBrightness6 className="w-5 h-5" /> Jasność
                   </label>
                   <span>{adjustments.brightness}%</span>
                 </div>
@@ -3431,7 +3414,7 @@ export default function PhotoEnhancer() {
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <label className="flex items-center gap-2 text-sm font-medium">
-                    <MdContrast className="w-5 h-5" /> Contrast
+                    <MdContrast className="w-5 h-5" /> Kontrast
                   </label>
                   <span>{adjustments.contrast}%</span>
                 </div>
@@ -3452,7 +3435,7 @@ export default function PhotoEnhancer() {
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <label className="flex items-center gap-2 text-sm font-medium">
-                    <IoColorPaletteOutline className="w-5 h-5" /> Saturation
+                    <IoColorPaletteOutline className="w-5 h-5" /> Nasycenie
                   </label>
                   <span>{adjustments.saturation}%</span>
                 </div>
@@ -3476,7 +3459,7 @@ export default function PhotoEnhancer() {
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <label className="flex items-center gap-2 text-sm font-medium">
-                    <MdBrightness7 className="w-5 h-5" /> Exposure
+                    <MdBrightness7 className="w-5 h-5" /> Ekspozycja
                   </label>
                   <span>{adjustments.exposure}%</span>
                 </div>
@@ -3497,7 +3480,7 @@ export default function PhotoEnhancer() {
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <label className="flex items-center gap-2 text-sm font-medium">
-                    <RiShadowLine className="w-5 h-5" /> Shadows
+                    <RiShadowLine className="w-5 h-5" /> Cienie
                   </label>
                   <span>
                     {adjustments.shadows > 0
@@ -3522,7 +3505,7 @@ export default function PhotoEnhancer() {
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <label className="flex items-center gap-2 text-sm font-medium">
-                    <BsArrowsFullscreen className="w-5 h-5" /> Highlights
+                    <BsArrowsFullscreen className="w-5 h-5" /> Podświetlenia
                   </label>
                   <span>
                     {adjustments.highlights > 0
@@ -3550,7 +3533,7 @@ export default function PhotoEnhancer() {
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <label className="flex items-center gap-2 text-sm font-medium">
-                    <MdFilterBAndW className="w-5 h-5" /> Sharpen
+                    <MdFilterBAndW className="w-5 h-5" /> Ostrość
                   </label>
                   <span>{adjustments.sharpen}%</span>
                 </div>
@@ -3571,7 +3554,7 @@ export default function PhotoEnhancer() {
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <label className="flex items-center gap-2 text-sm font-medium">
-                    <IoColorPaletteOutline className="w-5 h-5" /> Hue Shift
+                    <IoColorPaletteOutline className="w-5 h-5" /> Przesunięcie Barwy
                   </label>
                   <span>{adjustments.hueRotate}°</span>
                 </div>
@@ -3595,7 +3578,7 @@ export default function PhotoEnhancer() {
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <label className="flex items-center gap-2 text-sm font-medium">
-                    <MdFilterBAndW className="w-5 h-5" /> Grayscale
+                    <MdFilterBAndW className="w-5 h-5" /> Skala Szarości
                   </label>
                   <span>{adjustments.grayscale}%</span>
                 </div>
@@ -3619,7 +3602,7 @@ export default function PhotoEnhancer() {
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <label className="flex items-center gap-2 text-sm font-medium">
-                    <MdBrightness5 className="w-5 h-5" /> Temperature
+                    <MdBrightness5 className="w-5 h-5" /> Temperatura
                   </label>
                   <span>
                     {adjustments.temperature > 0
@@ -3647,7 +3630,7 @@ export default function PhotoEnhancer() {
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <label className="flex items-center gap-2 text-sm font-medium">
-                    <IoColorPaletteOutline className="w-5 h-5" /> Tint
+                    <IoColorPaletteOutline className="w-5 h-5" /> Odcień
                   </label>
                   <span>
                     {adjustments.tint > 0
@@ -3672,7 +3655,7 @@ export default function PhotoEnhancer() {
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <label className="flex items-center gap-2 text-sm font-medium">
-                    <MdFilterBAndW className="w-5 h-5" /> Clarity
+                    <MdFilterBAndW className="w-5 h-5" /> Przejrzystość
                   </label>
                   <span>{adjustments.clarity}%</span>
                 </div>
@@ -3693,7 +3676,7 @@ export default function PhotoEnhancer() {
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <label className="flex items-center gap-2 text-sm font-medium">
-                    <IoColorPaletteOutline className="w-5 h-5" /> Vibrance
+                    <IoColorPaletteOutline className="w-5 h-5" /> Wibracja
                   </label>
                   <span>{adjustments.vibrance}%</span>
                 </div>
@@ -3713,63 +3696,59 @@ export default function PhotoEnhancer() {
 
             {/* Transform Controls */}
             <div className="pt-4 border-t border-gray-200">
-              <h3 className="text-lg font-medium mb-4">Transform</h3>
+              <h3 className="text-lg font-medium mb-4">Transformacja</h3>
 
               <div className="flex flex-wrap gap-3">
                 <button
-                  className={`px-3 py-2 rounded-md flex items-center gap-2 ${
-                    !selectedImage
+                  className={`px-3 py-2 rounded-md flex items-center gap-2 ${!selectedImage
                       ? "bg-gray-200 text-gray-400"
                       : "bg-gray-200 hover:bg-gray-300"
-                  }`}
+                    }`}
                   onClick={() =>
                     handleAdjustmentChange("rotate", adjustments.rotate - 90)
                   }
                   disabled={!selectedImage}
                 >
-                  <FiRotateCcw /> Rotate Left
+                  <FiRotateCcw /> Obróć w Lewo
                 </button>
 
                 <button
-                  className={`px-3 py-2 rounded-md flex items-center gap-2 ${
-                    !selectedImage
+                  className={`px-3 py-2 rounded-md flex items-center gap-2 ${!selectedImage
                       ? "bg-gray-200 text-gray-400"
                       : "bg-gray-200 hover:bg-gray-300"
-                  }`}
+                    }`}
                   onClick={() =>
                     handleAdjustmentChange("rotate", adjustments.rotate + 90)
                   }
                   disabled={!selectedImage}
                 >
-                  <FiRotateCw /> Rotate Right
+                  <FiRotateCw /> Obróć w Prawo
                 </button>
 
                 <button
-                  className={`px-3 py-2 rounded-md flex items-center gap-2 ${
-                    !selectedImage
+                  className={`px-3 py-2 rounded-md flex items-center gap-2 ${!selectedImage
                       ? "bg-gray-200 text-gray-400"
                       : "bg-gray-200 hover:bg-gray-300"
-                  }`}
+                    }`}
                   onClick={() =>
                     handleAdjustmentChange("flipX", !adjustments.flipX)
                   }
                   disabled={!selectedImage}
                 >
-                  <TbFlipHorizontal /> Flip H
+                  <TbFlipHorizontal /> Przerzuć Poziomo
                 </button>
 
                 <button
-                  className={`px-3 py-2 rounded-md flex items-center gap-2 ${
-                    !selectedImage
+                  className={`px-3 py-2 rounded-md flex items-center gap-2 ${!selectedImage
                       ? "bg-gray-200 text-gray-400"
                       : "bg-gray-200 hover:bg-gray-300"
-                  }`}
+                    }`}
                   onClick={() =>
                     handleAdjustmentChange("flipY", !adjustments.flipY)
                   }
                   disabled={!selectedImage}
                 >
-                  <TbFlipVertical /> Flip V
+                  <TbFlipVertical /> Przerzuć Pionowo
                 </button>
               </div>
             </div>
@@ -3779,25 +3758,23 @@ export default function PhotoEnhancer() {
 
       <div className="mt-8 bg-blue-50 dark:bg-blue-50/20 dark:text-white p-4 rounded-lg transition-colors duration-300">
         <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white transition-colors duration-300">
-          How to use Photo Enhancer
+          Jak używać Ulepszacza Zdjęć
         </h3>
         <ol className="list-decimal pl-5 space-y-2 text-gray-900 dark:text-white transition-colors duration-300">
-          <li>Upload an image using the Upload button</li>
+          <li>Wgraj zdjęcie, używając przycisku Wgraj Zdjęcie</li>
           <li>
-            Try out different car-specific filter presets to quickly enhance
-            your photo
+            Wypróbuj różne presety filtrów samochodowych, aby szybko ulepszyć swoje zdjęcie
           </li>
-          <li>For quick enhancement, click the Auto Enhance button</li>
-          <li>Fine-tune individual settings using the adjustment sliders</li>
+          <li>Aby szybko ulepszyć zdjęcie, kliknij przycisk Automatyczne Ulepszanie</li>
+          <li>Dostosuj poszczególne ustawienia za pomocą suwaków</li>
           <li>
-            Transform the image using rotation, flip, and crop controls if
-            needed
+            W razie potrzeby przekształć zdjęcie, używając obrotu, przerzucenia i przycięcia
           </li>
-          <li>Remove the background to isolate the subject</li>
+          <li>Usuń tło, aby wyizolować obiekt</li>
           <li>
-            Add a solid color background of your choice after background removal
+            Po usunięciu tła dodaj wybrane jednolite tło
           </li>
-          <li>Download your enhanced image when satisfied</li>
+          <li>Pobierz ulepszone zdjęcie, gdy będziesz zadowolony</li>
         </ol>
       </div>
 
@@ -3806,7 +3783,7 @@ export default function PhotoEnhancer() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">Choose Background Color</h3>
+              <h3 className="text-lg font-semibold">Wybierz Kolor Tła</h3>
               <button
                 onClick={() => setShowBackgroundOptions(false)}
                 className="text-gray-500 hover:text-gray-700"
@@ -3817,7 +3794,7 @@ export default function PhotoEnhancer() {
 
             <div className="mb-4">
               <p className="text-gray-600 mb-2">
-                Select a background color to apply to your image:
+                Wybierz kolor tła, który chcesz zastosować do zdjęcia:
               </p>
             </div>
 
@@ -3853,7 +3830,7 @@ export default function PhotoEnhancer() {
                     className="w-full h-full opacity-0 cursor-pointer"
                   />
                 </div>
-                <div className="text-xs mt-1 text-center">Custom</div>
+                <div className="text-xs mt-1 text-center">Niestandardowy</div>
               </div>
 
               {/* Keep transparent option - only show if image has transparency */}
@@ -3861,16 +3838,16 @@ export default function PhotoEnhancer() {
                 <button
                   onClick={() => setShowBackgroundOptions(false)}
                   className="p-2 rounded border hover:border-blue-500 transition-colors"
-                  title="Keep Current Transparency"
+                  title="Zachowaj Obecną Przezroczystość"
                 >
                   <div className="w-full aspect-square rounded bg-checkered relative overflow-hidden">
                     <div className="absolute inset-0 flex items-center justify-center">
                       <span className="text-xs text-gray-600 font-medium text-center px-1">
-                        Keep Current
+                        Zachowaj Obecne
                       </span>
                     </div>
                   </div>
-                  <div className="text-xs mt-1 text-center">No Change</div>
+                  <div className="text-xs mt-1 text-center">Bez Zmian</div>
                 </button>
               )}
             </div>
@@ -3880,7 +3857,7 @@ export default function PhotoEnhancer() {
                 onClick={() => setShowBackgroundOptions(false)}
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
               >
-                Done
+                Gotowe
               </button>
             </div>
           </div>
@@ -3889,11 +3866,11 @@ export default function PhotoEnhancer() {
 
       {showCarBgOptions && (
         <div className="mt-4 p-4 bg-base-200 rounded-lg">
-          <h3 className="font-semibold mb-2">Car Background Removal Options</h3>
+          <h3 className="font-semibold mb-2">Opcje Usuwania Tła Samochodu</h3>
 
           {previewCanvas && (
             <div className="mb-4">
-              <h4 className="text-sm font-medium mb-1">Preview</h4>
+              <h4 className="text-sm font-medium mb-1">Podgląd</h4>
               <div
                 className="bg-gray-200 bg-opacity-50 p-2 rounded border border-gray-300"
                 style={{ maxHeight: "200px", overflow: "auto" }}
@@ -3930,11 +3907,11 @@ export default function PhotoEnhancer() {
           <div className="form-control">
             <label className="label">
               <span className="label-text">
-                Background Detection Threshold: {carBgThreshold}
+                Próg Wykrywania Tła: {carBgThreshold}
               </span>
             </label>
             <div className="flex items-center gap-2">
-              <span className="text-xs">Lower (More Precise)</span>
+              <span className="text-xs">Niższy (Bardziej Precyzyjny)</span>
               <input
                 type="range"
                 min="10"
@@ -3943,7 +3920,7 @@ export default function PhotoEnhancer() {
                 onChange={(e) => handleThresholdChange(e.target.value)}
                 className="range range-xs range-primary"
               />
-              <span className="text-xs">Higher (More Aggressive)</span>
+              <span className="text-xs">Wyższy (Bardziej Agresywny)</span>
             </div>
             <div className="mt-2">
               <button
@@ -3951,23 +3928,21 @@ export default function PhotoEnhancer() {
                 className="btn btn-sm btn-primary"
                 disabled={isProcessingBg}
               >
-                Apply Threshold
+                Zastosuj Próg
               </button>
               <button
                 onClick={() => setShowCarBgOptions(false)}
                 className="btn btn-sm btn-ghost ml-2"
               >
-                Close
+                Zamknij
               </button>
             </div>
             <div className="text-xs text-gray-500 mt-2">
               <p>
-                Lower values preserve more details but may leave some
-                background.
+                Niższe wartości zachowują więcej szczegółów, ale mogą pozostawić trochę tła.
               </p>
               <p>
-                Higher values remove more background but may affect the car
-                edges.
+                Wyższe wartości usuwają więcej tła, ale mogą wpłynąć na krawędzie samochodu.
               </p>
             </div>
           </div>

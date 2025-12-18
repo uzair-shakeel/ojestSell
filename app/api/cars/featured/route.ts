@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 
-const DEFAULT_BACKEND = "https://ojest-ap-is.vercel.app";
 
 export const revalidate = 60; // cache for 1 minute
 
 export async function GET() {
-  const backendBase = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || DEFAULT_BACKEND;
+  const backendBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_BACKEND_URL;
 
   // Try native featured endpoint first; fall back to filtering all cars
   const endpoints = [

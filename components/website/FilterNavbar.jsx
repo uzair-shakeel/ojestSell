@@ -616,7 +616,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                     Resetuj
                   </button>
                   <button
-                    onClick={() => setShowMoreFilters(true)}
+                    onClick={() => setIsDesktopExpanded(!isDesktopExpanded)}
                     className="flex items-center gap-1 lg:gap-2 px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-blue-500 rounded-md lg:rounded-lg focus:outline-none whitespace-nowrap shadow-sm flex-1 justify-center text-white bg-blue-500"
                   >
                     <span className="flex items-center gap-1">
@@ -628,7 +628,7 @@ export default function FilterNavbar({ onApplyFilters }) {
               )}
 
               {/* Reset + Show More/Less buttons (Visible always on Desktop) */}
-              <div className="hidden md:flex w-full justify-end items-end">
+              {/* <div className="hidden md:flex w-full justify-end items-end">
                 <button
                   onClick={() => setIsDesktopExpanded(!isDesktopExpanded)}
                   aria-expanded={isDesktopExpanded}
@@ -651,7 +651,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                     )}
                   </span>
                 </button>
-              </div>
+              </div> */}
 
             </div>
 
