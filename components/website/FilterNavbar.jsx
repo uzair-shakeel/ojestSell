@@ -973,7 +973,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                         {/* FIX: Values changed to match Database Enums */}
                         <option value="FWD">Przód (FWD)</option>
                         <option value="RWD">Tył (RWD)</option>
-                        <option value="AWD">4x4 (AWD)</option>
+                        {/* <option value="AWD">4x4 (AWD)</option> */}
                         <option value="4WD">4x4 (4WD)</option>
                       </select>
                       <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-3 pointer-events-none">
