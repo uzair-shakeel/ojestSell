@@ -82,8 +82,8 @@ export default function ImageCategorizationModal({
     if (!categorizedImagesData || categorizedImagesData.length === 0) {
       const results = {
         all: [],
-        interior: [],
         exterior: [],
+        interior: [],
         dashboard: [],
         wheel: [],
         engine: [],
@@ -108,8 +108,8 @@ export default function ImageCategorizationModal({
 
     const results = {
       all: [],
-      interior: [],
       exterior: [],
+      interior: [],
       dashboard: [],
       wheel: [],
       engine: [],
@@ -410,8 +410,8 @@ export default function ImageCategorizationModal({
 
   const categories = [
     "all",
-    "interior",
     "exterior",
+    "interior",
     "dashboard",
     "wheel",
     "engine",
