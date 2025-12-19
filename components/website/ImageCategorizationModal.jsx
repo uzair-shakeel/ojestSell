@@ -152,23 +152,16 @@ export default function ImageCategorizationModal({
     if (clickedImageUrl && organizedImages.all.length > 0 && !isProcessing) {
       const clickedImage = organizedImages.all.find(img => img.url === clickedImageUrl);
       if (clickedImage && !showSlider) {
-        const category = clickedImage.category || "all";
-        const categoryImages = organizedImages[category] || [];
-        const index = categoryImages.findIndex(img => img.url === clickedImageUrl);
-
-        if (index >= 0 && categoryImages.length > 0) {
+        // ALWAYS use ALL images
+        const allIndex = organizedImages.all.findIndex(
+          (img) => img.url === clickedImageUrl
+        );
+        if (allIndex >= 0) {
+          const category = clickedImage.category || "exterior";
           setCurrentCategory(category);
-          setSliderImages(categoryImages);
-          setSliderIndex(index);
+          setSliderImages(organizedImages.all);
+          setSliderIndex(allIndex);
           setShowSlider(true);
-        } else {
-          const allIndex = organizedImages.all.findIndex(img => img.url === clickedImageUrl);
-          if (allIndex >= 0) {
-            setCurrentCategory("all");
-            setSliderImages(organizedImages.all);
-            setSliderIndex(allIndex);
-            setShowSlider(true);
-          }
         }
       }
     }
@@ -187,27 +180,21 @@ export default function ImageCategorizationModal({
       setOrganizedImages(results);
 
       if (clickedImageUrl) {
-        const clickedImage = results.all.find(img => img.url === clickedImageUrl);
+        const clickedImage = results.all.find(
+          (img) => img.url === clickedImageUrl
+        );
         if (clickedImage) {
-          const category = clickedImage.category || "all";
-          const categoryImages = results[category] || [];
-          const index = categoryImages.findIndex(img => img.url === clickedImageUrl);
-
-          if (index >= 0 && categoryImages.length > 0) {
+          const allIndex = results.all.findIndex(
+            (img) => img.url === clickedImageUrl
+          );
+          if (allIndex >= 0) {
+            const category = clickedImage.category || "exterior";
             setCurrentCategory(category);
-            setSliderImages(categoryImages);
-            setSliderIndex(index);
+            setSliderImages(results.all);
+            setSliderIndex(allIndex);
             setShowSlider(true);
           } else {
-            const allIndex = results.all.findIndex(img => img.url === clickedImageUrl);
-            if (allIndex >= 0) {
-              setCurrentCategory("all");
-              setSliderImages(results.all);
-              setSliderIndex(allIndex);
-              setShowSlider(true);
-            } else {
-              setCurrentCategory(category);
-            }
+            setCurrentCategory("all");
           }
         }
       }
@@ -237,125 +224,44 @@ export default function ImageCategorizationModal({
   }, [sliderIndex, sliderImages]);
 
   const handleCategoryClick = (category) => {
-    const categoryImages = organizedImages[category] || [];
-    setCurrentCategory(category);
-
-    if (category === "all") {
-      setShowSlider(false);
-    } else if (categoryImages.length > 0) {
-      setSliderImages(categoryImages);
-      setSliderIndex(0);
-      setShowSlider(true);
+    if (showSlider) {
+      // In slider mode, jump to the first image of the selected category
+      const targetImages = organizedImages[category] || [];
+      if (targetImages.length > 0) {
+        const firstImgUrl = targetImages[0].url;
+        const indexInAll = organizedImages.all.findIndex(
+          (img) => img.url === firstImgUrl
+        );
+        if (indexInAll !== -1) {
+          setSliderIndex(indexInAll);
+        }
+      }
+      setCurrentCategory(category);
     } else {
-      setShowSlider(false);
+      // Grid mode: standard filtering
+      setCurrentCategory(category);
     }
   };
 
   const handleImageClick = (image, category) => {
-    let targetCategory = category;
-    let categoryImages = organizedImages[category] || [];
+    // Always use ALL images for scanner-like continuous workflow
+    const allImages = organizedImages.all;
+    const index = allImages.findIndex((img) => img.url === image.url);
 
-    if (category === "all") {
-      const imageCategory = image.category || "exterior";
-      targetCategory = imageCategory;
-      categoryImages = organizedImages[imageCategory] || [];
-    }
-
-    const index = categoryImages.findIndex((img) => img.url === image.url);
-    setCurrentCategory(targetCategory);
-    setSliderImages(categoryImages);
+    setSliderImages(allImages);
     setSliderIndex(index >= 0 ? index : 0);
+    setCurrentCategory(image.category || "exterior");
     setShowSlider(true);
   };
 
-  const navigateSlider = (step) => {
-    if (!sliderImages.length) return;
-
-    const newIndex = sliderIndex + step;
-
-    if (currentCategory === "all") {
-      if (newIndex < 0) {
-        setSliderIndex(sliderImages.length - 1);
-      } else if (newIndex >= sliderImages.length) {
-        setSliderIndex(0);
-      } else {
-        setSliderIndex(newIndex);
-      }
-      return;
-    }
-
-    // Categorized Logic
-    if (newIndex < 0) {
-      // GOING PREVIOUS
-      const currentIdx = categorySequence.indexOf(currentCategory);
-      let foundCategory = null;
-      let foundImages = [];
-
-      for (let i = 1; i < categorySequence.length; i++) {
-        const targetIdx = (currentIdx - i + categorySequence.length) % categorySequence.length;
-        const cat = categorySequence[targetIdx];
-        if (organizedImages[cat] && organizedImages[cat].length > 0) {
-          foundCategory = cat;
-          foundImages = organizedImages[cat];
-          break;
-        }
-      }
-
-      if (foundCategory) {
-        setCurrentCategory(foundCategory);
-        setSliderImages(foundImages);
-        setSliderIndex(foundImages.length - 1);
-        setZoomLevel(1);
-      } else {
-        // Fallback if no other categories have images
-        setSliderIndex(sliderImages.length - 1);
-      }
-
-    } else if (newIndex >= sliderImages.length) {
-      // GOING NEXT
-      const currentIdx = categorySequence.indexOf(currentCategory);
-      let foundCategory = null;
-      let foundImages = [];
-
-      for (let i = 1; i < categorySequence.length; i++) {
-        const targetIdx = (currentIdx + i) % categorySequence.length;
-        const cat = categorySequence[targetIdx];
-        if (organizedImages[cat] && organizedImages[cat].length > 0) {
-          foundCategory = cat;
-          foundImages = organizedImages[cat];
-          break;
-        }
-      }
-
-      if (foundCategory) {
-        setCurrentCategory(foundCategory);
-        setSliderImages(foundImages);
-        setSliderIndex(0);
-        setZoomLevel(1);
-      } else {
-        // Fallback
-        setSliderIndex(0);
-      }
-
-    } else {
-      setSliderIndex(newIndex);
-    }
-  };
-
   const handleSwiperNext = () => {
-    if (!swiperRef.current || !swiperRef.current.swiper) return;
-    if (swiperRef.current.swiper.isEnd) {
-      navigateSlider(1);
-    } else {
+    if (swiperRef.current && swiperRef.current.swiper) {
       swiperRef.current.swiper.slideNext();
     }
   };
 
   const handleSwiperPrev = () => {
-    if (!swiperRef.current || !swiperRef.current.swiper) return;
-    if (swiperRef.current.swiper.isBeginning) {
-      navigateSlider(-1);
-    } else {
+    if (swiperRef.current && swiperRef.current.swiper) {
       swiperRef.current.swiper.slidePrev();
     }
   };
@@ -539,14 +445,25 @@ export default function ImageCategorizationModal({
               <div className="flex items-center justify-center relative w-full h-full">
                 <Swiper
                   ref={swiperRef}
-                  key={currentCategory}
+                  // Removed dynamic key to prevent re-mounting on category change
+                  key="main-slider"
                   modules={[Zoom, Navigation]}
                   zoom={{ maxRatio: 3, toggle: true }}
                   spaceBetween={10}
                   slidesPerView={1}
                   grabCursor={true}
                   initialSlide={sliderIndex}
-                  onSlideChange={(swiper) => setSliderIndex(swiper.activeIndex)}
+                  onSlideChange={(swiper) => {
+                    const idx = swiper.activeIndex;
+                    setSliderIndex(idx);
+                    // Sync category tab with current image
+                    if (sliderImages[idx]) {
+                      const newCat = sliderImages[idx].category;
+                      if (newCat && newCat !== currentCategory) {
+                        setCurrentCategory(newCat);
+                      }
+                    }
+                  }}
                   className="modal-swiper !h-full !w-full"
                   loop={false}
                 >
