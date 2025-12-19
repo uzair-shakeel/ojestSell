@@ -139,7 +139,7 @@ async function convertHeicToJpeg(file: File): Promise<File> {
           );
         }
       }
-    } catch (_) {}
+    } catch (_) { }
     return file;
   }
 }
@@ -256,6 +256,15 @@ export default function ImageEditStep({
   const handleThumbDrop = (index: number) => (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (draggingIndex === null || draggingIndex === index) return handleThumbDragEnd();
+
+    // Enforce "Select only main image" rule:
+    // Only allow reordering if we are changing the main image (index 0).
+    // Block reordering of non-main images (e.g. swapping index 1 and 2).
+    if (draggingIndex !== 0 && index !== 0) {
+      handleThumbDragEnd();
+      return;
+    }
+
     const newImages = reorder(formData.images, draggingIndex, index);
     const newPreviews = reorder(formData.imagePreviews, draggingIndex, index);
     updateFormData({ ...formData, images: newImages, imagePreviews: newPreviews });
@@ -360,12 +369,10 @@ export default function ImageEditStep({
       grayscale(${adjustments.grayscale}%)
       sepia(${adjustments.sepia}%)
       hue-rotate(${adjustments.hueRotate}deg)
-      ${
-        adjustments.sharpen > 0
-          ? `contrast(${100 + adjustments.sharpen * 0.3}%) brightness(${
-              100 + adjustments.sharpen * 0.1
-            }%)`
-          : ""
+      ${adjustments.sharpen > 0
+        ? `contrast(${100 + adjustments.sharpen * 0.3}%) brightness(${100 + adjustments.sharpen * 0.1
+        }%)`
+        : ""
       }
     `;
 
@@ -387,12 +394,10 @@ export default function ImageEditStep({
       grayscale(${adj.grayscale}%)
       sepia(${adj.sepia}%)
       hue-rotate(${adj.hueRotate}deg)
-      ${
-        adj.sharpen > 0
-          ? `contrast(${100 + adj.sharpen * 0.3}%) brightness(${
-              100 + adj.sharpen * 0.1
-            }%)`
-          : ""
+      ${adj.sharpen > 0
+        ? `contrast(${100 + adj.sharpen * 0.3}%) brightness(${100 + adj.sharpen * 0.1
+        }%)`
+        : ""
       }
     `;
     return filterString;
@@ -803,7 +808,7 @@ export default function ImageEditStep({
       <div className="bg-white rounded-lg w-full">
         <h2 className="text-xl font-bold mb-4">Krok 2: Edytuj Swoje Zdjęcia</h2>
         <p className="text-gray-600 mb-6">
-         Popraw zdjęcia auta przed wystawieniem go na sprzedaż. Wybierz zdjęcia, które chcesz edytować.
+          Popraw zdjęcia auta przed wystawieniem go na sprzedaż. Wybierz zdjęcia, które chcesz edytować.
         </p>
 
         {formData.images.length === 0 ? (
@@ -830,7 +835,7 @@ export default function ImageEditStep({
               <h3 className="font-semibold mb-3">Dodane zdjęcia</h3>
               <div className="mb-3">
                 <label className="inline-flex items-center gap-2 cursor-pointer text-sm text-blue-600 hover:text-blue-700">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M12 5v14m-7-7h14"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M12 5v14m-7-7h14" /></svg>
                   Dodaj zdjęcia
                   <input
                     type="file"
@@ -845,9 +850,8 @@ export default function ImageEditStep({
                 {formData.imagePreviews.map((preview, index) => (
                   <div
                     key={index}
-                    className={`relative cursor-pointer border-2 ${
-                      activeImageIndex === index ? "border-blue-500" : "border-transparent"
-                    } ${dragOverIndex === index ? "border-blue-400" : ""} rounded-md overflow-hidden`}
+                    className={`relative cursor-pointer border-2 ${activeImageIndex === index ? "border-blue-500" : "border-transparent"
+                      } ${dragOverIndex === index ? "border-blue-400" : ""} rounded-md overflow-hidden`}
                     onClick={() => selectImage(index)}
                     draggable
                     onDragStart={handleThumbDragStart(index)}
@@ -862,7 +866,7 @@ export default function ImageEditStep({
                       style={{ filter: getFilterStyleForImage(index) }}
                     />
                     <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 text-center">
-                      Zdjecie {index + 1}
+                      {index === 0 ? "Zdjęcie Główne" : `Zdjecie ${index + 1}`}
                       {formData.imageAdjustments && formData.imageAdjustments[index] && (
                         <span className="ml-1 text-green-300">✓</span>
                       )}
@@ -943,9 +947,8 @@ export default function ImageEditStep({
                     </button>
                     <button
                       onClick={() => setShowCrop(!showCrop)}
-                      className={`flex items-center gap-1 ${
-                        showCrop ? "bg-green-600" : "bg-gray-600"
-                      } text-white px-3 py-2 rounded-md hover:bg-opacity-90 transition-colors`}
+                      className={`flex items-center gap-1 ${showCrop ? "bg-green-600" : "bg-gray-600"
+                        } text-white px-3 py-2 rounded-md hover:bg-opacity-90 transition-colors`}
                     >
                       <CropIcon className="w-4 h-4" />{" "}
                       {showCrop ? "Cofnij Przycinanie" : "Przytnij"}
@@ -1031,11 +1034,10 @@ export default function ImageEditStep({
                     applyFilterPreset(presetKey);
                     setShowPresetsModal(false);
                   }}
-                  className={`p-4 rounded-md border transition-all duration-200 flex flex-col items-center ${
-                    activeFilter === presetKey
-                      ? "border-blue-500 bg-blue-50"
-                      : "border-gray-200 hover:border-blue-300 hover:bg-blue-50"
-                  }`}
+                  className={`p-4 rounded-md border transition-all duration-200 flex flex-col items-center ${activeFilter === presetKey
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-gray-200 hover:border-blue-300 hover:bg-blue-50"
+                    }`}
                 >
                   <div className="w-full pb-[56.25%] relative mb-2 bg-gray-100 rounded overflow-hidden">
                     <div className="absolute inset-0 flex items-center justify-center">

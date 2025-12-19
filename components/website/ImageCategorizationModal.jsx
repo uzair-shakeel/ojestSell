@@ -10,33 +10,38 @@ import "swiper/css/navigation";
 const categorySequence = [
   "exterior",
   "interior",
-  "engine",
   "dashboard",
   "wheel",
-  "keys",
+  "engine",
   "documents",
+  "keys",
 ];
 
 const categoryOrder = {
   exterior: 0,
   interior: 1,
-  engine: 2,
-  dashboard: 3,
-  wheel: 4,
-  keys: 5,
-  documents: 6,
+  dashboard: 2,
+  wheel: 3,
+  engine: 4,
+  documents: 5,
+  keys: 6,
 };
 
 const normalizeCategory = (raw) => {
   if (!raw) return "exterior";
   const lower = raw.toLowerCase().trim();
-  if (lower.includes("front") || lower.includes("back") || lower.includes("side") || lower.includes("exterior")) return "exterior";
+
+  // Check specific parts first to avoid "front engine" being caught as "front" (Exterior)
   if (lower.includes("seat") || lower.includes("steering") || lower.includes("interior")) return "interior";
   if (lower.includes("dashboard") || lower.includes("console") || lower.includes("odometer") || lower.includes("instrument")) return "dashboard";
   if (lower.includes("wheel") || lower.includes("tire") || lower.includes("rim")) return "wheel";
   if (lower.includes("engine") || lower.includes("hood") || lower.includes("under")) return "engine";
   if (lower.includes("key")) return "keys";
   if (lower.includes("document") || lower.includes("paper") || lower.includes("vin")) return "documents";
+
+  // Check exterior last
+  if (lower.includes("front") || lower.includes("back") || lower.includes("side") || lower.includes("exterior") || lower.includes("bumper") || lower.includes("door") || lower.includes("trunk")) return "exterior";
+
   return "exterior"; // Default
 };
 
@@ -55,8 +60,8 @@ export default function ImageCategorizationModal({
 }) {
   const [organizedImages, setOrganizedImages] = useState({
     all: [],
-    interior: [],
     exterior: [],
+    interior: [],
     dashboard: [],
     wheel: [],
     engine: [],
@@ -129,6 +134,10 @@ export default function ImageCategorizationModal({
 
     Object.keys(results).forEach((key) => {
       results[key] = results[key].sort((a, b) => {
+        // Main Image (Index 0) always comes first
+        if (a.index === 0) return -1;
+        if (b.index === 0) return 1;
+
         const orderA = categoryOrder[normalizeCategory(a.category)] ?? 999;
         const orderB = categoryOrder[normalizeCategory(b.category)] ?? 999;
         if (orderA !== orderB) return orderA - orderB;
