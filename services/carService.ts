@@ -113,6 +113,51 @@ interface AddCarData {
   }[];
 }
 
+
+
+// Upload a batch of images and return their URLs
+export const uploadImageBatch = async (
+  images: File[],
+  onProgress?: (progress: number) => void,
+  getToken?: () => Promise<string | null>
+): Promise<{ success: boolean; urls: string[]; errors: any[] }> => {
+  try {
+    const token = getToken ? await getToken() : null;
+    if (!token) throw new Error("No authentication token found");
+
+    const formData = new FormData();
+    images.forEach((file) => formData.append("images", file));
+
+    const response = await axios.post(`${API_BASE_URL}/cars/upload-images`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+      onUploadProgress: (progressEvent) => {
+        if (onProgress && progressEvent.total) {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          onProgress(percentCompleted);
+        }
+      },
+    });
+
+    return {
+      success: true,
+      urls: response.data.urls || [],
+      errors: [],
+    };
+  } catch (error: any) {
+    console.error("Batch upload failed:", error);
+    return {
+      success: false,
+      urls: [],
+      errors: [error.message || "Upload failed"],
+    };
+  }
+};
+
 // Add a new car
 export const addCar = async (
   carData: FormData,

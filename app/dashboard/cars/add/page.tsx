@@ -172,8 +172,8 @@ export default function MultiStepForm() {
     if (!formData.title) return "Title is required.";
     if (!formData.description) return "Description is required.";
     if (formData.images.length === 0) return "At least 1 image is required.";
-    if (formData.images.length > 10)
-      return "You can upload a maximum of 10 images.";
+    if (formData.images.length > 100)
+      return "You can upload a maximum of 100 images.";
     if (!formData.make) return "Make is required.";
     if (!formData.model) return "Model is required.";
     if (!formData.type) return "Type is required.";

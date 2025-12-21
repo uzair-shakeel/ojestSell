@@ -323,7 +323,7 @@ export default function StepFive({
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex justify-between mt-6">
+      <div className="flex justify-between mt-6 relative">
         <button
           onClick={prevStep}
           className="bg-gray-500 text-white px-4 py-2 rounded"
@@ -333,12 +333,30 @@ export default function StepFive({
         </button>
         <button
           onClick={handleSubmit}
-          className="bg-green-500 text-white px-4 py-2 rounded"
+          className={`bg-green-500 text-white px-4 py-2 rounded flex items-center ${loading ? 'opacity-75 cursor-not-allowed' : ''}`}
           disabled={loading}
         >
-          {loading ? "Przesyłanie..." : "Zatwierdź"}
+          {loading ? (
+            <>
+              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></span>
+              Zapisywanie...
+            </>
+          ) : (
+            "Zatwierdź"
+          )}
         </button>
       </div>
+
+      {/* Global Processing Overlay if loading */}
+      {loading && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex flex-col items-center justify-center text-white backdrop-blur-sm">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-2xl flex flex-col items-center text-gray-900 dark:text-white">
+            <div className="w-16 h-16 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin mb-4"></div>
+            <h3 className="text-xl font-bold mb-2">Tworzenie Twojego Ogłoszenia</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Przetwarzanie zdjęć i danych...</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
