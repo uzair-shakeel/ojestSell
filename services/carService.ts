@@ -3,15 +3,15 @@ import axios from "axios";
 
 // Define the API base URL - prefer same-origin, else use NEXT_PUBLIC_API_BASE_URL
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
-const API_BASE_URL = API_BASE ? `${API_BASE}/api` : "/api";
+// If API_BASE is empty, use relative /api. If it has /api at the end, don't double it.
+const API_BASE_URL = API_BASE
+  ? (API_BASE.endsWith("/api") ? API_BASE : `${API_BASE}/api`)
+  : "/api";
 
-// Log the API URL being used
 console.log("Using API URL:", API_BASE_URL);
 
 // Backend base for admin endpoints (bypass Next API if no proxies exist)
-const BACKEND_BASE =
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  "https://ojest.pl/api";
+const BACKEND_BASE = API_BASE_URL;
 
 // Interface for the Car data as returned by the backend
 interface CarData {

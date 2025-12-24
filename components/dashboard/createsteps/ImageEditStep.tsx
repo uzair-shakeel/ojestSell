@@ -193,38 +193,47 @@ export default function ImageEditStep({
       const uploadPromises: Promise<void>[] = [];
       let shouldSetIsUploading = false;
 
+      const results: { [key: number]: string } = {};
+
       formData.images.forEach((img, index) => {
         // Skip if already a string (URL) or already uploaded in this session
-        if (typeof img === 'string' || uploadedUrls[index]) {
+        if (typeof img === "string" || uploadedUrls[index]) {
           return;
         }
 
         shouldSetIsUploading = true;
 
-        uploadPromises.push(limit(async () => {
-          // Check again if uploaded (race condition)
-          if (uploadedUrls[index]) return;
+        uploadPromises.push(
+          limit(async () => {
+            // Check again if uploaded (race condition)
+            if (uploadedUrls[index]) return;
 
-          // Set progress to 0 to show loading state
-          setUploadProgress(prev => ({ ...prev, [index]: 0 }));
+            // Set progress to 0 to show loading state
+            setUploadProgress((prev) => ({ ...prev, [index]: 0 }));
 
-          try {
-            const res = await uploadImageBatch([img as File], (percent) => {
-              setUploadProgress(prev => ({ ...prev, [index]: percent }));
-            }, getToken);
+            try {
+              const res = await uploadImageBatch(
+                [img as File],
+                (percent) => {
+                  setUploadProgress((prev) => ({ ...prev, [index]: percent }));
+                },
+                getToken
+              );
 
-            if (res.success && res.urls[0]) {
-              const url = res.urls[0];
-              setUploadedUrls(prev => ({ ...prev, [index]: url }));
-            } else {
-              console.error("Upload failed for index", index, "No URL returned.");
+              if (res.success && res.urls[0]) {
+                const url = res.urls[0];
+                results[index] = url; // Store in local results object
+                setUploadedUrls((prev) => ({ ...prev, [index]: url }));
+              } else {
+                console.error("Upload failed for index", index, "No URL returned.");
+              }
+            } catch (err) {
+              console.error("Upload failed for index", index, err);
+              // Optionally, set progress to -1 or some error state
+              setUploadProgress((prev) => ({ ...prev, [index]: -1 }));
             }
-          } catch (err) {
-            console.error("Upload failed for index", index, err);
-            // Optionally, set progress to -1 or some error state
-            setUploadProgress(prev => ({ ...prev, [index]: -1 }));
-          }
-        }));
+          })
+        );
       });
 
       if (shouldSetIsUploading) {
@@ -233,17 +242,21 @@ export default function ImageEditStep({
         setIsUploading(false);
 
         // Sync back to parent after all uploads in this batch are done
-        const currentImages = [...formData.images];
+        // IMPORTANT: We use the local 'results' object here because 'uploadedUrls' 
+        // in this closure is stale and doesn't contain the new values yet!
+        const latestImages = [...formData.images];
         let changed = false;
-        for (let i = 0; i < currentImages.length; i++) {
-          // If it was a File and now has an uploaded URL, update it
-          if (typeof currentImages[i] !== 'string' && uploadedUrls[i]) {
-            currentImages[i] = uploadedUrls[i];
+
+        Object.entries(results).forEach(([idxStr, url]) => {
+          const idx = parseInt(idxStr);
+          if (latestImages[idx] && typeof latestImages[idx] !== "string") {
+            latestImages[idx] = url;
             changed = true;
           }
-        }
+        });
+
         if (changed) {
-          updateFormData({ ...formData, images: currentImages });
+          updateFormData({ ...formData, images: latestImages });
         }
       }
     };
@@ -1165,9 +1178,20 @@ export default function ImageEditStep({
           </button>
           <button
             onClick={nextStep}
-            className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
+            disabled={isUploading}
+            className={`px-6 py-2 rounded-md transition-colors flex items-center gap-2 ${isUploading
+                ? "bg-blue-400 cursor-not-allowed opacity-80"
+                : "bg-blue-600 hover:bg-blue-700 text-white"
+              }`}
           >
-            Następne: Dane Auta
+            {isUploading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                Czekam na przesyłanie...
+              </>
+            ) : (
+              "Następne: Dane Auta"
+            )}
           </button>
         </div>
       </div>
