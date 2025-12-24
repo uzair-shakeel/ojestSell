@@ -988,6 +988,13 @@ export default function ImageEditStep({
                           {uploadedUrls[index] ? (
                             // Just uploaded but not yet state-updated to string
                             <CheckCircle2 className="text-white w-8 h-8 drop-shadow-lg" />
+                          ) : uploadProgress[index] === -1 ? (
+                            <div className="flex flex-col items-center">
+                              <div className="bg-red-500 rounded-full p-1 mb-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+                              </div>
+                              <span className="text-white text-[10px] font-bold">Error 404</span>
+                            </div>
                           ) : (
                             <div className="flex flex-col items-center">
                               <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin mb-2"></div>
@@ -1180,8 +1187,8 @@ export default function ImageEditStep({
             onClick={nextStep}
             disabled={isUploading}
             className={`px-6 py-2 rounded-md transition-colors flex items-center gap-2 ${isUploading
-                ? "bg-blue-400 cursor-not-allowed opacity-80"
-                : "bg-blue-600 hover:bg-blue-700 text-white"
+              ? "bg-blue-400 cursor-not-allowed opacity-80"
+              : "bg-blue-600 hover:bg-blue-700 text-white"
               }`}
           >
             {isUploading ? (

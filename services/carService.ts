@@ -2,13 +2,14 @@
 import axios from "axios";
 
 // Define the API base URL - prefer same-origin, else use NEXT_PUBLIC_API_BASE_URL
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || "").trim().replace(/\/$/, "");
 // If API_BASE is empty, use relative /api. If it has /api at the end, don't double it.
 const API_BASE_URL = API_BASE
   ? (API_BASE.endsWith("/api") ? API_BASE : `${API_BASE}/api`)
   : "/api";
 
-console.log("Using API URL:", API_BASE_URL);
+console.log("Using API_BASE_URL:", API_BASE_URL);
+console.log("Original process.env.NEXT_PUBLIC_API_BASE_URL:", process.env.NEXT_PUBLIC_API_BASE_URL);
 
 // Backend base for admin endpoints (bypass Next API if no proxies exist)
 const BACKEND_BASE = API_BASE_URL;
@@ -128,7 +129,10 @@ export const uploadImageBatch = async (
     const formData = new FormData();
     images.forEach((file) => formData.append("images", file));
 
-    const response = await axios.post(`${API_BASE_URL}/cars/upload-images`, formData, {
+    const uploadUrl = `${API_BASE_URL}/cars/upload-images`;
+    console.log("Uploading batch to:", uploadUrl);
+
+    const response = await axios.post(uploadUrl, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
