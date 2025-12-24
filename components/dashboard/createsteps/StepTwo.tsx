@@ -273,10 +273,12 @@ export default function StepTwo({
 
   // Update preview URL when active image changes
   useEffect(() => {
-    if (activeImage) {
+    if (activeImage instanceof File) {
       const url = URL.createObjectURL(activeImage);
       setPreviewUrl(url);
       return () => URL.revokeObjectURL(url);
+    } else if (typeof activeImage === "string") {
+      setPreviewUrl(activeImage);
     }
   }, [activeImage]);
 

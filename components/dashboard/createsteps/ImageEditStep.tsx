@@ -166,7 +166,7 @@ export default function ImageEditStep({
   formData,
 }: ImageEditStepProps) {
   const router = useRouter();
-  const [activeImage, setActiveImage] = useState<File | null>(null);
+  const [activeImage, setActiveImage] = useState<File | string | null>(null);
   const [showPresetsModal, setShowPresetsModal] = useState(false);
   const [activeFilter, setActiveFilter] = useState("none");
   const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -514,7 +514,7 @@ export default function ImageEditStep({
   // Select a different image to edit
   const selectImage = (index: number) => {
     if (formData.images[index]) {
-      setActiveImage(formData.images[index] as File); // Cast to File, assuming it's a File for editing
+      setActiveImage(formData.images[index]);
       setActiveImageIndex(index);
       setPreviewUrl(formData.imagePreviews[index]);
       resetAdjustments();
@@ -552,8 +552,11 @@ export default function ImageEditStep({
     canvas.toBlob(
       (blob) => {
         if (blob) {
-          const croppedFile = new File([blob], activeImage.name, {
-            type: activeImage.type,
+          const fileName = (activeImage instanceof File) ? activeImage.name : `img-${activeImageIndex}.jpg`;
+          const fileType = (activeImage instanceof File) ? activeImage.type : (blob.type || "image/jpeg");
+
+          const croppedFile = new File([blob], fileName, {
+            type: fileType,
           });
 
           const newImages = [...formData.images];
@@ -575,7 +578,7 @@ export default function ImageEditStep({
           setCompletedCrop(undefined);
         }
       },
-      activeImage.type,
+      (activeImage instanceof File ? activeImage.type : "image/jpeg"),
       1.0
     );
   };
@@ -591,8 +594,24 @@ export default function ImageEditStep({
     try {
       const externalUrl = "https://ojest.pl/detect/detect";
       const fd = new FormData();
-      const baseFile = isHeicFile(activeImage) ? await convertHeicToJpeg(activeImage) : activeImage;
-      const optimized = await compressImage(baseFile, 600 * 1000, 1600, 0.4);
+
+      let baseFile: any = activeImage;
+      if (!(activeImage instanceof File)) {
+        try {
+          // If it's a string URL, fetch it to get a blob/file for processing
+          const response = await fetch(activeImage as string);
+          const blob = await response.blob();
+          baseFile = new File([blob], `img-${activeImageIndex}.jpg`, { type: blob.type || "image/jpeg" });
+        } catch (fetchError) {
+          console.error("Failed to fetch remote image for blurring:", fetchError);
+          alert("Nie można edytować zdjęcia, które zostało już przesłane. Spróbuj edytować lokalne zdjęcie.");
+          setIsBlurringPlate(false);
+          return;
+        }
+      }
+
+      const processedBaseFile = isHeicFile(baseFile) ? await convertHeicToJpeg(baseFile) : baseFile;
+      const optimized = await compressImage(processedBaseFile, 600 * 1000, 1600, 0.4);
       fd.append("file", optimized as File, (optimized as File).name || "upload.jpg");
 
       const resp = await fetch(externalUrl, { method: "POST", mode: "cors", headers: { Accept: "application/json" }, body: fd });
