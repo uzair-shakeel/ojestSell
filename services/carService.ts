@@ -3,10 +3,7 @@ import axios from "axios";
 
 // Define the API base URL - prefer same-origin, else use NEXT_PUBLIC_API_BASE_URL
 const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || "").trim().replace(/\/$/, "");
-// If API_BASE is empty, use relative /api. If it has /api at the end, don't double it.
-const API_BASE_URL = API_BASE
-  ? (API_BASE.endsWith("/api") ? API_BASE : `${API_BASE}/api`)
-  : "/api";
+const API_BASE_URL = API_BASE ? `${API_BASE}/api` : "/api";
 
 console.log("Using API_BASE_URL:", API_BASE_URL);
 console.log("Original process.env.NEXT_PUBLIC_API_BASE_URL:", process.env.NEXT_PUBLIC_API_BASE_URL);
