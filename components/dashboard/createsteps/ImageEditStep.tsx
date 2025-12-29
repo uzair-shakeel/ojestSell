@@ -667,9 +667,65 @@ export default function ImageEditStep({
     };
 
     updateFormData(updatedFormData);
-
     // Show a brief success message or feedback
     console.log("Adjustments saved for image", activeImageIndex + 1);
+  };
+
+  // Set an image as the main (first) image
+  const setAsMain = (index: number) => {
+    if (index === 0) return;
+
+    // Create new arrays
+    const newImages = [...formData.images];
+    const newPreviews = [...formData.imagePreviews];
+
+    // Handle adjustments reordering
+    const currentAdjustments: any[] = [];
+    for (let i = 0; i < formData.images.length; i++) {
+      currentAdjustments.push(formData.imageAdjustments?.[i] || null);
+    }
+
+    // Move items to front
+    const [movedImage] = newImages.splice(index, 1);
+    newImages.unshift(movedImage);
+
+    const [movedPreview] = newPreviews.splice(index, 1);
+    newPreviews.unshift(movedPreview);
+
+    const [movedAdj] = currentAdjustments.splice(index, 1);
+    currentAdjustments.unshift(movedAdj);
+
+    // Rebuild adjustments object
+    const newAdjustmentsObj: Record<number, any> = {};
+    currentAdjustments.forEach((adj, i) => {
+      if (adj) newAdjustmentsObj[i] = adj;
+    });
+
+    // If the active image was the one moved, we need to find its new index (0)
+    // If the active image was something else, its index might have shifted
+    // Simplified: Reset active image to null or the new main image (0)
+    if (index === activeImageIndex) {
+      setActiveImageIndex(0);
+    } else if (activeImageIndex < index) {
+      // Index increased by 1 for items before the moved item? No.
+      // Items before the moved item (0 to index-1) shifted right by 1?
+      // Wait. 
+      // Start: [0, 1, 2, 3, 4]
+      // Move 3 to 0.
+      // End: [3, 0, 1, 2, 4]
+      // If active was 0, it is now 1.
+      // If active was 1, it is now 2.
+      // If active was 2, it is now 3.
+      // If active was 4 (after), it stays 4.
+      setActiveImageIndex(activeImageIndex + 1);
+    }
+
+    updateFormData({
+      ...formData,
+      images: newImages,
+      imagePreviews: newPreviews,
+      imageAdjustments: newAdjustmentsObj
+    });
   };
 
   // Professional filter presets
@@ -995,10 +1051,20 @@ export default function ImageEditStep({
                           filter: getFilterStyleForImage(index),
                         }}
                       />
-                      {index === 0 && (
-                        <span className="absolute top-2 left-2 bg-blue-600/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm z-10 uppercase tracking-wide">
+                      {index === 0 ? (
+                        <span className="absolute top-2 left-2 bg-blue-600/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm z-20 uppercase tracking-wide">
                           Główne
                         </span>
+                      ) : (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setAsMain(index);
+                          }}
+                          className="absolute top-2 left-2 bg-white/90 hover:bg-white text-blue-600 text-[10px] uppercase font-bold px-2 py-0.5 rounded shadow-sm z-20 opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          Ustaw jako główne
+                        </button>
                       )}
 
                       {/* Upload Progress Overlay */}
@@ -1059,7 +1125,7 @@ export default function ImageEditStep({
                             setPreviewUrl(null);
                           }
                         }}
-                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity z-20"
                       >
                         <svg
                           className="w-3 h-3"
