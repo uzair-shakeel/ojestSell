@@ -217,8 +217,9 @@ export default function ImageCategorizationModal({
 
   useEffect(() => {
     if (swiperRef.current && swiperRef.current.swiper) {
-      if (swiperRef.current.swiper.activeIndex !== sliderIndex) {
-        swiperRef.current.swiper.slideTo(sliderIndex, 0);
+      // Use realIndex for loop mode consistency
+      if (swiperRef.current.swiper.realIndex !== sliderIndex) {
+        swiperRef.current.swiper.slideToLoop(sliderIndex, 0);
       }
     }
   }, [sliderIndex, sliderImages]);
@@ -454,7 +455,8 @@ export default function ImageCategorizationModal({
                   grabCursor={true}
                   initialSlide={sliderIndex}
                   onSlideChange={(swiper) => {
-                    const idx = swiper.activeIndex;
+                    // Use realIndex for loop mode to get the actual slide position
+                    const idx = swiper.realIndex;
                     setSliderIndex(idx);
                     // Sync category tab with current image
                     if (sliderImages[idx]) {
@@ -465,7 +467,7 @@ export default function ImageCategorizationModal({
                     }
                   }}
                   className="modal-swiper !h-full !w-full"
-                  loop={false}
+                  loop={true}
                 >
                   {sliderImages.map((img, index) => (
                     <SwiperSlide key={`${img.url}-${index}`}>
