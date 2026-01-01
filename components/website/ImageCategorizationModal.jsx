@@ -236,8 +236,12 @@ export default function ImageCategorizationModal({
         if (indexInAll !== -1) {
           setSliderIndex(indexInAll);
         }
+        setCurrentCategory(category);
+      } else {
+        // If category has no images, close slider to show "No photos found" message
+        setShowSlider(false);
+        setCurrentCategory(category);
       }
-      setCurrentCategory(category);
     } else {
       // Grid mode: standard filtering
       setCurrentCategory(category);
