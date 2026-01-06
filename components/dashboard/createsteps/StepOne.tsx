@@ -1,27 +1,21 @@
 "use client";
 import { useState, useEffect } from "react";
-import { getCarDetailsByVin } from "../../../services/carService";
 import { useAuth } from "../../../lib/auth/AuthContext";
 import CustomMap from "../GoogleMapComponent";
 import {
   FaMapMarkerAlt,
   FaChevronDown,
-  FaChevronUp,
-  FaEdit,
 } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 
-export default function StepOne({ nextStep, updateFormData, formData, makesModelsData }) {
+export default function StepOne({ nextStep, prevStep, updateFormData, formData, makesModelsData }) {
   const router = useRouter();
-  const { getToken } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
-  const ENABLE_STEP1_IMAGES = false;
   const [localData, setLocalData] = useState({
     title: formData.title || "",
     description: formData.description || "",
     images: formData.images || [],
-    vin: formData.vin || "",
+    vin: formData.vin || "", // Still store VIN but don't show lookup here
     make: formData.make || "",
     model: formData.model || "",
     location: formData.location || {
@@ -30,176 +24,22 @@ export default function StepOne({ nextStep, updateFormData, formData, makesModel
     },
   });
 
-  // Drag & drop reordering state
-  const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
-
   // State for car models
   const [models, setModels] = useState<string[]>([]);
-
-  // Get makes from the hook data
   const makes = makesModelsData?.getMakes() || [];
 
-  // Update models when a make is selected
   useEffect(() => {
     if (localData.make && makesModelsData) {
       let modelsList = makesModelsData.getModelsForMake(localData.make) || [];
-
-      // If we have a model from VIN lookup that's not in the list, add it
       if (localData.model && !modelsList.includes(localData.model)) {
         modelsList = [...modelsList, localData.model];
       }
-
       setModels(modelsList);
     } else {
-      setModels([]); // Reset models if no make is selected
+      setModels([]);
     }
   }, [localData.make, localData.model, makesModelsData]);
 
-  // Check for edited images when component mounts or when returning from photo enhancer
-  useEffect(() => {
-    const editedImagePath = localStorage.getItem("editedImagePath");
-    const editedImageTimestamp = localStorage.getItem("editedImageTimestamp");
-    const editedImageIndex = localStorage.getItem("editedImageIndex");
-
-    if (editedImagePath && editedImageTimestamp && editedImageIndex) {
-      // Only process if the timestamp is recent (within the last minute)
-      const currentTime = Date.now();
-      const timestamp = parseInt(editedImageTimestamp);
-
-      if (currentTime - timestamp < 60000) {
-        // 60 seconds
-        handleImageUpdate(editedImagePath, parseInt(editedImageIndex));
-
-        // Clear the localStorage items after processing
-        localStorage.removeItem("editedImagePath");
-        localStorage.removeItem("editedImageTimestamp");
-        localStorage.removeItem("editedImageIndex");
-      }
-    }
-  }, []);
-
-  // Function to handle image updates from the photo enhancer
-  const handleImageUpdate = async (imagePath, index) => {
-    try {
-      // Create a new File object from the edited image URL
-      const response = await fetch(imagePath);
-      const blob = await response.blob();
-      const filename =
-        imagePath.split("/").pop() || `edited-image-${Date.now()}.jpg`;
-      const file = new File([blob], filename, { type: "image/jpeg" });
-
-      // Create a new array of images with the edited image replacing the original
-      const updatedImages = [...formData.images];
-      updatedImages[index] = file;
-
-      // Create a new array of image previews with the edited image preview replacing the original
-      const updatedPreviews = [...formData.imagePreviews];
-      updatedPreviews[index] = imagePath;
-
-      // Update form data with the new images and previews
-      updateFormData({
-        ...formData,
-        images: updatedImages,
-        imagePreviews: updatedPreviews,
-      });
-
-      // Update local state
-      setLocalData((prev) => ({
-        ...prev,
-        images: updatedImages,
-      }));
-    } catch (error) {
-      console.error("Error updating image:", error);
-      alert("Nie udało się załadować edytowanego zdjęcia. Spróbuj ponownie.");
-    }
-  };
-
-  // Helper to reorder arrays (immutably)
-  const reorder = <T,>(list: T[], startIndex: number, endIndex: number): T[] => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
-    return result;
-  };
-
-  // Drag & drop handlers
-  const handleDragStart = (index: number) => () => {
-    setDraggingIndex(index);
-  };
-
-  const handleDragOver = (index: number) => (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    if (dragOverIndex !== index) setDragOverIndex(index);
-  };
-
-  const handleDragEnd = () => {
-    setDraggingIndex(null);
-    setDragOverIndex(null);
-  };
-
-  const handleDrop = (index: number) => (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    if (draggingIndex === null || draggingIndex === index) return handleDragEnd();
-
-    // Reorder both images (File[]) and previews (string[])
-    const newImages = reorder(formData.images, draggingIndex, index);
-    const newPreviews = reorder(formData.imagePreviews, draggingIndex, index);
-
-    updateFormData({
-      ...formData,
-      images: newImages,
-      imagePreviews: newPreviews,
-    });
-
-    setLocalData(prev => ({
-      ...prev,
-      images: newImages,
-    }));
-
-    handleDragEnd();
-  };
-
-  // Function to open the photo enhancer for a specific image
-  const openPhotoEnhancer = (index) => {
-    router.push(`/dashboard/photo-enhancer?index=${index}`);
-  };
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const selectedFiles = Array.from(e.target.files);
-      if (selectedFiles.length + localData.images.length > 10) {
-        alert("Możesz maksymalnie dodać 10 zdjęć.");
-        return;
-      }
-      setLocalData((prev) => ({
-        ...prev,
-        images: [...prev.images, ...selectedFiles],
-      }));
-
-      // Generate previews
-      const previews = selectedFiles.map((file) => URL.createObjectURL(file));
-      updateFormData({
-        ...formData,
-        images: [...formData.images, ...selectedFiles],
-        imagePreviews: [...formData.imagePreviews, ...previews],
-      });
-    }
-  };
-
-  const removeImage = (index: number) => {
-    setLocalData((prev) => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index),
-    }));
-    updateFormData({
-      ...formData,
-      images: formData.images.filter((_, i) => i !== index),
-      imagePreviews: formData.imagePreviews.filter((_, i) => i !== index),
-    });
-  };
-
-  // Handle location change
   const handleLocationChange = (newLocation) => {
     setLocalData((prev) => ({
       ...prev,
@@ -210,113 +50,6 @@ export default function StepOne({ nextStep, updateFormData, formData, makesModel
       ...formData,
       location: newLocation,
     });
-  };
-
-  const handleVinLookup = async () => {
-    if (!localData.vin || localData.vin.length < 17) {
-      alert("Wpisz proszę poprawny VIN (17 znaków)");
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      console.log(`Attempting VIN lookup for: ${localData.vin}`);
-
-      const carDetails = await getCarDetailsByVin(localData.vin, getToken);
-      console.log("VIN lookup response:", carDetails);
-
-      // Generate a detailed title
-      const title = `${carDetails.year} ${carDetails.make} ${carDetails.model
-        } ${carDetails.trim || ""}`.trim();
-
-      // Generate a comprehensive description
-      const descriptionParts = [];
-      if (carDetails.year) descriptionParts.push(`Year: ${carDetails.year}`);
-      if (carDetails.make) descriptionParts.push(`Make: ${carDetails.make}`);
-      if (carDetails.model) descriptionParts.push(`Model: ${carDetails.model}`);
-      if (carDetails.trim) descriptionParts.push(`Trim: ${carDetails.trim}`);
-      if (carDetails.engineDetails)
-        descriptionParts.push(`Engine: ${carDetails.engineDetails}`);
-      if (carDetails.transmission)
-        descriptionParts.push(`Transmission: ${carDetails.transmission}`);
-      if (carDetails.fuel)
-        descriptionParts.push(`Fuel Type: ${carDetails.fuel}`);
-      if (carDetails.driveType)
-        descriptionParts.push(`Drive Type: ${carDetails.driveType}`);
-      if (carDetails.bodyClass)
-        descriptionParts.push(`Body Type: ${carDetails.bodyClass}`);
-      if (carDetails.horsepower)
-        descriptionParts.push(`Horsepower: ${carDetails.horsepower} HP`);
-
-      const description = descriptionParts.join("\n");
-
-      // Update form data with car details
-      const updatedData = {
-        ...localData,
-        title,
-        description,
-        vin: carDetails.vin,
-      };
-
-      // Update local state
-      setLocalData(updatedData);
-
-      // Update parent form data with all car details for Step Two
-      updateFormData({
-        ...formData,
-        ...updatedData,
-        make: carDetails.make,
-        model: carDetails.model,
-        trim: carDetails.trim,
-        type: carDetails.bodyClass,
-        year: carDetails.year,
-        fuel: carDetails.fuel,
-        transmission: carDetails.transmission,
-        drivetrain:
-          carDetails.driveType === "All wheel drive"
-            ? "AWD"
-            : carDetails.driveType,
-        engine: carDetails.engine,
-        horsepower: carDetails.horsepower,
-      });
-
-      // Also update local state with make and model
-      setLocalData((prev) => ({
-        ...prev,
-        vin: carDetails.vin,
-        make: carDetails.make,
-        model: carDetails.model
-      }));
-
-      // Show success message
-      alert(
-        `Znaleziono dane auta!\n\nTytuł I opis zostały wygenerowane w oparciu o:\n${descriptionParts.join(
-          "\n"
-        )}\n\nMożesz zmienić dane jeśli potrzeba.`
-      );
-    } catch (error: any) {
-      console.error("Error fetching car details:", error);
-      let errorMessage =
-        "Failed to fetch car details. Please enter the details manually.";
-      let details = "";
-
-      if (error.response?.data?.details) {
-        details = `\n\nDetails: ${error.response.data.details}`;
-      }
-
-      if (error.message?.includes("VIN validation failed")) {
-        errorMessage = "The VIN number appears to be invalid.";
-      } else if (error.message?.includes("404")) {
-        errorMessage = "No vehicle found with this VIN.";
-      } else if (error.message?.includes("Network Error")) {
-        errorMessage =
-          "Network error. Please check your connection and try again.";
-      }
-
-      alert(errorMessage + details);
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const handleNext = () => {
@@ -345,48 +78,16 @@ export default function StepOne({ nextStep, updateFormData, formData, makesModel
 
   return (
     <div className="bg-white rounded-lg w-full">
-      <h2 className="text-xl font-bold mb-4">Krok 1: Podstawowe Informacje </h2>
-      <div className="grid grid-cols-2 gap-4 w-full">
-        {/* VIN Input */}
-        <div className="col-span-2">
-          <label className="block text-gray-700 mb-1">
-            Wpisz VIN aby automatycznie dodać dane auta
-          </label>
-          <div className="flex">
-            <input
-              type="text"
-              placeholder="Wpisz VIN"
-              className="border p-3 w-full rounded-l h-12"
-              value={localData.vin}
-              onChange={(e) =>
-                setLocalData({
-                  ...localData,
-                  vin: e.target.value.toUpperCase(),
-                })
-              }
-              maxLength={17}
-            />
-            <button
-              type="button"
-              onClick={handleVinLookup}
-              disabled={isLoading}
-              className="bg-blue-500 text-white px-4 rounded-r h-12 hover:bg-blue-600 transition-colors disabled:bg-blue-300"
-            >
-              {isLoading ? "Ładowanie..." : "Sprawdź"}
-            </button>
-          </div>
-          <p className="text-xs text-gray-500 mt-1">
+      <h2 className="text-xl font-bold mb-4">Krok 2: Podstawowe Informacje</h2>
+      <div className="grid grid-cols-2 gap-6 w-full">
 
-            Dane mogą zostać znalezione automatycznie lub też można je wpisać/poprawić ręcznie
-          </p>
-        </div>
-
+        {/* Title */}
         <div className="col-span-2">
-          <label className="block text-gray-700 mb-1">Tytuł</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1 uppercase tracking-wider">Tytuł Ogłoszenia</label>
           <input
             type="text"
-            placeholder="Wpisz tytuł"
-            className="border p-3 w-full rounded h-12"
+            placeholder="Np. BMW M5 F90 Competition 2021"
+            className="border-2 border-gray-100 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold"
             value={localData.title}
             onChange={(e) =>
               setLocalData({ ...localData, title: e.target.value })
@@ -394,44 +95,47 @@ export default function StepOne({ nextStep, updateFormData, formData, makesModel
           />
         </div>
 
+        {/* Condition Type */}
         <div className="col-span-2">
-          <label className="block text-gray-700 mb-1">Stan auta</label>
-          <div className="flex items-center gap-4">
-            <label className="flex items-center gap-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wider">Stan auta</label>
+          <div className="flex items-center gap-6">
+            <label className="flex items-center gap-3 cursor-pointer group">
               <input
                 type="radio"
                 name="conditionType"
                 value="Used"
+                className="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300"
                 checked={formData.conditionType === "Used"}
                 onChange={() => updateFormData({ conditionType: "Used" })}
               />
-              <span>Używany</span>
+              <span className="text-gray-700 group-hover:text-blue-600 transition-colors font-medium">Używany</span>
             </label>
-            <label className="flex items-center gap-2">
+            <label className="flex items-center gap-3 cursor-pointer group">
               <input
                 type="radio"
                 name="conditionType"
                 value="New"
+                className="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300"
                 checked={formData.conditionType === "New"}
                 onChange={() => updateFormData({ conditionType: "New" })}
               />
-              <span>Nowy</span>
+              <span className="text-gray-700 group-hover:text-blue-600 transition-colors font-medium">Nowy</span>
             </label>
           </div>
         </div>
 
         {/* Make */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Marka</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1 uppercase tracking-wider">Marka</label>
           <select
-            className="border p-3 w-full rounded h-12"
+            className="border-2 border-gray-100 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold"
             value={localData.make}
             onChange={(e) =>
               setLocalData({ ...localData, make: e.target.value, model: "" })
             }
             disabled={makesModelsData?.loading}
           >
-            <option value="">Wybierz Marka</option>
+            <option value="">Wybierz Markę</option>
             {makes.map((make, index) => (
               <option key={index} value={make}>
                 {make}
@@ -442,9 +146,9 @@ export default function StepOne({ nextStep, updateFormData, formData, makesModel
 
         {/* Model */}
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-gray-700 mb-1">Model</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1 uppercase tracking-wider">Model</label>
           <select
-            className="border p-3 w-full rounded h-12"
+            className="border-2 border-gray-100 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold"
             value={localData.model}
             onChange={(e) =>
               setLocalData({ ...localData, model: e.target.value })
@@ -460,11 +164,12 @@ export default function StepOne({ nextStep, updateFormData, formData, makesModel
           </select>
         </div>
 
+        {/* Description */}
         <div className="col-span-2">
-          <label className="block text-gray-700 mb-1">Opis</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1 uppercase tracking-wider">Opis</label>
           <textarea
-            placeholder="Wpisz Opis"
-            className="border p-3 w-full rounded h-32"
+            placeholder="Opisz swoje auto - stan, wyposażenie, historię..."
+            className="border-2 border-gray-100 p-4 w-full rounded-xl h-48 focus:border-blue-500 transition-all"
             value={localData.description}
             onChange={(e) =>
               setLocalData({ ...localData, description: e.target.value })
@@ -472,43 +177,29 @@ export default function StepOne({ nextStep, updateFormData, formData, makesModel
           />
         </div>
 
-        {/* Map Location Section - Collapsible */}
+        {/* Map Location Section */}
         <div className="col-span-2">
-          <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-            {/* Dropdown Header */}
+          <div className="border-2 border-gray-50 rounded-2xl overflow-hidden shadow-sm">
             <div
-              className="flex items-center justify-between bg-gradient-to-r from-blue-50 to-blue-100 p-4 cursor-pointer hover:bg-blue-100 transition-colors"
+              className="flex items-center justify-between bg-gray-50 p-5 cursor-pointer hover:bg-gray-100 transition-colors"
               onClick={() => setShowMap(!showMap)}
             >
-              <div className="flex items-center">
-                <div className="bg-blue-500 p-2 rounded-full mr-3">
-                  <FaMapMarkerAlt className="text-white" size={16} />
+              <div className="flex items-center gap-3">
+                <div className="bg-blue-600 p-2.5 rounded-xl">
+                  <FaMapMarkerAlt className="text-white" size={18} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-800 dark:text-black transition-colors duration-300">Lokalizacja Auta</h3>
-                  <p className="text-xs text-gray-500">
-                    Ustaw lokalizacje gdzie auto się znajduje
-                  </p>
+                  <h3 className="font-bold text-gray-900">Lokalizacja Pojazdu</h3>
+                  <p className="text-sm text-gray-500 font-medium">Ustaw gdzie można obejrzeć auto</p>
                 </div>
               </div>
-              <div
-                className={`transition-transform duration-300 ${showMap ? "rotate-180" : ""
-                  }`}
-              >
-                <FaChevronDown className="text-gray-500" />
+              <div className={`transition-transform duration-300 ${showMap ? "rotate-180" : ""}`}>
+                <FaChevronDown className="text-gray-400" />
               </div>
             </div>
 
-            {/* Dropdown Content */}
-            <div
-              className={`transition-all duration-300 ease-in-out overflow-hidden ${showMap ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
-                }`}
-            >
-              <div className="p-4 border-t border-gray-200 bg-white">
-                <div className="text-sm text-gray-600 mb-3">
-                  Click on the map or use the search box to set the car's
-                  location
-                </div>
+            <div className={`transition-all duration-300 ease-in-out overflow-hidden ${showMap ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}>
+              <div className="p-4 bg-white">
                 <CustomMap
                   location={localData.location}
                   setLocation={handleLocationChange}
@@ -518,63 +209,19 @@ export default function StepOne({ nextStep, updateFormData, formData, makesModel
           </div>
         </div>
 
-        {ENABLE_STEP1_IMAGES && (
-          <div className="col-span-2">
-            <label className="block text-gray-700 mb-1">
-              Upload Images (1-10)
-            </label>
-            <input
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="text-base text-gray-500 file:mr-4 file:py-2 file:px-7 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gray-700 file:text-white hover:file:bg-gray-600 file:duration-300 border border-gray-300 p-1 w-auto rounded-md"
-            />
-            {formData.imagePreviews?.length > 0 && (
-              <div className="grid grid-cols-5 gap-2 mt-2">
-                {formData.imagePreviews.map((preview, index) => (
-                  <div
-                    key={index}
-                    className={`relative border-2 rounded-md ${dragOverIndex === index ? "border-blue-400" : "border-transparent"
-                      }`}
-                    draggable
-                    onDragStart={handleDragStart(index)}
-                    onDragOver={handleDragOver(index)}
-                    onDrop={handleDrop(index)}
-                    onDragEnd={handleDragEnd}
-                    title="Drag to reorder"
-                  >
-                    <img
-                      src={preview}
-                      alt={`Preview ${index + 1}`}
-                      className="w-full h-24 object-cover rounded-md"
-                    />
-                    <div className="absolute top-1 right-1 flex gap-1">
-                      <button
-                        type="button"
-                        onClick={() => removeImage(index)}
-                        className="bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
-                        title="Remove image"
-                      >
-                        ×
-                      </button>
-                    </div>
-                    <div className="absolute bottom-1 left-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded">
-                      {index + 1}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        <div className="col-span-2">
+        {/* Footer Buttons */}
+        <div className="col-span-2 flex justify-between items-center mt-12 pt-8 border-t border-gray-100">
+          <button
+            onClick={prevStep}
+            className="text-gray-500 font-bold px-8 py-4 rounded-xl hover:bg-gray-50 transition-all font-bold"
+          >
+            Wstecz
+          </button>
           <button
             onClick={handleNext}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
+            className="bg-blue-600 text-white font-bold px-12 py-4 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
           >
-            Następna
+            Następny Krok
           </button>
         </div>
       </div>

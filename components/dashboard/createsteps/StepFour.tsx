@@ -72,7 +72,7 @@ export default function StepFour({ nextStep, prevStep, updateFormData, formData 
     console.log("Updating formData with (english values):", localData);
     // Persist financial info and isFeatured into parent formData
     const { isFeatured, ...financialLocal } = localData as any;
-    updateFormData({ 
+    updateFormData({
       financialInfo: { ...formData.financialInfo, ...financialLocal },
       isFeatured: Boolean(isFeatured),
     });
@@ -80,109 +80,129 @@ export default function StepFour({ nextStep, prevStep, updateFormData, formData 
   };
 
   return (
-    <div className="bg-white rounded-lg">
-      <h2 className="text-xl font-bold mb-4">Krok 4: Finansowe Informacje</h2>
-
-      <div className="mb-4">
-        <label className="block text-gray-700 font-semibold mb-1">
-          Opcje Sprzedaży (Wybierz przynajmniej jedną)
-        </label>
-        <div className="grid grid-cols-2 gap-2">
-          {sellOptionsList.map((option, index) => (
-            <label key={index} className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={localData.sellOptions.includes(option.value)}
-                onChange={() => handleCheckboxChange("sellOptions", option.value)}
-                className="h-5 w-5"
-              />
-              <span>{option.label}</span>
-            </label>
-          ))}
-        </div>
+    <div className="bg-white rounded-lg w-full">
+      <div className="mb-8">
+        <h2 className="text-xl font-bold">Krok 6: Finansowe Informacje</h2>
+        <p className="text-gray-500 text-sm mt-1">Skonfiguruj cenę i opcje sprzedaży swojego pojazdu.</p>
       </div>
 
-      <div className="mb-4">
-        <label className="block text-gray-700 font-semibold mb-1">
-          Sposób Sprzedaży (Wybierz przynajmniej jedną)
-        </label>
-        <div className="grid grid-cols-2 gap-2">
-          {invoiceOptionsList.map((option, index) => (
-            <label key={index} className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={localData.invoiceOptions.includes(option.value)}
-                onChange={() => handleCheckboxChange("invoiceOptions", option.value)}
-                className="h-5 w-5"
-              />
-              <span>{option.label}</span>
-            </label>
-          ))}
+      <div className="space-y-8">
+        <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+          <label className="block text-sm font-semibold mb-4 uppercase tracking-wider text-gray-700">
+            Opcje Sprzedaży
+          </label>
+          <div className="grid grid-cols-2 gap-3">
+            {sellOptionsList.map((option, index) => (
+              <label
+                key={index}
+                className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all cursor-pointer ${localData.sellOptions.includes(option.value) ? 'border-blue-500 bg-blue-50/50 shadow-sm' : 'border-gray-50 bg-white hover:border-gray-200'}`}
+              >
+                <input
+                  type="checkbox"
+                  checked={localData.sellOptions.includes(option.value)}
+                  onChange={() => handleCheckboxChange("sellOptions", option.value)}
+                  className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span className={`text-sm font-bold ${localData.sellOptions.includes(option.value) ? 'text-blue-700' : 'text-gray-600'}`}>{option.label}</span>
+              </label>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div className="mb-4">
-        {localData.invoiceOptions.includes("Invoice VAT") ? (
-          <div className="grid grid-cols-2 gap-4">
+        <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+          <label className="block text-sm font-semibold mb-4 uppercase tracking-wider text-gray-700">
+            Sposób Sprzedaży
+          </label>
+          <div className="grid grid-cols-2 gap-3">
+            {invoiceOptionsList.map((option, index) => (
+              <label
+                key={index}
+                className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all cursor-pointer ${localData.invoiceOptions.includes(option.value) ? 'border-blue-500 bg-blue-50/50 shadow-sm' : 'border-gray-50 bg-white hover:border-gray-200'}`}
+              >
+                <input
+                  type="checkbox"
+                  checked={localData.invoiceOptions.includes(option.value)}
+                  onChange={() => handleCheckboxChange("invoiceOptions", option.value)}
+                  className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span className={`text-sm font-bold ${localData.invoiceOptions.includes(option.value) ? 'text-blue-700' : 'text-gray-600'}`}>{option.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          {localData.invoiceOptions.includes("Invoice VAT") ? (
+            <div className="grid grid-cols-2 gap-8">
+              <div className="col-span-2">
+                <label className="block text-sm font-semibold mb-2 uppercase tracking-wider text-gray-700">Cena (Netto)</label>
+                <div className="relative group">
+                  <input
+                    type="number"
+                    placeholder="Wprowadź cenę netto"
+                    className="border-2 border-gray-100 p-4 pl-12 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-bold text-lg bg-white"
+                    value={localData.priceNetto}
+                    onChange={(e) =>
+                      setLocalData({ ...localData, priceNetto: e.target.value })
+                    }
+                  />
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">€</div>
+                </div>
+                <p className="text-xs text-gray-400 mt-2 font-medium italic">* Cena brutto zostanie obliczona automatycznie w ogłoszeniu</p>
+              </div>
+            </div>
+          ) : (
             <div>
-              <label className="block text-gray-700 font-semibold mb-1">Cena (Netto)</label>
+              <label className="block text-sm font-semibold mb-2 uppercase tracking-wider text-gray-700">Cena</label>
+              <div className="relative group">
+                <input
+                  type="number"
+                  placeholder="Wprowadź cenę"
+                  className="border-2 border-gray-100 p-4 pl-12 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-bold text-lg bg-white"
+                  value={localData.priceNetto}
+                  onChange={(e) =>
+                    setLocalData({ ...localData, priceNetto: e.target.value })
+                  }
+                />
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">€</div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="bg-blue-50/50 p-6 rounded-2xl border border-blue-100">
+          <div className="flex items-start space-x-4">
+            <div className="mt-1">
               <input
-                type="number"
-                placeholder="Wprowadź cenę netto"
-                className="border p-3 w-full rounded h-12"
-                value={localData.priceNetto}
-                onChange={(e) =>
-                  setLocalData({ ...localData, priceNetto: e.target.value })
-                }
+                type="checkbox"
+                id="isFeatured"
+                className="w-5 h-5 text-blue-600 bg-white border-blue-200 rounded-lg focus:ring-blue-500"
+                checked={localData.isFeatured}
+                onChange={(e) => setLocalData({ ...localData, isFeatured: e.target.checked })}
               />
             </div>
+            <label htmlFor="isFeatured" className="cursor-pointer">
+              <span className="block text-gray-900 font-bold mb-1">Oznacz jako polecany samochód</span>
+              <span className="block text-sm text-gray-500 leading-relaxed font-medium">
+                Polecane samochody zostaną wyróżnione i wyeksponowane na stronie głównej oraz w wynikach wyszukiwania.
+              </span>
+            </label>
           </div>
-        ) : (
-          <div>
-            <label className="block text-gray-700 font-semibold mb-1">Cena</label>
-            <input
-              type="number"
-              placeholder="Wprowadź cenę"
-              className="border p-3 w-full rounded h-12"
-              value={localData.priceNetto}
-              onChange={(e) =>
-                setLocalData({ ...localData, priceNetto: e.target.value })
-              }
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Featured Car */}
-      <div className="mb-4">
-        <div className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            id="isFeatured"
-            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-            checked={localData.isFeatured}
-            onChange={(e) => setLocalData({ ...localData, isFeatured: e.target.checked })}
-          />
-          <label htmlFor="isFeatured" className="text-gray-700 font-medium">
-            Oznacz jako polecany samochód
-          </label>
         </div>
-        <p className="text-xs text-gray-500 mt-1">
-Polecane samochody zostaną wyróżnione i wyeksponowane na stronie internetowej        </p>
       </div>
 
-      <div className="flex justify-between mt-6">
+      <div className="flex justify-between items-center mt-12 pt-8 border-t border-gray-100">
         <button
           onClick={prevStep}
-          className="bg-gray-500 text-white px-4 py-2 rounded"
+          className="text-gray-500 font-bold px-8 py-4 rounded-xl hover:bg-gray-50 transition-all"
         >
-          Cofnij
+          Wstecz
         </button>
         <button
           onClick={handleNext}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="bg-blue-600 text-white font-bold px-12 py-4 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
         >
-          Następna
+          Następny Krok
         </button>
       </div>
     </div>

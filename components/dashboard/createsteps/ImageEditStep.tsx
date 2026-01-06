@@ -365,14 +365,7 @@ export default function ImageEditStep({
     e.preventDefault();
     if (draggingIndex === null || draggingIndex === index) return handleThumbDragEnd();
 
-    // Enforce "Select only main image" rule:
-    // Only allow reordering if we are changing the main image (index 0).
-    // Block reordering of non-main images (e.g. swapping index 1 and 2).
-    if (draggingIndex !== 0 && index !== 0) {
-      handleThumbDragEnd();
-      return;
-    }
-
+    // Allow reordering all images freely
     const newImages = reorder(formData.images, draggingIndex, index);
     const newPreviews = reorder(formData.imagePreviews, draggingIndex, index);
     updateFormData({ ...formData, images: newImages, imagePreviews: newPreviews });
@@ -989,9 +982,17 @@ export default function ImageEditStep({
   return (
     <>
       <div className="bg-white rounded-lg w-full">
-        <h2 className="text-xl font-bold mb-4">Krok 2: Edytuj Swoje Zdjęcia</h2>
-        <p className="text-gray-600 mb-6">
-          Popraw zdjęcia auta przed wystawieniem go na sprzedaż. Wybierz zdjęcia, które chcesz edytować.
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-xl font-bold">Krok 3: Zdjęcia Pojazdu</h2>
+          {isUploading && (
+            <div className="flex items-center gap-2 text-blue-600 bg-blue-50 px-3 py-1 rounded-full text-xs font-bold">
+              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
+              <span>PRZESYŁANIE...</span>
+            </div>
+          )}
+        </div>
+        <p className="text-gray-500 text-sm mb-6">
+          Zarządzaj zdjęciami swojego auta. Pierwsze zdjęcie to zdjęcie główne.
         </p>
 
         {formData.images.length === 0 ? (
@@ -1034,9 +1035,9 @@ export default function ImageEditStep({
                   {formData.imagePreviews?.map((preview, index) => (
                     <div
                       key={index}
-                      className={`relative border rounded-lg overflow-hidden aspect-square w-full cursor-pointer group bg-gray-100 ${draggingIndex === index ? "opacity-50" : ""
-                        } ${activeImageIndex === index ? "ring-2 ring-blue-600 ring-offset-1" : "hover:shadow-md transition-shadow"}`}
-                      draggable={index === 0 ? true : false}
+                      className={`relative border-2 rounded-xl overflow-hidden aspect-square w-full cursor-pointer group transition-all ${draggingIndex === index ? "opacity-30" : ""
+                        } ${activeImageIndex === index ? "border-blue-500 scale-[0.98] shadow-sm" : "border-transparent hover:border-gray-200"}`}
+                      draggable={true}
                       onDragStart={handleThumbDragStart(index)}
                       onDragOver={handleThumbDragOver(index)}
                       onDragEnd={handleThumbDragEnd}
@@ -1261,29 +1262,19 @@ export default function ImageEditStep({
           </div>
         )}
 
-        <div className="flex justify-between mt-8">
+        <div className="flex justify-between items-center mt-12 pt-8 border-t border-gray-100">
           <button
             onClick={prevStep}
-            className="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition-colors"
+            className="text-gray-500 font-bold px-8 py-4 rounded-xl hover:bg-gray-50 transition-all"
           >
-            Cofnij
+            Wstecz
           </button>
           <button
             onClick={nextStep}
             disabled={isUploading}
-            className={`px-6 py-2 rounded-md transition-colors flex items-center gap-2 ${isUploading
-              ? "bg-blue-400 cursor-not-allowed opacity-80"
-              : "bg-blue-600 hover:bg-blue-700 text-white"
-              }`}
+            className="bg-blue-600 text-white font-bold px-12 py-4 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 disabled:bg-blue-400"
           >
-            {isUploading ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                Czekam na przesyłanie...
-              </>
-            ) : (
-              "Następne: Dane Auta"
-            )}
+            {isUploading ? "Przesyłanie..." : "Następny Krok"}
           </button>
         </div>
       </div>

@@ -540,7 +540,7 @@ export const deleteAdminCar = async (
   }
 };
 
-// Get car details from VIN using vindecoder.eu API
+// Get car details from VIN using CarsXE International VIN Decoder API
 export const getCarDetailsByVin = async (
   vin: string,
   getToken: () => Promise<string | null>
@@ -558,6 +558,8 @@ export const getCarDetailsByVin = async (
   trim?: string;
   horsepower?: string;
   engineDetails?: string;
+  color?: string;
+  country?: string;
 }> => {
   try {
     console.log(`Fetching car details for VIN: ${vin}`);

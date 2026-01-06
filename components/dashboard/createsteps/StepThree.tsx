@@ -39,169 +39,134 @@ export default function StepThree({ nextStep, prevStep, updateFormData, formData
   const isNewCar = formData.conditionType === "New";
 
   return (
-    <div className="bg-white rounded-lg">
-      <h2 className="text-xl font-bold mb-4">Krok 4: Stan Auta</h2>
-      <div className="grid grid-cols-2 gap-4">
+    <div className="bg-white rounded-lg w-full">
+      <div className="mb-8">
+        <h2 className="text-xl font-bold">Krok 5: Stan Auta</h2>
+        <p className="text-gray-500 text-sm mt-1">Określ stan wizualny i techniczny swojego pojazdu.</p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-8">
         {!isNewCar && (
           <>
-            {/* Condition Interior */}
             <div className="col-span-2 md:col-span-1">
-              <label className="block text-gray-700 mb-1">Stan Wnętrza</label>
+              <label className="block text-sm font-semibold mb-2 uppercase tracking-wider text-gray-700">Stan Wnętrza</label>
               <select
-                className="border p-3 w-full rounded h-12"
+                className="border-2 border-gray-100 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-transparent"
                 value={localData.interior}
                 onChange={(e) => setLocalData({ ...localData, interior: e.target.value })}
               >
                 <option value="">Wybierz Stan Wnętrza</option>
                 {CONDITION_OPTS.map((opt, index) => (
-                  <option key={index} value={opt.value}>
-                    {opt.label}
-                  </option>
+                  <option key={index} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
             </div>
 
-            {/* Condition Mechanical */}
             <div className="col-span-2 md:col-span-1">
-              <label className="block text-gray-700 mb-1">Stan Mechaniczny</label>
+              <label className="block text-sm font-semibold mb-2 uppercase tracking-wider text-gray-700">Stan Mechaniczny</label>
               <select
-                className="border p-3 w-full rounded h-12"
+                className="border-2 border-gray-100 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-transparent"
                 value={localData.mechanical}
                 onChange={(e) => setLocalData({ ...localData, mechanical: e.target.value })}
               >
                 <option value="">Wybierz Stan Mechaniczny</option>
                 {CONDITION_OPTS.map((opt, index) => (
-                  <option key={index} value={opt.value}>
-                    {opt.label}
-                  </option>
+                  <option key={index} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
             </div>
 
-            {/* Condition Paint & Body */}
             <div className="col-span-2 md:col-span-1">
-              <label className="block text-gray-700 mb-1">Stan Lakieru i Karoserii</label>
+              <label className="block text-sm font-semibold mb-2 uppercase tracking-wider text-gray-700">Stan Lakieru i Karoserii</label>
               <select
-                className="border p-3 w-full rounded h-12"
+                className="border-2 border-gray-100 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-transparent"
                 value={localData.paintandBody}
                 onChange={(e) => setLocalData({ ...localData, paintandBody: e.target.value })}
               >
                 <option value="">Wybierz Stan Lakieru i Karoserii</option>
                 {CONDITION_OPTS.map((opt, index) => (
-                  <option key={index} value={opt.value}>
-                    {opt.label}
-                  </option>
+                  <option key={index} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
             </div>
 
-            {/* Condition Frame & Underbody */}
             <div className="col-span-2 md:col-span-1">
-              <label className="block text-gray-700 mb-1">Stan Ramy i Podwozia</label>
+              <label className="block text-sm font-semibold mb-2 uppercase tracking-wider text-gray-700">Stan Ramy i Podwozia</label>
               <select
-                className="border p-3 w-full rounded h-12"
+                className="border-2 border-gray-100 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-transparent"
                 value={localData.frameandUnderbody}
-                onChange={(e) =>
-                  setLocalData({ ...localData, frameandUnderbody: e.target.value })
-                }
+                onChange={(e) => setLocalData({ ...localData, frameandUnderbody: e.target.value })}
               >
                 <option value="">Wybierz Stan Ramy i Podwozia</option>
                 {CONDITION_OPTS.map((opt, index) => (
-                  <option key={index} value={opt.value}>
-                    {opt.label}
-                  </option>
+                  <option key={index} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
             </div>
 
-            {/* Condition Overall */}
             <div className="col-span-2">
-              <label className="block text-gray-700 mb-1">Stan Ogólny</label>
+              <label className="block text-sm font-semibold mb-2 uppercase tracking-wider text-gray-700">Stan Ogólny</label>
               <select
-                className="border p-3 w-full rounded h-12"
+                className="border-2 border-gray-100 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-transparent"
                 value={localData.overall}
                 onChange={(e) => setLocalData({ ...localData, overall: e.target.value })}
               >
                 <option value="">Wybierz Stan Ogólny</option>
                 {CONDITION_OPTS.map((opt, index) => (
-                  <option key={index} value={opt.value}>
-                    {opt.label}
-                  </option>
+                  <option key={index} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
             </div>
           </>
         )}
-        {/* Warranty configuration for new cars */}
+
         {(isNewCar || localData.overall === "New") && (
-          <div className="col-span-2 mt-4">
-            <h3 className="text-lg font-semibold mb-2">Gwarancja (dla nowych aut)</h3>
-            <p className="text-sm text-gray-600 mb-3">
-              Dodaj jedną lub więcej opcji gwarancji. Każda opcja to dodatkowa cena
-              doliczana do podstawowej ceny samochodu.
+          <div className="col-span-2 mt-8 p-8 bg-blue-50/30 rounded-3xl border border-blue-100/50">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Gwarancja (dla nowych aut)</h3>
+            <p className="text-sm text-gray-500 mb-8 max-w-2xl">
+              Dodaj opcje gwarancji doliczane do ceny podstawowej.
             </p>
-            <div className="space-y-3">
+            <div className="space-y-6">
               {warranties.map((w, index) => (
-                <div
-                  key={index}
-                  className="grid grid-cols-1 md:grid-cols-4 gap-2 items-start border border-gray-200 rounded p-3"
-                >
-                  <div>
-                    <label className="block text-gray-700 mb-1">Lata</label>
+                <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-6 items-end bg-white border border-gray-100 rounded-2xl p-6 shadow-sm relative group">
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-widest">Lata</label>
                     <select
-                      className="border p-2 w-full rounded h-10"
+                      className="border-2 border-gray-50 p-3 w-full rounded-xl h-12 bg-gray-50/50 focus:border-blue-400 transition-all font-semibold"
                       value={w.years || ""}
                       onChange={(e) => {
-                        const years = e.target.value
-                          ? parseInt(e.target.value, 10)
-                          : undefined;
+                        const years = e.target.value ? parseInt(e.target.value, 10) : undefined;
                         const next = [...warranties];
                         next[index] = { ...next[index], years };
                         setWarranties(next);
                       }}
                     >
-                      <option value="">Wybierz liczbę lat</option>
+                      <option value="">Wybierz</option>
                       {Array.from({ length: 20 }, (_, i) => i + 1).map((y) => (
-                        <option key={y} value={y}>
-                          {y}
-                        </option>
+                        <option key={y} value={y}>{y} Lat{y > 1 ? 'a' : ''}</option>
                       ))}
                     </select>
                   </div>
-
-                  <div>
-                    <label className="block text-gray-700 mb-1">Przebieg (km)</label>
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-widest">Limit (KM)</label>
                     <input
                       type="number"
-                      min={0}
-                      className="border p-2 w-full rounded h-10"
+                      placeholder="Np. 100000"
+                      className="border-2 border-gray-50 p-3 w-full rounded-xl h-12 bg-gray-50/50 focus:border-blue-400 transition-all font-semibold"
                       value={w.mileageLimit || ""}
                       onChange={(e) => {
-                        const mileageLimit = e.target.value
-                          ? parseInt(e.target.value, 10)
-                          : undefined;
+                        const mileageLimit = e.target.value ? parseInt(e.target.value, 10) : undefined;
                         const next = [...warranties];
                         next[index] = { ...next[index], mileageLimit };
                         setWarranties(next);
                       }}
                     />
                   </div>
-                  <div className="flex justify-end">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const next = warranties.filter((_, i) => i !== index);
-                        setWarranties(next);
-                      }}
-                      className="bg-red-500 text-white px-3 py-2 rounded text-sm"
-                    >
-                      Usuń
-                    </button>
-                  </div>
-                  <div className="md:col-span-4 col-span-1">
-                    <label className="block text-gray-700 mb-1">Opis</label>
+                  <div className="md:col-span-4">
+                    <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-widest">Opis</label>
                     <textarea
-                      className="border p-2 w-full rounded min-h-[60px]"
+                      placeholder="Szczegóły gwarancji..."
+                      className="border-2 border-gray-50 p-4 w-full rounded-xl min-h-[100px] bg-gray-50/50 focus:border-blue-400 transition-all"
                       value={w.description || ""}
                       onChange={(e) => {
                         const description = e.target.value;
@@ -211,38 +176,40 @@ export default function StepThree({ nextStep, prevStep, updateFormData, formData
                       }}
                     />
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => setWarranties(warranties.filter((_, i) => i !== index))}
+                    className="absolute top-4 right-4 text-gray-300 hover:text-red-500 transition-colors"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                  </button>
                 </div>
               ))}
             </div>
             <button
               type="button"
-              onClick={() =>
-                setWarranties([
-                  ...warranties,
-                  { years: undefined, mileageLimit: undefined, description: "" },
-                ])
-              }
-              className="mt-3 bg-blue-500 text-white px-4 py-2 rounded"
+              onClick={() => setWarranties([...warranties, { years: undefined, mileageLimit: undefined, description: "" }])}
+              className="mt-6 w-full py-4 border-2 border-dashed border-blue-200 text-blue-600 rounded-2xl font-bold hover:bg-blue-50 transition-all flex items-center justify-center gap-2"
             >
-              Dodaj gwarancję
+              + Dodaj kolejną gwarancję
             </button>
           </div>
         )}
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex justify-between mt-6">
+      <div className="flex justify-between items-center mt-12 pt-8 border-t border-gray-100">
         <button
           onClick={prevStep}
-          className="bg-gray-500 text-white px-4 py-2 rounded"
+          className="text-gray-500 font-bold px-8 py-4 rounded-xl hover:bg-gray-50 transition-all"
         >
-          Back
+          Wstecz
         </button>
         <button
           onClick={handleNext}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="bg-blue-600 text-white font-bold px-12 py-4 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
         >
-          Next
+          Następny Krok
         </button>
       </div>
     </div>

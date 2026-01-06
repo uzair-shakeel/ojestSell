@@ -12,6 +12,7 @@ import StepOne from "../../../../components/dashboard/createsteps/StepOne";
 import StepPhotoEnhancer from "../../../../components/dashboard/createsteps/StepPhotoEnhancer";
 import { getUserById } from "../../../../services/userService";
 import ImageEditStep from "../../../../components/dashboard/createsteps/ImageEditStep";
+import VinLookupStep from "../../../../components/dashboard/createsteps/VinLookupStep";
 import { useMakesModels } from "../../../../hooks/useMakesModels";
 
 export default function MultiStepForm() {
@@ -76,7 +77,8 @@ export default function MultiStepForm() {
       coordinates: [51.5074, -0.1278], // Default to London
     },
     createdBy: "",
-    // Optional warranties for new cars
+    // Track auto-filled fields from VIN
+    vinFields: [] as string[],
     warranties: [] as any[],
   });
 
@@ -379,15 +381,22 @@ export default function MultiStepForm() {
           className="relative"
         >
           {step === 1 && (
+            <VinLookupStep
+              nextStep={nextStep}
+              updateFormData={updateFormData}
+              formData={formData}
+            />
+          )}
+          {step === 2 && (
             <StepOne
               nextStep={nextStep}
+              prevStep={prevStep}
               updateFormData={updateFormData}
               formData={formData}
               makesModelsData={makesModelsData}
             />
           )}
-          {step === 2 && (
-            // <StepPhotoEnhancer
+          {step === 3 && (
             <ImageEditStep
               nextStep={nextStep}
               prevStep={prevStep}
@@ -395,7 +404,7 @@ export default function MultiStepForm() {
               formData={formData}
             />
           )}
-          {step === 3 && (
+          {step === 4 && (
             <StepTwo
               nextStep={nextStep}
               prevStep={prevStep}
@@ -404,7 +413,7 @@ export default function MultiStepForm() {
               makesModelsData={makesModelsData}
             />
           )}
-          {step === 4 && (
+          {step === 5 && (
             <StepThree
               nextStep={nextStep}
               prevStep={prevStep}
@@ -412,7 +421,7 @@ export default function MultiStepForm() {
               formData={formData}
             />
           )}
-          {step === 5 && (
+          {step === 6 && (
             <StepFour
               nextStep={nextStep}
               prevStep={prevStep}
@@ -420,7 +429,7 @@ export default function MultiStepForm() {
               formData={formData}
             />
           )}
-          {step === 6 && (
+          {step === 7 && (
             <StepFive
               prevStep={prevStep}
               handleSubmit={handleSubmit}

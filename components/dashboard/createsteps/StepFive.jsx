@@ -66,7 +66,7 @@ export default function StepFive({
     "Petrol": "Benzyna",
     "Diesel": "Diesel",
     "Electric": "Elektryczny",
-    "Hybrid": "Hybrydowy",
+    "Hybrid": "Hybryda",
     "Plug-in Hybrid": "Hybryda Plug-in",
     "Hydrogen": "Wodór",
     "LPG": "LPG",
@@ -114,235 +114,151 @@ export default function StepFive({
     return map[value] || value;
   };
 
+  const SummaryItem = ({ label, value, fullWidth = false }) => (
+    <div className={`${fullWidth ? 'col-span-2' : 'col-span-1'} space-y-1`}>
+      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</p>
+      <p className="font-bold text-gray-900 leading-tight">{value || "N/A"}</p>
+    </div>
+  );
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg transition-colors duration-300">
       <h2 className="text-xl font-bold mb-6 text-gray-900 dark:text-white transition-colors duration-300">
-        Krok 5: Przejrzyj i Potwierdź
+        Krok 7: Przejrzyj i Potwierdź
       </h2>
 
-      {/* Grid Layout */}
-      <div className="sm:grid sm:grid-cols-2 space-y-5 gap-y-5 text-gray-700 dark:text-gray-300 transition-colors duration-300">
-        {/* Title & Description */}
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Tytuł</p>
-          <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {formData.title}
-          </p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Opis</p>
-          <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {formData.description}
-          </p>
-        </div>
-
-        {/* Car Details */}
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Marka</p>
-          <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {formData.make}
-          </p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Model</p>
-          <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {formData.model}
-          </p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Wersja</p>
-          <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {formData.trim || "N/A"}
-          </p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Typ</p>
-          <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {formData.type}
-          </p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Rok</p>
-          <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {formData.year || "N/A"}
-          </p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Przebieg</p>
-          <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {formData.mileage ? `${formData.mileage} km` : "N/A"}
-          </p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Napęd</p>
-          <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {translateValue(formData.drivetrain, drivetrainMap)}
-          </p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Skrzynia Biegów</p>
-          <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {translateValue(formData.transmission, transmissionMap)}
-          </p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Paliwo</p>
-          <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {translateValue(formData.fuel, fuelMap)}
-          </p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Silnik</p>
-          <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {formData.engine ? `${formData.engine}L` : "N/A"}
-          </p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Konie Mechaniczne</p>
-          <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {formData.horsepower ? `${formData.horsepower} HP` : "N/A"}
-          </p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Historia Bezwypadkowość</p>
-          <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {translateValue(formData.accidentHistory, yesNoMap)}
-          </p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Historia Serwisowa</p>
-          <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {translateValue(formData.serviceHistory, yesNoMap)}
-          </p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">VIN</p>
-          <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {formData.vin || "N/A"}
-          </p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Kraj pochodzenia</p>
-          <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {formData.country || "N/A"}
-          </p>
-        </div>
-
-        {/* Car Condition */}
-        <div className="col-span-2 text-lg font-bold mt-4 text-gray-900 dark:text-white transition-colors duration-300">
-          Stan
-        </div>
-        {Object.entries(formData.condition).map(([key, value], index) => (
-          <div key={index} className="grid grid-cols-2 sm:grid-cols-1 w-full">
-            <p className="text-xs uppercase">
-              {conditionKeyMap[key] || key.replace(/([A-Z])/g, " $1").trim()}
-            </p>
-            <p className="font-medium text-black dark:text-white transition-colors duration-300">
-              {translateValue(value, conditionValueMap)}
-            </p>
+      <div className="space-y-8">
+        {/* Basic Info Section */}
+        <div className="bg-gray-50/50 rounded-2xl border border-gray-100 overflow-hidden">
+          <div className="px-6 py-4 bg-gray-100/50 border-b border-gray-100">
+            <h3 className="font-bold text-gray-900 uppercase tracking-widest text-xs">Informacje Podstawowe</h3>
           </div>
-        ))}
-
-        {/* Financial Information */}
-        <div className="col-span-2 text-lg font-bold mt-4 text-gray-900 dark:text-white transition-colors duration-300">
-          Informacje Finansowe
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Opcje Sprzedaży</p>
-          <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {translateValue(formData.financialInfo.sellOptions, sellOptionsMap)}
-          </p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Sposób Sprzedaży</p>
-          <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {translateValue(formData.financialInfo.invoiceOptions, invoiceOptionsMap)}
-          </p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Typ Sprzedawcy</p>
-          <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {translateValue(formData.financialInfo.sellerType, sellerTypeMap)}
-          </p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Cena</p>
-          <p className="font-medium text-black dark:text-white transition-colors duration-300">
-            {formData.financialInfo.invoiceOptions.includes("Invoice VAT")
-              ? `Netto: ${formData.financialInfo.priceNetto} €, Z VAT: ${formData.financialInfo.priceWithVat || "Obliczone Automatycznie"
-              } €`
-              : `${formData.financialInfo.priceNetto} €`}
-          </p>
-        </div>
-
-        {/* Location Information */}
-        <div className="col-span-2 text-lg font-bold mt-4 text-gray-900 dark:text-white transition-colors duration-300">
-          Lokalizacja
-        </div>
-        {locationDetails.city && (
-          <div className="col-span-2 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-lg mb-3 flex items-center transition-colors duration-300">
-            <FaMapMarkerAlt className="text-blue-500 dark:text-blue-400 mr-2 flex-shrink-0 transition-colors duration-300" />
-            <div>
-              <span className="font-medium text-gray-900 dark:text-white transition-colors duration-300">
-                Lokalizacja Samochodu:
-              </span>{" "}
-              <span className="text-gray-900 dark:text-white transition-colors duration-300">
-                {locationDetails.city}
-                {locationDetails.state ? `, ${locationDetails.state}` : ""}
-              </span>
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+              <SummaryItem label="Tytuł" value={formData.title} fullWidth />
+              <SummaryItem label="Marka" value={formData.make} />
+              <SummaryItem label="Model" value={formData.model} />
+              <SummaryItem label="Wersja" value={formData.trim || "Brak"} />
+              <SummaryItem label="Typ" value={formData.type} />
+              <SummaryItem label="Rok" value={formData.year} />
+              <SummaryItem label="Przebieg" value={formData.mileage ? `${formData.mileage} km` : "N/A"} />
+              <SummaryItem label="Skrzynia" value={translateValue(formData.transmission, transmissionMap)} />
+              <SummaryItem label="Paliwo" value={translateValue(formData.fuel, fuelMap)} />
+              <SummaryItem label="Silnik" value={formData.engine ? `${formData.engine} cm3` : "N/A"} />
+              <SummaryItem label="Moc" value={formData.horsepower ? `${formData.horsepower} KM` : "N/A"} />
+              <SummaryItem label="Bezwypadkowy" value={translateValue(formData.accidentHistory, yesNoMap)} />
+              <SummaryItem label="Serwisowany" value={translateValue(formData.serviceHistory, yesNoMap)} />
+              <SummaryItem label="VIN" value={formData.vin || "Brak"} />
+              <SummaryItem label="Kraj" value={formData.country || "Polska"} />
             </div>
           </div>
-        )}
-        <div className="col-span-2">
-          {isLoaded && formData.location && (
-            <div className="h-64 w-full rounded-lg overflow-hidden border border-gray-200 shadow-md">
-              <GoogleMap
-                zoom={12}
-                center={{
-                  lat: formData.location.coordinates[1],
-                  lng: formData.location.coordinates[0],
-                }}
-                mapContainerClassName="w-full h-full"
-                options={{
-                  fullscreenControl: true,
-                  streetViewControl: true,
-                  mapTypeControl: false,
-                  zoomControl: true,
-                }}
-              >
-                <Marker
-                  position={{
+        </div>
+
+        {/* Condition Section */}
+        <div className="bg-gray-50/50 rounded-2xl border border-gray-100 overflow-hidden">
+          <div className="px-6 py-4 bg-gray-100/50 border-b border-gray-100">
+            <h3 className="font-bold text-gray-900 uppercase tracking-widest text-xs">Stan Pojazdu</h3>
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+              {Object.entries(formData.condition).map(([key, value]) => (
+                <SummaryItem
+                  key={key}
+                  label={conditionKeyMap[key] || key}
+                  value={translateValue(value, conditionValueMap)}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Financial Info Section */}
+        <div className="bg-gray-50/50 rounded-2xl border border-gray-100 overflow-hidden">
+          <div className="px-6 py-4 bg-gray-100/50 border-b border-gray-100">
+            <h3 className="font-bold text-gray-900 uppercase tracking-widest text-xs">Finanse i Sprzedaż</h3>
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+              <SummaryItem label="Opcje Sprzedaży" value={translateValue(formData.financialInfo.sellOptions, sellOptionsMap)} />
+              <SummaryItem label="Dokumentacja" value={translateValue(formData.financialInfo.invoiceOptions, invoiceOptionsMap)} />
+              <SummaryItem label="Typ Sprzedawcy" value={translateValue(formData.financialInfo.sellerType, sellerTypeMap)} />
+              <div className="col-span-1">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Cena</p>
+                <p className="text-2xl font-black text-blue-600">
+                  {formData.financialInfo.invoiceOptions.includes("Invoice VAT")
+                    ? `${formData.financialInfo.priceNetto} € (Netto)`
+                    : `${formData.financialInfo.priceNetto} €`}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Location Section */}
+        <div className="bg-gray-50/50 rounded-2xl border border-gray-100 overflow-hidden">
+          <div className="px-6 py-4 bg-gray-100/50 border-b border-gray-100">
+            <h3 className="font-bold text-gray-900 uppercase tracking-widest text-xs">Lokalizacja</h3>
+          </div>
+          <div className="p-6">
+            {locationDetails.city && (
+              <div className="flex items-center gap-3 mb-6 p-4 bg-white border border-gray-100 rounded-xl">
+                <div className="bg-blue-600 p-2 rounded-lg">
+                  <FaMapMarkerAlt className="text-white" size={16} />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-gray-900 leading-none">{locationDetails.city}</p>
+                  <p className="text-xs text-gray-500 mt-1">{locationDetails.state || "Polska"}</p>
+                </div>
+              </div>
+            )}
+            <div className="h-64 w-full rounded-xl overflow-hidden border border-gray-100 shadow-sm shadow-gray-50">
+              {isLoaded && formData.location && (
+                <GoogleMap
+                  zoom={12}
+                  center={{
                     lat: formData.location.coordinates[1],
                     lng: formData.location.coordinates[0],
                   }}
-                />
-              </GoogleMap>
+                  mapContainerClassName="w-full h-full"
+                  options={{
+                    disableDefaultUI: true,
+                    zoomControl: true,
+                  }}
+                >
+                  <Marker
+                    position={{
+                      lat: formData.location.coordinates[1],
+                      lng: formData.location.coordinates[0],
+                    }}
+                  />
+                </GoogleMap>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex justify-between mt-6 relative">
+      <div className="flex justify-between items-center mt-12 pt-8 border-t border-gray-100 relative">
         <button
           onClick={prevStep}
-          className="bg-gray-500 text-white px-4 py-2 rounded"
           disabled={loading}
+          className="text-gray-500 font-bold px-8 py-4 rounded-xl hover:bg-gray-50 transition-all disabled:opacity-50"
         >
-          Cofnij
+          Wstecz
         </button>
         <button
           onClick={handleSubmit}
-          className={`bg-green-500 text-white px-4 py-2 rounded flex items-center ${loading ? 'opacity-75 cursor-not-allowed' : ''}`}
           disabled={loading}
+          className="bg-green-600 text-white font-bold px-12 py-4 rounded-xl hover:bg-green-700 transition-all shadow-lg shadow-green-200 flex items-center gap-2 disabled:bg-green-400"
         >
           {loading ? (
             <>
-              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></span>
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
               Zapisywanie...
             </>
           ) : (
-            "Zatwierdź"
+            "Zatwierdź i Wyślij"
           )}
         </button>
       </div>
