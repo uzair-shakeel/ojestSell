@@ -688,191 +688,230 @@ const MessagesPage = () => {
   const chatCount = chats.length;
 
   return (
-    <div className="flex h-[calc(100vh-70px)] bg-white font-sans overflow-hidden relative">
-      {/* Sidebar */}
+    <div className="flex h-[calc(100vh-70px)] bg-gray-50 font-sans overflow-hidden relative">
+      {/* Sidebar - Floating Card Style */}
       <div
-        className={`absolute md:relative inset-y-0 left-0 z-20 bg-white h-full min-h-0 w-full sm:w-[320px] md:w-[320px] border-r border-gray-300 flex flex-col transform transition-transform duration-300 ${showSidebar ? "translate-x-0" : "-translate-x-full"
-          } md:translate-x-0`}
+        className={`absolute md:relative inset-y-0 left-0 z-20 h-full w-full sm:w-[360px] md:w-[380px] flex flex-col transform transition-transform duration-300 ${showSidebar ? "translate-x-0" : "-translate-x-full"
+          } md:translate-x-0 p-4 md:pr-0`}
       >
-        {/* Sidebar Header */}
-        <div className="p-4 border-b h-[77px] border-gray-300 flex justify-between items-center shrink-0">
-          <h2 className="font-semibold text-lg">Wiadomości</h2>
-          {totalUnread > 0 && (
-            <div className="bg-red-500 text-white rounded-full h-6 w-6 flex items-center justify-center text-xs">
-              {totalUnread}
+        <div className="bg-white rounded-3xl shadow-xl h-full flex flex-col border border-gray-100 overflow-hidden">
+          {/* Sidebar Header */}
+          <div className="p-6 border-b border-gray-100 flex justify-between items-center shrink-0 bg-white">
+            <div>
+              <h2 className="font-extrabold text-2xl text-gray-900 tracking-tight">Wiadomości</h2>
+              <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">Twoje konwersacje</p>
             </div>
-          )}
-        </div>
-
-        {/* Chat List - Scrollable */}
-        <div className="flex-1 overflow-y-auto px-4 space-y-2 py-4">
-          {chats.length > 0 ? (
-            chats.map((chat) => (
-              <div
-                key={chat._id}
-                className={`flex items-center gap-2 p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg cursor-pointer ${selectedChat && selectedChat._id === chat._id
-                  ? "bg-blue-50 dark:bg-gray-900"
-                  : ""
-                  }`}
-                onClick={() => handleSelectChat(chat)}
-              >
-                <Avatar
-                  src={getParticipantImage(chat)}
-                  alt={getParticipantName(chat)}
-                  size={48}
-                />
-                <div className="flex-grow min-w-0">
-                  <div className="flex justify-between items-center">
-                    <div className={`${chat.unreadCount > 0 ? "font-semibold" : "font-medium"} text-sm truncate`}>
-                      {getParticipantName(chat)}
-                    </div>
-                    {chat.unreadCount > 0 && (
-                      <div className="bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs ml-2">
-                        {chat.unreadCount}
-                      </div>
-                    )}
-                  </div>
-                  <div className={`truncate w-full ${chat.unreadCount > 0 ? "text-gray-800 font-medium" : "text-xs text-gray-500"}`}>
-                    {chat.lastMessage ? (
-                      <>
-                        <span className="font-medium">
-                          {String(chat.lastMessage.sender) === String(myUserId) ? "Ty: " : ""}
-                        </span>
-                        {chat.lastMessage.content || "No message content"}
-                      </>
-                    ) : (
-                      "Brak Wiadomości"
-                    )}
-                  </div>
-                  {chat.lastMessage && (
-                    <div className="text-xs text-gray-400">
-                      {fmtDateTime(chat.lastMessage.timestamp)}
-                    </div>
-                  )}
-                </div>
+            {totalUnread > 0 && (
+              <div className="bg-red-500 text-white rounded-xl px-3 py-1 text-xs font-bold shadow-red-200 shadow-md">
+                {totalUnread} nowych
               </div>
-            ))
-          ) : (
-            <p className="text-center text-gray-500 text-sm mt-4">
-              Brak Wiadomości
-            </p>
-          )}
+            )}
+          </div>
+
+          {/* Chat List - Scrollable */}
+          <div className="flex-1 overflow-y-auto px-4 space-y-3 py-4 custom-scrollbar">
+            {chats.length > 0 ? (
+              chats.map((chat) => (
+                <div
+                  key={chat._id}
+                  className={`flex items-center gap-4 p-4 rounded-2xl cursor-pointer transition-all border-2 ${selectedChat && selectedChat._id === chat._id
+                    ? "bg-blue-50 border-blue-500 shadow-sm"
+                    : "bg-white border-transparent hover:bg-gray-50 hover:border-gray-100"
+                    }`}
+                  onClick={() => handleSelectChat(chat)}
+                >
+                  <div className="relative">
+                    <Avatar
+                      src={getParticipantImage(chat)}
+                      alt={getParticipantName(chat)}
+                      size={56}
+                      imgClassName="rounded-2xl"
+                    />
+                    {chat.unreadCount > 0 && <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white"></span>}
+                  </div>
+
+                  <div className="flex-grow min-w-0">
+                    <div className="flex justify-between items-center mb-1">
+                      <div className={`text-sm truncate ${chat.unreadCount > 0 ? "font-bold text-gray-900" : "font-semibold text-gray-700"}`}>
+                        {getParticipantName(chat)}
+                      </div>
+                      {chat.lastMessage && (
+                        <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded-lg">
+                          {fmtTime(chat.lastMessage.timestamp)}
+                        </span>
+                      )}
+                    </div>
+                    <div className={`truncate w-full text-sm ${chat.unreadCount > 0 ? "text-gray-900 font-medium" : "text-gray-500"}`}>
+                      {chat.lastMessage ? (
+                        <>
+                          <span className="font-semibold text-gray-400 mr-1">
+                            {String(chat.lastMessage.sender) === String(myUserId) ? "Ty:" : ""}
+                          </span>
+                          {chat.lastMessage.content || "Empty message"}
+                        </>
+                      ) : (
+                        <span className="italic text-gray-400">Rozpocznij konwersację</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
+                  <FaEnvelope size={24} />
+                </div>
+                <p className="text-gray-500 font-medium text-sm">Brak wiadomości</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 grid grid-rows-[auto_1fr_auto] h-full min-h-0 overflow-hidden bg-white">
-        {/* Chat Header - Fixed */}
-        <div className="border-b border-gray-300 p-4 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
-            {/* Mobile: sidebar toggle */}
-            <button
-              type="button"
-              className="md:hidden inline-flex items-center justify-center h-9 w-9 rounded-full border border-gray-300 text-gray-700 mr-1"
-              onClick={() => setShowSidebar((prev) => !prev)}
-            >
-              <FaBars className="h-4 w-4" />
-            </button>
-            <div>
-              <div className="font-medium text-lg">
-                {selectedChat
-                  ? getParticipantName(selectedChat)
-                  : "Select a chat"}
-              </div>
-              {selectedChat && selectedChat.carId && (
-                <div className="text-xs text-gray-500">
-                  Auto: {selectedChat.carId.title || "Brak Auta"}
+      <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden relative p-4 pl-0 md:pl-4">
+        <div className="bg-white rounded-3xl shadow-xl h-full flex flex-col border border-gray-100 overflow-hidden relative">
+          {/* Chat Header */}
+          <div className="p-4 md:p-6 border-b border-gray-100 flex items-center justify-between shrink-0 bg-white z-10">
+            <div className="flex items-center gap-4">
+              {/* Mobile: sidebar toggle */}
+              <button
+                type="button"
+                className="md:hidden inline-flex items-center justify-center h-10 w-10 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+                onClick={() => setShowSidebar((prev) => !prev)}
+              >
+                <FaBars className="h-4 w-4" />
+              </button>
+              {selectedChat ? (
+                <div className="flex items-center gap-4">
+                  <Avatar
+                    src={getParticipantImage(selectedChat)}
+                    alt={getParticipantName(selectedChat)}
+                    size={48}
+                    imgClassName="rounded-xl shadow-sm border border-gray-100"
+                  />
+                  <div>
+                    <div className="font-bold text-lg text-gray-900">
+                      {getParticipantName(selectedChat)}
+                    </div>
+                    {selectedChat.carId && (
+                      <div className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg inline-block mt-1">
+                        AUTO: {selectedChat.carId.title || "Nieznane"}
+                      </div>
+                    )}
+                  </div>
                 </div>
+              ) : (
+                <div className="font-bold text-lg text-gray-400">Wybierz konwersację</div>
               )}
             </div>
           </div>
-        </div>
 
-        {/* Messages Container - Scrollable */}
-        <div className="min-h-0 overflow-y-auto overscroll-contain px-6 py-3 space-y-4 bg-white">
-          {selectedChat ? (
-            messages.length > 0 ? (
-              <>
-                {messages.map((message) => (
-                  <div
-                    key={message._id}
-                    className={`flex ${String(message.sender) === String(myUserId) || String(message.senderId) === String(myUserId)
-                      ? "justify-end"
-                      : "justify-start"
-                      }`}
-                  >
-                    <div
-                      className={`max-w-[60%] px-4 py-2 rounded-lg text-sm whitespace-pre-line ${String(message.sender) === String(myUserId) ||
-                        String(message.senderId) === String(myUserId)
-                        ? "bg-blue-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200"
-                        : "bg-white border border-gray-300 dark:border-gray-600"
-                        } ${message.pending ? "opacity-70" : "opacity-100"}`}
-                    >
-                      {String(message.sender) !== String(myUserId) &&
-                        String(message.senderId) !== String(myUserId) && (
-                          <div className="font-medium text-xs text-gray-600 mb-1">
-                            {message.senderName || "Unknown"}
-                          </div>
-                        )}
-                      {message.text || message.content}
-                      <div className="text-right text-[10px] text-gray-500 mt-1">
-                        {fmtTime(message.createdAt)}
-                        {(String(message.sender) === String(myUserId) ||
-                          String(message.senderId) === String(myUserId)) && (
-                            <span className="ml-2">
-                              {message.pending ? (
-                                <span className="text-gray-400 italic">Wysyłanie...</span>
-                              ) : message.seenBy && message.seenBy.length > 1 ? (
-                                "Przeczytane"
-                              ) : (
-                                "Wysłane"
+          {/* Messages Container */}
+          <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 bg-gray-50/30 custom-scrollbar">
+            {selectedChat ? (
+              messages.length > 0 ? (
+                <>
+                  {messages.map((message, index) => {
+                    const isMe = String(message.sender) === String(myUserId) || String(message.senderId) === String(myUserId);
+                    const isLast = index === messages.length - 1;
+
+                    return (
+                      <div
+                        key={message._id || message.tempId}
+                        className={`flex ${isMe ? "justify-end" : "justify-start"} group`}
+                      >
+                        <div className={`max-w-[75%] md:max-w-[60%] flex gap-3 ${isMe ? "flex-row-reverse" : "flex-row"}`}>
+                          {/* Optional small avatar next to message bubbles */}
+                          {/* <Avatar src={isMe ? user?.image : getParticipantImage(selectedChat)} size={32} imgClassName="rounded-lg self-end" /> */}
+
+                          <div
+                            className={`px-6 py-4 rounded-2xl shadow-sm text-sm whitespace-pre-line relative ${isMe
+                              ? "bg-blue-600 text-white rounded-br-none"
+                              : "bg-white text-gray-800 border border-gray-100 rounded-bl-none"
+                              } ${message.pending ? "opacity-80" : "opacity-100"}`}
+                          >
+                            {String(message.sender) !== String(myUserId) &&
+                              String(message.senderId) !== String(myUserId) && (
+                                <div className="font-bold text-[10px] uppercase tracking-wider text-gray-400 mb-2">
+                                  {message.senderName || "Użytkownik"}
+                                </div>
                               )}
-                            </span>
-                          )}
+                            {message.text || message.content}
+
+                            <div className={`text-right text-[10px] font-bold mt-2 ${isMe ? 'text-blue-200' : 'text-gray-300'}`}>
+                              {fmtTime(message.createdAt)}
+                              {isMe && (
+                                <span className="ml-2 inline-block">
+                                  {message.pending ? (
+                                    <span className="animate-pulse">●</span>
+                                  ) : message.seenBy && message.seenBy.length > 1 ? (
+                                    "✓✓"
+                                  ) : (
+                                    "✓"
+                                  )}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                  {typing && (
+                    <div className="flex justify-start">
+                      <div className="bg-white border border-gray-100 px-6 py-4 rounded-2xl rounded-bl-none shadow-sm flex items-center gap-2">
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                       </div>
                     </div>
-                  </div>
-                ))}
-                {typing && (
-                  <div className="text-sm text-gray-500 italic">
-                    {getParticipantName(selectedChat)} pisze...
-                  </div>
-                )}
-                <div ref={messagesEndRef} className="h-0" />
-              </>
+                  )}
+                  <div ref={messagesEndRef} className="h-0" />
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-full text-gray-400 opacity-60">
+                  <FaEnvelope size={48} className="mb-4" />
+                  <p className="font-bold">To początek Waszej rozmowy</p>
+                </div>
+              )
             ) : (
-              <p className="text-center text-gray-500">Brak Wiadomości</p>
-            )
-          ) : (
-            <p className="text-center text-gray-500">
-              Wybierz czat aby rozpocząć rozmowę
-            </p>
+              <div className="flex flex-col items-center justify-center h-full text-gray-300">
+                <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                  <FaPaperPlane size={32} className="ml-2" />
+                </div>
+                <p className="font-bold text-lg text-gray-400">Wybierz czat aby rozpocząć rozmowę</p>
+              </div>
+            )}
+          </div>
+
+          {/* Message Input - Floating */}
+          {selectedChat && (
+            <div className="p-4 md:p-6 bg-white border-t border-gray-100 z-10">
+              <div className="flex items-center gap-3 bg-gray-50 border-2 border-gray-100 rounded-2xl p-2 pr-2 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-50/50 transition-all">
+                <input
+                  type="text"
+                  value={newMessage}
+                  onChange={handleTyping}
+                  className="flex-1 bg-transparent border-none focus:ring-0 p-3 pl-4 text-sm font-medium text-gray-800 placeholder-gray-400"
+                  placeholder="Napisz wiadomość..."
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleSendMessage();
+                    }
+                  }}
+                />
+                <button
+                  onClick={handleSendMessage}
+                  disabled={!newMessage.trim()}
+                  className="p-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:bg-gray-200 disabled:text-gray-400 transition-all shadow-lg shadow-blue-200 hover:scale-105 active:scale-95 flex items-center justify-center"
+                >
+                  <FaPaperPlane size={14} className={newMessage.trim() ? "translate-x-0.5 translate-y-0.5" : ""} />
+                </button>
+              </div>
+            </div>
           )}
         </div>
-
-        {/* Message Input - Fixed at bottom */}
-        {selectedChat && (
-          <div className="px-3 py-2 flex items-center gap-2 bg-white">
-            <input
-              type="text"
-              value={newMessage}
-              onChange={handleTyping}
-              className="flex-1 p-2 border border-gray-300 rounded-full px-4 text-sm"
-              placeholder="Wpisz wiadomość..."
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleSendMessage();
-                }
-              }}
-            />
-            <button
-              onClick={handleSendMessage}
-              className="p-2 bg-blue-500 text-white rounded-full"
-            >
-              <FaPaperPlane size={14} />
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );

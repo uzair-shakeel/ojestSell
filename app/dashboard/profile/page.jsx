@@ -71,11 +71,10 @@ const ProfileComponent = () => {
           <div
             key={brand.name}
             className={`
-              flex flex-col items-center p-2 rounded-lg cursor-pointer transition-all duration-300
-              ${
-                selectedBrands.includes(brand.name)
-                  ? "bg-blue-100 border-2 border-blue-500 dark:bg-gray-900"
-                  : "bg-gray-100 border-2 border-transparent hover:bg-gray-200 dark:hover:bg-gray-700"
+              flex flex-col items-center p-4 rounded-2xl cursor-pointer transition-all duration-300
+              ${selectedBrands.includes(brand.name)
+                ? "bg-blue-50 border-2 border-blue-500 shadow-md ring-2 ring-blue-100"
+                : "bg-white border-2 border-gray-100 hover:border-gray-300 hover:shadow-sm"
               }
             `}
             onClick={() => onBrandChange(brand.name)}
@@ -83,12 +82,12 @@ const ProfileComponent = () => {
             <img
               src={brand.logo}
               alt={brand.name}
-              width={50}
-              height={50}
+              width={60}
+              height={60}
               loading="lazy"
-              className="mb-2 object-contain"
+              className="mb-3 object-contain h-12 w-12"
             />
-            <span className="text-xs font-medium">{brand.name}</span>
+            <span className={`text-xs font-bold ${selectedBrands.includes(brand.name) ? "text-blue-700" : "text-gray-500"}`}>{brand.name}</span>
           </div>
         ))}
       </div>
@@ -166,9 +165,9 @@ const ProfileComponent = () => {
           sellerType: userData.sellerType || "private",
           phoneNumbers: userData.phoneNumbers?.length
             ? userData.phoneNumbers.map((phone) => ({
-                phone,
-                countryCode: phone.startsWith("+48") ? "pl" : "us",
-              }))
+              phone,
+              countryCode: phone.startsWith("+48") ? "pl" : "us",
+            }))
             : [{ phone: "", countryCode: "pl" }],
           location: {
             type: "Point",
@@ -406,358 +405,339 @@ const ProfileComponent = () => {
   if (!user) return <div>Loading...</div>;
 
   return (
-    <div className="p-6">
-    
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.2 }}
-    >
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-3xl font-bold">Profile</h1>
+    <div className="p-8 max-w-7xl mx-auto">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center justify-between mb-8"
+      >
+        <div>
+          <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">Twój Profil</h1>
+          <p className="text-gray-500 mt-2 font-medium">Zarządzaj swoimi danymi osobowymi i ustawieniami konta.</p>
+        </div>
         <button
           type="button"
           onClick={() => setIsCpOpen(true)}
-          className="bg-gray-800 text-white rounded-md px-4 py-2 hover:bg-gray-700"
+          className="bg-white text-gray-700 font-bold border-2 border-gray-100 px-6 py-3 rounded-xl hover:bg-gray-50 hover:border-gray-200 transition-all shadow-sm"
         >
           Zmień Hasło
         </button>
-      </div>
-      <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
-        {/* Left part */}
+      </motion.div>
+
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        {/* Left Column: Personal Info */}
         <motion.div
-          initial={{ x: -50 }}
-          animate={{ x: 0 }}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4 }}
-          className="col-span-2 xl:col-span-1"
+          className="xl:col-span-2 space-y-8"
         >
-          {/* Profile Picture */}
-          <div className="mb-6">
-            <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-              Zdjęcie Profilowe
-            </label>
-            <div className="flex flex-col md:flex-row gap-4 items-center space-x-4">
-              <Avatar
-                src={formatImageUrl(user?.image || user?.profilePicture)}
-                alt="Profil"
-                size={80}
-                imgClassName="border border-gray-300"
-              />
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="block text-base text-gray-500 file:mr-4 file:py-2 file:px-7 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gray-700 file:text-white hover:file:bg-gray-600 file:duration-300 border border-gray-300 p-1 w-auto rounded-md"
+          {/* Section: Profile Photo */}
+          <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group">
+            <h2 className="text-lg font-bold text-gray-900 uppercase tracking-widest mb-6">Zdjęcie Profilowe</h2>
+            <div className="flex items-center gap-8">
+              <div className="relative">
+                <Avatar
+                  src={formatImageUrl(user?.image || user?.profilePicture)}
+                  alt="Profil"
+                  size={100}
+                  imgClassName="border-4 border-white shadow-xl rounded-full object-cover"
+                />
+                <div className="absolute inset-0 rounded-full border-2 border-blue-500/20 pointer-events-none"></div>
+              </div>
+              <div>
+                <label className="bg-blue-600 text-white font-bold px-6 py-3 rounded-xl cursor-pointer hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 inline-block">
+                  Wgraj nowe zdjęcie
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                </label>
+                <p className="text-xs text-gray-400 mt-3 font-medium">
+                  Zalecany format: JPG, PNG lub WebP. Max 5MB.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Section: Personal Details */}
+          <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+            <h2 className="text-lg font-bold text-gray-900 uppercase tracking-widest mb-6">Dane Osobowe</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Imię</label>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  className="w-full border-2 border-gray-100 p-4 rounded-xl focus:border-blue-500 focus:ring-blue-500 transition-all font-semibold text-gray-900 bg-gray-50/50 focus:bg-white"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Nazwisko</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  className="w-full border-2 border-gray-100 p-4 rounded-xl focus:border-blue-500 focus:ring-blue-500 transition-all font-semibold text-gray-900 bg-gray-50/50 focus:bg-white"
+                  required
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">O Sobie</label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                className="w-full border-2 border-gray-100 p-4 rounded-xl focus:border-blue-500 focus:ring-blue-500 transition-all text-gray-900 bg-gray-50/50 focus:bg-white min-h-[120px]"
+                placeholder="Napisz kilka słów o sobie..."
               />
             </div>
           </div>
 
-          {/* First Name and Last Name */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div>
-              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-                Imię
-              </label>
-              <input
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleInputChange}
-                className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
-                required
+          {/* Section: Location */}
+          <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+            <h2 className="text-lg font-bold text-gray-900 uppercase tracking-widest mb-6">Lokalizacja</h2>
+            <div className="rounded-2xl overflow-hidden border-2 border-gray-100">
+              <CustomMap
+                location={formData.location}
+                setLocation={(newLocation) => {
+                  setFormData({ ...formData, location: newLocation });
+                }}
               />
             </div>
-            <div>
-              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-                Nazwisko
-              </label>
-              <input
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleInputChange}
-                className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
-                required
-              />
-            </div>
-          </div>
-
-          {/* Description */}
-          <div className="mb-6">
-            <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-              Opis
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
-              rows="4"
-            />
           </div>
         </motion.div>
 
-        {/* Right part */}
+        {/* Right Column: Contact & Business */}
         <motion.div
-          initial={{ y: -50 }}
-          animate={{ y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="col-span-2 xl:col-span-1 bg-gray-100 p-5 sm:p-5"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="xl:col-span-1 space-y-8"
         >
-          {/* Company Name and Email */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div>
-              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-                Nazwa Firmy
-              </label>
-              <input
-                type="text"
-                name="companyName"
-                value={formData.companyName}
-                onChange={handleInputChange}
-                className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
-              />
-            </div>
-            <div>
-              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
-                required
-                disabled
-              />
-            </div>
-          </div>
+          {/* Section: Contact Info */}
+          <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+            <h2 className="text-lg font-bold text-gray-900 uppercase tracking-widest mb-6">Kontakt i Firma</h2>
 
-          {/* Seller Type */}
-          <div className="mb-6">
-            <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-              Typ Sprzedawcy
-            </label>
-            <select
-              name="sellerType"
-              value={formData.sellerType}
-              onChange={handleInputChange}
-              className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
-            >
-              <option value="private">Prywatny</option>
-              <option value="company">Firma</option>
-            </select>
-          </div>
-
-          {/* Social Media Links (Twitter/LinkedIn hidden per requirements) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div>
-              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-                Instagram Link
-              </label>
-              <input
-                type="url"
-                name="instagram"
-                value={formData.socialMedia.instagram}
-                onChange={handleInputChange}
-                className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
-              />
-            </div>
-            <div>
-              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-                Facebook Link
-              </label>
-              <input
-                type="url"
-                name="facebook"
-                value={formData.socialMedia.facebook}
-                onChange={handleInputChange}
-                className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
-              />
-            </div>
-            <div>
-              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-                Strona WWW firmowa Link
-              </label>
-              <input
-                type="url"
-                name="website"
-                value={formData.socialMedia.website}
-                onChange={handleInputChange}
-                className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
-              />
-            </div>
-          </div>
-
-          {/* Phone Numbers */}
-          <div className="mb-6">
-            <label className="block text-sm uppercase font-medium text-gray-800 mb-1">
-              Numer Telefonu
-            </label>
-            {formData.phoneNumbers.map((phone, index) => (
-              <div key={index} className="flex items-center space-x-2 mb-2">
-                <PhoneInput
-                  country={phone.countryCode.toLowerCase()}
-                  value={phone.phone}
-                  onChange={(value, country) =>
-                    handlePhoneNumberChange(index, value, country)
-                  }
-                  inputClass="w-full py-5 border border-gray-300 rounded-md focus:outline-none focus:ring-0"
-                  dropdownClass="z-50"
+            <div className="space-y-6">
+              <div>
+                <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  disabled
+                  className="w-full border-2 border-gray-100 p-4 rounded-xl bg-gray-50 text-gray-500 font-medium cursor-not-allowed"
                 />
-                {formData.phoneNumbers.length > 1 && (
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Typ Konta</label>
+                <div className="flex bg-gray-50 p-1 rounded-xl border border-gray-100">
                   <button
                     type="button"
-                    onClick={() => removePhoneNumber(index)}
-                    className="p-2 bg-gray-800 text-white rounded-md px-5"
+                    onClick={() => setFormData({ ...formData, sellerType: 'private' })}
+                    className={`flex-1 py-3 px-4 rounded-lg text-sm font-bold transition-all ${formData.sellerType === 'private' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                   >
-                    Usuń
+                    Prywatny
                   </button>
-                )}
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, sellerType: 'company' })}
+                    className={`flex-1 py-3 px-4 rounded-lg text-sm font-bold transition-all ${formData.sellerType === 'company' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                  >
+                    Firma
+                  </button>
+                </div>
               </div>
-            ))}
-            {formData.phoneNumbers.length < 4 && (
-              <button
-                type="button"
-                onClick={addPhoneNumber}
-                className="mt-2 p-2 bg-blue-500 text-white rounded-md px-5 hover:bg-blue-600"
-              >
-                Dodaj Numer Telefonu
-              </button>
-            )}
+
+              {formData.sellerType === 'company' && (
+                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
+                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Nazwa Firmy</label>
+                  <input
+                    type="text"
+                    name="companyName"
+                    value={formData.companyName}
+                    onChange={handleInputChange}
+                    className="w-full border-2 border-gray-100 p-4 rounded-xl focus:border-blue-500 focus:ring-blue-500 transition-all font-semibold text-gray-900 bg-gray-50/50 focus:bg-white"
+                  />
+                </motion.div>
+              )}
+
+              <div>
+                <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Numery Telefonu</label>
+                <div className="space-y-3">
+                  {formData.phoneNumbers.map((phone, index) => (
+                    <div key={index} className="flex gap-2">
+                      <div className="flex-grow">
+                        <PhoneInput
+                          country={phone.countryCode?.toLowerCase() || 'pl'}
+                          value={phone.phone}
+                          onChange={(value, country) => handlePhoneNumberChange(index, value, country)}
+                          inputClass="!w-full !h-12 !text-base !bg-gray-50/50 !border-2 !border-gray-100 !rounded-xl focus:!border-blue-500 !transition-all"
+                          containerClass="!w-full"
+                          buttonClass="!bg-transparent !border-0 !pl-2"
+                          dropdownClass="!shadow-xl !rounded-xl !border-gray-100"
+                        />
+                      </div>
+                      {formData.phoneNumbers.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removePhoneNumber(index)}
+                          className="p-3 text-red-500 hover:bg-red-50 rounded-xl transition-colors border-2 border-transparent hover:border-red-100"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  {formData.phoneNumbers.length < 4 && (
+                    <button
+                      type="button"
+                      onClick={addPhoneNumber}
+                      className="w-full py-3 border-2 border-dashed border-gray-200 text-gray-500 rounded-xl font-bold hover:bg-gray-50 hover:border-blue-200 hover:text-blue-600 transition-all text-sm"
+                    >
+                      + Dodaj kolejny numer
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Section: Social Media */}
+          <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+            <h2 className="text-lg font-bold text-gray-900 uppercase tracking-widest mb-6">Social Media</h2>
+            <div className="space-y-4">
+              {['instagram', 'facebook', 'website'].map((social) => (
+                <div key={social} className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 uppercase text-xs font-bold tracking-wider w-24">
+                    {social}
+                  </div>
+                  <input
+                    type="url"
+                    name={social}
+                    value={formData.socialMedia[social]}
+                    onChange={handleInputChange}
+                    placeholder="https://..."
+                    className="w-full border-2 border-gray-100 p-4 pl-24 rounded-xl focus:border-blue-500 focus:ring-blue-500 transition-all text-sm font-medium text-gray-900 bg-gray-50/50 focus:bg-white"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </motion.div>
 
-        {/* Brands Selection for Company Sellers */}
-        {formData.sellerType === "company" && (
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="col-span-2 bg-white p-6 rounded-lg shadow-md"
-          >
-            <h3 className="text-xl font-semibold mb-4 text-gray-800">
-              Marki z którymi współpracujesz
-            </h3>
-
-            <BrandSelector
-              brands={carBrands}
-              selectedBrands={formData.brands}
-              onBrandChange={(brand) => {
-                setFormData((prevData) => {
-                  const currentBrands = prevData.brands || [];
-                  const updatedBrands = currentBrands.includes(brand)
-                    ? currentBrands.filter((b) => b !== brand)
-                    : [...currentBrands, brand];
-
-                  return {
-                    ...prevData,
-                    brands: updatedBrands,
-                  };
-                });
-              }}
-            />
-
-            {formData.sellerType === "company" &&
-              (!formData.brands || formData.brands.length === 0) && (
-                <p className="text-red-500 text-sm mt-4">
-                  Proszę wybrać co najmniej jedną markę, z którą współpracujesz
-                </p>
-              )}
-          </motion.div>
-        )}
-
-        <motion.div className="mb-6 col-span-2">
-          <CustomMap
-            location={formData.location}
-            setLocation={(newLocation) => {
-              setFormData({ ...formData, location: newLocation });
-            }}
-          />
-        </motion.div>
-
-        {/* Submit Button */}
-        <div className="flex gap-4">
-          <button
-            type="submit"
-            className="bg-blue-500 text-white rounded-md px-5 py-2 hover:bg-blue-600"
-          >
-             Zapisz Zmiany
-          </button>
-        </div>
-      </form>
-    </motion.div>
-
-    {/* Change Password Modal (outside main form) */}
-    {isCpOpen && (
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="absolute inset-0 bg-black/50" onClick={() => setIsCpOpen(false)} />
-        <div className="relative z-10 w-full max-w-lg bg-white rounded-lg shadow-lg p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-semibold text-gray-800">Zmień Hasło</h3>
-            <button
-              type="button"
-              onClick={() => setIsCpOpen(false)}
-              className="text-gray-600 hover:text-gray-900"
+        {/* Bottom Section: Brands (if company) & Submit */}
+        <div className="col-span-1 xl:col-span-3">
+          {formData.sellerType === "company" && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm mb-8"
             >
-              ✕
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Marki z którymi współpracujesz</h3>
+              <p className="text-gray-500 mb-6 text-sm">Wybierz marki, w których specjalizuje się Twoja firma.</p>
+
+              <BrandSelector
+                brands={carBrands}
+                selectedBrands={formData.brands}
+                onBrandChange={handleBrandChange}
+              />
+            </motion.div>
+          )}
+
+          <div className="flex justify-end pt-4">
+            <button
+              type="submit"
+              className="bg-blue-600 text-white font-bold px-12 py-5 rounded-xl hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 hover:-translate-y-1 text-lg flex items-center gap-2"
+            >
+              <span>Zapisz Zmiany</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
             </button>
           </div>
-          <form onSubmit={handleChangePassword} className="grid grid-cols-1 gap-4">
-            <div>
-              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">Aktualne Hasło</label>
-              <input
-                type="password"
-                value={cpCurrent}
-                onChange={(e) => setCpCurrent(e.target.value)}
-                className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">Nowe Hasło</label>
-              <input
-                type="password"
-                value={cpNew}
-                onChange={(e) => setCpNew(e.target.value)}
-                minLength={6}
-                className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm uppercase font-medium text-gray-800 mb-1">Potwierdź Nowe Hasło</label>
-              <input
-                type="password"
-                value={cpConfirm}
-                onChange={(e) => setCpConfirm(e.target.value)}
-                minLength={6}
-                className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
-                required
-              />
-            </div>
-            <div className="flex items-center justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setIsCpOpen(false)}
-                className="px-4 py-2 rounded-md border border-gray-300"
-              >
-                Anuluj
-              </button>
-              <button
-                type="submit"
-                disabled={cpLoading}
-                className="px-5 py-2 rounded-md bg-gray-800 text-white hover:bg-gray-700"
-              >
-                {cpLoading ? "Changing..." : "Aktualizuj Hasło"}
-              </button>
-            </div>
-          </form>
         </div>
-      </div>
-    )}
-    </div>
+      </form>
+
+
+      {/* Change Password Modal (outside main form) */}
+      {
+        isCpOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="absolute inset-0 bg-black/50" onClick={() => setIsCpOpen(false)} />
+            <div className="relative z-10 w-full max-w-lg bg-white rounded-lg shadow-lg p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-semibold text-gray-800">Zmień Hasło</h3>
+                <button
+                  type="button"
+                  onClick={() => setIsCpOpen(false)}
+                  className="text-gray-600 hover:text-gray-900"
+                >
+                  ✕
+                </button>
+              </div>
+              <form onSubmit={handleChangePassword} className="grid grid-cols-1 gap-4">
+                <div>
+                  <label className="block text-sm uppercase font-medium text-gray-800 mb-1">Aktualne Hasło</label>
+                  <input
+                    type="password"
+                    value={cpCurrent}
+                    onChange={(e) => setCpCurrent(e.target.value)}
+                    className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm uppercase font-medium text-gray-800 mb-1">Nowe Hasło</label>
+                  <input
+                    type="password"
+                    value={cpNew}
+                    onChange={(e) => setCpNew(e.target.value)}
+                    minLength={6}
+                    className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm uppercase font-medium text-gray-800 mb-1">Potwierdź Nowe Hasło</label>
+                  <input
+                    type="password"
+                    value={cpConfirm}
+                    onChange={(e) => setCpConfirm(e.target.value)}
+                    minLength={6}
+                    className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-0"
+                    required
+                  />
+                </div>
+                <div className="flex items-center justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsCpOpen(false)}
+                    className="px-4 py-2 rounded-md border border-gray-300"
+                  >
+                    Anuluj
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={cpLoading}
+                    className="px-5 py-2 rounded-md bg-gray-800 text-white hover:bg-gray-700"
+                  >
+                    {cpLoading ? "Changing..." : "Aktualizuj Hasło"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )
+      }
+    </div >
   );
 };
 

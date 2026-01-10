@@ -57,10 +57,11 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
       alert("Tytuł jest wymagany.");
       return;
     }
-    if (!localData.description.trim()) {
-      alert("Opis jest wymagany.");
+    if (!localData.title.trim()) {
+      alert("Tytuł jest wymagany.");
       return;
     }
+    // Description check removed
     if (!localData.make) {
       alert("Marka jest wymagana.");
       return;
@@ -95,87 +96,100 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
           />
         </div>
 
-        {/* Condition Type */}
-        <div className="col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wider">Stan auta</label>
-          <div className="flex items-center gap-6">
-            <label className="flex items-center gap-3 cursor-pointer group">
-              <input
-                type="radio"
-                name="conditionType"
-                value="Used"
-                className="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300"
-                checked={formData.conditionType === "Used"}
-                onChange={() => updateFormData({ conditionType: "Used" })}
-              />
-              <span className="text-gray-700 group-hover:text-blue-600 transition-colors font-medium">Używany</span>
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer group">
-              <input
-                type="radio"
-                name="conditionType"
-                value="New"
-                className="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300"
-                checked={formData.conditionType === "New"}
-                onChange={() => updateFormData({ conditionType: "New" })}
-              />
-              <span className="text-gray-700 group-hover:text-blue-600 transition-colors font-medium">Nowy</span>
-            </label>
+        {/* Make & Model Section - Read Only if VIN exists, else Selects */}
+        {formData.vin ? (
+          <div className="col-span-2">
+            <div className="bg-blue-50/50 rounded-2xl border border-blue-100 p-6">
+              <h3 className="text-sm font-bold text-blue-800 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                DANE ZWERYFIKOWANE Z VIN
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-6">
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Marka</label>
+                  <p className="text-lg font-bold text-gray-900">{localData.make}</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Model</label>
+                  <p className="text-lg font-bold text-gray-900">{localData.model}</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Rok</label>
+                  <p className="text-lg font-bold text-gray-900">{formData.year || "—"}</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Nadwozie</label>
+                  <p className="text-lg font-bold text-gray-900">{formData.type || "—"}</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Paliwo</label>
+                  <p className="text-lg font-bold text-gray-900">{formData.fuel || "—"}</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Skrzynia</label>
+                  <p className="text-lg font-bold text-gray-900">{formData.transmission || "—"}</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Silnik</label>
+                  <p className="text-lg font-bold text-gray-900">{formData.engine || "—"}</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Moc</label>
+                  <p className="text-lg font-bold text-gray-900">{formData.horsepower ? `${formData.horsepower} KM` : "—"}</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Napęd</label>
+                  <p className="text-lg font-bold text-gray-900">{formData.drivetrain || "—"}</p>
+                </div>
+              </div>
+              <p className="text-xs text-blue-600/60 mt-4 font-medium">
+                Te dane zostały pobrane automatycznie i nie mogą być edytowane.
+              </p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <>
+            {/* Make */}
+            <div className="col-span-2 md:col-span-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 uppercase tracking-wider">Marka</label>
+              <select
+                className="border-2 border-gray-100 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold"
+                value={localData.make}
+                onChange={(e) =>
+                  setLocalData({ ...localData, make: e.target.value, model: "" })
+                }
+                disabled={makesModelsData?.loading}
+              >
+                <option value="">Wybierz Markę</option>
+                {makes.map((make, index) => (
+                  <option key={index} value={make}>
+                    {make}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        {/* Make */}
-        <div className="col-span-2 md:col-span-1">
-          <label className="block text-sm font-medium text-gray-700 mb-1 uppercase tracking-wider">Marka</label>
-          <select
-            className="border-2 border-gray-100 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold"
-            value={localData.make}
-            onChange={(e) =>
-              setLocalData({ ...localData, make: e.target.value, model: "" })
-            }
-            disabled={makesModelsData?.loading}
-          >
-            <option value="">Wybierz Markę</option>
-            {makes.map((make, index) => (
-              <option key={index} value={make}>
-                {make}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Model */}
-        <div className="col-span-2 md:col-span-1">
-          <label className="block text-sm font-medium text-gray-700 mb-1 uppercase tracking-wider">Model</label>
-          <select
-            className="border-2 border-gray-100 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold"
-            value={localData.model}
-            onChange={(e) =>
-              setLocalData({ ...localData, model: e.target.value })
-            }
-            disabled={makesModelsData?.loading || !localData.make}
-          >
-            <option value="">Wybierz Model</option>
-            {models.map((model, index) => (
-              <option key={index} value={model}>
-                {model}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Description */}
-        <div className="col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1 uppercase tracking-wider">Opis</label>
-          <textarea
-            placeholder="Opisz swoje auto - stan, wyposażenie, historię..."
-            className="border-2 border-gray-100 p-4 w-full rounded-xl h-48 focus:border-blue-500 transition-all"
-            value={localData.description}
-            onChange={(e) =>
-              setLocalData({ ...localData, description: e.target.value })
-            }
-          />
-        </div>
+            {/* Model */}
+            <div className="col-span-2 md:col-span-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 uppercase tracking-wider">Model</label>
+              <select
+                className="border-2 border-gray-100 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold"
+                value={localData.model}
+                onChange={(e) =>
+                  setLocalData({ ...localData, model: e.target.value })
+                }
+                disabled={makesModelsData?.loading || !localData.make}
+              >
+                <option value="">Wybierz Model</option>
+                {models.map((model, index) => (
+                  <option key={index} value={model}>
+                    {model}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </>
+        )}
 
         {/* Map Location Section */}
         <div className="col-span-2">

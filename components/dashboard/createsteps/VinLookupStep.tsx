@@ -121,7 +121,40 @@ export default function VinLookupStep({ nextStep, updateFormData, formData }) {
                 </p>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-8">
+                {/* Condition Type Selection */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-4 uppercase tracking-wider text-center">Stan Pojazdu</label>
+                    <div className="flex justify-center gap-6">
+                        <label className={`relative cursor-pointer group`}>
+                            <input
+                                type="radio"
+                                name="conditionType"
+                                value="Used"
+                                checked={formData.conditionType === "Used" || !formData.conditionType}
+                                onChange={() => updateFormData({ conditionType: "Used" })}
+                                className="peer sr-only"
+                            />
+                            <div className="px-8 py-3 rounded-xl border-2 border-gray-100 bg-white text-gray-600 font-bold transition-all peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-200">
+                                Używany
+                            </div>
+                        </label>
+                        <label className={`relative cursor-pointer group`}>
+                            <input
+                                type="radio"
+                                name="conditionType"
+                                value="New"
+                                checked={formData.conditionType === "New"}
+                                onChange={() => updateFormData({ conditionType: "New" })}
+                                className="peer sr-only"
+                            />
+                            <div className="px-8 py-3 rounded-xl border-2 border-gray-100 bg-white text-gray-600 font-bold transition-all peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-200">
+                                Nowy
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
                 <div className="relative">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Numer VIN (17 znaków)</label>
                     <div className="flex gap-2">

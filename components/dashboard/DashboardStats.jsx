@@ -74,25 +74,100 @@ export default function DashboardStats({ user: userProp }) {
   }, [userId, getToken]);
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <KPICard
-        title="Wszystkie Auta"
-        value={loading ? "-" : carsCount}
-        icon={<FaCar className="w-6 h-6" />}
-        gradient="from-sky-500 to-blue-600"
-      />
-      <KPICard
-        title="Wiadomości"
-        value={loading ? "-" : chatsCount}
-        icon={<BsChatLeftDots className="w-6 h-6" />}
-        gradient="from-emerald-500 to-teal-600"
-      />
-      <KPICard
-        title="Witaj"
-        value={user?.firstName || "User"}
-        icon={<HiOutlineUser className="w-6 h-6" />}
-        gradient="from-fuchsia-500 to-pink-600"
-      />
+    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
+      {/* Welcome Section */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+            Witaj, {user?.firstName || "Użytkowniku"}! 👋
+          </h1>
+          <p className="text-gray-500 font-medium mt-1">
+            Oto podsumowanie Twojego konta i aktywności.
+          </p>
+        </div>
+        <div className="flex gap-3">
+          <a href="/dashboard/cars/add" className="inline-flex items-center gap-2 bg-blue-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 hover:-translate-y-1">
+            <FaCar /> Sprzedaj Auto
+          </a>
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Cars Card */}
+        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+          <div className="absolute right-0 top-0 w-32 h-32 bg-blue-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+          <div className="relative z-10">
+            <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-4 text-xl">
+              <FaCar />
+            </div>
+            <h3 className="text-gray-500 font-bold uppercase text-xs tracking-wider mb-1">Twoje Auta</h3>
+            <div className="text-4xl font-extrabold text-gray-900">
+              {loading ? (
+                <div className="h-10 w-16 bg-gray-200 animate-pulse rounded-lg"></div>
+              ) : (
+                carsCount
+              )}
+            </div>
+            <a href="/dashboard/cars" className="inline-block mt-4 text-sm font-bold text-blue-600 hover:text-blue-700">
+              Zarządzaj autami →
+            </a>
+          </div>
+        </div>
+
+        {/* Messages Card */}
+        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+          <div className="absolute right-0 top-0 w-32 h-32 bg-emerald-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+          <div className="relative z-10">
+            <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-4 text-xl">
+              <BsChatLeftDots />
+            </div>
+            <h3 className="text-gray-500 font-bold uppercase text-xs tracking-wider mb-1">Wiadomości</h3>
+            <div className="text-4xl font-extrabold text-gray-900">
+              {loading ? (
+                <div className="h-10 w-16 bg-gray-200 animate-pulse rounded-lg"></div>
+              ) : (
+                chatsCount
+              )}
+            </div>
+            <a href="/dashboard/messages" className="inline-block mt-4 text-sm font-bold text-emerald-600 hover:text-emerald-700">
+              Przejdź do czatu →
+            </a>
+          </div>
+        </div>
+
+        {/* Profile Card */}
+        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+          <div className="absolute right-0 top-0 w-32 h-32 bg-purple-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+          <div className="relative z-10">
+            <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mb-4 text-xl">
+              <HiOutlineUser />
+            </div>
+            <h3 className="text-gray-500 font-bold uppercase text-xs tracking-wider mb-1">Twój Profil</h3>
+            <div className="text-lg font-bold text-gray-900 truncate">
+              {user?.email || "Brak emaila"}
+            </div>
+            <p className="text-xs text-gray-400 font-medium mb-1">Typ konta: {user?.sellerType === 'company' ? 'Firma' : 'Prywatne'}</p>
+
+            <a href="/dashboard/profile" className="inline-block mt-3 text-sm font-bold text-purple-600 hover:text-purple-700">
+              Edytuj wyprofil →
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Activity / Banner (Placeholder for now) */}
+      {/* <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+        <div className="relative z-10 max-w-xl">
+          <h2 className="text-2xl font-bold mb-2">Potrzebujesz pomocy ze sprzedażą?</h2>
+          <p className="text-gray-300 mb-6">Skontaktuj się z naszym zespołem wsparcia, aby uzyskać porady dotyczące lepszej ekspozycji Twoich ogłoszeń.</p>
+          <button className="bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-6 rounded-xl transition-all border border-white/10 backdrop-blur-sm">
+            Centrum Pomocy
+          </button>
+        </div>
+      </div> */}
     </div>
+
   );
 }

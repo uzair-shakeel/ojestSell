@@ -6,7 +6,7 @@ export default function DashboardPage() {
   const { user } = useAuth();
 
   return (
-    <div>
+    <div className="bg-gray-50 min-h-full">
       <DashboardStats user={user} />
     </div>
   );

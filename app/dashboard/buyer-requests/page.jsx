@@ -53,7 +53,7 @@ const BuyerRequestsDashboard = () => {
       if (activeTab === "received-offers") {
         fetchAllOffers();
       } else {
-      fetchRequests(activeTab);
+        fetchRequests(activeTab);
       }
     }
   }, [userId, activeTab]);
@@ -335,105 +335,70 @@ const BuyerRequestsDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-        <div>
-            <h1 className="text-3xl dark:text-white font-bold text-gray-900">
-              Panel Zapytań Kupującego
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+              Twoje Zapytania 📋
             </h1>
-            <p className="text-gray-600 mt-2">
-              Zarządzaj prośbami o samochody i przeglądaj oferty od sprzedawców
-          </p>
-        </div>
-        <Link
-          href="/dashboard/buyer-requests/add"
-          className="flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md"
-        >
-          <FiPlus className="mr-2" /> Utwórz nowe zapytanie
-        </Link>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex flex-wrap mb-8 bg-white rounded-lg shadow-sm border overflow-hidden">
-        <button
-          className={`py-3 px-6 font-medium transition-colors ${
-            activeTab === "active"
-              ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
-              : "text-gray-600 hover:bg-gray-50"
-          }`}
-          onClick={() => setActiveTab("active")}
-        >
-          Aktywne
-        </button>
-        <button
-          className={`py-3 px-6 font-medium transition-colors ${
-            activeTab === "fulfilled"
-              ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
-              : "text-gray-600 hover:bg-gray-50"
-          }`}
-          onClick={() => setActiveTab("fulfilled")}
-        >
-          Zrealizowane
-        </button>
-        <button
-          className={`py-3 px-6 font-medium transition-colors ${
-            activeTab === "cancelled"
-              ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
-              : "text-gray-600 hover:bg-gray-50"
-          }`}
-          onClick={() => setActiveTab("cancelled")}
-        >
-          Anulowane
-        </button>
-        <button
-          className={`py-3 px-6 font-medium transition-colors ${
-            activeTab === "expired"
-              ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
-              : "text-gray-600 hover:bg-gray-50"
-          }`}
-          onClick={() => setActiveTab("expired")}
-        >
-          Wygasłe
-        </button>
-          <button
-            className={`py-3 px-6 font-medium transition-colors ${
-              activeTab === "received-offers"
-                ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
-                : "text-gray-600 hover:bg-gray-50"
-            }`}
-            onClick={() => setActiveTab("received-offers")}
+            <p className="text-gray-500 font-medium mt-2 text-lg">
+              Zarządzaj swoimi poszukiwaniami i przeglądaj oferty od sprzedawców.
+            </p>
+          </div>
+          <Link
+            href="/dashboard/buyer-requests/add"
+            className="inline-flex items-center gap-2 bg-gray-900 text-white font-bold px-6 py-3 rounded-xl hover:bg-gray-800 transition-all shadow-lg hover:-translate-y-1"
           >
-            Otrzymane oferty
-        </button>
-      </div>
+            <FiPlus className="w-5 h-5" /> Nowe Zapytanie
+          </Link>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex flex-wrap gap-2 bg-white p-1.5 rounded-2xl shadow-sm border border-gray-100 w-fit">
+          {[
+            { id: "active", label: "Aktywne" },
+            { id: "fulfilled", label: "Zrealizowane" },
+            { id: "cancelled", label: "Anulowane" },
+            { id: "expired", label: "Wygasłe" },
+            { id: "received-offers", label: "Otrzymane Oferty" },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === tab.id
+                ? "bg-gray-900 text-white shadow-md"
+                : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
+                }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
         {/* Content */}
         {activeTab === "received-offers" ? (
           // Received Offers Tab
           allOffersLoading ? (
-            <div className="flex justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            <div className="flex justify-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {allOffers.length === 0 ? (
-                <div className="md:col-span-2 lg:col-span-3 bg-white rounded-xl shadow-md p-8 text-center border">
-                  <div className="flex justify-center mb-4">
-                    <div className="bg-blue-100 p-3 rounded-full">
-                      <FiDollarSign className="h-10 w-10 text-blue-600" />
-                    </div>
+                <div className="md:col-span-2 lg:col-span-3 bg-white rounded-3xl shadow-sm p-12 text-center border border-gray-100">
+                  <div className="bg-gray-50 p-4 rounded-full inline-flex mb-4">
+                    <FiDollarSign className="h-8 w-8 text-gray-400" />
                   </div>
-                  <h3 className="text-xl font-medium text-gray-800 mb-2">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
                     Brak ofert
                   </h3>
-                  <p className="text-gray-500 mb-6">
-                    Utwórz prośbę o samochód, aby rozpocząć otrzymywanie ofert od
-                    sprzedawców
+                  <p className="text-gray-500 mb-6 max-w-md mx-auto">
+                    Nie otrzymałeś jeszcze żadnych ofert. Utwórz prośbę o samochód, aby rozpocząć otrzymywanie ofert od sprzedawców.
                   </p>
                   <Link
                     href="/dashboard/buyer-requests/add"
-                    className="inline-flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                    className="inline-flex items-center px-6 py-3 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 transition-all shadow-lg hover:-translate-y-1"
                   >
                     <FiPlus className="mr-2" /> Utwórz nowe zapytanie
                   </Link>
@@ -442,153 +407,79 @@ const BuyerRequestsDashboard = () => {
                 allOffers.map((offer) => (
                   <div
                     key={offer._id}
-                    className="bg-white rounded-xl shadow-md overflow-hidden border hover:shadow-lg transition-all"
+                    className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all group flex flex-col"
                   >
-                    <div className="p-6">
-                      <div className="flex justify-between items-start mb-3">
-                        <h3 className="text-xl font-semibold text-gray-800">
-                          {offer.title}
-                        </h3>
+                    {/* Car Image Header */}
+                    <div className="h-48 relative overflow-hidden bg-gray-100">
+                      {offer.carInfo?.images?.[0] ? (
+                        <img
+                          src={offer.carInfo.images[0]}
+                          alt={offer.title}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400">
+                          <TbCar className="w-12 h-12 opacity-50" />
+                        </div>
+                      )}
+                      <div className="absolute top-3 right-3">
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            offer.status === "Pending"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : offer.status === "Accepted"
-                              ? "bg-green-100 text-green-800"
+                          className={`px-3 py-1 rounded-lg text-xs font-bold uppercase shadow-sm backdrop-blur-md ${offer.status === "Pending"
+                            ? "bg-yellow-100/90 text-yellow-800"
+                            : offer.status === "Accepted"
+                              ? "bg-emerald-100/90 text-emerald-800"
                               : offer.status === "Rejected"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-gray-100 text-gray-800"
-                          }`}
+                                ? "bg-red-100/90 text-red-800"
+                                : "bg-gray-100/90 text-gray-800"
+                            }`}
                         >
-                          {offer.status}
+                          {offer.status === "Pending" ? "Oczekująca" : offer.status}
                         </span>
                       </div>
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4">
+                        <p className="text-white font-bold text-xl">
+                          ${offer.price?.toLocaleString() || "N/A"}
+                        </p>
+                      </div>
+                    </div>
 
-                      <p className="text-gray-600 mb-4 line-clamp-2">
-                        {offer.description}
-                      </p>
+                    <div className="p-5 flex-1 flex flex-col">
+                      <div className="mb-4">
+                        <h3 className="font-bold text-gray-900 text-lg line-clamp-1 mb-1">
+                          {offer.title}
+                        </h3>
+                        <div className="flex items-center text-gray-500 text-xs font-medium bg-gray-50 px-2 py-1 rounded-lg w-fit">
+                          <TbCar className="mr-1.5" />
+                          Do zapytania: <span className="text-gray-900 ml-1 truncate max-w-[120px]">{offer.requestTitle}</span>
+                        </div>
+                      </div>
 
-                      {/* Compact Request Indicator */}
-                      <div className="flex items-center mb-3">
-                        <div className="flex items-center text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                          <TbCar className="h-3 w-3 mr-1" />
-                          <span
-                            className="truncate max-w-[150px]"
-                            title={offer.requestTitle}
-                          >
-                            {offer.requestTitle}
+                      {/* Info Grid */}
+                      <div className="grid grid-cols-2 gap-3 mb-6">
+                        <div className="bg-gray-50 p-3 rounded-2xl">
+                          <span className="text-xs text-gray-400 font-bold uppercase block mb-1">Auto</span>
+                          <span className="text-sm font-semibold text-gray-800 truncate block">
+                            {offer.carInfo ? `${offer.carInfo.make} ${offer.carInfo.model}` : "Info niedostępne"}
+                          </span>
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-2xl">
+                          <span className="text-xs text-gray-400 font-bold uppercase block mb-1">Sprzedawca</span>
+                          <span className="text-sm font-semibold text-gray-800 truncate block">
+                            {offer.sellerInfo?.firstName} {offer.sellerInfo?.lastName}
                           </span>
                         </div>
                       </div>
 
-                      {/* Car Images */}
-                      {offer.carInfo &&
-                        offer.carInfo.images &&
-                        offer.carInfo.images.length > 0 && (
-                          <div className="mb-3">
-                            <div className="flex space-x-2 overflow-x-auto pb-2">
-                              {offer.carInfo.images
-                                .slice(0, 3)
-                                .map((image, index) => (
-                                  <img
-                                    key={index}
-                                    src={image}
-                                    alt={`${offer.carInfo.make} ${offer.carInfo.model}`}
-                                    className="h-16 w-24 object-cover rounded-lg border border-gray-200 flex-shrink-0"
-                                    onError={(e) => {
-                                      console.error(
-                                        `Failed to load image ${index}:`,
-                                        image
-                                      );
-                                      e.target.style.display = "none";
-                                    }}
-                                    onLoad={() =>
-                                      console.log(
-                                        `Successfully loaded image ${index}:`,
-                                        image
-                                      )
-                                    }
-                                  />
-                                ))}
-                            </div>
-                          </div>
-                        )}
-
-                      {/* Debug Info */}
-                      {process.env.NODE_ENV === "development" && (
-                        <div className="mb-2 p-2 bg-yellow-50 rounded text-xs text-gray-600">
-                          <div>CarInfo: {offer.carInfo ? "Yes" : "No"}</div>
-                          <div>
-                            Images:{" "}
-                            {offer.carInfo?.images
-                              ? offer.carInfo.images.length
-                              : 0}
-                          </div>
-                          <div>
-                            First Image: {offer.carInfo?.images?.[0] || "None"}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Car Details */}
-                      {offer.carInfo && (
-                        <div className="mb-3 p-2 bg-blue-50 rounded-lg">
-                          <div className="text-sm text-gray-700">
-                            <span className="font-medium">Auto:</span>{" "}
-                            {offer.carInfo.make} {offer.carInfo.model}{" "}
-                            {offer.carInfo.year}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Seller Information */}
-                      {offer.sellerInfo && (
-                        <div className="mb-3 p-2 bg-gray-50 rounded-lg">
-                          <div className="flex items-center justify-between text-sm">
-                            <div className="text-gray-700">
-                              <span className="font-medium">Sprzedawca:</span>{" "}
-                              {offer.sellerInfo.firstName}{" "}
-                              {offer.sellerInfo.lastName}
-                              {offer.sellerInfo.companyName && (
-                                <span className="text-gray-500 ml-1">
-                                  ({offer.sellerInfo.companyName})
-                                </span>
-                              )}
-                            </div>
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                offer.sellerInfo.sellerType === "company"
-                                  ? "bg-purple-100 text-purple-800"
-                                  : "bg-blue-100 text-blue-800"
-                              }`}
-                            >
-                              {offer.sellerInfo.sellerType === "company"
-                                ? "Firma"
-                                : "Osoba prywatna"}
-                            </span>
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="text-2xl font-bold text-blue-600">
-                          ${offer.price?.toLocaleString() || "N/A"}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {offer.requestTitle}
-                        </div>
-                      </div>
-
-                      <div className="flex justify-between items-center">
+                      <div className="mt-auto grid grid-cols-2 gap-2 pt-4 border-t border-gray-50">
                         <button
                           onClick={() => handleAcceptOffer(offer._id)}
-                          className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                          className="flex items-center justify-center py-2.5 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-colors font-bold text-sm shadow-lg shadow-emerald-100"
                         >
                           Potwierdź
                         </button>
                         <button
                           onClick={() => handleRejectOffer(offer._id)}
-                          className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                          className="flex items-center justify-center py-2.5 bg-white border border-red-100 text-red-600 rounded-xl hover:bg-red-50 transition-colors font-bold text-sm"
                         >
                           Odrzuć
                         </button>
@@ -600,351 +491,220 @@ const BuyerRequestsDashboard = () => {
             </div>
           )
         ) : // Regular Requests Tabs
-        loading ? (
-        <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {requests.length === 0 ? (
-            <div className="md:col-span-2 lg:col-span-3 bg-white rounded-xl shadow-md p-8 text-center border">
-              <div className="flex justify-center mb-4">
-                <div className="bg-blue-100 p-3 rounded-full">
-                  <TbCar className="h-10 w-10 text-blue-600" />
-                </div>
-              </div>
-              <h3 className="text-xl font-medium text-gray-800 mb-2">
-                Brak {activeTab} znalezionych zapytań
-
-              </h3>
-              <p className="text-gray-500 mb-6">
-Utwórz nowe zapytanie, aby zacząć otrzymywać oferty od sprzedawców
-              </p>
-              <Link
-                href="/dashboard/buyer-requests/add"
-                className="inline-flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-              >
-                <FiPlus className="mr-2" /> Utwórz nowe zapytanie
-
-              </Link>
+          loading ? (
+            <div className="flex justify-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
             </div>
           ) : (
-            requests.map((request) => (
-              <div
-                key={request._id}
-                className="bg-white rounded-xl shadow-md overflow-hidden border hover:shadow-lg transition-all"
-              >
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-3">
-                    <h3 className="text-xl font-semibold text-gray-800">
-                      {request.title}
-                    </h3>
-                    {getStatusBadge(request.status)}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {requests.length === 0 ? (
+                <div className="md:col-span-2 lg:col-span-3 bg-white rounded-3xl shadow-sm p-12 text-center border border-gray-100">
+                  <div className="bg-gray-50 p-4 rounded-full inline-flex mb-4">
+                    <TbCar className="h-8 w-8 text-gray-400" />
                   </div>
-
-                  <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
-                    <div className="flex items-center">
-                      <FiCalendar className="mr-1 text-gray-400" />
-                      <span>{formatDate(request.createdAt)}</span>
-                    </div>
-
-                    {request.status === "Active" && (
-                      <div className="flex items-center">
-                        <FiClock className="mr-1 text-gray-400" />
-                        <span>
-                          {calculateDaysLeft(request.expiryDate)} dni do końca
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="space-y-2 mb-4">
-                    {(request.make || request.model) && (
-                      <div className="flex items-center text-sm">
-                        <TbCar className="mr-2 text-gray-400" />
-                        <span className="font-medium">Auto:</span>
-                        <span className="ml-1 text-gray-700">
-                          {request.make} {request.model}
-                        </span>
-                      </div>
-                    )}
-
-                    <div className="flex items-center text-sm">
-                      <FiDollarSign className="mr-2 text-gray-400" />
-                      <span className="font-medium">Budżet:</span>
-                      <span className="ml-1 text-gray-700">
-                        {request.budgetMin
-                          ? `$${request.budgetMin.toLocaleString()} - $${request.budgetMax.toLocaleString()}`
-                          : `Do $${request.budgetMax.toLocaleString()}`}
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    Brak {activeTab === "active" ? "aktywnych" : activeTab} zapytań
+                  </h3>
+                  <p className="text-gray-500 mb-6 max-w-md mx-auto">
+                    Utwórz nowe zapytanie, aby zacząć otrzymywać oferty od sprzedawców i znaleźć swój wymarzony samochód.
+                  </p>
+                  <Link
+                    href="/dashboard/buyer-requests/add"
+                    className="inline-flex items-center px-6 py-3 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 transition-all shadow-lg hover:-translate-y-1"
+                  >
+                    <FiPlus className="mr-2" /> Utwórz nowe zapytanie
+                  </Link>
+                </div>
+              ) : (
+                requests.map((request) => (
+                  <div
+                    key={request._id}
+                    className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all group flex flex-col"
+                  >
+                    <div className="bg-gradient-to-r from-gray-50 to-white border-b border-gray-50 px-6 py-4 flex justify-between items-center">
+                      <span
+                        className={`px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider ${request.status === "Active"
+                          ? "bg-green-100 text-green-700"
+                          : request.status === "Fulfilled"
+                            ? "bg-blue-100 text-blue-700"
+                            : request.status === "Cancelled"
+                              ? "bg-red-100 text-red-700"
+                              : "bg-gray-100 text-gray-700"
+                          }`}
+                      >
+                        {request.status === "Active" ? "Aktywne" : request.status}
                       </span>
-                    </div>
-                  </div>
-
-                  <div className="flex space-x-2">
-                    <Link
-                      href={`/dashboard/buyer-requests/${request._id}`}
-                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
-                      title="Pokaż Szczegóły"
-                    >
-                      <FiEye size={18} />
-                    </Link>
-                    <button
-                        onClick={() => toggleRequestExpanded(request._id)}
-                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
-                        title={
-                          expandedRequests.has(request._id)
-                            ? "Ukryj oferty"
-                            : "Pokaż oferty"
-                        }
-                    >
-                      <FiDollarSign size={18} />
-                        <span className="ml-1 text-xs">
-                          {expandedRequests.has(request._id) ? "Ukryj" : "Pokaż"}
+                      {request.status === "Active" && (
+                        <span className="text-xs font-bold text-gray-400 flex items-center">
+                          <FiClock className="mr-1" /> {calculateDaysLeft(request.expiryDate)} dni
                         </span>
-                    </button>
-                    <Link
-                      href={`/dashboard/buyer-requests/${request._id}/edit`}
-                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
-                      title="Edytuj Zapytanie"
-                    >
-                      <FiEdit size={18} />
-                    </Link>
-                    <button
-                      onClick={() => handleDeleteRequest(request._id)}
-                      className="p-2 text-red-600 hover:bg-red-50 rounded-md transition-colors"
-                      title="Usuń Zapytanie"
-                    >
-                      <FiTrash2 size={18} />
-                    </button>
-                  </div>
+                      )}
+                    </div>
 
-                    {/* Inline Offers Section */}
-                    {expandedRequests.has(request._id) && (
-                      <div className="mt-4 pt-4 border-t border-gray-200">
-                        <div className="flex items-center justify-between mb-3">
-                          <h4 className="text-lg font-semibold text-gray-800">
-                            Oferty ({requestOffers[request._id]?.length || 0})
-                          </h4>
-                          <button
-                            onClick={() => handleViewOffers(request)}
-                            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                          >
-                            Pokaż Wszystkie Szczegóły →
-                          </button>
-                        </div>
+                    <div className="p-6 flex-1 flex flex-col">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-1">
+                        {request.title}
+                      </h3>
 
-                        {!requestOffers[request._id] ? (
-                          <div className="text-center py-4">
-                            <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500 mx-auto mb-2"></div>
-                            <p className="text-gray-500 text-sm">
-                              Ładowanie Ofert...
-                            </p>
-                          </div>
-                        ) : requestOffers[request._id].length === 0 ? (
-                          <div className="text-center py-4 bg-gray-50 rounded-lg">
-                            <FiDollarSign className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                            <p className="text-gray-500 text-sm">
-                              Brak ofert
-                            </p>
-                          </div>
-                        ) : (
-                          <div className="space-y-3">
-                            {requestOffers[request._id]
-                              .slice(0, 3)
-                              .map((offer) => (
-                                <div
-                                  key={offer._id}
-                                  className="bg-gray-50 rounded-lg p-3 border border-gray-200"
-                                >
-                                  {/* Compact Request Indicator */}
-                                  <div className="flex items-center mb-2">
-                                    <div className="flex items-center text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                                      <TbCar className="h-3 w-3 mr-1" />
-                                      <span
-                                        className="truncate max-w-[120px]"
-                                        title={request.title}
-                                      >
-                                        {request.title}
-                                      </span>
-                                    </div>
-                                  </div>
-
-                                  {/* Car Images */}
-                                  {offer.carInfo &&
-                                    offer.carInfo.images &&
-                                    offer.carInfo.images.length > 0 && (
-                                      <div className="mb-2">
-                                        <div className="flex space-x-1 overflow-x-auto pb-1">
-                                          {offer.carInfo.images
-                                            .slice(0, 2)
-                                            .map((image, index) => (
-                                              <img
-                                                key={index}
-                                                src={image}
-                                                alt={`${offer.carInfo.make} ${offer.carInfo.model}`}
-                                                className="h-12 w-16 object-cover rounded border border-gray-200 flex-shrink-0"
-                                                onError={(e) => {
-                                                  console.error(
-                                                    `Failed to load inline image ${index}:`,
-                                                    image
-                                                  );
-                                                  e.target.style.display =
-                                                    "none";
-                                                }}
-                                                onLoad={() =>
-                                                  console.log(
-                                                    `Successfully loaded inline image ${index}:`,
-                                                    image
-                                                  )
-                                                }
-                                              />
-                                            ))}
-                                        </div>
-                                      </div>
-                                    )}
-
-                                  {/* Debug Info */}
-                                  {process.env.NODE_ENV === "development" && (
-                                    <div className="mb-1 p-1 bg-yellow-50 rounded text-xs text-gray-500">
-                                      <div>
-                                        CarInfo: {offer.carInfo ? "Yes" : "No"}
-                                      </div>
-                                      <div>
-                                        Images:{" "}
-                                        {offer.carInfo?.images
-                                          ? offer.carInfo.images.length
-                                          : 0}
-                                      </div>
-                                    </div>
-                                  )}
-
-                                  <div className="flex justify-between items-start mb-2">
-                                    <div className="flex-1">
-                                      <h5 className="font-medium text-gray-800">
-                                        {offer.title}
-                                      </h5>
-                                      <p className="text-sm text-gray-600 line-clamp-2">
-                                        {offer.description}
-                                      </p>
-
-                                      {/* Car Details */}
-                                      {offer.carInfo && (
-                                        <div className="mt-1 text-xs text-gray-600">
-                                          {offer.carInfo.make}{" "}
-                                          {offer.carInfo.model}{" "}
-                                          {offer.carInfo.year}
-                                        </div>
-                                      )}
-
-                                      {/* Seller Info */}
-                                      {offer.sellerInfo && (
-                                        <div className="mt-1 text-xs text-gray-500">
-                                          {offer.sellerInfo.firstName}{" "}
-                                          {offer.sellerInfo.lastName}
-                                          {offer.sellerInfo.companyName &&
-                                            ` (${offer.sellerInfo.companyName})`}
-                                        </div>
-                                      )}
-                                    </div>
-                                    <div className="text-right ml-3">
-                                      <div className="text-lg font-bold text-blue-600">
-                                        $
-                                        {offer.price?.toLocaleString() || "N/A"}
-                                      </div>
-                                      <span
-                                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                          offer.status === "Pending"
-                                            ? "bg-yellow-100 text-yellow-800"
-                                            : offer.status === "Accepted"
-                                            ? "bg-green-100 text-green-800"
-                                            : offer.status === "Rejected"
-                                            ? "bg-red-100 text-red-800"
-                                            : "bg-gray-100 text-gray-800"
-                                        }`}
-                                      >
-                                        {offer.status}
-                                      </span>
-                                    </div>
-                                  </div>
-
-                                  <div className="flex justify-end space-x-2">
-                                    <button
-                                      onClick={() =>
-                                        handleAcceptOffer(offer._id)
-                                      }
-                                      className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 transition-colors"
-                                    >
-                                      Akceptuj
-                                    </button>
-                                    <button
-                                      onClick={() =>
-                                        handleRejectOffer(offer._id)
-                                      }
-                                      className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700 transition-colors"
-                                    >
-                                      Odrzuć
-                                    </button>
-                                  </div>
-                                </div>
-                              ))}
-
-                            {requestOffers[request._id].length > 3 && (
-                              <div className="text-center pt-2">
-                                <button
-                                  onClick={() => handleViewOffers(request)}
-                                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                                >
-                                  Pokaż Wszystkie  {requestOffers[request._id].length}{" "}
-                                  Oferty →
-                                </button>
-                              </div>
-                            )}
+                      {/* Specs Grid */}
+                      <div className="grid grid-cols-2 gap-y-4 gap-x-2 mb-6 mt-2">
+                        {(request.make || request.model) && (
+                          <div>
+                            <p className="text-xs text-gray-400 font-bold uppercase mb-1">Pojazd</p>
+                            <div className="flex items-center gap-1.5 text-sm font-bold text-gray-800 line-clamp-1">
+                              <TbCar className="text-gray-400 flex-shrink-0" />
+                              {request.make} {request.model}
+                            </div>
                           </div>
                         )}
+                        <div>
+                          <p className="text-xs text-gray-400 font-bold uppercase mb-1">Budżet</p>
+                          <div className="flex items-center gap-1.5 text-sm font-bold text-emerald-600">
+                            <FiDollarSign className="text-emerald-500 flex-shrink-0" />
+                            {request.budgetMin
+                              ? `${(request.budgetMin / 1000).toFixed(0)}k - ${(request.budgetMax / 1000).toFixed(0)}k`
+                              : `< ${(request.budgetMax / 1000).toFixed(0)}k`}
+                          </div>
+                        </div>
                       </div>
-                    )}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      )}
 
-      {/* Offers Modal */}
-      {showOffersModal && selectedRequest && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
-            <div className="flex justify-between items-center p-6 border-b">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-800">
-                  Oferty dla: {selectedRequest.title}
-                </h2>
-                <p className="text-gray-500 mt-1">
-                  {selectedRequest.make} {selectedRequest.model}
-                </p>
-              </div>
-              <button
-                onClick={() => {
-                  setShowOffersModal(false);
-                  setSelectedOffer(null);
-                }}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-              >
-                  <FiX size={24} />
-              </button>
+                      {/* Stats & Metadata */}
+                      <div className="flex items-center justify-between py-3 border-t border-b border-gray-50 mb-4">
+                        <div className="flex items-center text-xs font-medium text-gray-500">
+                          <FiCalendar className="mr-1.5" />
+                          {formatDate(request.createdAt)}
+                        </div>
+                        <button
+                          onClick={() => toggleRequestExpanded(request._id)}
+                          className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-lg transition-colors ${expandedRequests.has(request._id) ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                            }`}
+                        >
+                          <FiDollarSign />
+                          {requestOffers[request._id]?.length || 0} Ofert
+                        </button>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-2">
+                        <Link
+                          href={`/dashboard/buyer-requests/${request._id}`}
+                          className="flex-1 py-2.5 flex items-center justify-center bg-gray-900 text-white rounded-xl font-bold text-sm hover:bg-gray-800 transition-colors shadow-md"
+                        >
+                          Szczegóły
+                        </Link>
+                        <Link
+                          href={`/dashboard/buyer-requests/${request._id}/edit`}
+                          className="p-2.5 bg-white border border-gray-200 text-gray-600 rounded-xl hover:bg-gray-50 transition-colors"
+                          title="Edytuj"
+                        >
+                          <FiEdit className="w-5 h-5" />
+                        </Link>
+                        <button
+                          onClick={() => handleDeleteRequest(request._id)}
+                          className="p-2.5 bg-white border border-red-100 text-red-500 rounded-xl hover:bg-red-50 transition-colors"
+                          title="Usuń"
+                        >
+                          <FiTrash2 className="w-5 h-5" />
+                        </button>
+                      </div>
+
+                      {/* Inline Offers - Premium Dropdown */}
+                      {expandedRequests.has(request._id) && (
+                        <div className="mt-4 pt-4 border-t border-gray-100 animate-in slide-in-from-top-2">
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                              Oferty ({requestOffers[request._id]?.length || 0})
+                            </span>
+                            {requestOffers[request._id]?.length > 0 && (
+                              <button
+                                onClick={() => handleViewOffers(request)}
+                                className="text-xs font-bold text-blue-600 hover:underline"
+                              >
+                                Zobacz wszystkie
+                              </button>
+                            )}
+                          </div>
+
+                          {!requestOffers[request._id] ? (
+                            <div className="text-center py-4">
+                              <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-blue-600 mx-auto"></div>
+                            </div>
+                          ) : requestOffers[request._id].length === 0 ? (
+                            <div className="text-center py-4 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                              <span className="text-xs font-medium text-gray-400">Brak ofert</span>
+                            </div>
+                          ) : (
+                            <div className="space-y-2">
+                              {requestOffers[request._id]
+                                .slice(0, 3)
+                                .map((offer) => (
+                                  <div
+                                    key={offer._id}
+                                    className="bg-gray-50 rounded-xl p-3 border border-gray-100 flex gap-3 items-center group/offer hover:border-blue-100 hover:bg-blue-50/30 transition-colors"
+                                  >
+                                    <div className="h-10 w-14 bg-white rounded-lg overflow-hidden border border-gray-200 flex-shrink-0">
+                                      {offer.carInfo?.images?.[0] ? (
+                                        <img src={offer.carInfo.images[0]} className="w-full h-full object-cover" alt="" />
+                                      ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-gray-300"><TbCar /></div>
+                                      )}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <h5 className="font-bold text-gray-800 text-xs truncate">{offer.title}</h5>
+                                      <p className="text-xs text-blue-600 font-bold">${offer.price?.toLocaleString()}</p>
+                                    </div>
+                                    <div className="flex gap-1 opacity-0 group-hover/offer:opacity-100 transition-opacity">
+                                      <button onClick={() => handleAcceptOffer(offer._id)} className="p-1.5 bg-emerald-100 text-emerald-600 rounded-lg hover:bg-emerald-200" title="Akceptuj"><span className="sr-only">Akceptuj</span>✓</button>
+                                      <button onClick={() => handleRejectOffer(offer._id)} className="p-1.5 bg-red-100 text-red-600 rounded-lg hover:bg-red-200" title="Odrzuć"><span className="sr-only">Odrzuć</span>✕</button>
+                                    </div>
+                                  </div>
+                                ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
+          )}
 
-              <div className="flex-1 overflow-y-auto p-6">
+        {/* Offers Modal */}
+        {showOffersModal && selectedRequest && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
+              <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-gray-50/50">
+                <div>
+                  <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">
+                    Oferty dla: {selectedRequest.title}
+                  </h2>
+                  <p className="text-gray-500 font-medium mt-1">
+                    {selectedRequest.make} {selectedRequest.model}
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowOffersModal(false);
+                    setSelectedOffer(null);
+                  }}
+                  className="p-2 hover:bg-gray-200 rounded-full transition-colors text-gray-500 hover:text-gray-700"
+                >
+                  <FiX size={24} />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
                 {offersLoading ? (
                   <div className="flex justify-center py-12">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
                   </div>
                 ) : offers.length === 0 ? (
-                  <div className="text-center py-12">
-                    <div className="bg-gray-100 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                      <FiInfo className="h-8 w-8 text-gray-400" />
-                      </div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  <div className="text-center py-12 bg-white rounded-2xl shadow-sm border border-gray-100 m-4">
+                    <div className="bg-blue-50 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                      <FiInfo className="h-8 w-8 text-blue-500" />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">
                       Brak ofert
                     </h3>
                     <p className="text-gray-500">
@@ -956,117 +716,104 @@ Utwórz nowe zapytanie, aby zacząć otrzymywać oferty od sprzedawców
                     {offers.map((offer) => (
                       <div
                         key={offer._id}
-                        className="border rounded-lg p-4 hover:shadow-md transition-shadow"
+                        className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
                       >
-                        {/* Car Images */}
-                        {offer.carInfo &&
-                          offer.carInfo.images &&
-                          offer.carInfo.images.length > 0 && (
-                            <div className="mb-3">
-                              <div className="flex space-x-2 overflow-x-auto pb-2">
-                                {offer.carInfo.images.map((image, index) => (
-                                  <img
-                                    key={index}
-                                    src={image}
-                                    alt={`${offer.carInfo.make} ${offer.carInfo.model}`}
-                                    className="h-20 w-28 object-cover rounded-lg border border-gray-200 flex-shrink-0"
-                                  />
-                                ))}
-                        </div>
-                            </div>
-                          )}
-
-                        <div className="flex justify-between items-start mb-3">
-                          <div className="flex-1">
-                            <h4 className="text-lg font-semibold text-gray-800">
-                              {offer.title}
-                            </h4>
-                            <p className="text-gray-600 text-sm mb-2">
-                          {offer.description}
-                        </p>
-
-                            {/* Car Details */}
-                            {offer.carInfo && (
-                              <div className="mb-2 p-2 bg-blue-50 rounded-lg">
-                                <div className="text-sm text-gray-700">
-                                  <span className="font-medium">Car:</span>{" "}
-                                  {offer.carInfo.make} {offer.carInfo.model}{" "}
-                                  {offer.carInfo.year}
-                      </div>
-                  </div>
-                )}
-
-                            {/* Seller Information */}
-                            {offer.sellerInfo && (
-                              <div className="mb-2 p-2 bg-gray-50 rounded-lg">
-                                <div className="flex items-center justify-between text-sm">
-                                  <div className="text-gray-700">
-                                    <span className="font-medium">Sprzedawca:</span>{" "}
-                                    {offer.sellerInfo.firstName}{" "}
-                                    {offer.sellerInfo.lastName}
-                                    {offer.sellerInfo.companyName && (
-                                      <span className="text-gray-500 ml-1">
-                                        ({offer.sellerInfo.companyName})
-                                      </span>
-                                    )}
-                                  </div>
-                                  <span
-                                    className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                      offer.sellerInfo.sellerType === "company"
-                                        ? "bg-purple-100 text-purple-800"
-                                        : "bg-blue-100 text-blue-800"
-                                    }`}
-                                  >
-                                    {offer.sellerInfo.sellerType === "company"
-                                      ? "Firma"
-                                      : "Osoba prywatna"}
-                                  </span>
-                  </div>
-                    </div>
-                            )}
-                      </div>
-                          <div className="text-right ml-4">
-                            <div className="text-2xl font-bold text-blue-600">
-                              ${offer.price?.toLocaleString() || "N/A"}
-                      </div>
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                offer.status === "Pending"
-                                  ? "bg-yellow-100 text-yellow-800"
-                                  : offer.status === "Accepted"
-                                  ? "bg-green-100 text-green-800"
-                                  : offer.status === "Rejected"
-                                  ? "bg-red-100 text-red-800"
-                                  : "bg-gray-100 text-gray-800"
-                              }`}
-                            >
-                              {offer.status}
-                            </span>
+                        <div className="flex flex-col md:flex-row gap-6">
+                          {/* Car Images */}
+                          <div className="w-full md:w-1/3 bg-gray-100 rounded-xl overflow-hidden self-start">
+                            {offer.carInfo?.images?.[0] ? (
+                              <div className="aspect-video relative">
+                                <img
+                                  src={offer.carInfo.images[0]}
+                                  alt={`${offer.carInfo.make} ${offer.carInfo.model}`}
+                                  className="w-full h-full object-cover"
+                                />
+                                <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
+                                  {offer.carInfo.images.length} zdjęć
+                                </div>
                               </div>
+                            ) : (
+                              <div className="aspect-video flex items-center justify-center text-gray-300">
+                                <TbCar className="w-12 h-12" />
+                              </div>
+                            )}
+                            <div className="p-3 bg-gray-50 border-t border-gray-100">
+                              <p className="font-bold text-gray-900 text-sm">
+                                {offer.carInfo?.make} {offer.carInfo?.model} {offer.carInfo?.year}
+                              </p>
+                            </div>
                           </div>
 
-                        <div className="flex justify-end space-x-2">
-                        <button
-                            onClick={() => handleAcceptOffer(offer._id)}
-                            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
-                        >
-                            Akceptuj
-                        </button>
-                        <button
-                            onClick={() => handleRejectOffer(offer._id)}
-                            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-                        >
-                            Odrzuć
-                        </button>
+                          <div className="flex-1 flex flex-col">
+                            <div className="flex justify-between items-start mb-2">
+                              <h4 className="text-xl font-bold text-gray-900">
+                                {offer.title}
+                              </h4>
+                              <div className="text-right">
+                                <div className="text-2xl font-bold text-blue-600">
+                                  ${offer.price?.toLocaleString() || "N/A"}
+                                </div>
+                                <span
+                                  className={`inline-block mt-1 px-3 py-1 rounded-lg text-xs font-bold uppercase ${offer.status === "Pending"
+                                    ? "bg-yellow-100 text-yellow-800"
+                                    : offer.status === "Accepted"
+                                      ? "bg-emerald-100 text-emerald-800"
+                                      : offer.status === "Rejected"
+                                        ? "bg-red-100 text-red-800"
+                                        : "bg-gray-100 text-gray-800"
+                                    }`}
+                                >
+                                  {offer.status}
+                                </span>
+                              </div>
+                            </div>
+
+                            <p className="text-gray-600 text-sm mb-4 line-clamp-3 leading-relaxed">
+                              {offer.description}
+                            </p>
+
+                            <div className="mt-auto pt-4 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
+                              {offer.sellerInfo && (
+                                <div className="flex items-center gap-3 bg-gray-50 px-3 py-2 rounded-xl w-full md:w-auto">
+                                  <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                                    {offer.sellerInfo.firstName[0]}
+                                  </div>
+                                  <div className="text-sm">
+                                    <p className="font-bold text-gray-900">
+                                      {offer.sellerInfo.firstName} {offer.sellerInfo.lastName}
+                                    </p>
+                                    <p className="text-xs text-gray-500">
+                                      {offer.sellerInfo.companyName || "Osoba prywatna"}
+                                    </p>
+                                  </div>
+                                </div>
+                              )}
+
+                              <div className="flex gap-2 w-full md:w-auto">
+                                <button
+                                  onClick={() => handleAcceptOffer(offer._id)}
+                                  className="flex-1 md:flex-none px-6 py-2.5 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-colors font-bold text-sm shadow-md"
+                                >
+                                  Akceptuj
+                                </button>
+                                <button
+                                  onClick={() => handleRejectOffer(offer._id)}
+                                  className="flex-1 md:flex-none px-6 py-2.5 bg-white border border-red-100 text-red-600 rounded-xl hover:bg-red-50 transition-colors font-bold text-sm"
+                                >
+                                  Odrzuć
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                  </div>
                     ))}
-                </div>
-              )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
       </div>
     </div>
   );
