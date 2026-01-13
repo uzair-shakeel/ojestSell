@@ -981,25 +981,25 @@ export default function ImageEditStep({
 
   return (
     <>
-      <div className="bg-white rounded-lg w-full">
+      <div className="bg-white dark:bg-gray-800 rounded-lg w-full transition-colors">
         <div className="flex items-center justify-between mb-2">
-          <h2 className="text-xl font-bold">Krok 3: Zdjęcia Pojazdu</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Krok 3: Zdjęcia Pojazdu</h2>
           {isUploading && (
-            <div className="flex items-center gap-2 text-blue-600 bg-blue-50 px-3 py-1 rounded-full text-xs font-bold">
-              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
+            <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full text-xs font-bold border border-blue-100 dark:border-blue-800">
+              <div className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full animate-bounce"></div>
               <span>PRZESYŁANIE...</span>
             </div>
           )}
         </div>
-        <p className="text-gray-500 text-sm mb-6">
+        <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
           Zarządzaj zdjęciami swojego auta. Pierwsze zdjęcie to zdjęcie główne.
         </p>
 
         {formData.images.length === 0 ? (
           <div className="mb-6">
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50">
-              <p className="text-gray-700 font-medium mb-2">Załaduj zdjęcia (1-100)</p>
-              <p className="text-sm text-gray-500 mb-4">Dodaj zdjęcia auta tutaj. Możesz je edytować od razu po załadowaniu.</p>
+            <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center bg-gray-50 dark:bg-gray-700/50">
+              <p className="text-gray-700 dark:text-gray-300 font-medium mb-2">Załaduj zdjęcia (1-100)</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Dodaj zdjęcia auta tutaj. Możesz je edytować od razu po załadowaniu.</p>
               <label className="inline-block cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
                 Wybierz zdjęcia
                 <input
@@ -1015,10 +1015,10 @@ export default function ImageEditStep({
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Image Thumbnails */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="font-semibold mb-3">Dodane zdjęcia</h3>
+            <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg">
+              <h3 className="font-semibold mb-3 text-gray-900 dark:text-white">Dodane zdjęcia</h3>
               <div className="mb-3">
-                <label className="inline-flex items-center gap-2 cursor-pointer text-sm text-blue-600 hover:text-blue-700">
+                <label className="inline-flex items-center gap-2 cursor-pointer text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-bold uppercase tracking-wider">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M12 5v14m-7-7h14" /></svg>
                   Dodaj zdjęcia
                   <input
@@ -1149,21 +1149,21 @@ export default function ImageEditStep({
               </div>
 
               {/* Upload Status Footer */}
-              <div className="mt-3 pt-3 border-t text-sm text-gray-500 flex justify-between items-center">
+              <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 text-sm text-gray-500 dark:text-gray-400 flex justify-between items-center">
                 <span>{uploadedCount} z {totalImages} zdjęć przesłanych.</span>
                 {isUploading && <span className="text-blue-500 animate-pulse flex items-center gap-2"><div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div> Przesyłanie...</span>}
               </div>
             </div>
 
-            {/* Image Preview & Edit Area */}
+            {/* Image Editor Area */}
             <div className="md:col-span-2">
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="font-semibold mb-3">Edytuj Zdjęcie</h3>
-
-                {/* Image Preview */}
+              <div className="bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden h-full flex flex-col">
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800">
+                  <h3 className="font-bold text-gray-900 dark:text-white">Edytor Zdjęć</h3>
+                </div>
                 <div
                   ref={containerRef}
-                  className="relative w-full h-[400px] border border-gray-300 rounded-lg overflow-hidden bg-white flex items-center justify-center mb-4"
+                  className="relative w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden bg-white dark:bg-gray-800 flex items-center justify-center mb-4"
                 >
                   {activeImage ? (
                     <div className="relative w-full h-full flex items-center justify-center">
@@ -1200,7 +1200,7 @@ export default function ImageEditStep({
                       )}
                     </div>
                   ) : (
-                    <div className="text-gray-400">Wybierz zdjęcie do edycji</div>
+                    <div className="text-gray-400 dark:text-gray-500">Wybierz zdjęcie do edycji</div>
                   )}
                 </div>
 
@@ -1262,17 +1262,17 @@ export default function ImageEditStep({
           </div>
         )}
 
-        <div className="flex justify-between items-center mt-12 pt-8 border-t border-gray-100">
+        <div className="flex justify-between items-center mt-12 pt-8 border-t border-gray-100 dark:border-gray-700">
           <button
             onClick={prevStep}
-            className="text-gray-500 font-bold px-8 py-4 rounded-xl hover:bg-gray-50 transition-all"
+            className="text-gray-500 dark:text-gray-400 font-bold px-8 py-4 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all font-bold"
           >
             Wstecz
           </button>
           <button
             onClick={nextStep}
             disabled={isUploading}
-            className="bg-blue-600 text-white font-bold px-12 py-4 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 disabled:bg-blue-400"
+            className="bg-blue-600 text-white font-bold px-12 py-4 rounded-xl hover:bg-blue-700 transition-all shadow-lg dark:shadow-md dark:shadow-blue-900 shadow-blue-200  disabled:bg-blue-400"
           >
             {isUploading ? "Przesyłanie..." : "Następny Krok"}
           </button>
@@ -1281,10 +1281,10 @@ export default function ImageEditStep({
 
       {/* Presets Modal */}
       {showPresetsModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center border-b p-4">
-              <h3 className="text-lg font-semibold">Ustawienia Zdjęć</h3>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-white/10">
+            <div className="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 p-6">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Filtry i Ulepszenia</h3>
               <button
                 onClick={() => setShowPresetsModal(false)}
                 className="text-gray-500 hover:text-gray-700"
@@ -1314,12 +1314,12 @@ export default function ImageEditStep({
                     applyFilterPreset(presetKey);
                     setShowPresetsModal(false);
                   }}
-                  className={`p-4 rounded-md border transition-all duration-200 flex flex-col items-center ${activeFilter === presetKey
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-gray-200 hover:border-blue-300 hover:bg-blue-50"
+                  className={`p-4 rounded-2xl border-2 transition-all duration-200 flex flex-col items-center group/preset ${activeFilter === presetKey
+                    ? "border-blue-500 bg-blue-50/50 dark:bg-blue-900/30"
+                    : "border-gray-50 dark:border-gray-700/50 bg-white dark:bg-gray-900 hover:border-blue-300 dark:hover:border-blue-700"
                     }`}
                 >
-                  <div className="w-full pb-[56.25%] relative mb-2 bg-gray-100 rounded overflow-hidden">
+                  <div className="w-full pb-[56.25%] relative mb-3 bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden">
                     <div className="absolute inset-0 flex items-center justify-center">
                       {/* This would ideally display a thumbnail preview of the effect */}
                       <div className="w-12 h-12 flex items-center justify-center">
@@ -1344,7 +1344,7 @@ export default function ImageEditStep({
                       </div>
                     </div>
                   </div>
-                  <span className="text-sm font-medium">
+                  <span className="text-sm font-bold text-gray-700 dark:text-gray-300 group-hover/preset:text-blue-600 transition-colors">
                     {
                       filterPresets[presetKey as keyof typeof filterPresets]
                         .name

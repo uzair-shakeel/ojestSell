@@ -97,9 +97,6 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
     fetchChats();
   }, [userId, getToken]);
 
-  // Debug logging
-  console.log("Sidebar sellerType:", sellerType);
-  console.log("Sidebar userData:", userData);
 
   const menuItems = [
     {
@@ -166,9 +163,17 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
 
   // Helper to check if link is active
   const isActive = (href) => {
-    // Exact match for home, startsWith for others to handle sub-pages
-    if (href === '/dashboard/home') return pathname === href;
-    return pathname?.startsWith(href);
+    if (!pathname || !href) return false;
+    if (pathname === href) return true;
+
+    // Special case for Moje Auta: don't highlight if on Wystaw Auto (/dashboard/cars/add)
+    if (href === '/dashboard/cars' && pathname.startsWith('/dashboard/cars/add')) {
+      return false;
+    }
+
+    // For other links, startsWith is fine but we add a trailing slash check to be safer
+    // or we just check if it's a sub-path
+    return pathname.startsWith(href + '/');
   };
 
   return (

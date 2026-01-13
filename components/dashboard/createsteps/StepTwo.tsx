@@ -256,7 +256,7 @@ export default function StepTwo({
           </button>
           <button
             onClick={handleNext}
-            className="bg-blue-600 text-white font-bold px-12 py-4 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
+            className="bg-blue-600 text-white font-bold px-12 py-4 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 dark:shadow-md dark:shadow-blue-900"
           >
             Następny Krok
           </button>

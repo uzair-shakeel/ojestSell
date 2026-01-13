@@ -370,7 +370,7 @@ export default function MultiStepForm() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6 overflow-hidden h-auto border border-gray-200 shadow-md rounded-lg relative">
+    <div className="max-w-5xl mx-auto p-6 overflow-hidden h-auto border border-gray-200 dark:border-gray-700 shadow-md rounded-lg relative bg-white dark:bg-gray-800 transition-colors">
       {error && <div className="text-red-500 mb-4">{error}</div>}
       <AnimatePresence mode="wait">
         <motion.div
@@ -405,15 +405,6 @@ export default function MultiStepForm() {
             />
           )}
           {step === 4 && (
-            <StepTwo
-              nextStep={nextStep}
-              prevStep={prevStep}
-              updateFormData={updateFormData}
-              formData={formData}
-              makesModelsData={makesModelsData}
-            />
-          )}
-          {step === 5 && (
             <StepThree
               nextStep={nextStep}
               prevStep={prevStep}
@@ -421,7 +412,7 @@ export default function MultiStepForm() {
               formData={formData}
             />
           )}
-          {step === 6 && (
+          {step === 5 && (
             <StepFour
               nextStep={nextStep}
               prevStep={prevStep}
@@ -429,7 +420,7 @@ export default function MultiStepForm() {
               formData={formData}
             />
           )}
-          {step === 7 && (
+          {step === 6 && (
             <StepFive
               prevStep={prevStep}
               handleSubmit={handleSubmit}
@@ -448,17 +439,17 @@ export default function MultiStepForm() {
             className="absolute inset-0 bg-black/50"
             onClick={() => setShowSuccessModal(false)}
           />
-          <div className="relative bg-white rounded-lg shadow-xl w-full max-w-md p-6 mx-4">
-            <h3 className="text-xl font-semibold mb-2">
+          <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6 mx-4 border border-white/10">
+            <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
               Car created successfully
             </h3>
-            <p className="text-gray-600 mb-6">
-              Your listing has been submitted for review and is currently <span className="font-semibold">Pending approval</span>.
+            <p className="text-gray-600 dark:text-gray-400 mb-6 font-medium">
+              Your listing has been submitted for review and is currently <span className="font-bold text-yellow-600 dark:text-yellow-400">Pending approval</span>.
               It will not appear on the public website until an admin approves it. You can track its status in your dashboard.
             </p>
             <div className="flex justify-end gap-3">
               <button
-                className="px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 rounded border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 font-bold transition-all"
                 onClick={() => setShowSuccessModal(false)}
               >
                 Close

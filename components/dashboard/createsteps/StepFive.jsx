@@ -116,22 +116,22 @@ export default function StepFive({
 
   const SummaryItem = ({ label, value, fullWidth = false }) => (
     <div className={`${fullWidth ? 'col-span-2' : 'col-span-1'} space-y-1`}>
-      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</p>
-      <p className="font-bold text-gray-900 leading-tight">{value || "N/A"}</p>
+      <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">{label}</p>
+      <p className="font-bold text-gray-900 dark:text-gray-100 leading-tight">{value || "N/A"}</p>
     </div>
   );
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg transition-colors duration-300">
       <h2 className="text-xl font-bold mb-6 text-gray-900 dark:text-white transition-colors duration-300">
-        Krok 7: Przejrzyj i Potwierdź
+        Krok 6: Przejrzyj i Potwierdź
       </h2>
 
       <div className="space-y-8">
         {/* Basic Info Section */}
-        <div className="bg-gray-50/50 rounded-2xl border border-gray-100 overflow-hidden">
-          <div className="px-6 py-4 bg-gray-100/50 border-b border-gray-100">
-            <h3 className="font-bold text-gray-900 uppercase tracking-widest text-xs">Informacje Podstawowe</h3>
+        <div className="bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+          <div className="px-6 py-4 bg-gray-100/50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-700">
+            <h3 className="font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest text-xs">Informacje Podstawowe</h3>
           </div>
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
@@ -155,9 +155,9 @@ export default function StepFive({
         </div>
 
         {/* Condition Section */}
-        <div className="bg-gray-50/50 rounded-2xl border border-gray-100 overflow-hidden">
-          <div className="px-6 py-4 bg-gray-100/50 border-b border-gray-100">
-            <h3 className="font-bold text-gray-900 uppercase tracking-widest text-xs">Stan Pojazdu</h3>
+        <div className="bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+          <div className="px-6 py-4 bg-gray-100/50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-700">
+            <h3 className="font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest text-xs">Stan Pojazdu</h3>
           </div>
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
@@ -173,9 +173,9 @@ export default function StepFive({
         </div>
 
         {/* Financial Info Section */}
-        <div className="bg-gray-50/50 rounded-2xl border border-gray-100 overflow-hidden">
-          <div className="px-6 py-4 bg-gray-100/50 border-b border-gray-100">
-            <h3 className="font-bold text-gray-900 uppercase tracking-widest text-xs">Finanse i Sprzedaż</h3>
+        <div className="bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+          <div className="px-6 py-4 bg-gray-100/50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-700">
+            <h3 className="font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest text-xs">Finanse i Sprzedaż</h3>
           </div>
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
@@ -183,8 +183,8 @@ export default function StepFive({
               <SummaryItem label="Dokumentacja" value={translateValue(formData.financialInfo.invoiceOptions, invoiceOptionsMap)} />
               <SummaryItem label="Typ Sprzedawcy" value={translateValue(formData.financialInfo.sellerType, sellerTypeMap)} />
               <div className="col-span-1">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Cena</p>
-                <p className="text-2xl font-black text-blue-600">
+                <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Cena</p>
+                <p className="text-2xl font-black text-blue-600 dark:text-blue-400">
                   {formData.financialInfo.invoiceOptions.includes("Invoice VAT")
                     ? `${formData.financialInfo.priceNetto} € (Netto)`
                     : `${formData.financialInfo.priceNetto} €`}
@@ -195,19 +195,19 @@ export default function StepFive({
         </div>
 
         {/* Location Section */}
-        <div className="bg-gray-50/50 rounded-2xl border border-gray-100 overflow-hidden">
-          <div className="px-6 py-4 bg-gray-100/50 border-b border-gray-100">
-            <h3 className="font-bold text-gray-900 uppercase tracking-widest text-xs">Lokalizacja</h3>
+        <div className="bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+          <div className="px-6 py-4 bg-gray-100/50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-700">
+            <h3 className="font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest text-xs">Lokalizacja</h3>
           </div>
           <div className="p-6">
             {locationDetails.city && (
-              <div className="flex items-center gap-3 mb-6 p-4 bg-white border border-gray-100 rounded-xl">
+              <div className="flex items-center gap-3 mb-6 p-4 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-sm">
                 <div className="bg-blue-600 p-2 rounded-lg">
                   <FaMapMarkerAlt className="text-white" size={16} />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-gray-900 leading-none">{locationDetails.city}</p>
-                  <p className="text-xs text-gray-500 mt-1">{locationDetails.state || "Polska"}</p>
+                  <p className="text-sm font-bold text-gray-900 dark:text-white leading-none">{locationDetails.city}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{locationDetails.state || "Polska"}</p>
                 </div>
               </div>
             )}
@@ -239,7 +239,7 @@ export default function StepFive({
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex justify-between items-center mt-12 pt-8 border-t border-gray-100 relative">
+      <div className="flex justify-between items-center mt-12 pt-8 border-t border-gray-100 dark:border-gray-700 relative">
         <button
           onClick={prevStep}
           disabled={loading}
