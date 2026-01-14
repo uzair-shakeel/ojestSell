@@ -231,7 +231,8 @@ const BuyerRequestsDashboard = () => {
 
         await deleteBuyerRequest(requestId, getTokenFn);
         toast.success("Zapytanie zostało anulowane");
-        fetchRequests(activeTab);
+        // Use the actual backend status for "cancelled"
+        fetchRequests(activeTab === "cancelled" ? "Cancelled" : activeTab);
       } catch (error) {
         console.error("Error deleting request:", error);
         toast.error("Nie udało się anulować zapytania");

@@ -1511,10 +1511,9 @@ export default function PhotoEnhancer() {
 
         // For iOS Safari, we need to use a different technique
         // Create a temporary link that opens in a new window
-        await deleteBuyerRequest(requestId, getTokenFn);
-        toast.success("Zapytanie zostało anulowane");
-        // Use the actual backend status for "cancelled"
-        fetchRequests(activeTab === "cancelled" ? "Cancelled" : activeTab);
+        const a = document.createElement("a");
+        a.style.display = "none";
+        a.href = url;
         a.download = filename;
 
         // iOS specific: Open in new window/tab with download prompt
