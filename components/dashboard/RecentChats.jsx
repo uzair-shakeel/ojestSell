@@ -14,16 +14,16 @@ export default function RecentChats({ chats = [] }) {
 
   const items = Array.isArray(chats)
     ? [...chats]
-        .sort((a, b) => {
-          const ta = new Date(a?.lastMessage?.timestamp || a?.updatedAt || 0).getTime();
-          const tb = new Date(b?.lastMessage?.timestamp || b?.updatedAt || 0).getTime();
-          return tb - ta;
-        })
-        .slice(0, 6)
+      .sort((a, b) => {
+        const ta = new Date(a?.lastMessage?.timestamp || a?.updatedAt || 0).getTime();
+        const tb = new Date(b?.lastMessage?.timestamp || b?.updatedAt || 0).getTime();
+        return tb - ta;
+      })
+      .slice(0, 6)
     : [];
 
   return (
-    <div className="p-4 bg-white dark:bg-gray-800800800800800 shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+    <div className="p-4 bg-white dark:bg-gray-800 shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 transition-colors duration-300">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white transition-colors duration-300">
           Ostatnie wiadomości
@@ -42,7 +42,7 @@ export default function RecentChats({ chats = [] }) {
             : null;
           const name = other
             ? `${other.firstName || ""} ${other.lastName || ""}`.trim() ||
-              other.email
+            other.email
             : "Unknown";
           const avatar = other?.image || other?.profilePicture || null;
           const preview =

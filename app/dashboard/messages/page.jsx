@@ -688,18 +688,18 @@ const MessagesPage = () => {
   const chatCount = chats.length;
 
   return (
-    <div className="flex h-[calc(100vh-70px)] bg-gray-50 font-sans overflow-hidden relative">
+    <div className="flex h-[calc(100vh-70px)] bg-gray-50 dark:bg-gray-900 font-sans overflow-hidden relative transition-colors duration-300">
       {/* Sidebar - Floating Card Style */}
       <div
         className={`absolute md:relative inset-y-0 left-0 z-20 h-full w-full sm:w-[360px] md:w-[380px] flex flex-col transform transition-transform duration-300 ${showSidebar ? "translate-x-0" : "-translate-x-full"
           } md:translate-x-0 p-4 md:pr-0`}
       >
-        <div className="bg-white rounded-3xl shadow-xl h-full flex flex-col border border-gray-100 overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl h-full flex flex-col border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">
           {/* Sidebar Header */}
-          <div className="p-6 border-b border-gray-100 flex justify-between items-center shrink-0 bg-white">
+          <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center shrink-0 bg-white dark:bg-gray-800 transition-colors">
             <div>
-              <h2 className="font-extrabold text-2xl text-gray-900 tracking-tight">Wiadomości</h2>
-              <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">Twoje konwersacje</p>
+              <h2 className="font-extrabold text-2xl text-gray-900 dark:text-white tracking-tight">Wiadomości</h2>
+              <p className="text-xs text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest mt-1">Twoje konwersacje</p>
             </div>
             {totalUnread > 0 && (
               <div className="bg-red-500 text-white rounded-xl px-3 py-1 text-xs font-bold shadow-red-200 shadow-md">
@@ -715,8 +715,8 @@ const MessagesPage = () => {
                 <div
                   key={chat._id}
                   className={`flex items-center gap-4 p-4 rounded-2xl cursor-pointer transition-all border-2 ${selectedChat && selectedChat._id === chat._id
-                    ? "bg-blue-50 border-blue-500 shadow-sm"
-                    : "bg-white border-transparent hover:bg-gray-50 hover:border-gray-100"
+                    ? "bg-blue-50 dark:bg-blue-900/20 border-blue-500 shadow-sm"
+                    : "bg-white dark:bg-gray-800 border-transparent hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-100 dark:hover:border-gray-600"
                     }`}
                   onClick={() => handleSelectChat(chat)}
                 >
@@ -727,24 +727,24 @@ const MessagesPage = () => {
                       size={56}
                       imgClassName="rounded-2xl"
                     />
-                    {chat.unreadCount > 0 && <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white"></span>}
+                    {chat.unreadCount > 0 && <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white dark:border-gray-800"></span>}
                   </div>
 
                   <div className="flex-grow min-w-0">
                     <div className="flex justify-between items-center mb-1">
-                      <div className={`text-sm truncate ${chat.unreadCount > 0 ? "font-bold text-gray-900" : "font-semibold text-gray-700"}`}>
+                      <div className={`text-sm truncate ${chat.unreadCount > 0 ? "font-bold text-gray-900 dark:text-white" : "font-semibold text-gray-700 dark:text-gray-300"}`}>
                         {getParticipantName(chat)}
                       </div>
                       {chat.lastMessage && (
-                        <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded-lg">
+                        <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-lg">
                           {fmtTime(chat.lastMessage.timestamp)}
                         </span>
                       )}
                     </div>
-                    <div className={`truncate w-full text-sm ${chat.unreadCount > 0 ? "text-gray-900 font-medium" : "text-gray-500"}`}>
+                    <div className={`truncate w-full text-sm ${chat.unreadCount > 0 ? "text-gray-900 dark:text-white font-medium" : "text-gray-500 dark:text-gray-400"}`}>
                       {chat.lastMessage ? (
                         <>
-                          <span className="font-semibold text-gray-400 mr-1">
+                          <span className="font-semibold text-gray-400 dark:text-gray-500 mr-1">
                             {String(chat.lastMessage.sender) === String(myUserId) ? "Ty:" : ""}
                           </span>
                           {chat.lastMessage.content || "Empty message"}
@@ -758,10 +758,10 @@ const MessagesPage = () => {
               ))
             ) : (
               <div className="text-center py-12">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
+                <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400 dark:text-gray-500">
                   <FaEnvelope size={24} />
                 </div>
-                <p className="text-gray-500 font-medium text-sm">Brak wiadomości</p>
+                <p className="text-gray-500 dark:text-gray-400 font-medium text-sm">Brak wiadomości</p>
               </div>
             )}
           </div>
@@ -769,15 +769,15 @@ const MessagesPage = () => {
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden relative p-4 pl-0 md:pl-4">
-        <div className="bg-white rounded-3xl shadow-xl h-full flex flex-col border border-gray-100 overflow-hidden relative">
+      <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden relative p-4 pl-0 md:pl-4 transition-colors duration-300">
+        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl h-full flex flex-col border border-gray-100 dark:border-gray-700 overflow-hidden relative transition-colors duration-300">
           {/* Chat Header */}
-          <div className="p-4 md:p-6 border-b border-gray-100 flex items-center justify-between shrink-0 bg-white z-10">
+          <div className="p-4 md:p-6 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between shrink-0 bg-white dark:bg-gray-800 z-10 transition-colors">
             <div className="flex items-center gap-4">
               {/* Mobile: sidebar toggle */}
               <button
                 type="button"
-                className="md:hidden inline-flex items-center justify-center h-10 w-10 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+                className="md:hidden inline-flex items-center justify-center h-10 w-10 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                 onClick={() => setShowSidebar((prev) => !prev)}
               >
                 <FaBars className="h-4 w-4" />
@@ -788,14 +788,14 @@ const MessagesPage = () => {
                     src={getParticipantImage(selectedChat)}
                     alt={getParticipantName(selectedChat)}
                     size={48}
-                    imgClassName="rounded-xl shadow-sm border border-gray-100"
+                    imgClassName="rounded-xl shadow-sm border border-gray-100 dark:border-gray-700"
                   />
                   <div>
-                    <div className="font-bold text-lg text-gray-900">
+                    <div className="font-bold text-lg text-gray-900 dark:text-white transition-colors">
                       {getParticipantName(selectedChat)}
                     </div>
                     {selectedChat.carId && (
-                      <div className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg inline-block mt-1">
+                      <div className="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-lg inline-block mt-1">
                         AUTO: {selectedChat.carId.title || "Nieznane"}
                       </div>
                     )}
@@ -808,7 +808,7 @@ const MessagesPage = () => {
           </div>
 
           {/* Messages Container */}
-          <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 bg-gray-50/30 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 bg-gray-50/30 dark:bg-gray-900/10 custom-scrollbar transition-colors">
             {selectedChat ? (
               messages.length > 0 ? (
                 <>
@@ -826,20 +826,20 @@ const MessagesPage = () => {
                           {/* <Avatar src={isMe ? user?.image : getParticipantImage(selectedChat)} size={32} imgClassName="rounded-lg self-end" /> */}
 
                           <div
-                            className={`px-6 py-4 rounded-2xl shadow-sm text-sm whitespace-pre-line relative ${isMe
-                              ? "bg-blue-600 text-white rounded-br-none"
-                              : "bg-white text-gray-800 border border-gray-100 rounded-bl-none"
+                            className={`px-6 py-4 rounded-2xl shadow-sm text-sm whitespace-pre-line relative transition-all duration-200 ${isMe
+                              ? "bg-blue-600 text-white rounded-br-none shadow-blue-900/20"
+                              : "bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-100 dark:border-gray-600 rounded-bl-none shadow-black/5"
                               } ${message.pending ? "opacity-80" : "opacity-100"}`}
                           >
                             {String(message.sender) !== String(myUserId) &&
                               String(message.senderId) !== String(myUserId) && (
-                                <div className="font-bold text-[10px] uppercase tracking-wider text-gray-400 mb-2">
+                                <div className="font-bold text-[10px] uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2">
                                   {message.senderName || "Użytkownik"}
                                 </div>
                               )}
                             {message.text || message.content}
 
-                            <div className={`text-right text-[10px] font-bold mt-2 ${isMe ? 'text-blue-200' : 'text-gray-300'}`}>
+                            <div className={`text-right text-[10px] font-bold mt-2 ${isMe ? 'text-blue-200' : 'text-gray-300 dark:text-gray-500'}`}>
                               {fmtTime(message.createdAt)}
                               {isMe && (
                                 <span className="ml-2 inline-block">
@@ -860,40 +860,40 @@ const MessagesPage = () => {
                   })}
                   {typing && (
                     <div className="flex justify-start">
-                      <div className="bg-white border border-gray-100 px-6 py-4 rounded-2xl rounded-bl-none shadow-sm flex items-center gap-2">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      <div className="bg-white dark:bg-gray-700 border border-gray-100 dark:border-gray-600 px-6 py-4 rounded-2xl rounded-bl-none shadow-sm flex items-center gap-2">
+                        <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
+                        <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                        <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                       </div>
                     </div>
                   )}
                   <div ref={messagesEndRef} className="h-0" />
                 </>
               ) : (
-                <div className="flex flex-col items-center justify-center h-full text-gray-400 opacity-60">
+                <div className="flex flex-col items-center justify-center h-full text-gray-400 dark:text-gray-600 opacity-60">
                   <FaEnvelope size={48} className="mb-4" />
                   <p className="font-bold">To początek Waszej rozmowy</p>
                 </div>
               )
             ) : (
-              <div className="flex flex-col items-center justify-center h-full text-gray-300">
-                <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+              <div className="flex flex-col items-center justify-center h-full text-gray-300 dark:text-gray-600">
+                <div className="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-6">
                   <FaPaperPlane size={32} className="ml-2" />
                 </div>
-                <p className="font-bold text-lg text-gray-400">Wybierz czat aby rozpocząć rozmowę</p>
+                <p className="font-bold text-lg text-gray-400 dark:text-gray-500">Wybierz czat aby rozpocząć rozmowę</p>
               </div>
             )}
           </div>
 
           {/* Message Input - Floating */}
           {selectedChat && (
-            <div className="p-4 md:p-6 bg-white border-t border-gray-100 z-10">
-              <div className="flex items-center gap-3 bg-gray-50 border-2 border-gray-100 rounded-2xl p-2 pr-2 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-50/50 transition-all">
+            <div className="p-4 md:p-6 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 z-10 transition-colors">
+              <div className="flex items-center gap-3 bg-gray-50 dark:bg-gray-900 border-2 border-gray-100 dark:border-gray-700 rounded-2xl p-2 pr-2 focus-within:border-blue-500 dark:focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-50/50 dark:focus-within:ring-blue-900/20 transition-all">
                 <input
                   type="text"
                   value={newMessage}
                   onChange={handleTyping}
-                  className="flex-1 bg-transparent border-none focus:ring-0 p-3 pl-4 text-sm font-medium text-gray-800 placeholder-gray-400"
+                  className="flex-1 bg-transparent border-none focus:ring-0 p-3 pl-4 text-sm font-medium text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                   placeholder="Napisz wiadomość..."
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
@@ -904,7 +904,7 @@ const MessagesPage = () => {
                 <button
                   onClick={handleSendMessage}
                   disabled={!newMessage.trim()}
-                  className="p-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:bg-gray-200 disabled:text-gray-400 transition-all shadow-lg shadow-blue-200 hover:scale-105 active:scale-95 flex items-center justify-center"
+                  className="p-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:bg-gray-200 dark:disabled:bg-gray-700 disabled:text-gray-400 dark:disabled:text-gray-600 transition-all shadow-lg dark:shadow-blue-900 shadow-blue-200 hover:scale-105 active:scale-95 flex items-center justify-center"
                 >
                   <FaPaperPlane size={14} className={newMessage.trim() ? "translate-x-0.5 translate-y-0.5" : ""} />
                 </button>

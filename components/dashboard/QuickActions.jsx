@@ -37,7 +37,7 @@ export default function QuickActions() {
           <Link
             key={a.href}
             href={a.href}
-            className={`group rounded-lg ring-1 ring-black/5 p-3 flex items-center gap-3 hover:shadow transition bg-gradient-to-br ${a.color} text-white`}
+            className={`group rounded-lg ring-1 ring-black/5 dark:ring-white/10 p-3 flex items-center gap-3 hover:shadow transition bg-gradient-to-br ${a.color} text-white`}
           >
             <div className="w-9 h-9 rounded-md bg-white/20 backdrop-blur flex items-center justify-center">
               {a.icon}

@@ -42,19 +42,24 @@ export default function DashboardCarsPage() {
 
   // Handle the case when there's no user or still loading
   if (isLoading || !user) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-gray-800">
+        <div className="w-16 h-16 border-4 border-blue-100 dark:border-blue-900 border-t-blue-600 rounded-full animate-spin mb-4"></div>
+        <p className="text-gray-400 dark:text-gray-500 font-medium">Ładowanie...</p>
+      </div>
+    );
   }
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
       <div className="flex justify-between items-end mb-12">
         <div>
-          <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">Moje Auta</h1>
-          <p className="text-gray-500 mt-2 font-medium">Zarządzaj swoją flotą i ogłoszeniami sprzedaży.</p>
+          <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight transition-colors">Moje Auta</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-2 font-medium transition-colors">Zarządzaj swoją flotą i ogłoszeniami sprzedaży.</p>
         </div>
         <a
           href="/dashboard/cars/add"
-          className="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 flex items-center gap-2 hover:-translate-y-1"
+          className="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg dark:shadow-blue-900/40 shadow-blue-200 flex items-center gap-2 hover:-translate-y-1"
         >
           <span className="text-xl">+</span>
           Dodaj Nowe
@@ -65,10 +70,10 @@ export default function DashboardCarsPage() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 rounded-2xl border border-yellow-200 bg-yellow-50 p-4 text-yellow-800 flex items-start gap-3 shadow-sm"
+          className="mb-8 rounded-2xl border border-yellow-200 dark:border-yellow-900/50 bg-yellow-50 dark:bg-yellow-900/10 p-4 text-yellow-800 dark:text-yellow-200 flex items-start gap-3 shadow-sm"
         >
-          <div className="bg-yellow-100 p-2 rounded-lg">
-            <svg className="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <div className="bg-yellow-100 dark:bg-yellow-900/40 p-2 rounded-lg">
+            <svg className="w-5 h-5 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
           </div>
           <div>
             <h4 className="font-bold">Oczekiwanie na zatwierdzenie</h4>
@@ -79,14 +84,14 @@ export default function DashboardCarsPage() {
 
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-20">
-          <div className="w-16 h-16 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin mb-4"></div>
-          <p className="text-gray-400 font-medium animate-pulse">Ładowanie Twoich aut...</p>
+          <div className="w-16 h-16 border-4 border-blue-100 dark:border-blue-900 border-t-blue-600 rounded-full animate-spin mb-4"></div>
+          <p className="text-gray-400 dark:text-gray-500 font-medium animate-pulse">Ładowanie Twoich aut...</p>
         </div>
       ) : cars.length === 0 ? (
-        <div className="text-center py-24 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
-          <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-gray-100">
+        <div className="text-center py-24 bg-gray-50 dark:bg-gray-800/50 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-700 transition-colors">
+          <div className="w-24 h-24 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-gray-100 dark:border-gray-700">
             <svg
-              className="h-10 w-10 text-gray-300"
+              className="h-10 w-10 text-gray-300 dark:text-gray-600"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -94,8 +99,8 @@ export default function DashboardCarsPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
           </div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">Brak samochodów</h3>
-          <p className="text-gray-500 mb-8 max-w-md mx-auto">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Brak samochodów</h3>
+          <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-md mx-auto">
             Nie masz jeszcze żadnych ogłoszeń. Dodaj swoje pierwsze auto, aby dotrzeć do kupujących.
           </p>
           <a
@@ -119,21 +124,21 @@ export default function DashboardCarsPage() {
                 {/* Overlay gradient for text readability if needed, but CarCard might handle image */}
               </div>
 
-              <div className="flex items-center justify-between pt-4 border-t border-gray-50 mt-auto">
+              <div className="flex items-center justify-between pt-4 border-t border-gray-50 dark:border-gray-700 mt-auto transition-colors">
                 <div className="flex flex-col gap-1">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</span>
+                  <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">Status</span>
                   {car.status === "Approved" ? (
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
                       <span className="w-1.5 h-1.5 rounded-full bg-green-500 mr-2"></span>
                       Aktywny
                     </span>
                   ) : car.status === "Pending" ? (
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400">
                       <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 mr-2 animate-pulse"></span>
                       Weryfikacja
                     </span>
                   ) : (
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400">
                       <span className="w-1.5 h-1.5 rounded-full bg-red-500 mr-2"></span>
                       Odrzucony
                     </span>
@@ -142,7 +147,7 @@ export default function DashboardCarsPage() {
 
                 <button
                   onClick={() => handleDelete(car._id)}
-                  className="px-4 py-2 rounded-lg text-red-500 hover:bg-red-50 hover:text-red-600 font-bold text-xs uppercase tracking-wider transition-colors"
+                  className="px-4 py-2 rounded-lg text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-300 font-bold text-xs uppercase tracking-wider transition-all"
                 >
                   Usuń
                 </button>

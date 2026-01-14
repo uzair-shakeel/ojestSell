@@ -6,13 +6,13 @@ export default function RecentCars({ cars = [] }) {
   const getStatusClasses = (status) => {
     switch ((status || "").toLowerCase()) {
       case "approved":
-        return "bg-emerald-100 text-emerald-700 ring-emerald-200";
+        return "bg-emerald-100 text-emerald-700 ring-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:ring-emerald-800";
       case "pending":
-        return "bg-amber-100 text-amber-700 ring-amber-200";
+        return "bg-amber-100 text-amber-700 ring-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:ring-amber-800";
       case "rejected":
-        return "bg-rose-100 text-rose-700 ring-rose-200";
+        return "bg-rose-100 text-rose-700 ring-rose-200 dark:bg-rose-900/30 dark:text-rose-400 dark:ring-rose-800";
       default:
-        return "bg-slate-100 text-slate-700 ring-slate-200";
+        return "bg-slate-100 text-slate-700 ring-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:ring-slate-600";
     }
   };
 

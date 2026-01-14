@@ -1,6 +1,4 @@
-"use client";
-
-import { useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -31,6 +29,17 @@ export default function DashboardCharts({
   recentCars = [],
   chatsCountByDay = [],
 }) {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    const checkDark = () => {
+      setIsDarkMode(document.documentElement.classList.contains("dark"));
+    };
+    checkDark();
+    const observer = new MutationObserver(checkDark);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
   const fmt = (d) => {
     const date = new Date(d);
     const dd = String(date.getDate()).padStart(2, "0");
@@ -143,13 +152,13 @@ export default function DashboardCharts({
 
   const axisOptions = {
     x: {
-      grid: { color: "rgba(0,0,0,0.05)" },
-      ticks: { color: "#64748b", maxRotation: 0, autoSkip: true },
+      grid: { color: isDarkMode ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)" },
+      ticks: { color: isDarkMode ? "#94a3b8" : "#64748b", maxRotation: 0, autoSkip: true },
       border: { display: false },
     },
     y: {
-      grid: { color: "rgba(0,0,0,0.05)" },
-      ticks: { color: "#64748b", precision: 0 },
+      grid: { color: isDarkMode ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)" },
+      ticks: { color: isDarkMode ? "#94a3b8" : "#64748b", precision: 0 },
       border: { display: false },
     },
   };
@@ -164,6 +173,7 @@ export default function DashboardCharts({
           boxHeight: 10,
           padding: 8,
           usePointStyle: false,
+          color: isDarkMode ? "#f8fafc" : "#1e293b",
           font: { size: 11 },
         },
       },

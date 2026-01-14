@@ -1511,9 +1511,10 @@ export default function PhotoEnhancer() {
 
         // For iOS Safari, we need to use a different technique
         // Create a temporary link that opens in a new window
-        const a = document.createElement("a");
-        a.style.display = "none";
-        a.href = url;
+        await deleteBuyerRequest(requestId, getTokenFn);
+        toast.success("Zapytanie zostało anulowane");
+        // Use the actual backend status for "cancelled"
+        fetchRequests(activeTab === "cancelled" ? "Cancelled" : activeTab);
         a.download = filename;
 
         // iOS specific: Open in new window/tab with download prompt
@@ -2719,7 +2720,7 @@ export default function PhotoEnhancer() {
   };
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-8 px-4 transition-colors duration-300">
       <style jsx>{`
         .bg-checkered {
           background-image: linear-gradient(45deg, #ccc 25%, transparent 25%),
@@ -2731,15 +2732,15 @@ export default function PhotoEnhancer() {
         }
       `}</style>
 
-      <h1 className="text-3xl font-bold mb-6">Ulepszanie Zdjęć</h1>
+      <h1 className="text-3xl font-extrabold mb-6 text-gray-900 dark:text-white tracking-tight">Ulepszanie Zdjęć</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Image Preview Section */}
-        <div className="lg:col-span-2 bg-gray-50 rounded-lg p-6 shadow-md">
+        <div className="lg:col-span-2 bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 transition-colors duration-300">
           <div className="flex flex-col items-center">
             <div
               ref={containerRef}
-              className="relative w-full h-[300px] md:h-[580px] border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-white flex items-center justify-center"
+              className="relative w-full h-[300px] md:h-[580px] border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-3xl overflow-hidden bg-gray-50 dark:bg-gray-950 flex items-center justify-center transition-colors duration-300"
             >
               {selectedImage ? (
                 <div className="relative w-full h-full flex items-center justify-center">
@@ -2886,10 +2887,10 @@ export default function PhotoEnhancer() {
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center text-gray-400">
-                  <BsFillImageFill className="w-16 h-16 mb-4" />
-                  <p className="text-lg">Nie wybrano zdjęcia</p>
-                  <p className="text-sm mt-2">Prześlij zdjęcie, aby je ulepszyć</p>
+                <div className="flex flex-col items-center justify-center text-gray-400 dark:text-gray-600">
+                  <BsFillImageFill className="w-16 h-16 mb-4 opacity-50" />
+                  <p className="text-lg font-bold">Nie wybrano zdjęcia</p>
+                  <p className="text-sm mt-2 opacity-75">Prześlij zdjęcie, aby je ulepszyć</p>
                 </div>
               )}
             </div>
@@ -2912,7 +2913,7 @@ export default function PhotoEnhancer() {
 
               <button
                 onClick={resetAdjustments}
-                className="btn btn-outline flex items-center gap-2"
+                className="btn btn-outline flex items-center gap-2 dark:text-white dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
                 disabled={!selectedImage}
               >
                 <FiRefreshCw /> Resetuj
@@ -2928,7 +2929,7 @@ export default function PhotoEnhancer() {
 
               <button
                 onClick={() => setShowCropModal(true)}
-                className="btn btn-outline flex items-center gap-2"
+                className="btn btn-outline flex items-center gap-2 dark:text-white dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
                 disabled={!selectedImage}
               >
                 <MdCrop /> Przytnij
@@ -2936,32 +2937,29 @@ export default function PhotoEnhancer() {
 
               <button
                 onClick={blurNumberPlate}
-                className="btn btn-outline btn-info flex items-center gap-2"
+                className="btn btn-outline btn-info flex items-center gap-2 dark:bg-info/20 dark:text-info dark:hover:bg-info/30 transition-colors"
                 disabled={!selectedImage || isBlurringPlate}
               >
                 <FaCar /> {isBlurringPlate ? "Zamazuję..." : "Zamaż Tablicę"}
               </button>
 
-              {/* <button
-                onClick={() => setShowBgRemovalModal(true)}
-                className={`btn btn-outline ${
-                  !selectedImage || !backgroundRemovalLoaded
-                    ? "btn-warning"
-                    : "btn-accent"
-                } flex items-center gap-2`}
+              <button
+                onClick={removeCarBackground}
+                className={`btn btn-outline ${!selectedImage ? "dark:text-gray-500 border-gray-300 dark:border-gray-700" : "text-emerald-600 dark:text-emerald-400 border-emerald-500 dark:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"} flex items-center gap-2 transition-all`}
                 disabled={!selectedImage || isProcessingBg}
               >
-                {networkError ? (
+                {isProcessingBg ? (
                   <>
-                    <MdRefresh /> Retry Background Removal
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-500"></div>
+                    Przetwarzanie...
                   </>
                 ) : (
                   <>
-                    <RiScissorsCutLine />
-                    {isProcessingBg ? "Processing..." : "Remove Background"}
+                    <RiScissorsCutLine className="w-5 h-5" />
+                    Usuń Tło (Auto)
                   </>
                 )}
-              </button> */}
+              </button>
 
               <input
                 type="file"
@@ -2978,25 +2976,25 @@ export default function PhotoEnhancer() {
 
             {/* Remove the blur intensity slider and replace with simple controls */}
             {showBlurBox && (
-              <div className="mt-4 w-full max-w-md bg-white p-4 rounded-md shadow">
+              <div className="mt-4 w-full max-w-md bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium flex items-center gap-2">
-                    <MdBlurOn className="w-5 h-5" /> Rozmycie Tablicy Rejestracyjnej
+                  <span className="text-sm font-bold flex items-center gap-2 text-gray-900 dark:text-white">
+                    <MdBlurOn className="w-5 h-5 text-blue-500" /> Rozmycie Tablicy Rejestracyjnej
                   </span>
                 </div>
-                <p className="text-sm text-gray-600 mb-3">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
                   Umieść ramkę rozmycia nad tablicą rejestracyjną i kliknij "Zastosuj Rozmycie", gdy będziesz gotowy.
                 </p>
                 <div className="flex justify-end gap-2">
                   <button
                     onClick={() => setShowBlurBox(false)}
-                    className="px-3 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+                    className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 font-bold transition-colors"
                   >
                     Anuluj
                   </button>
                   <button
                     onClick={applyBlurBox}
-                    className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-bold shadow-md transition-colors"
                   >
                     Zastosuj Rozmycie
                   </button>
@@ -3008,15 +3006,15 @@ export default function PhotoEnhancer() {
 
         {/* Background Removal Processing Modal */}
         {showBgRemovalModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full text-center">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl p-8 max-w-md w-full text-center border border-gray-100 dark:border-gray-800">
               {isProcessingBg ? (
                 <>
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                  <h3 className="text-lg font-semibold mb-2">
+                  <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
                     Usuwam Tło
                   </h3>
-                  <p className="text-gray-600">
+                  <p className="text-gray-500 dark:text-gray-400">
                     To może zająć chwilę...
                   </p>
                 </>
@@ -3029,8 +3027,8 @@ export default function PhotoEnhancer() {
                       <MdClose className="mx-auto" />
                     )}
                   </div>
-                  <h3 className="text-lg font-semibold mb-2">Błąd</h3>
-                  <p className="text-gray-600 mb-4">{bgRemovalError}</p>
+                  <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Błąd</h3>
+                  <p className="text-gray-500 dark:text-gray-400 mb-6">{bgRemovalError}</p>
                   <div className="flex flex-col gap-2">
                     {networkError ? (
                       <>
@@ -3059,7 +3057,7 @@ export default function PhotoEnhancer() {
                     ) : null}
                     <button
                       onClick={() => setShowBgRemovalModal(false)}
-                      className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+                      className="px-6 py-3 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 font-bold transition-colors"
                     >
                       Zamknij
                     </button>
@@ -3072,13 +3070,13 @@ export default function PhotoEnhancer() {
 
         {/* Presets Modal */}
         {showPresetsModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="flex justify-between items-center border-b p-4">
-                <h3 className="text-lg font-semibold">Presety Zdjęć Samochodowych</h3>
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+            <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-gray-100 dark:border-gray-800 animate-in zoom-in-95 duration-200">
+              <div className="flex justify-between items-center border-b border-gray-100 dark:border-gray-800 p-6 bg-gray-50/50 dark:bg-gray-800/50">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Presety Zdjęć Samochodowych</h3>
                 <button
                   onClick={() => setShowPresetsModal(false)}
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-all"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -3105,12 +3103,12 @@ export default function PhotoEnhancer() {
                       applyFilterPreset(presetKey);
                       setShowPresetsModal(false);
                     }}
-                    className={`p-4 rounded-md border transition-all duration-200 flex flex-col items-center ${activeFilter === presetKey
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-gray-200 hover:border-blue-300 hover:bg-blue-50"
+                    className={`p-4 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center ${activeFilter === presetKey
+                      ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg shadow-blue-100 dark:shadow-none"
+                      : "border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                       }`}
                   >
-                    <div className="w-full pb-[56.25%] relative mb-2 bg-gray-100 rounded overflow-hidden">
+                    <div className="w-full pb-[56.25%] relative mb-3 bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden transition-colors">
                       <div className="absolute inset-0 flex items-center justify-center">
                         {/* This would ideally display a thumbnail preview of the effect */}
                         <div className="w-12 h-12 flex items-center justify-center">
@@ -3135,7 +3133,7 @@ export default function PhotoEnhancer() {
                         </div>
                       </div>
                     </div>
-                    <span className="text-sm font-medium">
+                    <span className={`text-sm font-bold transition-colors ${activeFilter === presetKey ? "text-blue-600 dark:text-blue-400" : "text-gray-700 dark:text-gray-300"}`}>
                       {filterPresets[presetKey].name}
                     </span>
                   </button>
@@ -3147,21 +3145,21 @@ export default function PhotoEnhancer() {
 
         {/* Crop Modal */}
         {showCropModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
-              <div className="flex justify-between items-center border-b p-4">
-                <h3 className="text-lg font-semibold">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-in fade-in duration-200">
+            <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col border border-gray-100 dark:border-gray-800 animate-in zoom-in-95 duration-200">
+              <div className="flex justify-between items-center border-b border-gray-100 dark:border-gray-800 p-6 bg-gray-50/50 dark:bg-gray-800/50">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">
                   Przytnij Zdjęcie (Format 3:2)
                 </h3>
                 <button
                   onClick={() => setShowCropModal(false)}
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-all"
                 >
                   <MdClose size={24} />
                 </button>
               </div>
 
-              <div className="flex-1 overflow-auto p-2 sm:p-4 bg-gray-100 relative">
+              <div className="flex-1 overflow-auto p-2 sm:p-4 bg-gray-100 dark:bg-gray-950 relative">
                 <div className="relative w-full h-full flex items-center justify-center">
                   <div
                     ref={imageCropWrapperRef}
@@ -3235,7 +3233,7 @@ export default function PhotoEnhancer() {
                         onTouchStart={(e) => handleCropResize("e", e)}
                       ></div>
                       <div
-                        className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-6 h-6 sm:w-6 sm:h-6 bg-white rounded-full border-2 border-blue-500 cursor-nw-resize touch-manipulation"
+                        className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-6 h-6 sm:w-6 sm:h-6 bg-white dark:bg-gray-800 rounded-full border-2 border-blue-500 cursor-nw-resize touch-manipulation"
                         style={{ width: "24px", height: "24px" }}
                         onMouseDown={(e) => handleCropResize("nw", e)}
                         onTouchStart={(e) => handleCropResize("nw", e)}
@@ -3262,10 +3260,10 @@ export default function PhotoEnhancer() {
                   </div>
 
                   {/* Vertical adjustment controls */}
-                  <div className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2 sm:gap-3 bg-white p-2 sm:p-3 rounded-lg shadow-lg">
+                  <div className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2 sm:gap-3 bg-white dark:bg-gray-900 p-2 sm:p-3 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800">
                     <button
                       onClick={() => handleVerticalAdjust(-10)}
-                      className="p-2 sm:p-3 bg-blue-100 hover:bg-blue-200 rounded-md transition-colors w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center"
+                      className="p-2 sm:p-3 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-xl transition-colors w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center"
                       title="Move up significantly"
                     >
                       <svg
@@ -3298,15 +3296,15 @@ export default function PhotoEnhancer() {
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        className="text-blue-500"
+                        className="text-blue-500 dark:text-blue-400"
                       >
                         <path d="M18 15l-6-6-6 6" />
                       </svg>
                     </button>
-                    <div className="h-px w-full bg-gray-200 my-1"></div>
+                    <div className="h-px w-full bg-gray-100 dark:bg-gray-800 my-1"></div>
                     <button
                       onClick={() => handleVerticalAdjust(2)}
-                      className="p-2 sm:p-3 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center"
+                      className="p-2 sm:p-3 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-xl transition-colors w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center"
                       title="Fine adjust down"
                     >
                       <svg
@@ -3319,14 +3317,14 @@ export default function PhotoEnhancer() {
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        className="text-blue-500"
+                        className="text-blue-500 dark:text-blue-400"
                       >
                         <path d="M6 9l6 6 6-6" />
                       </svg>
                     </button>
                     <button
                       onClick={() => handleVerticalAdjust(10)}
-                      className="p-2 sm:p-3 bg-blue-100 hover:bg-blue-200 rounded-md transition-colors w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center"
+                      className="p-2 sm:p-3 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-xl transition-colors w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center"
                       title="Move down significantly"
                     >
                       <svg
@@ -3350,24 +3348,24 @@ export default function PhotoEnhancer() {
                 </div>
               </div>
 
-              <div className="border-t p-3 sm:p-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-                <div className="text-sm text-gray-600 text-center sm:text-left">
+              <div className="border-t border-gray-100 dark:border-gray-800 p-6 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gray-50/50 dark:bg-gray-800/50">
+                <div className="text-sm font-medium text-gray-500 dark:text-gray-400 text-center sm:text-left">
                   <p>
-                    Przeciągnij, aby ustawić • Użyj uchwytów, aby zmienić rozmiar • Użyj pionowych kontrolek do precyzyjnej regulacji
+                    Przeciągnij, aby ustawić • Użyj uchwytów, aby zmienić rozmiar • Użyj kontrolek do precyzyjnej regulacji
                   </p>
                 </div>
                 <div className="flex gap-2 w-full sm:w-auto">
                   <button
                     onClick={() => setShowCropModal(false)}
-                    className="flex-1 sm:flex-none px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+                    className="flex-1 sm:flex-none px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 font-bold transition-colors"
                   >
                     Anuluj
                   </button>
                   <button
                     onClick={applyCrop}
-                    className="flex-1 sm:flex-none px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center justify-center gap-2"
+                    className="flex-1 sm:flex-none px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 flex items-center justify-center gap-2 font-bold shadow-md transition-colors"
                   >
-                    <MdCheck size={18} /> Zastosuj Przycięcie
+                    <MdCheck size={20} /> Zastosuj Przycięcie
                   </button>
                 </div>
               </div>
@@ -3376,23 +3374,23 @@ export default function PhotoEnhancer() {
         )}
 
         {/* Controls Section */}
-        <div className="bg-gray-50 rounded-lg p-6 shadow-md overflow-y-auto max-h-[800px]">
-          <h2 className="text-xl font-semibold mb-4">Dostosuj Zdjęcie</h2>
+        <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 overflow-y-auto max-h-[800px] transition-colors duration-300">
+          <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white tracking-tight">Dostosuj Zdjęcie</h2>
 
           <div className="space-y-6">
             {/* Basic Adjustments */}
             <div>
-              <h3 className="text-md font-medium mb-3 border-b pb-1">
+              <h3 className="text-sm font-bold mb-4 border-b border-gray-100 dark:border-gray-800 pb-2 text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                 Podstawowe Ustawienia
               </h3>
 
               {/* Brightness */}
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
-                  <label className="flex items-center gap-2 text-sm font-medium">
-                    <MdBrightness6 className="w-5 h-5" /> Jasność
+                  <label className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-300">
+                    <MdBrightness6 className="w-5 h-5 text-yellow-500" /> Jasność
                   </label>
-                  <span>{adjustments.brightness}%</span>
+                  <span className="text-xs font-bold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-md">{adjustments.brightness}%</span>
                 </div>
                 <input
                   type="range"
@@ -3413,10 +3411,10 @@ export default function PhotoEnhancer() {
               {/* Contrast */}
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
-                  <label className="flex items-center gap-2 text-sm font-medium">
-                    <MdContrast className="w-5 h-5" /> Kontrast
+                  <label className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-300">
+                    <MdContrast className="w-5 h-5 text-blue-500" /> Kontrast
                   </label>
-                  <span>{adjustments.contrast}%</span>
+                  <span className="text-xs font-bold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-md">{adjustments.contrast}%</span>
                 </div>
                 <input
                   type="range"
@@ -3695,14 +3693,14 @@ export default function PhotoEnhancer() {
             </div>
 
             {/* Transform Controls */}
-            <div className="pt-4 border-t border-gray-200">
-              <h3 className="text-lg font-medium mb-4">Transformacja</h3>
+            <div className="pt-6 border-t border-gray-100 dark:border-gray-800">
+              <h3 className="text-sm font-bold mb-4 text-gray-400 dark:text-gray-500 uppercase tracking-wider">Transformacja</h3>
 
               <div className="flex flex-wrap gap-3">
                 <button
-                  className={`px-3 py-2 rounded-md flex items-center gap-2 ${!selectedImage
-                      ? "bg-gray-200 text-gray-400"
-                      : "bg-gray-200 hover:bg-gray-300"
+                  className={`px-3 py-2 rounded-xl flex items-center justify-center gap-2 flex-1 min-w-[140px] text-sm font-bold transition-all ${!selectedImage
+                    ? "bg-gray-50 dark:bg-gray-800 text-gray-300 dark:text-gray-600"
+                    : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                     }`}
                   onClick={() =>
                     handleAdjustmentChange("rotate", adjustments.rotate - 90)
@@ -3714,8 +3712,8 @@ export default function PhotoEnhancer() {
 
                 <button
                   className={`px-3 py-2 rounded-md flex items-center gap-2 ${!selectedImage
-                      ? "bg-gray-200 text-gray-400"
-                      : "bg-gray-200 hover:bg-gray-300"
+                    ? "bg-gray-200 text-gray-400"
+                    : "bg-gray-200 hover:bg-gray-300"
                     }`}
                   onClick={() =>
                     handleAdjustmentChange("rotate", adjustments.rotate + 90)
@@ -3727,8 +3725,8 @@ export default function PhotoEnhancer() {
 
                 <button
                   className={`px-3 py-2 rounded-md flex items-center gap-2 ${!selectedImage
-                      ? "bg-gray-200 text-gray-400"
-                      : "bg-gray-200 hover:bg-gray-300"
+                    ? "bg-gray-200 text-gray-400"
+                    : "bg-gray-200 hover:bg-gray-300"
                     }`}
                   onClick={() =>
                     handleAdjustmentChange("flipX", !adjustments.flipX)
@@ -3740,8 +3738,8 @@ export default function PhotoEnhancer() {
 
                 <button
                   className={`px-3 py-2 rounded-md flex items-center gap-2 ${!selectedImage
-                      ? "bg-gray-200 text-gray-400"
-                      : "bg-gray-200 hover:bg-gray-300"
+                    ? "bg-gray-200 text-gray-400"
+                    : "bg-gray-200 hover:bg-gray-300"
                     }`}
                   onClick={() =>
                     handleAdjustmentChange("flipY", !adjustments.flipY)
@@ -3780,20 +3778,20 @@ export default function PhotoEnhancer() {
 
       {/* Background Color Options Modal */}
       {showBackgroundOptions && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">Wybierz Kolor Tła</h3>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl p-8 max-w-md w-full border border-gray-100 dark:border-gray-800 animate-in zoom-in-95 duration-200">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Wybierz Kolor Tła</h3>
               <button
                 onClick={() => setShowBackgroundOptions(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-all"
               >
                 <MdClose size={24} />
               </button>
             </div>
 
             <div className="mb-4">
-              <p className="text-gray-600 mb-2">
+              <p className="text-gray-500 dark:text-gray-400 mb-4 font-medium">
                 Wybierz kolor tła, który chcesz zastosować do zdjęcia:
               </p>
             </div>
@@ -3806,19 +3804,19 @@ export default function PhotoEnhancer() {
                     setSelectedBackgroundColor(option.color);
                     applyBackgroundColor(option.color);
                   }}
-                  className="p-2 rounded border hover:border-blue-500 transition-colors"
+                  className="p-3 rounded-2xl border-2 border-gray-50 dark:border-gray-800 hover:border-blue-500 dark:hover:border-blue-500 transition-all bg-white dark:bg-gray-800 group"
                   title={option.name}
                 >
                   <div
                     className="w-full aspect-square rounded"
                     style={{ backgroundColor: option.color }}
                   ></div>
-                  <div className="text-xs mt-1 text-center">{option.name}</div>
+                  <div className="text-[10px] mt-2 text-center font-bold text-gray-500 dark:text-gray-400 group-hover:text-blue-600 transition-colors uppercase tracking-tight">{option.name}</div>
                 </button>
               ))}
 
               {/* Custom color picker */}
-              <div className="p-2 rounded border hover:border-blue-500 transition-colors">
+              <div className="p-3 rounded-2xl border-2 border-gray-50 dark:border-gray-800 hover:border-blue-500 dark:hover:border-blue-500 transition-all bg-white dark:bg-gray-800 group">
                 <div className="w-full aspect-square rounded flex items-center justify-center bg-gradient-to-r from-red-500 via-green-500 to-blue-500">
                   <input
                     type="color"
@@ -3830,14 +3828,14 @@ export default function PhotoEnhancer() {
                     className="w-full h-full opacity-0 cursor-pointer"
                   />
                 </div>
-                <div className="text-xs mt-1 text-center">Niestandardowy</div>
+                <div className="text-[10px] mt-2 text-center font-bold text-gray-500 dark:text-gray-400 group-hover:text-blue-600 transition-colors uppercase tracking-tight">Kolor</div>
               </div>
 
               {/* Keep transparent option - only show if image has transparency */}
               {imageHasTransparency && (
                 <button
                   onClick={() => setShowBackgroundOptions(false)}
-                  className="p-2 rounded border hover:border-blue-500 transition-colors"
+                  className="p-3 rounded-2xl border-2 border-gray-50 dark:border-gray-800 hover:border-blue-500 dark:hover:border-blue-500 transition-all bg-white dark:bg-gray-800 group"
                   title="Zachowaj Obecną Przezroczystość"
                 >
                   <div className="w-full aspect-square rounded bg-checkered relative overflow-hidden">
@@ -3847,7 +3845,7 @@ export default function PhotoEnhancer() {
                       </span>
                     </div>
                   </div>
-                  <div className="text-xs mt-1 text-center">Bez Zmian</div>
+                  <div className="text-[10px] mt-2 text-center font-bold text-gray-500 dark:text-gray-400 group-hover:text-blue-600 transition-colors uppercase tracking-tight">Bez Zmian</div>
                 </button>
               )}
             </div>
@@ -3855,7 +3853,7 @@ export default function PhotoEnhancer() {
             <div className="flex justify-end">
               <button
                 onClick={() => setShowBackgroundOptions(false)}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                className="w-full px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-bold shadow-lg transition-colors"
               >
                 Gotowe
               </button>
@@ -3865,14 +3863,14 @@ export default function PhotoEnhancer() {
       )}
 
       {showCarBgOptions && (
-        <div className="mt-4 p-4 bg-base-200 rounded-lg">
-          <h3 className="font-semibold mb-2">Opcje Usuwania Tła Samochodu</h3>
+        <div className="mt-8 p-6 bg-white dark:bg-gray-900 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 transition-colors duration-300">
+          <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white tracking-tight">Opcje Usuwania Tła Samochodu</h3>
 
           {previewCanvas && (
             <div className="mb-4">
               <h4 className="text-sm font-medium mb-1">Podgląd</h4>
               <div
-                className="bg-gray-200 bg-opacity-50 p-2 rounded border border-gray-300"
+                className="bg-gray-100 dark:bg-gray-950 p-2 rounded-2xl border border-gray-200 dark:border-gray-800 transition-colors"
                 style={{ maxHeight: "200px", overflow: "auto" }}
               >
                 <div
@@ -3906,43 +3904,43 @@ export default function PhotoEnhancer() {
 
           <div className="form-control">
             <label className="label">
-              <span className="label-text">
-                Próg Wykrywania Tła: {carBgThreshold}
+              <span className="label-text font-bold text-gray-700 dark:text-gray-300">
+                Próg Wykrywania Tła: <span className="text-blue-600 dark:text-blue-400">{carBgThreshold}</span>
               </span>
             </label>
-            <div className="flex items-center gap-2">
-              <span className="text-xs">Niższy (Bardziej Precyzyjny)</span>
+            <div className="flex items-center gap-4">
+              <span className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Bardziej Precyzyjny</span>
               <input
                 type="range"
                 min="10"
                 max="100"
                 value={carBgThreshold}
                 onChange={(e) => handleThresholdChange(e.target.value)}
-                className="range range-xs range-primary"
+                className="flex-1 accent-blue-600"
               />
-              <span className="text-xs">Wyższy (Bardziej Agresywny)</span>
+              <span className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Bardziej Agresywny</span>
             </div>
             <div className="mt-2">
               <button
                 onClick={applyCarBgThreshold}
-                className="btn btn-sm btn-primary"
+                className="px-6 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-bold shadow-md transition-colors"
                 disabled={isProcessingBg}
               >
                 Zastosuj Próg
               </button>
               <button
                 onClick={() => setShowCarBgOptions(false)}
-                className="btn btn-sm btn-ghost ml-2"
+                className="ml-2 px-6 py-2.5 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 font-bold transition-colors"
               >
                 Zamknij
               </button>
             </div>
-            <div className="text-xs text-gray-500 mt-2">
+            <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mt-4 space-y-1">
               <p>
-                Niższe wartości zachowują więcej szczegółów, ale mogą pozostawić trochę tła.
+                • Niższe wartości zachowują więcej szczegółów, ale mogą pozostawić trochę tła.
               </p>
               <p>
-                Wyższe wartości usuwają więcej tła, ale mogą wpłynąć na krawędzie samochodu.
+                • Wyższe wartości usuwają więcej tła, ale mogą wpłynąć na krawędzie samochodu.
               </p>
             </div>
           </div>

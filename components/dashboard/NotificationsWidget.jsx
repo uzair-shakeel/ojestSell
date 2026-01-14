@@ -14,10 +14,10 @@ function fmt(d) {
 
 const TypeBadge = ({ type }) => {
   const map = {
-    message: "bg-blue-100 text-blue-700 border-blue-200",
-    car: "bg-emerald-100 text-emerald-700 border-emerald-200",
-    status: "bg-amber-100 text-amber-700 border-amber-200",
-    system: "bg-gray-100 text-gray-700 border-gray-200",
+    message: "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800",
+    car: "bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800",
+    status: "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/10 dark:text-amber-400 dark:border-amber-800",
+    system: "bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600",
   };
   return (
     <span className={`text-[10px] px-2 py-0.5 rounded-full border ${map[type] || map.system}`}>{type}</span>
@@ -48,7 +48,7 @@ export default function NotificationsWidget() {
     e.stopPropagation();
     try {
       if (!n.read) await markRead(n.id);
-    } catch {}
+    } catch { }
   };
   return (
     <div className="p-4 bg-white dark:bg-gray-800 shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 transition-colors duration-300">
