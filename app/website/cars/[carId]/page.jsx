@@ -69,7 +69,7 @@ const Page = () => {
     return `https://${trimmed}`;
   };
 
-  // Format phone number with spaces (e.g., "+48 669 993 336")
+  // Format phone number with spaces for display (e.g., "+48 669 993 336")
   const formatPhoneNumber = (phoneNumber) => {
     if (!phoneNumber) return "";
 
@@ -84,34 +84,21 @@ const Page = () => {
     // Remove the + for processing
     const digitsOnly = cleaned.substring(1);
 
-    // Common 2-digit country codes (including Poland: 48)
-    const twoDigitCodes = ['48', '49', '44', '33', '39', '34', '41', '43', '31', '32', '30', '45', '46', '47', '90'];
-
-    let countryCode = "";
-    let rest = "";
-
-    // Check if it starts with a 2-digit country code
-    if (digitsOnly.length >= 2 && twoDigitCodes.includes(digitsOnly.substring(0, 2))) {
-      countryCode = digitsOnly.substring(0, 2);
-      rest = digitsOnly.substring(2);
-    }
-    // Otherwise try 3-digit country code
-    else if (digitsOnly.length >= 3) {
-      countryCode = digitsOnly.substring(0, 3);
-      rest = digitsOnly.substring(3);
-    }
-    // Fallback
-    else {
-      return cleaned;
+    // Polish formatting (+48 XXX XXX XXX) or 2-digit CC (+XX XXX XXX XXX)
+    if (digitsOnly.length === 11) {
+      return `+${digitsOnly.substring(0, 2)} ${digitsOnly.substring(2, 5)} ${digitsOnly.substring(5, 8)} ${digitsOnly.substring(8)}`;
     }
 
-    // Split the rest into groups of 3
+    // Fallback simple grouping for other lengths
     const groups = [];
+    let countryCode = digitsOnly.length > 9 ? digitsOnly.substring(0, digitsOnly.length - 9) : "";
+    let rest = digitsOnly.length > 9 ? digitsOnly.substring(digitsOnly.length - 9) : digitsOnly;
+
     for (let i = 0; i < rest.length; i += 3) {
       groups.push(rest.substring(i, i + 3));
     }
 
-    return `+${countryCode} ${groups.join(" ")}`;
+    return countryCode ? `+${countryCode} ${groups.join(" ")}` : `+${groups.join(" ")}`;
   };
 
   const getCityFromCoordinates = async (lat, lon) => {

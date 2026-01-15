@@ -22,18 +22,17 @@ const formatPhoneNumber = (phoneNumber) => {
     let cleaned = String(phoneNumber).replace(/[^\d+]/g, "");
     if (!cleaned.startsWith("+")) cleaned = "+" + cleaned;
     const digitsOnly = cleaned.substring(1);
-    const twoDigitCodes = ['48', '49', '44', '33', '39', '34', '41', '43', '31', '32', '30', '45', '46', '47', '90'];
-    let countryCode = "", rest = "";
-    if (digitsOnly.length >= 2 && twoDigitCodes.includes(digitsOnly.substring(0, 2))) {
-        countryCode = digitsOnly.substring(0, 2);
-        rest = digitsOnly.substring(2);
-    } else if (digitsOnly.length >= 3) {
-        countryCode = digitsOnly.substring(0, 3);
-        rest = digitsOnly.substring(3);
-    } else return cleaned;
+
+    // Polish/2-digit formatting
+    if (digitsOnly.length === 11) {
+        return `+${digitsOnly.substring(0, 2)} ${digitsOnly.substring(2, 5)} ${digitsOnly.substring(5, 8)} ${digitsOnly.substring(8)}`;
+    }
+
     const groups = [];
+    let countryCode = digitsOnly.length > 9 ? digitsOnly.substring(0, digitsOnly.length - 9) : "";
+    let rest = digitsOnly.length > 9 ? digitsOnly.substring(digitsOnly.length - 9) : digitsOnly;
     for (let i = 0; i < rest.length; i += 3) groups.push(rest.substring(i, i + 3));
-    return `+${countryCode} ${groups.join(" ")}`;
+    return countryCode ? `+${countryCode} ${groups.join(" ")}` : `+${groups.join(" ")}`;
 };
 
 function ProfileContent({ sellerId }) {
