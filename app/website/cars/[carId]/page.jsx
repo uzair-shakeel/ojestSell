@@ -322,7 +322,10 @@ const Page = () => {
     // Fallback for single number
     const fallbackSinglePhone = seller?.phoneNumber || seller?.phone;
     if (fallbackSinglePhone) {
-      const sanitized = String(fallbackSinglePhone).replace(/[^+\d]/g, "");
+      let sanitized = String(fallbackSinglePhone).replace(/[^\d+]/g, "");
+      if (!sanitized.startsWith("+") && sanitized.length > 0) {
+        sanitized = "+" + sanitized;
+      }
       window.location.href = `tel:${sanitized}`;
       return;
     }
@@ -354,10 +357,15 @@ const Page = () => {
 
               if (!number) return null;
 
+              let sanitized = String(number).replace(/[^\d+]/g, "");
+              if (!sanitized.startsWith("+") && sanitized.length > 0) {
+                sanitized = "+" + sanitized;
+              }
+
               return (
                 <a
                   key={index}
-                  href={`tel:${String(number).replace(/[^+\d]/g, "")}`}
+                  href={`tel:${sanitized}`}
                   className="flex items-center justify-between p-4 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
                 >
                   <div className="flex items-center space-x-3">
@@ -709,8 +717,8 @@ const Page = () => {
                         src={img}
                         alt={`Thumbnail ${index + 1}`}
                         className={`w-[120px] h-[80px] object-cover rounded-md border-2 transition-all duration-200 cursor-pointer ${currentImageIndex === index
-                            ? "border-blue-500 shadow-lg"
-                            : "border-gray-300 hover:border-gray-400"
+                          ? "border-blue-500 shadow-lg"
+                          : "border-gray-300 hover:border-gray-400"
                           }`}
                         onClick={() => {
                           setCurrentImageIndex(index);
