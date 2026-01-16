@@ -124,7 +124,7 @@ export default function StepFive({
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg transition-colors duration-300">
       <h2 className="text-xl font-bold mb-6 text-gray-900 dark:text-white transition-colors duration-300">
-        Krok 6: Przejrzyj i Potwierdź
+        Krok 7: Przejrzyj i Potwierdź
       </h2>
 
       <div className="space-y-8">
@@ -136,6 +136,7 @@ export default function StepFive({
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
               <SummaryItem label="Tytuł" value={formData.title} fullWidth />
+              <SummaryItem label="Notatki Sprzedającego" value={formData.description || "Brak"} fullWidth />
               <SummaryItem label="Marka" value={formData.make} />
               <SummaryItem label="Model" value={formData.model} />
               <SummaryItem label="Wersja" value={formData.trim || "Brak"} />
@@ -150,6 +151,14 @@ export default function StepFive({
               <SummaryItem label="Serwisowany" value={translateValue(formData.serviceHistory, yesNoMap)} />
               <SummaryItem label="VIN" value={formData.vin || "Brak"} />
               <SummaryItem label="Kraj" value={formData.country || "Polska"} />
+              {formData.generatedListing && (
+                <div className="col-span-2 mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
+                  <p className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2">Wygenerowany Opis Ojest</p>
+                  <div className="text-sm text-gray-700 dark:text-gray-300 line-clamp-6 whitespace-pre-line font-medium">
+                    {formData.generatedListing}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

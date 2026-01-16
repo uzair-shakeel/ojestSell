@@ -592,3 +592,28 @@ export const getCarDetailsByVin = async (
     );
   }
 };
+// Generate car listing using OpenAI
+export const generateCarListing = async (
+  inputData: any,
+  getToken: () => Promise<string | null>
+): Promise<{ listing: string }> => {
+  try {
+    const token = await getToken();
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+
+    const response = await axios.post(`${API_BASE_URL}/generate-listing`, inputData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("Error generating car listing:", error);
+    throw new Error(
+      error?.response?.data?.error || error?.message || "Failed to generate car listing"
+    );
+  }
+};

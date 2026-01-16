@@ -5,6 +5,7 @@ import { useAuth } from "../../../../lib/auth/AuthContext";
 import { useRouter } from "next/navigation";
 import { addCar } from "../../../../services/carService";
 import StepFive from "../../../../components/dashboard/createsteps/StepFive";
+import StepSix from "../../../../components/dashboard/createsteps/StepSix";
 import StepFour from "../../../../components/dashboard/createsteps/StepFour";
 import StepThree from "../../../../components/dashboard/createsteps/StepThree";
 import StepTwo from "../../../../components/dashboard/createsteps/StepTwo";
@@ -80,6 +81,7 @@ export default function MultiStepForm() {
     // Track auto-filled fields from VIN
     vinFields: [] as string[],
     warranties: [] as any[],
+    generatedListing: "",
   });
 
   useEffect(() => {
@@ -421,6 +423,14 @@ export default function MultiStepForm() {
             />
           )}
           {step === 6 && (
+            <StepSix
+              nextStep={nextStep}
+              prevStep={prevStep}
+              formData={formData}
+              updateFormData={updateFormData}
+            />
+          )}
+          {step === 7 && (
             <StepFive
               prevStep={prevStep}
               handleSubmit={handleSubmit}

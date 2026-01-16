@@ -149,6 +149,22 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
           />
         </div>
 
+        {/* Seller Notes (Description) */}
+        <div className="col-span-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 uppercase tracking-wider">Notatki Sprzedającego / Opis</label>
+          <textarea
+            placeholder="Wpisz dodatkowe informacje o aucie, np. historia, dodatkowe wyposażenie, stan..."
+            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl min-h-[120px] focus:border-blue-500 transition-all font-semibold bg-white dark:bg-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-600"
+            value={localData.description}
+            onChange={(e) =>
+              setLocalData({ ...localData, description: e.target.value })
+            }
+          />
+          <p className="text-xs text-gray-400 mt-2 font-medium italic">
+            * Te notatki zostaną wykorzystane przez AI do wygenerowania profesjonalnego opisu.
+          </p>
+        </div>
+
         {/* Make & Model Section - Read Only if VIN exists, else Selects */}
         {formData.vin ? (
           <div className="col-span-2">
