@@ -67,8 +67,8 @@ export default function StepSix({ nextStep, prevStep, formData, updateFormData }
     const formatListing = (text: string) => {
         if (!text) return null;
 
-        // Split by markdown h3 headers: ### Heading
-        const sections = text.split(/###\s+/).filter(s => s.trim().length > 0);
+        // Split by markdown h2 headers: ## Heading
+        const sections = text.split(/##\s+/).filter(s => s.trim().length > 0);
 
         return sections.map((section, index) => {
             const lines = section.trim().split('\n');
