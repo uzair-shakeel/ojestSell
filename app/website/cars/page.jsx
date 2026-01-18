@@ -96,7 +96,7 @@ const CarsContent = () => {
   const { t } = useLanguage();
 
   // State Management
-  
+
   // View Mode (Default is Grid)
   const [viewMode, setViewMode] = useState("grid");
 
@@ -220,21 +220,21 @@ const CarsContent = () => {
     if (get("model")) apiFilters.model = get("model");
     if (get("bodyType") || get("type")) apiFilters.type = get("bodyType") || get("type");
     if (get("fuel")) apiFilters.fuel = get("fuel");
-    
+
     // FIX: Drivetrain (Frontend now sends English values like FWD, RWD)
-    if (get("drivetrain")) apiFilters.drivetrain = get("drivetrain"); 
-    
+    if (get("drivetrain")) apiFilters.drivetrain = get("drivetrain");
+
     if (get("transmission")) apiFilters.transmission = get("transmission");
     if (get("location")) apiFilters.location = get("location");
     if (get("condition") || get("stan")) apiFilters.condition = get("condition") || get("stan");
     if (get("color")) apiFilters.color = get("color");
     if (get("serviceHistory")) apiFilters.serviceHistory = get("serviceHistory");
     if (get("accidentHistory")) apiFilters.accidentHistory = get("accidentHistory");
-    
+
     // Numeric Mappings
     if (get("priceFrom")) apiFilters.minPrice = Number(get("priceFrom"));
     if (get("priceTo")) apiFilters.maxPrice = Number(get("priceTo"));
-    
+
     // Year Mapping
     if (get("yearFrom") || get("minYear")) apiFilters.yearFrom = Number(get("yearFrom") || get("minYear"));
     if (get("yearTo") || get("maxYear")) apiFilters.yearTo = Number(get("yearTo") || get("maxYear"));
@@ -276,13 +276,13 @@ const CarsContent = () => {
     // FIX: Country/Origin Mapping (Checks for 'krajPochodzenia' and maps slug)
     const origin = get("krajPochodzenia") || get("country") || get("origin");
     if (origin) {
-        apiFilters.country = SLUG_TO_ORIGIN[origin] || origin;
+      apiFilters.country = SLUG_TO_ORIGIN[origin] || origin;
     }
 
     // Manufacturer Country Mapping
     const manufacturer = get("krajProducenta") || get("countryOfManufacturer");
     if (manufacturer) {
-        apiFilters.countryOfManufacturer = SLUG_TO_COUNTRY[manufacturer] || manufacturer;
+      apiFilters.countryOfManufacturer = SLUG_TO_COUNTRY[manufacturer] || manufacturer;
     }
 
     // Page Sync
@@ -347,10 +347,10 @@ const CarsContent = () => {
         // 5. Engine Capacity Filtering (Client Side Fallback)
         if (filters.minEngine !== undefined || filters.maxEngine !== undefined) {
           fetchedCars = fetchedCars.filter(c => {
-             const carEngine = parseInt(c.engine || "0", 10);
-             if (filters.minEngine !== undefined && carEngine < filters.minEngine) return false;
-             if (filters.maxEngine !== undefined && carEngine > filters.maxEngine) return false;
-             return true;
+            const carEngine = parseInt(c.engine || "0", 10);
+            if (filters.minEngine !== undefined && carEngine < filters.minEngine) return false;
+            if (filters.maxEngine !== undefined && carEngine > filters.maxEngine) return false;
+            return true;
           });
         }
 
@@ -497,7 +497,7 @@ const CarsContent = () => {
         <main className="h-full w-full px-0 sm:px-4">
           {/* Controls: View Toggle & Sort */}
           <div className="bg-white dark:bg-gray-800 flex flex-col lg:flex-row justify-between items-center py-1 pb-2 px-[10px] sm:px-2 gap-2 lg:gap-4">
-            
+
             {/* View Toggle Buttons */}
             <div className="hidden lg:flex justify-center lg:justify-end w-full lg:w-auto order-1 lg:order-2">
               <div className="bg-white rounded-lg p-1 shadow-sm border flex gap-1">

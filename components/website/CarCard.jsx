@@ -209,17 +209,17 @@ export default function CarCard({ car, viewMode = 'grid' }) {
               </h3>
             </div>
 
-            <div className="space-y-1 mb-3">
+            <div className="space-y-1.5 mb-4">
               <div className="text-xs font-bold text-gray-600 dark:text-gray-400 flex items-center gap-1.5">
                 {car.mileage || '0'} km
-                <div className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700" />
+                <div className="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-500" />
                 {translateFuelType(car.fuel) || 'N/A'}
-                <div className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700" />
+                <div className="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-500" />
                 {car.engine ? `${car.engine} cm3` : 'N/A'}
-                <div className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700" />
+                <div className="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-500" />
                 {translateTransmission(car.transmission) || 'N/A'}
               </div>
-              <div className="text-[11px] text-gray-500 dark:text-gray-500 font-medium flex items-center gap-1">
+              <div className="text-sm text-gray-500 dark:text-gray-400 font-bold flex items-center gap-1">
                 {locationDetails.city || 'Polska'}
               </div>
             </div>
@@ -239,10 +239,10 @@ export default function CarCard({ car, viewMode = 'grid' }) {
                   )}
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-gray-900 dark:text-white truncate max-w-[100px] leading-none">
+                  <span className="text-xs font-black text-gray-900 dark:text-white truncate max-w-[100px] leading-none mb-0.5">
                     {getSellerName()}
                   </span>
-                  <span className="text-[8px] text-gray-500 dark:text-gray-400 uppercase font-bold tracking-tighter">
+                  <span className="text-[10px] text-gray-500 dark:text-gray-400 uppercase font-bold">
                     {getSellerType()}
                   </span>
                 </div>
@@ -337,24 +337,20 @@ export default function CarCard({ car, viewMode = 'grid' }) {
                 {car.model}
               </h3>
 
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 md:gap-x-6 md:gap-y-3 text-gray-600 dark:text-gray-300 mb-2 md:mb-6">
-                <div className="flex items-center gap-1">
-                  <span className="text-[10px] md:text-sm font-bold">{car.mileage || '0'} km</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <span className="text-[10px] md:text-sm font-bold">{translateFuelType(car.fuel) || 'N/A'}</span>
-                </div>
-                <div className="hidden xs:flex items-center gap-1">
-                  <span className="text-[10px] md:text-sm font-bold">{car.engine ? `${car.engine} cm3` : 'N/A'}</span>
-                </div>
-                <div className="hidden sm:flex items-center gap-1">
-                  <span className="text-[10px] md:text-sm font-bold">{translateTransmission(car.transmission) || 'N/A'}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <span className="text-[10px] md:text-sm font-bold truncate max-w-[80px] md:max-w-[150px]">
-                    {locationDetails.city ? `${locationDetails.city}, ${locationDetails.state}` : 'Polska'}
-                  </span>
-                </div>
+              <div className="flex flex-wrap items-center gap-1.5 md:gap-2 text-gray-600 dark:text-gray-300 mb-2 md:mb-3">
+                <span className="text-[10px] md:text-sm font-bold">{car.mileage || '0'} km</span>
+                <div className="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-500" />
+                <span className="text-[10px] md:text-sm font-bold">{translateFuelType(car.fuel) || 'N/A'}</span>
+                <div className="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-500" />
+                <span className="text-[10px] md:text-sm font-bold">{car.engine ? `${car.engine} cm3` : 'N/A'}</span>
+                <div className="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-500" />
+                <span className="text-[10px] md:text-sm font-bold">{translateTransmission(car.transmission) || 'N/A'}</span>
+              </div>
+
+              <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
+                <span className="text-[10px] md:text-sm font-bold truncate max-w-[150px]">
+                  {locationDetails.city ? `${locationDetails.city}, ${locationDetails.state}` : 'Polska'}
+                </span>
               </div>
             </div>
 
@@ -396,7 +392,7 @@ export default function CarCard({ car, viewMode = 'grid' }) {
               </div>
             </div>
 
-            <button className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-3 py-1.5 xs:px-4 xs:py-2 md:px-8 md:py-3.5 rounded-lg md:rounded-2xl text-[10px] md:text-sm font-black hover:bg-blue-600 dark:hover:bg-blue-500 hover:text-white transition-all duration-300 shadow-xl hover:shadow-blue-500/40 flex items-center gap-1 md:gap-2 group/btn">
+            <button className="bg-blue-600 dark:bg-blue-500 text-white px-3 py-1.5 xs:px-4 xs:py-2 md:px-8 md:py-3.5 rounded-lg md:rounded-2xl text-[10px] md:text-sm font-black hover:bg-blue-700 dark:hover:bg-blue-400 transition-all duration-300 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 flex items-center gap-1 md:gap-2 group/btn">
               <span className="hidden xs:inline">Zobacz ofertę</span>
               <span className="xs:hidden">Oferta</span>
               <Zap className="w-3 h-3 md:w-4 md:h-4 fill-current group-hover/btn:scale-125 transition-transform" />

@@ -281,7 +281,7 @@ export default function FilterNavbar({ onApplyFilters }) {
     <>
       <div
         ref={filterRef}
-        className={`bg-white dark:bg-gray-800 z-50 ${isSticky
+        className={`bg-white max-w-[1480px] mx-auto dark:bg-gray-800 z-50 ${isSticky
           ? 'fixed top-0 left-0 right-0 shadow-xl backdrop-blur-sm bg-white/70'
           : 'relative'
           }`}
@@ -293,7 +293,7 @@ export default function FilterNavbar({ onApplyFilters }) {
             <div className="flex items-center justify-between mx-[10px] mb-[10px]">
               <h2 className="font-bold text-gray-900 dark:text-white text-2xl transition-colors duration-300">Filtrowanie</h2>
               {/* Mobile inline view toggle (adjacent to heading) */}
-              <div className="flex md:hidden items-center gap-1 bg-white rounded-md p-1 shadow-sm border">
+              {/* <div className="flex md:hidden items-center gap-1 bg-white rounded-md p-1 shadow-sm border">
                 <button
                   type="button"
                   onClick={() => { setMobileViewMode('grid'); if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('ojest:viewMode', { detail: 'grid' })); }}
@@ -314,7 +314,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                     <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
                   </svg>
                 </button>
-              </div>
+              </div> */}
             </div>
           )}
 
