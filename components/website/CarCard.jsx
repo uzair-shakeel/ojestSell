@@ -180,7 +180,7 @@ export default function CarCard({ car, viewMode = 'grid' }) {
               <img
                 src={firstImage}
                 alt={`${car.year} ${car.make} ${car.model}`}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                className="w-full h-full object-cover  transition-transform duration-500"
               />
             )}
 
@@ -304,7 +304,7 @@ export default function CarCard({ car, viewMode = 'grid' }) {
             <img
               src={firstImage}
               alt={`${car.year} ${car.make} ${car.model}`}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              className="w-full h-full object-cover  transition-transform duration-700"
             />
           )}
 
@@ -325,16 +325,10 @@ export default function CarCard({ car, viewMode = 'grid' }) {
           <div className="flex flex-col md:flex-row justify-between items-start gap-1 md:gap-4">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1 md:gap-2 mb-0.5 md:mb-1">
-                <span className="text-blue-600 dark:text-blue-400 text-[8px] md:text-xs font-black uppercase tracking-widest truncate">
-                  {car.make}
-                </span>
-                <div className="w-0.5 h-0.5 md:w-1 md:h-1 rounded-full bg-gray-300 dark:bg-gray-700" />
-                <span className="text-gray-500 dark:text-gray-400 text-[8px] md:text-xs font-bold">
-                  {car.year}
-                </span>
+
               </div>
               <h3 className="text-sm xs:text-base sm:text-lg md:text-3xl font-black text-gray-900 dark:text-white mb-1 md:mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-none tracking-tight truncate">
-                {car.model}
+                {car.year} {car.make} {car.model}
               </h3>
 
               <div className="flex flex-wrap items-center gap-1.5 md:gap-2 text-gray-600 dark:text-gray-300 mb-2 md:mb-3">
