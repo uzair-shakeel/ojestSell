@@ -146,10 +146,10 @@ const Page = () => {
     }
   };
 
-  const selectImage = (index) => {
-    setCurrentImageIndex(index);
-    setMainImage(images[index]);
-  };
+  // const selectImage = (index) => {
+  //   setCurrentImageIndex(index);
+  //   setMainImage(images[index]);
+  // };
 
   const scrollThumbnails = (direction) => {
     if (thumbnailScrollRef.current) {
