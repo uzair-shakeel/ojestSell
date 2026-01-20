@@ -37,31 +37,31 @@ function HomeContent() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative h-[600px] w-[98%] mx-auto my-[10px] rounded-2xl overflow-hidden">
+      <section className="relative h-[600px] w-[98%] mx-auto my-[10px] rounded-3xl overflow-hidden shadow-2xl">
         <div className="absolute inset-0">
           <Image
             src="/Hero2-QKTSHICM.webp"
             alt="Car sales hero image"
             fill
-            className="object-cover hidden md:block brightness-75"
+            className="object-cover hidden md:block brightness-75 scale-105"
             priority
           />
           <Image
             src="/Hero2-QKTSHICM - Copy.webp"
             alt="Car sales hero image"
             fill
-            className="object-cover md:hidden brightness-75"
+            className="object-cover md:hidden brightness-75 scale-105"
             priority
           />
         </div>
         <div className="relative  w-full z-10 h-full flex flex-col justify-between py-[70px]  items-center text-center text-white">
           <div>
-            <h1 className="text-xl md:text-5xl  font-bold mb-4">
+            <h1 className="text-3xl md:text-6xl font-extrabold mb-4 tracking-tight drop-shadow-lg">
               Znajdź lub sprzedaj swoje auto
             </h1>
-            <h1 className="text-xl md:text-4xl  font-bold mb-4">
+            <h2 className="text-2xl md:text-5xl font-extrabold mb-4 tracking-tight text-white/90 drop-shadow-md">
               Nowy portal handlu autami
-            </h1>
+            </h2>
           </div>
           <div className="absolute md:bottom-10 bottom-5 left-5 right-5">
             <FilterSearch />

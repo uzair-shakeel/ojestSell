@@ -44,38 +44,42 @@ export function BlogSection() {
 
   return (
     <section className="py-12 bg-white dark:bg-gray-800 transition-colors duration-300">
-      <div className=" mx-auto px-4">
-        <h2 className="text-2xl font-bold mb-8 text-gray-900 dark:text-white transition-colors duration-300">
+      <div className=" mx-auto px-4 max-w-7xl">
+        <h2 className="text-3xl md:text-4xl font-extrabold mb-10 text-gray-900 dark:text-white transition-colors duration-300 tracking-tight">
           {t("homepage.blogSection.title")}
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {BLOG_POSTS.map((post) => (
-            <Link key={post.id} href={`/blog/${post.id}`} className="group">
-              <div className="relative h-48 rounded-lg overflow-hidden mb-4">
-                <Image
-                  src={post.image || "/placeholder.svg"}
-                  alt={t(`homepage.blogSection.posts.${post.titleKey}`)}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute top-3 left-3 text-white bg-blue-600 text-xs font-semibold px-2 py-1 rounded">
-                  {t(`homepage.blogSection.categories.${post.categoryKey}`)}
+            <Link key={post.id} href={`/blog/${post.id}`} className="group block h-full">
+              <div className="bg-white dark:bg-gray-900 rounded-3xl overflow-hidden shadow-sm group-hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 h-full flex flex-col">
+                <div className="relative h-56 overflow-hidden">
+                  <Image
+                    src={post.image || "/placeholder.svg"}
+                    alt={t(`homepage.blogSection.posts.${post.titleKey}`)}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute top-4 left-4 text-xs font-bold px-3 py-1.5 rounded-full bg-white/90 dark:bg-gray-900/90 backdrop-blur text-gray-900 dark:text-white shadow-lg">
+                    {t(`homepage.blogSection.categories.${post.categoryKey}`)}
+                  </div>
+                </div>
+                <div className="p-6 flex flex-col flex-1">
+                  <p className="text-xs font-bold text-blue-600 dark:text-blue-400 mb-2 uppercase tracking-wide">
+                    {t(`homepage.blogSection.dates.${post.dateKey}`)}
+                  </p>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 leading-tight mb-2">
+                    {t(`homepage.blogSection.posts.${post.titleKey}`)}
+                  </h3>
                 </div>
               </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2 transition-colors duration-300">
-                {t(`homepage.blogSection.dates.${post.dateKey}`)}
-              </p>
-              <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
-                {t(`homepage.blogSection.posts.${post.titleKey}`)}
-              </h3>
             </Link>
           ))}
         </div>
 
         <div className="text-center">
-          <button className="px-4 py-2 border border-gray-300 dark:border-white rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-700 dark:text-white transition-colors duration-300">
-            {t("homepage.blogSection.viewAll")}
+          <button className="px-8 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-full text-sm font-bold text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 inline-flex items-center gap-2">
+            {t("homepage.blogSection.viewAll")} <span className="text-lg">→</span>
           </button>
         </div>
       </div>
