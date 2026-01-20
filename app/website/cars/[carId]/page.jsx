@@ -615,316 +615,319 @@ const Page = () => {
         </div>
       )}
 
-      <div className="lg:mx-20 p-2">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="col-span-1 md:col-span-2">
-            <h1 className="text-3xl font-bold mt-6">{`${car?.make} ${car?.model} ${car?.year}`}</h1>
-            <div className="grid grid-cols-2 mt-6">
-              {/* Main Swiper */}
-              <div className="col-span-2 relative group px-2 md:px-0">
-                <Swiper
-                  ref={mainSwiperRef}
-                  modules={[Navigation, Thumbs, A11y]}
-                  navigation={{
-                    prevEl: ".main-swiper-prev",
-                    nextEl: ".main-swiper-next",
-                  }}
-                  thumbs={{ swiper: thumbsSwiper }}
-                  spaceBetween={0}
-                  slidesPerView={1}
-                  onSlideChange={(swiper) =>
-                    setCurrentImageIndex(swiper.activeIndex)
-                  }
-                  grabCursor={true}
-                  touchRatio={1}
-                  touchAngle={45}
-                  threshold={10}
-                  allowTouchMove={true}
-                  simulateTouch={true}
-                  className="main-image-swiper"
-                >
-                  {images.map((img, index) => (
-                    <SwiperSlide key={index}>
-                      <div className="relative overflow-hidden rounded-lg lg:rounded-tl-[10px] lg:rounded-bl-[10px] lg:rounded-tr-none lg:rounded-br-none">
-                        <img
-                          src={img}
-                          alt={`${car?.make} ${car?.model} - Image ${index + 1
-                            }`}
-                          className="w-full aspect-[5/3] object-cover cursor-pointer rounded-lg lg:rounded-none"
-                          onClick={() => {
-                            setClickedImageUrl(img);
-                            setIsCategorizationModalOpen(true);
-                          }}
-                        />
-                      </div>
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column */}
+            <div className="col-span-1 lg:col-span-2 space-y-8">
+              {/* Image & Title Card */}
+              <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden relative">
+                <div className="p-6 md:p-8">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+                      {`${car?.make} ${car?.model} ${car?.year}`}
+                    </h1>
+                    <span className="px-4 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-bold">
+                      {car?.condition === "New" ? "Nowy" : "Używany"}
+                    </span>
+                  </div>
 
-                {/* Fullscreen button overlay - Hidden on mobile */}
-                <button
-                  onClick={() => setIsFullscreen(true)}
-                  className="hidden md:block absolute top-4 right-4 bg-black bg-opacity-50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-opacity-70 z-10"
-                >
-                  <IoExpand className="w-5 h-5" />
-                </button>
-
-                {/* Custom Navigation Arrows - Hidden on mobile */}
-                <button className="hidden md:block main-swiper-prev absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 text-white p-2 rounded-full hover:bg-opacity-80 transition-all opacity-0 group-hover:opacity-100 z-10">
-                  <IoIosArrowBack className="w-4 h-4" />
-                </button>
-                <button className="hidden md:block main-swiper-next absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 text-white p-2 rounded-full hover:bg-opacity-80 transition-all opacity-0 group-hover:opacity-100 z-10">
-                  <IoIosArrowForward className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Thumbnail Swiper */}
-              {/* Thumbnail Swiper */}
-              <div className="col-span-2 relative mt-4 overflow-hidden w-full">
-                <Swiper
-                  modules={[Navigation, A11y]}
-                  onSwiper={setThumbsSwiper}
-                  spaceBetween={8}
-                  slidesPerView="auto"
-                  freeMode={true}
-                  watchSlidesProgress={true}
-                  grabCursor={true}
-                  touchRatio={1}
-                  allowTouchMove={true}
-                  simulateTouch={true}
-                  navigation={{
-                    prevEl: ".thumb-swiper-prev",
-                    nextEl: ".thumb-swiper-next",
-                  }}
-                  className="thumbnail-swiper w-full"
-                >
-                  {images.map((img, index) => (
-                    <SwiperSlide key={index} className="!w-[120px]">
-                      <img
-                        src={img}
-                        alt={`Thumbnail ${index + 1}`}
-                        className={`w-[120px] h-[80px] object-cover rounded-md border-2 transition-all duration-200 cursor-pointer ${currentImageIndex === index
-                          ? "border-blue-500 shadow-lg"
-                          : "border-gray-300 hover:border-gray-400"
-                          }`}
-                        onClick={() => {
-                          setCurrentImageIndex(index);
-                          setMainImage(img);
-                          setClickedImageUrl(img);
+                  <div className="space-y-6">
+                    {/* Main Swiper */}
+                    <div className="relative group w-full rounded-2xl overflow-hidden shadow-inner bg-gray-100 dark:bg-gray-900">
+                      <Swiper
+                        ref={mainSwiperRef}
+                        modules={[Navigation, Thumbs, A11y]}
+                        navigation={{
+                          prevEl: ".main-swiper-prev",
+                          nextEl: ".main-swiper-next",
                         }}
-                      />
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
+                        thumbs={{ swiper: thumbsSwiper }}
+                        spaceBetween={0}
+                        slidesPerView={1}
+                        onSlideChange={(swiper) =>
+                          setCurrentImageIndex(swiper.activeIndex)
+                        }
+                        grabCursor={true}
+                        touchRatio={1}
+                        touchAngle={45}
+                        threshold={10}
+                        allowTouchMove={true}
+                        simulateTouch={true}
+                        className="main-image-swiper"
+                      >
+                        {images.map((img, index) => (
 
-                {/* Thumbnail Navigation */}
-                {images.length > 6 && (
-                  <>
-                    <button className="thumb-swiper-prev absolute left-2 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-1.5 md:p-2 z-10 hover:bg-gray-50 transition">
-                      <IoIosArrowBack className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
-                    </button>
+                          <SwiperSlide key={index}>
+                            <div className="relative">
+                              <img
+                                src={img}
+                                alt={`${car?.make} ${car?.model} - Image ${index + 1}`}
+                                className="w-full aspect-[16/10] object-cover cursor-pointer hover:scale-[1.02] transition-transform duration-500"
+                                onClick={() => {
+                                  setClickedImageUrl(img);
+                                  setIsCategorizationModalOpen(true);
+                                }}
+                              />
+                            </div>
+                          </SwiperSlide>
+                        ))}
+                      </Swiper>
 
-                    <button className="thumb-swiper-next absolute right-2 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-1.5 md:p-2 z-10 hover:bg-gray-50 transition">
-                      <IoIosArrowForward className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
-                    </button>
-                  </>
-                )}
+                      {/* Fullscreen button overlay - Hidden on mobile */}
+                      <button
+                        onClick={() => setIsFullscreen(true)}
+                        className="hidden md:block absolute top-4 right-4 bg-black bg-opacity-50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-opacity-70 z-10"
+                      >
+                        <IoExpand className="w-5 h-5" />
+                      </button>
+
+                      {/* Custom Navigation Arrows - Hidden on mobile */}
+                      <button className="hidden md:block main-swiper-prev absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 text-white p-2 rounded-full hover:bg-opacity-80 transition-all opacity-0 group-hover:opacity-100 z-10">
+                        <IoIosArrowBack className="w-4 h-4" />
+                      </button>
+                      <button className="hidden md:block main-swiper-next absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 text-white p-2 rounded-full hover:bg-opacity-80 transition-all opacity-0 group-hover:opacity-100 z-10">
+                        <IoIosArrowForward className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {/* Thumbnail Swiper */}
+                    {/* Thumbnail Swiper */}
+                    <div className="col-span-2 relative mt-4 overflow-hidden w-full">
+                      <Swiper
+                        modules={[Navigation, A11y]}
+                        onSwiper={setThumbsSwiper}
+                        spaceBetween={8}
+                        slidesPerView="auto"
+                        freeMode={true}
+                        watchSlidesProgress={true}
+                        grabCursor={true}
+                        touchRatio={1}
+                        allowTouchMove={true}
+                        simulateTouch={true}
+                        navigation={{
+                          prevEl: ".thumb-swiper-prev",
+                          nextEl: ".thumb-swiper-next",
+                        }}
+                        className="thumbnail-swiper w-full"
+                      >
+                        {images.map((img, index) => (
+                          <SwiperSlide key={index} className="!w-[120px]">
+                            <img
+                              src={img}
+                              alt={`Thumbnail ${index + 1}`}
+                              className={`w-[120px] h-[80px] object-cover rounded-md border-2 transition-all duration-200 cursor-pointer ${currentImageIndex === index
+                                ? "border-blue-500 shadow-lg"
+                                : "border-gray-300 hover:border-gray-400"
+                                }`}
+                              onClick={() => {
+                                setCurrentImageIndex(index);
+                                setMainImage(img);
+                                setClickedImageUrl(img);
+                              }}
+                            />
+                          </SwiperSlide>
+                        ))}
+                      </Swiper>
+
+                      {/* Thumbnail Navigation */}
+                      {images.length > 6 && (
+                        <>
+                          <button className="thumb-swiper-prev absolute left-2 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-1.5 md:p-2 z-10 hover:bg-gray-50 transition">
+                            <IoIosArrowBack className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
+                          </button>
+
+                          <button className="thumb-swiper-next absolute right-2 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-1.5 md:p-2 z-10 hover:bg-gray-50 transition">
+                            <IoIosArrowForward className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
+                          </button>
+                        </>
+                      )}
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+              {/* Details Tab Card */}
+              <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div className="p-6 md:p-8">
+                  <div className="flex flex-wrap gap-3 mb-8 border-b border-gray-100 dark:border-gray-700 pb-2">
+                    {["opis", "stan", "lokalizacja", "finanse"].map((tab) => {
+                      // Get the display name for the tab
+                      let displayName = tab.charAt(0).toUpperCase() + tab.slice(1);
+                      if (tab === "stan" && car?.condition === "New") {
+                        displayName = "Gwarancja";
+                      }
+
+                      return (
+
+                        <button
+                          key={tab}
+                          className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-200 ${activeTab === tab
+                            ? "bg-gray-900 text-white shadow-lg shadow-gray-200/50 dark:shadow-blue-900/30 dark:bg-blue-600 dark:text-white"
+                            : "bg-gray-50 text-gray-600 hover:bg-gray-100 dark:bg-gray-700/50 dark:text-gray-300 dark:hover:bg-gray-700"
+                            }`}
+                          onClick={() => setActiveTab(tab)}
+                        >
+                          {displayName}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {renderContent()}
+                </div>
               </div>
 
             </div>
-            <div className="col-span-2 bg-white rounded-md mt-5">
-              <div className="gap-2 mb-4 grid grid-cols-2 md:grid-cols-4">
-                {["opis", "stan", "lokalizacja", "finanse"].map((tab) => {
-                  // Get the display name for the tab
-                  let displayName = tab.charAt(0).toUpperCase() + tab.slice(1);
-                  if (tab === "stan" && car?.condition === "New") {
-                    displayName = "Gwarancja";
-                  }
 
-                  return (
-                    <button
-                      key={tab}
-                      className={`px-4 py-2 border border-gray-200 ${activeTab === tab
-                        ? "bg-blue-500 text-white"
-                        : "bg-white text-gray-700"
-                        } rounded-md`}
-                      onClick={() => setActiveTab(tab)}
-                    >
-                      {displayName}
-                    </button>
-                  );
-                })}
-              </div>
-              {renderContent()}
-            </div>
-          </div>
-          <div className="col-span-1  sm:mt-20">
-            <div className="w-full p-4 bg-white dark:bg-black/10 rounded-sm border sticky top-4 shadow">
-              <div className="py-3 flex flex-col space-y-3">
-                <div className="flex flex-col items-start">
-                  <h3 className="text-base font-medium mb-2">Cena</h3>
-                  <div className="flex flex-col">
-                    <p className="text-4xl font-bold text-gray-900 dark:text-white mb-1 transition-colors duration-300">
-                      {basePriceNetto !== null
-                        ? `${basePriceNetto.toLocaleString("pl-PL")} zł`
-                        : "N/A"}
-                      <span className="text-sm font-normal text-gray-500 ml-2">Netto</span>
-                    </p>
+            {/* Right Column / Sidebar */}
+            <div className="col-span-1">
+              <div className="space-y-6 sticky top-24">
 
-                    {car?.financialInfo?.invoiceOptions?.includes("Invoice VAT") && basePriceNetto !== null && (
-                      <p className="text-xl text-gray-600 mt-1">
-                        {(basePriceNetto * 1.23).toLocaleString("pl-PL", { maximumFractionDigits: 0 })} zł
-                        <span className="text-sm font-normal text-gray-500 ml-2">Brutto</span>
+                {/* Price Card */}
+                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 md:p-8 relative overflow-hidden group">
+                  <div className="absolute right-0 top-0 w-32 h-32 bg-blue-50 dark:bg-blue-900/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+                  <div className="relative z-10">
+                    <h3 className="text-gray-500 dark:text-gray-400 font-bold uppercase text-xs tracking-wider mb-2">Cena Całkowita</h3>
+                    <div className="flex flex-col">
+                      <p className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-2">
+                        {basePriceNetto !== null
+                          ? `${basePriceNetto.toLocaleString("pl-PL")} zł`
+                          : "N/A"}
+                        <span className="text-lg font-bold text-gray-400 ml-2">Netto</span>
                       </p>
+
+                      {car?.financialInfo?.invoiceOptions?.includes("Invoice VAT") && basePriceNetto !== null && (
+                        <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 font-medium">
+                          <span className="text-xl">
+                            {(basePriceNetto * 1.23).toLocaleString("pl-PL", { maximumFractionDigits: 0 })} zł
+                          </span>
+                          <span className="text-xs uppercase bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">Brutto</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <p className="text-lg font-bold text-blue-600 dark:text-blue-400 mt-4 cursor-pointer hover:underline">
+                      {car?.financialInfo?.priceWithVat
+                        ? `${car?.financialInfo?.priceWithVat} zł (z VAT)`
+                        : ""}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Seller Card */}
+                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 md:p-8 relative overflow-hidden group">
+                  <div className="absolute right-0 top-0 w-32 h-32 bg-purple-50 dark:bg-purple-900/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+
+                  <div className="relative z-10 space-y-6">
+                    {/* Seller Header */}
+                    <div className="flex items-center space-x-4">
+                      <div className="relative w-20 h-20 shrink-0">
+                        <button
+                          onClick={() => {
+                            const sellerId =
+                              seller?._id ||
+                              seller?.id ||
+                              (typeof car?.createdBy === "object"
+                                ? car?.createdBy?._id
+                                : car?.createdBy);
+
+                            if (sellerId) {
+                              router.push(`/website/profile?id=${sellerId}`);
+                            }
+                          }}
+                          className="w-full h-full block rounded-full overflow-hidden shadow-lg border-4 border-white dark:border-gray-700 ring-2 ring-gray-100 dark:ring-gray-900 transition-transform hover:scale-105 relative"
+                        >
+                          <Image
+                            src={formatImageUrl(seller?.image)}
+                            alt={sellerName}
+                            fill
+                            className="object-cover"
+                            sizes="96px"
+                          />
+                        </button>
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-blue-600 dark:text-blue-400 font-bold uppercase tracking-wider mb-1">
+                          {(() => {
+                            const type =
+                              seller?.sellerType || car?.financialInfo?.sellerType;
+                            if (!type) return "Sprzedawca";
+                            return type === "company" ? "Dealer" : "Sprzedawca Prywatny";
+                          })()}
+                        </p>
+                        <h3
+                          className="text-xl font-extrabold text-gray-900 dark:text-white truncate hover:text-blue-600 transition-colors cursor-pointer"
+                          onClick={() => {
+                            const sellerId =
+                              seller?._id ||
+                              seller?.id ||
+                              (typeof car?.createdBy === "object"
+                                ? car?.createdBy?._id
+                                : car?.createdBy);
+
+                            if (sellerId) {
+                              router.push(`/website/profile?id=${sellerId}`);
+                            }
+                          }}
+                        >
+                          {sellerName}
+                        </h3>
+                        <div className="flex items-center mt-1 text-gray-500 dark:text-gray-400 text-sm font-medium">
+                          <img src="/website/map.svg" alt="Location" className="w-4 h-4 mr-1.5 opacity-60" />
+                          Nowy Targ
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-gray-100 dark:border-gray-700"></div>
+
+                    {/* Action Buttons */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        onClick={startChat}
+                        className="col-span-1 bg-white dark:bg-gray-900 text-gray-900 dark:text-white py-3.5 px-4 border-2 border-gray-100 dark:border-gray-700 rounded-2xl font-bold shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-500 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 group/btn"
+                      >
+                        <img src="/website/whats.svg" alt="" className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
+                        <span>Czat</span>
+                      </button>
+                      <button
+                        className="col-span-1 bg-blue-600 text-white py-3.5 px-4 rounded-2xl font-bold shadow-lg shadow-blue-200 dark:shadow-blue-900/30 hover:bg-blue-700 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
+                        onClick={callSeller}
+                      >
+                        <span>Zadzwoń</span>
+                      </button>
+                    </div>
+
+                    {socialMediaLinks.length > 0 && (
+                      <div className="flex items-center justify-center gap-6 pt-2">
+                        {socialMediaLinks.map(({ platform, icon, url }) => (
+                          <a
+                            key={platform}
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-gray-400 hover:text-purple-600 hover:scale-110 transition-all text-2xl"
+                          >
+                            {icon}
+                          </a>
+                        ))}
+                      </div>
                     )}
                   </div>
-
-                  {/* <p className="text-sm text-gray-500">Cena podstawowa</p> */}
-                  <p className="text-xl text-medium text-gray-600 underline mt-3">
-                    {car?.financialInfo?.priceWithVat
-                      ? `${car?.financialInfo?.priceWithVat} zł`
-                      : ""}
-                  </p>
-                </div>
-              </div>
-
-              {/* {car?.condition === "New" &&
-                Array.isArray(car?.warranties) &&
-                car.warranties.length > 0 && (
-                  <div className="mt-2">
-                    <button
-                      type="button"
-                      onClick={() => setIsWarrantyModalOpen(true)}
-                      className="w-full border border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold py-2.5 rounded-md text-sm transition-colors"
-                    >
-                      Wybierz gwarancję
-                    </button>
-                  </div>
-                )} */}
-
-              <div className="flex items-center my-4">
-                <div className="flex-grow border-b"></div>
-                <p className="px-2 text-gray-500 text-sm">LUB</p>
-                <div className="flex-grow border-b"></div>
-              </div>
-              <div className="gap-2 flex flex-col">
-                <button
-                  className="w-full border border-gray-500 py-3 rounded-md font-semibold"
-                  onClick={() => setActiveTab("financial")}
-                >
-                  Zobacz więcej szczegółów finansowych
-                </button>
-              </div>
-              <div className="flex items-center space-x-3 my-5">
-                <div className="relative w-24 h-20 aspect-square overflow-hidden rounded-full">
-                  <button
-                    onClick={() => {
-                      const sellerId =
-                        seller?._id ||
-                        seller?.id ||
-                        (typeof car?.createdBy === "object"
-                          ? car?.createdBy?._id
-                          : car?.createdBy);
-
-                      if (sellerId) {
-                        // Navigate to profile page with ID query parameter
-                        router.push(`/website/profile?id=${sellerId}`);
-                      }
-                    }}
-                  >
-                    <Image
-                      src={formatImageUrl(seller?.image)}
-                      alt={sellerName}
-                      fill
-                      className="object-cover"
-                      sizes="96px"
-                    />
-                  </button>
                 </div>
 
-                <div className="w-full">
-                  <div className="flex justify-between items-center">
-                    <p className="text-black dark:text-white text-lg lg:text-xl transition-colors duration-300 hover:underline">
-                      <button
-                        onClick={() => {
-                          const sellerId =
-                            seller?._id ||
-                            seller?.id ||
-                            (typeof car?.createdBy === "object"
-                              ? car?.createdBy?._id
-                              : car?.createdBy);
 
-                          if (sellerId) {
-                            // Navigate to profile page with ID query parameter
-                            router.push(`/website/profile?id=${sellerId}`);
-                          }
-                        }}
-                      >
-                        <strong>{sellerName}</strong>
-                      </button>
-                    </p>
-                  </div>
-                  <p className="text-base text-gray-500">
-                    {(() => {
-                      const type =
-                        seller?.sellerType || car?.financialInfo?.sellerType;
-                      if (!type) return "Unknown Seller Type";
-                      return type === "company" ? "Firma" : "Sprzedawca prywatny";
-                    })()}
-                  </p>
-                  <div className="flex justify-start items-center space-x-2">
-                    <img
-                      src="/website/map.svg"
-                      alt="Map Icon"
-                      className="w-5 h-5"
-                    />
-                    {/* <p className="text-base text-gray-500">{locationDisplay || "Nowy Targ"}</p> */}
-                    <p className="text-base text-gray-500">Nowy Targ</p>
-                  </div>
-                </div>
+
               </div>
-              <hr className="my-4" />
-              <h2 className="text-base font-medium mb-2 col-span-2">
-                Kontakt z sprzedawcą
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4">
-                <button
-                  onClick={startChat}
-                  className="w-full bg-white-500 text-blue-600 py-3 border border-blue-600 rounded-md font-semibold flex items-center justify-center space-x-2"
-                >
-                  <img
-                    src="/website/whats.svg"
-                    alt="Message"
-                    className="w-5 h-5"
-                  />
-                  <span>Wiadomość</span>
-                </button>
-                <button
-                  className="w-full border py-3 rounded-md font-semibold bg-blue-500 flex items-center justify-center space-x-2"
-                  onClick={callSeller}
-                >
-                  <span className="text-white">Zadzwoń</span>
-                </button>
-              </div>
-              {socialMediaLinks.length > 0 && (
-                <div className="flex items-center justify-center space-x-4 my-7">
-                  {socialMediaLinks.map(({ platform, icon, url }) => (
-                    <a
-                      key={platform}
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-3xl transition-all duration-300 hover:opacity-75 text-blue-600"
-                    >
-                      {icon}
-                    </a>
-                  ))}
-                </div>
-              )}
             </div>
           </div>
         </div>
-        <SimilarVehicles />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <SimilarVehicles />
+        </div>
       </div>
 
       {isWarrantyModalOpen &&
@@ -992,7 +995,8 @@ const Page = () => {
               </div>
             </div>
           </div>
-        )}
+        )
+      }
 
       {/* Image Categorization Modal */}
       <ImageCategorizationModal
