@@ -112,15 +112,105 @@ const Page = () => {
         data.address.town ||
         data.address.village ||
         data.address.county ||
-        "Unknown Location"
+        "Nieznana lokalizacja"
       );
     } catch (err) {
       console.error("Error geocoding coordinates:", err);
-      return "Unknown Location";
+      return "Nieznana lokalizacja";
     }
   };
 
   const images = car?.images || ["/images/hamer1.png"];
+
+  // Main gallery uses 1 large image + up to 8 small thumbnails on the right.
+  // If there are fewer than 9 real images, we duplicate some thumbnails so
+  // the grid is always filled (visually matching a full 2x4 column).
+  const useThumbnailOffset = images.length > 1;
+  const thumbnailSource = useThumbnailOffset ? images.slice(1) : images.slice(0);
+  const thumbnailImages = [];
+
+  if (thumbnailSource.length > 0) {
+    // First, push each unique thumbnail once, up to 8
+    for (let i = 0; i < Math.min(8, thumbnailSource.length); i++) {
+      thumbnailImages.push(thumbnailSource[i]);
+    }
+
+    // If there are still empty slots, repeat from the beginning
+    let i = 0;
+    while (thumbnailImages.length < 8 && thumbnailSource.length > 0) {
+      thumbnailImages.push(thumbnailSource[i % thumbnailSource.length]);
+      i++;
+    }
+  }
+
+  const normalizeImageCategory = (rawCategory) => {
+    if (!rawCategory) return "exterior";
+    const lower = String(rawCategory).toLowerCase().trim();
+
+    if (lower.includes("seat") || lower.includes("steering") || lower.includes("interior")) return "interior";
+    if (lower.includes("dashboard") || lower.includes("console") || lower.includes("odometer") || lower.includes("instrument")) return "dashboard";
+    if (lower.includes("wheel") || lower.includes("tire") || lower.includes("rim")) return "wheel";
+    if (lower.includes("engine") || lower.includes("hood") || lower.includes("under")) return "engine";
+    if (lower.includes("key")) return "keys";
+    if (lower.includes("document") || lower.includes("paper") || lower.includes("vin")) return "documents";
+
+    if (
+      lower.includes("front") ||
+      lower.includes("back") ||
+      lower.includes("side") ||
+      lower.includes("exterior") ||
+      lower.includes("bumper") ||
+      lower.includes("door") ||
+      lower.includes("trunk")
+    ) {
+      return "exterior";
+    }
+
+    return "exterior";
+  };
+
+  const categorizedImagesData = Array.isArray(car?.categorizedImages)
+    ? car.categorizedImages
+    : [];
+
+  const imageCategoryCounts = {};
+  const imageCategoryFirstIndex = {};
+
+  categorizedImagesData.forEach((img) => {
+    const category = normalizeImageCategory(img?.category);
+    imageCategoryCounts[category] = (imageCategoryCounts[category] || 0) + 1;
+
+    const idx =
+      typeof img?.index === "number"
+        ? img.index
+        : typeof img?.imageIndex === "number"
+          ? img.imageIndex
+          : null;
+
+    if (idx === null || idx < 0) {
+      return;
+    }
+
+    if (
+      imageCategoryFirstIndex[category] === undefined ||
+      idx < imageCategoryFirstIndex[category]
+    ) {
+      imageCategoryFirstIndex[category] = idx;
+    }
+  });
+
+  const exteriorCount = imageCategoryCounts.exterior || 0;
+  const interiorCount = imageCategoryCounts.interior || 0;
+
+  const exteriorFirstIndex =
+    typeof imageCategoryFirstIndex.exterior === "number"
+      ? imageCategoryFirstIndex.exterior
+      : null;
+
+  const interiorFirstIndex =
+    typeof imageCategoryFirstIndex.interior === "number"
+      ? imageCategoryFirstIndex.interior
+      : null;
 
   const nextImage = () => {
     if (isFullscreen) {
@@ -128,9 +218,9 @@ const Page = () => {
         fullscreenSwiperRef.current.swiper.slideNext();
       }
     } else {
-      if (mainSwiperRef.current && mainSwiperRef.current.swiper) {
-        mainSwiperRef.current.swiper.slideNext();
-      }
+      const nextIndex = (currentImageIndex + 1) % images.length;
+      setCurrentImageIndex(nextIndex);
+      setMainImage(images[nextIndex]);
     }
   };
 
@@ -140,9 +230,9 @@ const Page = () => {
         fullscreenSwiperRef.current.swiper.slidePrev();
       }
     } else {
-      if (mainSwiperRef.current && mainSwiperRef.current.swiper) {
-        mainSwiperRef.current.swiper.slidePrev();
-      }
+      const prevIndex = (currentImageIndex - 1 + images.length) % images.length;
+      setCurrentImageIndex(prevIndex);
+      setMainImage(images[prevIndex]);
     }
   };
 
@@ -509,17 +599,23 @@ const Page = () => {
     : null;
 
   const sellerName = (() => {
-    if (!seller) return "Seller";
+    if (!seller) return "Sprzedawca";
     const type = seller?.sellerType || car?.financialInfo?.sellerType;
     if (type === "company") {
-      return seller?.companyName || "Company";
+      return seller?.companyName || "Firma";
     }
-    const fullName = `${seller?.firstName || ""} ${seller?.lastName || ""
-      }`.trim();
-    return fullName || seller?.companyName || "Private Seller";
+    const fullName = `${seller?.firstName || ""} ${seller?.lastName || ""}`.trim();
+    return fullName || seller?.companyName || "Sprzedawca prywatny";
   })();
 
-  const locationDisplay = city || "Unknown Location";
+  const sellerTypeLabel = (() => {
+    const type = seller?.sellerType || car?.financialInfo?.sellerType;
+    if (type === "company") return "Firma";
+    if (type === "private") return "Sprzedawca prywatny";
+    return "-";
+  })();
+
+  const locationDisplay = city || "Nieznana lokalizacja";
 
   const socialMediaLinks = [
     {
@@ -538,6 +634,52 @@ const Page = () => {
       url: normalizeUrl(seller?.socialMedia?.website),
     },
   ].filter((link) => link.url && link.url.trim() !== "");
+
+  const formatCurrency = (value) => {
+    if (typeof value !== "number" || Number.isNaN(value)) return null;
+    try {
+      return value.toLocaleString("pl-PL", {
+        style: "currency",
+        currency: "PLN",
+        maximumFractionDigits: 0,
+      });
+    } catch {
+      return `${value.toLocaleString("pl-PL")} PLN`;
+    }
+  };
+
+  const formattedNetPrice = formatCurrency(basePriceNetto);
+
+  const specItemsLeft = [
+    { label: "Marka", value: car?.make || "-" },
+    { label: "Model", value: car?.model || "-" },
+    {
+      label: "Przebieg",
+      value:
+        typeof car?.mileage === "number"
+          ? `${car.mileage.toLocaleString("pl-PL")} km`
+          : "-",
+    },
+    { label: "VIN", value: car?.vin || "-" },
+    { label: "Lokalizacja", value: locationDisplay },
+    { label: "Sprzedawca", value: sellerName },
+  ];
+
+  const specItemsRight = [
+    { label: "Silnik", value: car?.engine || car?.financialInfo?.engine || "-" },
+    { label: "Napęd", value: car?.drivetrain || "-" },
+    { label: "Skrzynia biegów", value: car?.transmission || "-" },
+    { label: "Typ nadwozia", value: car?.type || "-" },
+    { label: "Kolor zewnętrzny", value: car?.color || "-" },
+    {
+      label: "Typ sprzedawcy",
+      value: sellerTypeLabel,
+    },
+  ];
+
+  const stickyTitle = `${car?.year || ""} ${car?.make || ""} ${car?.model || ""}`
+    .replace(/\s+/g, " ")
+    .trim();
 
   return (
     <>
@@ -615,304 +757,310 @@ const Page = () => {
         </div>
       )}
 
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column */}
-            <div className="col-span-1 lg:col-span-2 space-y-8">
-              {/* Image & Title Card */}
-              <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden relative">
-                <div className="p-6 md:p-8">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-                    <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-                      {`${car?.make} ${car?.model} ${car?.year}`}
-                    </h1>
-                    <span className="px-4 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-bold">
-                      {car?.condition === "New" ? "Nowy" : "Używany"}
-                    </span>
-                  </div>
-
-                  <div className="space-y-6">
-                    {/* Main Swiper */}
-                    <div className="relative group w-full rounded-2xl overflow-hidden shadow-inner bg-gray-100 dark:bg-gray-900">
-                      <Swiper
-                        ref={mainSwiperRef}
-                        modules={[Navigation, Thumbs, A11y]}
-                        navigation={{
-                          prevEl: ".main-swiper-prev",
-                          nextEl: ".main-swiper-next",
-                        }}
-                        thumbs={{ swiper: thumbsSwiper }}
-                        spaceBetween={0}
-                        slidesPerView={1}
-                        onSlideChange={(swiper) =>
-                          setCurrentImageIndex(swiper.activeIndex)
-                        }
-                        grabCursor={true}
-                        touchRatio={1}
-                        touchAngle={45}
-                        threshold={10}
-                        allowTouchMove={true}
-                        simulateTouch={true}
-                        className="main-image-swiper"
-                      >
-                        {images.map((img, index) => (
-
-                          <SwiperSlide key={index}>
-                            <div className="relative">
-                              <img
-                                src={img}
-                                alt={`${car?.make} ${car?.model} - Image ${index + 1}`}
-                                className="w-full aspect-[16/10] object-cover cursor-pointer hover:scale-[1.02] transition-transform duration-500"
-                                onClick={() => {
-                                  setClickedImageUrl(img);
-                                  setIsCategorizationModalOpen(true);
-                                }}
-                              />
-                            </div>
-                          </SwiperSlide>
-                        ))}
-                      </Swiper>
-
-                      {/* Fullscreen button overlay - Hidden on mobile */}
-                      <button
-                        onClick={() => setIsFullscreen(true)}
-                        className="hidden md:block absolute top-4 right-4 bg-black bg-opacity-50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-opacity-70 z-10"
-                      >
-                        <IoExpand className="w-5 h-5" />
-                      </button>
-
-                      {/* Custom Navigation Arrows - Hidden on mobile */}
-                      <button className="hidden md:block main-swiper-prev absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 text-white p-2 rounded-full hover:bg-opacity-80 transition-all opacity-0 group-hover:opacity-100 z-10">
-                        <IoIosArrowBack className="w-4 h-4" />
-                      </button>
-                      <button className="hidden md:block main-swiper-next absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 text-white p-2 rounded-full hover:bg-opacity-80 transition-all opacity-0 group-hover:opacity-100 z-10">
-                        <IoIosArrowForward className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                    {/* Thumbnail Swiper */}
-                    {/* Thumbnail Swiper */}
-                    <div className="col-span-2 relative mt-4 overflow-hidden w-full">
-                      <Swiper
-                        modules={[Navigation, A11y]}
-                        onSwiper={setThumbsSwiper}
-                        spaceBetween={8}
-                        slidesPerView="auto"
-                        freeMode={true}
-                        watchSlidesProgress={true}
-                        grabCursor={true}
-                        touchRatio={1}
-                        allowTouchMove={true}
-                        simulateTouch={true}
-                        navigation={{
-                          prevEl: ".thumb-swiper-prev",
-                          nextEl: ".thumb-swiper-next",
-                        }}
-                        className="thumbnail-swiper w-full"
-                      >
-                        {images.map((img, index) => (
-                          <SwiperSlide key={index} className="!w-[120px]">
-                            <img
-                              src={img}
-                              alt={`Thumbnail ${index + 1}`}
-                              className={`w-[120px] h-[80px] object-cover rounded-md border-2 transition-all duration-200 cursor-pointer ${currentImageIndex === index
-                                ? "border-blue-500 shadow-lg"
-                                : "border-gray-300 hover:border-gray-400"
-                                }`}
-                              onClick={() => {
-                                setCurrentImageIndex(index);
-                                setMainImage(img);
-                                setClickedImageUrl(img);
-                              }}
-                            />
-                          </SwiperSlide>
-                        ))}
-                      </Swiper>
-
-                      {/* Thumbnail Navigation */}
-                      {images.length > 6 && (
-                        <>
-                          <button className="thumb-swiper-prev absolute left-2 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-1.5 md:p-2 z-10 hover:bg-gray-50 transition">
-                            <IoIosArrowBack className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
-                          </button>
-
-                          <button className="thumb-swiper-next absolute right-2 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-1.5 md:p-2 z-10 hover:bg-gray-50 transition">
-                            <IoIosArrowForward className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
-                          </button>
-                        </>
-                      )}
-                    </div>
-
-                  </div>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        {/* Full Page Gallery */}
+        <div className="relative w-full">
+          {/* Full Page Gallery with max-width and padding */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Desktop / tablet gallery: 1 large + 8 thumbnails on the side */}
+            <div className="hidden md:flex md:flex-row gap-[3px] bg-white dark:bg-gray-900 rounded-xl overflow-hidden shadow-sm h-[380px] sm:h-[430px] md:h-[461px] lg:h-[520px] xl:h-[560px] 2xl:h-[600px]">
+              {/* Main Image - Left Side */}
+              <div className="relative group w-full md:w-[calc(100%-320px)] h-full">
+                <div className="relative w-full h-full">
+                  <img
+                    src={mainImage || images[currentImageIndex] || images[0]}
+                    alt={`${car?.make} ${car?.model} - Image ${currentImageIndex + 1}`}
+                    className="w-full h-full object-cover cursor-pointer"
+                    onClick={() => {
+                      setClickedImageUrl(mainImage || images[currentImageIndex] || images[0]);
+                      setIsCategorizationModalOpen(true);
+                    }}
+                  />
                 </div>
+
+                {/* Fullscreen button overlay */}
+                <button
+                  onClick={() => setIsFullscreen(true)}
+                  className="absolute top-4 right-4 bg-black bg-opacity-50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-opacity-70 z-10"
+                >
+                  <IoExpand className="w-5 h-5" />
+                </button>
+
+                {/* Navigation Arrows */}
+                {images.length > 1 && (
+                  <>
+                    <button
+                      onClick={prevImage}
+                      className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 text-white p-3 rounded-full hover:bg-opacity-80 transition-all opacity-0 group-hover:opacity-100 z-10"
+                    >
+                      <IoIosArrowBack className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={nextImage}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 text-white p-3 rounded-full hover:bg-opacity-80 transition-all opacity-0 group-hover:opacity-100 z-10"
+                    >
+                      <IoIosArrowForward className="w-5 h-5" />
+                    </button>
+                  </>
+                )}
               </div>
 
-              {/* Details Tab Card */}
-              <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-                <div className="p-6 md:p-8">
-                  <div className="flex flex-wrap gap-3 mb-8 border-b border-gray-100 dark:border-gray-700 pb-2">
-                    {["opis", "stan", "lokalizacja", "finanse"].map((tab) => {
-                      // Get the display name for the tab
-                      let displayName = tab.charAt(0).toUpperCase() + tab.slice(1);
-                      if (tab === "stan" && car?.condition === "New") {
-                        displayName = "Gwarancja";
-                      }
+              {/* Thumbnail Grid - Right Side - Show up to 8 thumbnails */}
+              <div className="w-full md:w-[320px] flex-shrink-0 h-full">
+                <div className="grid grid-cols-2 gap-[3px] h-full">
+                  {thumbnailImages.map((img, index) => {
+                    const realIndex = useThumbnailOffset ? index + 1 : index;
+                    const isAllPhotosTile = index === 7 && images.length > (useThumbnailOffset ? 9 : 8);
+                    const isExteriorThumb =
+                      !isAllPhotosTile &&
+                      exteriorFirstIndex !== null &&
+                      exteriorFirstIndex === realIndex &&
+                      exteriorCount > 0;
+                    const isInteriorThumb =
+                      !isAllPhotosTile &&
+                      interiorFirstIndex !== null &&
+                      interiorFirstIndex === realIndex &&
+                      interiorCount > 0;
 
-                      return (
+                    return (
+                      <div
+                        key={index}
+                        className="relative aspect-square overflow-hidden cursor-pointer transition-all duration-200"
+                        onClick={() => {
+                          setClickedImageUrl(img);
+                          setIsCategorizationModalOpen(true);
+                        }}
+                      >
+                        <img
+                          src={img}
+                          alt={`Thumbnail ${realIndex + 1}`}
+                          className="w-full h-full object-cover"
+                        />
 
-                        <button
-                          key={tab}
-                          className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-200 ${activeTab === tab
-                            ? "bg-gray-900 text-white shadow-lg shadow-gray-200/50 dark:shadow-blue-900/30 dark:bg-blue-600 dark:text-white"
-                            : "bg-gray-50 text-gray-600 hover:bg-gray-100 dark:bg-gray-700/50 dark:text-gray-300 dark:hover:bg-gray-700"
-                            }`}
-                          onClick={() => setActiveTab(tab)}
-                        >
-                          {displayName}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  {renderContent()}
+                        {(isExteriorThumb || isInteriorThumb) && (
+                          <div className="absolute top-2 left-2 bg-black/70 text-white px-2.5 py-1 rounded-md text-xs font-semibold tracking-wide">
+                            {isExteriorThumb
+                              ? `Nadwozie (${exteriorCount})`
+                              : `Wnętrze (${interiorCount})`}
+                          </div>
+                        )}
+
+                        {isAllPhotosTile && (
+                          <div
+                            className="absolute inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center cursor-pointer hover:bg-opacity-70 transition-all"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setClickedImageUrl(images[0]);
+                              setIsCategorizationModalOpen(true);
+                            }}
+                          >
+                            <span className="text-white text-base md:text-lg font-semibold">
+                              {`Wszystkie zdjęcia (${images.length})`}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-
             </div>
 
-            {/* Right Column / Sidebar */}
-            <div className="col-span-1">
-              <div className="space-y-6 sticky top-24">
+            {/* Mobile gallery: big main image on top, horizontally scrollable thumbnail grid below */}
+            <div className="flex md:hidden flex-col gap-[3px] bg-white dark:bg-gray-900 rounded-xl overflow-hidden shadow-sm">
+              {/* Main Image - Top */}
+              <div className="relative w-full aspect-[4/3]">
+                <img
+                  src={mainImage || images[currentImageIndex] || images[0]}
+                  alt={`${car?.make} ${car?.model} - Image ${currentImageIndex + 1}`}
+                  className="w-full h-full object-cover cursor-pointer"
+                  onClick={() => {
+                    setClickedImageUrl(mainImage || images[currentImageIndex] || images[0]);
+                    setIsCategorizationModalOpen(true);
+                  }}
+                />
 
-                {/* Price Card */}
-                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 md:p-8 relative overflow-hidden group">
-                  <div className="absolute right-0 top-0 w-32 h-32 bg-blue-50 dark:bg-blue-900/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-                  <div className="relative z-10">
-                    <h3 className="text-gray-500 dark:text-gray-400 font-bold uppercase text-xs tracking-wider mb-2">Cena Całkowita</h3>
-                    <div className="flex flex-col">
-                      <p className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-2">
-                        {basePriceNetto !== null
-                          ? `${basePriceNetto.toLocaleString("pl-PL")} zł`
-                          : "N/A"}
-                        <span className="text-lg font-bold text-gray-400 ml-2">Netto</span>
-                      </p>
+                {/* Fullscreen button overlay */}
+                <button
+                  onClick={() => setIsFullscreen(true)}
+                  className="absolute top-3 right-3 bg-black bg-opacity-60 text-white p-2 rounded-full hover:bg-opacity-80 z-10"
+                >
+                  <IoExpand className="w-4 h-4" />
+                </button>
+              </div>
 
-                      {car?.financialInfo?.invoiceOptions?.includes("Invoice VAT") && basePriceNetto !== null && (
-                        <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 font-medium">
-                          <span className="text-xl">
-                            {(basePriceNetto * 1.23).toLocaleString("pl-PL", { maximumFractionDigits: 0 })} zł
-                          </span>
-                          <span className="text-xs uppercase bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">Brutto</span>
-                        </div>
-                      )}
-                    </div>
+              {/* Thumbnail strip: 2-row grid, horizontally scrollable */}
+              <div className="overflow-x-auto">
+                <div className="grid grid-rows-2 auto-cols-[minmax(120px,1fr)] grid-flow-col gap-[3px] px-[3px] pb-[3px]">
+                  {thumbnailImages.map((img, index) => {
+                    const realIndex = useThumbnailOffset ? index + 1 : index;
+                    const isAllPhotosTile = index === 7 && images.length > (useThumbnailOffset ? 9 : 8);
+                    const isExteriorThumb =
+                      !isAllPhotosTile &&
+                      exteriorFirstIndex !== null &&
+                      exteriorFirstIndex === realIndex &&
+                      exteriorCount > 0;
+                    const isInteriorThumb =
+                      !isAllPhotosTile &&
+                      interiorFirstIndex !== null &&
+                      interiorFirstIndex === realIndex &&
+                      interiorCount > 0;
 
-                    <p className="text-lg font-bold text-blue-600 dark:text-blue-400 mt-4 cursor-pointer hover:underline">
-                      {car?.financialInfo?.priceWithVat
-                        ? `${car?.financialInfo?.priceWithVat} zł (z VAT)`
-                        : ""}
+                    return (
+                      <div
+                        key={index}
+                        className="relative aspect-square overflow-hidden cursor-pointer transition-all duration-200"
+                        onClick={() => {
+                          if (isAllPhotosTile) {
+                            setClickedImageUrl(images[0]);
+                          } else {
+                            setClickedImageUrl(img);
+                          }
+                          setIsCategorizationModalOpen(true);
+                        }}
+                      >
+                        <img
+                          src={img}
+                          alt={`Thumbnail ${realIndex + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+
+                        {(isExteriorThumb || isInteriorThumb) && (
+                          <div className="absolute top-1 left-1 bg-black/70 text-white px-2 py-0.5 rounded-md text-[10px] font-semibold tracking-wide">
+                            {isExteriorThumb
+                              ? `Nadwozie (${exteriorCount})`
+                              : `Wnętrze (${interiorCount})`}
+                          </div>
+                        )}
+
+                        {isAllPhotosTile && (
+                          <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center cursor-pointer hover:bg-black/70 transition-all">
+                            <span className="text-white text-xs font-semibold text-center px-1">
+                              {`Wszystkie zdjęcia (${images.length})`}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sticky Price / Actions Bar - aligned with content width */}
+          <div className="sticky top-0 z-30 border-b border-gray-200 bg-white/95 dark:bg-gray-900/95 backdrop-blur">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center justify-between gap-4 py-3">
+                <div className="min-w-0">
+                  {stickyTitle && (
+                    <p className="text-xs sm:text-sm md:text-base font-semibold text-gray-900 dark:text-white truncate">
+                      {stickyTitle}
                     </p>
+                  )}
+                  {locationDisplay && (
+                    <p className="hidden sm:block text-[11px] text-gray-500 dark:text-gray-400 mt-0.5 truncate">
+                      {locationDisplay}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-4">
+                  {formattedNetPrice && (
+                    <div className="flex flex-col items-end leading-tight">
+                      <span className="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                        Cena netto
+                      </span>
+                      <span className="text-lg sm:text-2xl font-extrabold tracking-tight text-blue-600 dark:text-blue-400">
+                        {formattedNetPrice}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={callSeller}
+                      className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-blue-600 dark:bg-blue-500 text-white text-xs sm:text-sm font-semibold shadow-sm hover:bg-blue-700 dark:hover:bg-blue-400 whitespace-nowrap"
+                    >
+                      Zadzwoń
+                    </button>
+                    <button
+                      type="button"
+                      onClick={startChat}
+                      className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-gray-300 text-gray-900 dark:text-white text-xs sm:text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 whitespace-nowrap"
+                    >
+                      Napisz
+                    </button>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
 
-                {/* Seller Card */}
-                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 md:p-8 relative overflow-hidden group">
-                  <div className="absolute right-0 top-0 w-32 h-32 bg-purple-50 dark:bg-purple-900/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+          {/* Content below gallery */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-8">
+            {/* Main details + similar vehicles side column */}
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,3fr)_minmax(0,1.4fr)] gap-6 items-start">
+              {/* Left: tabs, specs, narrative */}
+              <div className="space-y-8">
+                {/* Details Tab Card with spec table inside */}
+                <div className=" overflow-hidden">
+                  <div className="p-2">
+                    <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-6 border-b border-gray-200 dark:border-gray-700 pb-3">
+                      {["opis", "stan", "lokalizacja", "finanse"].map((tab) => {
+                        // Get the display name for the tab
+                        let displayName = tab.charAt(0).toUpperCase() + tab.slice(1);
+                        if (tab === "stan" && car?.condition === "New") {
+                          displayName = "Gwarancja";
+                        }
 
-                  <div className="relative z-10 space-y-6">
-                    {/* Seller Header */}
-                    <div className="flex items-center space-x-4">
-                      <div className="relative w-20 h-20 shrink-0">
-                        <button
-                          onClick={() => {
-                            const sellerId =
-                              seller?._id ||
-                              seller?.id ||
-                              (typeof car?.createdBy === "object"
-                                ? car?.createdBy?._id
-                                : car?.createdBy);
-
-                            if (sellerId) {
-                              router.push(`/website/profile?id=${sellerId}`);
-                            }
-                          }}
-                          className="w-full h-full block rounded-full overflow-hidden shadow-lg border-4 border-white dark:border-gray-700 ring-2 ring-gray-100 dark:ring-gray-900 transition-transform hover:scale-105 relative"
-                        >
-                          <Image
-                            src={formatImageUrl(seller?.image)}
-                            alt={sellerName}
-                            fill
-                            className="object-cover"
-                            sizes="96px"
-                          />
-                        </button>
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs text-blue-600 dark:text-blue-400 font-bold uppercase tracking-wider mb-1">
-                          {(() => {
-                            const type =
-                              seller?.sellerType || car?.financialInfo?.sellerType;
-                            if (!type) return "Sprzedawca";
-                            return type === "company" ? "Dealer" : "Sprzedawca Prywatny";
-                          })()}
-                        </p>
-                        <h3
-                          className="text-xl font-extrabold text-gray-900 dark:text-white truncate hover:text-blue-600 transition-colors cursor-pointer"
-                          onClick={() => {
-                            const sellerId =
-                              seller?._id ||
-                              seller?.id ||
-                              (typeof car?.createdBy === "object"
-                                ? car?.createdBy?._id
-                                : car?.createdBy);
-
-                            if (sellerId) {
-                              router.push(`/website/profile?id=${sellerId}`);
-                            }
-                          }}
-                        >
-                          {sellerName}
-                        </h3>
-                        <div className="flex items-center mt-1 text-gray-500 dark:text-gray-400 text-sm font-medium">
-                          <img src="/website/map.svg" alt="Location" className="w-4 h-4 mr-1.5 opacity-60" />
-                          Nowy Targ
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="border-t border-gray-100 dark:border-gray-700"></div>
-
-                    {/* Action Buttons */}
-                    <div className="grid grid-cols-2 gap-3">
-                      <button
-                        onClick={startChat}
-                        className="col-span-1 bg-white dark:bg-gray-900 text-gray-900 dark:text-white py-3.5 px-4 border-2 border-gray-100 dark:border-gray-700 rounded-2xl font-bold shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-500 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 group/btn"
-                      >
-                        <img src="/website/whats.svg" alt="" className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
-                        <span>Czat</span>
-                      </button>
-                      <button
-                        className="col-span-1 bg-blue-600 text-white py-3.5 px-4 rounded-2xl font-bold shadow-lg shadow-blue-200 dark:shadow-blue-900/30 hover:bg-blue-700 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
-                        onClick={callSeller}
-                      >
-                        <span>Zadzwoń</span>
-                      </button>
-                    </div>
-
-                    {socialMediaLinks.length > 0 && (
-                      <div className="flex items-center justify-center gap-6 pt-2">
-                        {socialMediaLinks.map(({ platform, icon, url }) => (
-                          <a
-                            key={platform}
-                            href={url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-gray-400 hover:text-purple-600 hover:scale-110 transition-all text-2xl"
+                        return (
+                          <button
+                            key={tab}
+                            className={`px-4 py-1.5 sm:px-5 sm:py-2 rounded-full font-semibold text-xs sm:text-sm transition-all duration-200 ${activeTab === tab
+                              ? "bg-gray-900 text-white shadow-md shadow-gray-200/50 dark:shadow-blue-900/30 dark:bg-blue-600 dark:text-white"
+                              : "bg-gray-50 text-gray-600 hover:bg-gray-100 dark:bg-gray-700/50 dark:text-gray-300 dark:hover:bg-gray-700"
+                              }`}
+                            onClick={() => setActiveTab(tab)}
                           >
-                            {icon}
-                          </a>
-                        ))}
+                            {displayName}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {/* Two-column spec table - only for OPIS tab */}
+                    {renderContent()}
+                    {activeTab === "opis" && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 mt-2 gap-0 md:gap-8 mb-8 text-sm">
+                        <div className="divide-y divide-gray-400 dark:divide-gray-500 border border-gray-400 dark:border-gray-500 rounded-lg overflow-hidden bg-gray-50/60 dark:bg-gray-900/40">
+                          {specItemsLeft.map((item, idx) => (
+                            <div
+                              key={idx}
+                              className="flex justify-between gap-4 px-4 py-2.5"
+                            >
+                              <span className="font-semibold text-gray-600 dark:text-gray-300 whitespace-nowrap">
+                                {item.label}
+                              </span>
+                              <span className="text-right text-gray-900 dark:text-gray-100 truncate max-w-[60%]">
+                                {item.value}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="divide-y divide-gray-400 dark:divide-gray-500 border border-gray-400 dark:border-gray-500 rounded-lg overflow-hidden bg-gray-50/60 dark:bg-gray-900/40">
+                          {specItemsRight.map((item, idx) => (
+                            <div
+                              key={idx}
+                              className="flex justify-between gap-4 px-4 py-2.5"
+                            >
+                              <span className="font-semibold text-gray-600 dark:text-gray-300 whitespace-nowrap">
+                                {item.label}
+                              </span>
+                              <span className="text-right text-gray-900 dark:text-gray-100 truncate max-w-[60%]">
+                                {item.value}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -920,13 +1068,217 @@ const Page = () => {
 
 
 
+                {/* Narrative sections with dummy content */}
+                <div className="space-y-10">
+                  <section>
+                    <h2 className="text-xl font-semibold mb-3">Highlights</h2>
+                    <p className="text-sm text-gray-700 mb-3">
+                      This is a well-presented example of a modern performance car, combining
+                      everyday usability with strong performance and a high level of factory
+                      equipment. The car in this listing benefits from a clean history,
+                      carefully selected options, and a specification focused on both comfort
+                      and driver engagement.
+                    </p>
+                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+                      <li>Odometer currently indicates a sensible mileage for its age.</li>
+                      <li>
+                        Vehicle history reports no major accidents or mileage discrepancies
+                        to date.
+                      </li>
+                      <li>
+                        Factory equipment includes comfort and convenience features normally
+                        reserved for higher trims.
+                      </li>
+                      <li>
+                        No major modifications reported; presents largely in original factory
+                        condition.
+                      </li>
+                      <li>
+                        Power is delivered smoothly through a proven engine and transmission
+                        combination.
+                      </li>
+                    </ul>
+                  </section>
+
+                  <section>
+                    <h2 className="text-xl font-semibold mb-3">Equipment</h2>
+                    <p className="text-sm text-gray-700 mb-3">
+                      A selection of notable equipment reported by the seller includes:
+                    </p>
+                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+                      <li>Automatic climate control and multi-zone cabin ventilation.</li>
+                      <li>Heated and power-adjustable front seats with memory function.</li>
+                      <li>Leather-wrapped steering wheel with multifunction controls.</li>
+                      <li>Parking sensors and driver-assistance features where equipped.</li>
+                      <li>Factory infotainment system with Bluetooth and navigation.</li>
+                    </ul>
+                  </section>
+
+                  <section>
+                    <h2 className="text-xl font-semibold mb-3">Known Flaws</h2>
+                    <p className="text-sm text-gray-700 mb-3">
+                      The seller reports the following cosmetic or age-related imperfections:
+                    </p>
+                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+                      <li>Minor stone chips and light marks around the exterior.</li>
+                      <li>Typical wear on interior touch-points such as seat bolsters.</li>
+                      <li>Light scratching on wheels consistent with regular road use.</li>
+                      <li>General age-related patina appropriate for the model year.</li>
+                    </ul>
+                  </section>
+
+                  <section>
+                    <h2 className="text-xl font-semibold mb-3">Recent Service History</h2>
+                    <p className="text-sm text-gray-700 mb-3">
+                      According to the seller, recent maintenance includes the following
+                      items:
+                    </p>
+                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+                      <li>Engine oil and filter changed within the last 12 months.</li>
+                      <li>General inspection carried out with no major issues reported.</li>
+                      <li>Routine wear items checked and replaced where necessary.</li>
+                    </ul>
+                  </section>
+
+                  <section>
+                    <h2 className="text-xl font-semibold mb-3">Other Items Included in Sale</h2>
+                    <p className="text-sm text-gray-700 mb-3">
+                      The sale is reported to include the following additional items:
+                    </p>
+                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+                      <li>Two keys or key fobs, where originally supplied.</li>
+                      <li>Owner&apos;s manuals and basic documentation set.</li>
+                      <li>Any remaining service booklets or invoices available to the seller.</li>
+                    </ul>
+                  </section>
+
+                  <section>
+                    <h2 className="text-xl font-semibold mb-3">Ownership History</h2>
+                    <p className="text-sm text-gray-700">
+                      The seller reports that the vehicle has been maintained on schedule and
+                      used primarily for regular road driving rather than track use. Exact
+                      ownership count and registration history may vary by market and can be
+                      confirmed with the seller or relevant registration authority.
+                    </p>
+                  </section>
+
+                  {/* FAQs */}
+                  <section>
+                    <h2 className="text-xl font-semibold mb-3">Najczęściej zadawane pytania</h2>
+                    <div className="space-y-3">
+                      <div>
+                        <h3 className="text-sm font-semibold text-gray-900">Czy mogę umówić się na oględziny samochodu?</h3>
+                        <p className="text-sm text-gray-700">
+                          Tak, skontaktuj się ze sprzedawcą za pomocą przycisków „Zadzwoń” lub „Napisz”, aby ustalić termin oględzin.
+                        </p>
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-semibold text-gray-900">Czy cena jest do negocjacji?</h3>
+                        <p className="text-sm text-gray-700">
+                          Możliwość negocjacji zależy od sprzedawcy. Zapytaj bezpośrednio podczas kontaktu.
+                        </p>
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-semibold text-gray-900">Czy mogę sprawdzić historię serwisową pojazdu?</h3>
+                        <p className="text-sm text-gray-700">
+                          Jeżeli sprzedawca posiada książkę serwisową lub faktury, może je udostępnić podczas oględzin lub w rozmowie.
+                        </p>
+                      </div>
+                    </div>
+                  </section>
+                </div>
               </div>
+
+              {/* Right column: seller profile + similar vehicles */}
+              <aside className="space-y-6">
+                {/* Seller profile card */}
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 flex flex-col gap-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="relative w-14 h-14 rounded-full overflow-hidden border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-900 flex-shrink-0">
+                        <img
+                          src={formatImageUrl(seller?.image)}
+                          alt={sellerName}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                          {sellerName}
+                        </span>
+                        <span className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                          {sellerTypeLabel}
+                        </span>
+                        {locationDisplay && (
+                          <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">
+                            {locationDisplay}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <span className="hidden sm:inline-flex px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-900 text-[10px] font-semibold tracking-wide uppercase text-gray-600 dark:text-gray-300">
+                      Sprzedający
+                    </span>
+                  </div>
+
+                  {socialMediaLinks.length > 0 && (
+                    <div className="flex items-center gap-3 pt-2 border-t border-dashed border-gray-200 dark:border-gray-700">
+                      <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">
+                        Media społecznościowe
+                      </span>
+                      <div className="flex items-center gap-2">
+                        {socialMediaLinks.map((link) => (
+                          <a
+                            key={link.platform}
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-8 h-8 inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 text-sm"
+                          >
+                            {link.icon}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="mt-1 grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={callSeller}
+                      className="inline-flex items-center justify-center w-full px-4 py-2.5 rounded-lg bg-blue-600 dark:bg-blue-500 text-white text-xs sm:text-sm font-semibold hover:bg-blue-700 dark:hover:bg-blue-400 transition-colors"
+                    >
+                      Zadzwoń
+                    </button>
+                    <button
+                      type="button"
+                      onClick={startChat}
+                      className="inline-flex items-center justify-center w-full px-4 py-2.5 rounded-lg bg-gray-900 text-white text-xs sm:text-sm font-semibold hover:bg-black transition-colors"
+                    >
+                      Napisz
+                    </button>
+                  </div>
+                </div>
+
+                {/* Similar vehicles */}
+                <div className="">
+                  <div className="flex items-center justify-between mb-2">
+                    <div>
+                      <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
+                        Podobne pojazdy
+                      </h2>
+                      <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                        Inne oferty, które mogą Cię zainteresować
+                      </p>
+                    </div>
+                  </div>
+                  <div className="-mx-2">
+                    <SimilarVehicles />
+                  </div>
+                </div>
+              </aside>
             </div>
           </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <SimilarVehicles />
         </div>
       </div>
 
