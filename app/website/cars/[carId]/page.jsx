@@ -122,22 +122,30 @@ const Page = () => {
 
   const images = car?.images || ["/images/hamer1.png"];
 
-  // Main gallery uses 1 large image + up to 8 small thumbnails on the right.
-  // If there are fewer than 9 real images, we duplicate some thumbnails so
-  // the grid is always filled (visually matching a full 2x4 column).
+  // Logic for dynamic desktop gallery layout
+  let galleryMode = "full"; // default 1 main + 8 thumbs (for 9+ images)
+  if (images.length < 5) {
+    galleryMode = "single"; // just 1 main image
+  } else if (images.length < 9) {
+    galleryMode = "mini"; // 1 main + 4 thumbs
+  }
+
+  const maxThumbnailsToShow = galleryMode === "full" ? 8 : (galleryMode === "mini" ? 4 : 0);
+
+  // Main gallery uses thumbnails on the right.
   const useThumbnailOffset = images.length > 1;
   const thumbnailSource = useThumbnailOffset ? images.slice(1) : images.slice(0);
   const thumbnailImages = [];
 
-  if (thumbnailSource.length > 0) {
-    // First, push each unique thumbnail once, up to 8
-    for (let i = 0; i < Math.min(8, thumbnailSource.length); i++) {
+  if (thumbnailSource.length > 0 && maxThumbnailsToShow > 0) {
+    // Fill thumbnails up to the allowed limit
+    for (let i = 0; i < Math.min(maxThumbnailsToShow, thumbnailSource.length); i++) {
       thumbnailImages.push(thumbnailSource[i]);
     }
 
-    // If there are still empty slots, repeat from the beginning
+    // Fill remaining slots if needed to maintain grid shape
     let i = 0;
-    while (thumbnailImages.length < 8 && thumbnailSource.length > 0) {
+    while (thumbnailImages.length < maxThumbnailsToShow && thumbnailSource.length > 0) {
       thumbnailImages.push(thumbnailSource[i % thumbnailSource.length]);
       i++;
     }
@@ -759,54 +767,60 @@ const Page = () => {
 
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         {/* Sticky Price / Actions Bar - Now at the VERY top of the gallery section */}
-        <div className="sticky top-0 z-30 border-b border-gray-200 bg-white/95 dark:bg-gray-900/95 backdrop-blur">
+        <div className="sticky top-0 z-40 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm transition-all duration-300">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between gap-4 py-3">
+            <div className="flex items-center justify-between gap-4 py-3 md:py-4">
               <div className="min-w-0 flex-1">
                 <div className="flex flex-col">
                   {stickyTitle && (
-                    <p className="text-sm sm:text-base font-extrabold text-gray-900 dark:text-white truncate">
-                      {stickyTitle}
-                    </p>
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse hidden md:block" />
+                      <p className="text-sm sm:text-lg font-black text-gray-900 dark:text-white truncate uppercase tracking-tight">
+                        {stickyTitle}
+                      </p>
+                    </div>
                   )}
                   {formattedNetPrice && (
-                    <div className="flex items-center gap-1.5 md:hidden">
-                      <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                    <div className="flex items-center gap-2 md:hidden">
+                      <span className="text-base font-black text-blue-600 dark:text-blue-400">
                         {formattedNetPrice}
                       </span>
-                      <span className="text-[10px] uppercase font-medium text-gray-500">
+                      <span className="text-[9px] uppercase font-bold text-gray-400 border border-gray-200 dark:border-gray-700 px-1 rounded">
                         Netto
                       </span>
                     </div>
                   )}
-                  <p className="hidden md:block text-[11px] text-gray-500 dark:text-gray-400 mt-0.5 truncate">
-                    {locationDisplay}
-                  </p>
+                  <div className="hidden md:flex items-center gap-1">
+                    <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    <p className="text-[11px] font-medium text-gray-500 dark:text-gray-400 truncate">
+                      {locationDisplay}
+                    </p>
+                  </div>
                 </div>
               </div>
               <div className="flex items-center gap-4">
                 {formattedNetPrice && (
-                  <div className="hidden md:flex flex-col items-end leading-tight">
-                    <span className="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                  <div className="hidden md:flex flex-col items-end leading-none">
+                    <span className="text-[9px] uppercase font-bold tracking-widest text-gray-400 mb-1">
                       Cena netto
                     </span>
-                    <span className="text-sm sm:text-lg font-extrabold tracking-tight text-blue-600 dark:text-blue-400">
+                    <span className="text-lg sm:text-2xl font-black tracking-tighter text-blue-600 dark:text-blue-400">
                       {formattedNetPrice}
                     </span>
                   </div>
                 )}
-                <div className="hidden md:flex items-center gap-2">
+                <div className="hidden md:flex items-center gap-3">
                   <button
                     type="button"
                     onClick={callSeller}
-                    className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-blue-600 dark:bg-blue-500 text-white text-xs sm:text-sm font-semibold shadow-sm hover:bg-blue-700 dark:hover:bg-blue-400 whitespace-nowrap"
+                    className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-blue-600 dark:bg-blue-500 text-white text-xs sm:text-sm font-bold shadow-lg shadow-blue-500/20 hover:bg-blue-700 dark:hover:bg-blue-400 hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap"
                   >
                     Zadzwoń
                   </button>
                   <button
                     type="button"
                     onClick={startChat}
-                    className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-gray-300 text-gray-900 dark:text-white text-xs sm:text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 whitespace-nowrap"
+                    className="inline-flex items-center justify-center px-6 py-2.5 rounded-full border-2 border-gray-900 dark:border-white text-gray-900 dark:text-white text-xs sm:text-sm font-bold hover:bg-gray-900 hover:text-white dark:hover:bg-white dark:hover:text-gray-900 hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap"
                   >
                     Napisz
                   </button>
@@ -822,10 +836,10 @@ const Page = () => {
           <div className="max-w-7xl mx-auto md:px-4 lg:px-8">
 
 
-            {/* Desktop / tablet gallery: 1 large + 8 thumbnails on the side */}
+            {/* Desktop / tablet gallery: Dynamic layout based on image count */}
             <div className="hidden md:flex md:flex-row gap-2 bg-white dark:bg-gray-900 overflow-hidden h-[380px] sm:h-[430px] md:h-[461px] lg:h-[520px] xl:h-[560px] 2xl:h-[600px]">
               {/* Main Image - Left Side */}
-              <div className="relative group w-full md:w-[calc(100%-320px)] h-full">
+              <div className={`relative group h-full ${galleryMode === "single" ? "w-full" : "w-full md:w-[calc(100%-320px)]"}`}>
                 <div className="relative w-full h-full">
                   <img
                     src={mainImage || images[currentImageIndex] || images[0]}
@@ -865,65 +879,67 @@ const Page = () => {
                 )}
               </div>
 
-              {/* Thumbnail Grid - Right Side - Show up to 8 thumbnails */}
-              <div className="w-full md:w-[320px] flex-shrink-0 h-full overflow-hidden">
-                <div className="grid grid-cols-2 grid-rows-4 gap-2 h-full">
-                  {thumbnailImages.map((img, index) => {
-                    const realIndex = useThumbnailOffset ? index + 1 : index;
-                    const isAllPhotosTile = index === 7 && images.length > (useThumbnailOffset ? 9 : 8);
-                    const isExteriorThumb =
-                      !isAllPhotosTile &&
-                      exteriorFirstIndex !== null &&
-                      exteriorFirstIndex === realIndex &&
-                      exteriorCount > 0;
-                    const isInteriorThumb =
-                      !isAllPhotosTile &&
-                      interiorFirstIndex !== null &&
-                      interiorFirstIndex === realIndex &&
-                      interiorCount > 0;
+              {/* Thumbnail Grid - Right Side - Show conditionally based on count */}
+              {galleryMode !== "single" && (
+                <div className="w-full md:w-[320px] flex-shrink-0 h-full overflow-hidden">
+                  <div className={`grid grid-cols-2 gap-2 h-full ${galleryMode === "mini" ? "grid-rows-2" : "grid-rows-4"}`}>
+                    {thumbnailImages.map((img, index) => {
+                      const realIndex = useThumbnailOffset ? index + 1 : index;
+                      const isAllPhotosTile = index === (maxThumbnailsToShow - 1) && images.length > (useThumbnailOffset ? (maxThumbnailsToShow + 1) : maxThumbnailsToShow);
+                      const isExteriorThumb =
+                        !isAllPhotosTile &&
+                        exteriorFirstIndex !== null &&
+                        exteriorFirstIndex === realIndex &&
+                        exteriorCount > 0;
+                      const isInteriorThumb =
+                        !isAllPhotosTile &&
+                        interiorFirstIndex !== null &&
+                        interiorFirstIndex === realIndex &&
+                        interiorCount > 0;
 
-                    return (
-                      <div
-                        key={index}
-                        className="relative overflow-hidden cursor-pointer transition-all duration-200 h-full w-full"
-                        onClick={() => {
-                          setClickedImageUrl(img);
-                          setIsCategorizationModalOpen(true);
-                        }}
-                      >
-                        <img
-                          src={img}
-                          alt={`Thumbnail ${realIndex + 1}`}
-                          className="w-full h-full object-cover"
-                        />
+                      return (
+                        <div
+                          key={index}
+                          className="relative overflow-hidden cursor-pointer transition-all duration-200 h-full w-full"
+                          onClick={() => {
+                            setClickedImageUrl(img);
+                            setIsCategorizationModalOpen(true);
+                          }}
+                        >
+                          <img
+                            src={img}
+                            alt={`Thumbnail ${realIndex + 1}`}
+                            className="w-full h-full object-cover"
+                          />
 
-                        {(isExteriorThumb || isInteriorThumb) && (
-                          <div className="absolute top-2 left-2 bg-black/70 text-white px-2.5 py-1 rounded-md text-xs font-semibold tracking-wide">
-                            {isExteriorThumb
-                              ? `Nadwozie (${exteriorCount})`
-                              : `Wnętrze (${interiorCount})`}
-                          </div>
-                        )}
+                          {(isExteriorThumb || isInteriorThumb) && (
+                            <div className="absolute top-2 left-2 bg-black/70 text-white px-2.5 py-1 rounded-md text-xs font-semibold tracking-wide">
+                              {isExteriorThumb
+                                ? `Nadwozie (${exteriorCount})`
+                                : `Wnętrze (${interiorCount})`}
+                            </div>
+                          )}
 
-                        {isAllPhotosTile && (
-                          <div
-                            className="absolute inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center cursor-pointer hover:bg-opacity-70 transition-all"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setClickedImageUrl(images[0]);
-                              setIsCategorizationModalOpen(true);
-                            }}
-                          >
-                            <span className="text-white text-base md:text-lg font-semibold">
-                              {`Wszystkie zdjęcia (${images.length})`}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
+                          {isAllPhotosTile && (
+                            <div
+                              className="absolute inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center cursor-pointer hover:bg-opacity-70 transition-all"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setClickedImageUrl(images[0]);
+                                setIsCategorizationModalOpen(true);
+                              }}
+                            >
+                              <span className="text-white text-base md:text-lg font-semibold">
+                                {`Wszystkie zdjęcia (${images.length})`}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Mobile gallery: horizontally scrollable carousel with PEEK effect */}
