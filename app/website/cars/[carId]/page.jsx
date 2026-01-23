@@ -774,15 +774,14 @@ const Page = () => {
                 <div className="flex flex-col">
                   {stickyTitle && (
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse hidden md:block" />
-                      <p className="text-sm sm:text-lg font-black text-gray-900 dark:text-white truncate uppercase tracking-tight">
+                      <p className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-900 dark:text-white truncate uppercase tracking-tight">
                         {stickyTitle}
                       </p>
                     </div>
                   )}
                   {formattedNetPrice && (
                     <div className="flex items-center gap-2 md:hidden">
-                      <span className="text-base font-black text-blue-600 dark:text-blue-400">
+                      <span className="text-2xl font-black text-blue-600 dark:text-blue-400">
                         {formattedNetPrice}
                       </span>
                       <span className="text-[9px] uppercase font-bold text-gray-400 border border-gray-200 dark:border-gray-700 px-1 rounded">
@@ -790,12 +789,7 @@ const Page = () => {
                       </span>
                     </div>
                   )}
-                  <div className="hidden md:flex items-center gap-1">
-                    <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                    <p className="text-[11px] font-medium text-gray-500 dark:text-gray-400 truncate">
-                      {locationDisplay}
-                    </p>
-                  </div>
+
                 </div>
               </div>
               <div className="flex items-center gap-4">
@@ -809,7 +803,7 @@ const Page = () => {
                     </span>
                   </div>
                 )}
-                <div className="hidden md:flex items-center gap-3">
+                {/* <div className="hidden md:flex items-center gap-3">
                   <button
                     type="button"
                     onClick={callSeller}
@@ -824,7 +818,7 @@ const Page = () => {
                   >
                     Napisz
                   </button>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -1088,39 +1082,126 @@ const Page = () => {
                     {/* Two-column spec table - only for OPIS tab */}
                     {activeTab !== "opis" && renderContent()}
                     {activeTab === "opis" && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 mt-2 gap-0 md:gap-8 mb-8 text-sm">
-                        <div className="divide-y divide-gray-400 dark:divide-gray-500 border border-gray-400 dark:border-gray-500 rounded-lg overflow-hidden bg-gray-50/60 dark:bg-gray-900/40">
-                          {specItemsLeft.map((item, idx) => (
-                            <div
-                              key={idx}
-                              className="flex justify-between gap-4 px-4 py-2.5"
-                            >
-                              <span className="font-semibold text-gray-600 dark:text-gray-300 whitespace-nowrap">
-                                {item.label}
-                              </span>
-                              <span className="text-right text-gray-900 dark:text-gray-100 truncate max-w-[60%]">
-                                {item.value}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                        <div className="divide-y divide-gray-400 dark:divide-gray-500 border border-gray-400 dark:border-gray-500 rounded-lg overflow-hidden bg-gray-50/60 dark:bg-gray-900/40">
-                          {specItemsRight.map((item, idx) => (
-                            <div
-                              key={idx}
-                              className="flex justify-between gap-4 px-4 py-2.5"
-                            >
-                              <span className="font-semibold text-gray-600 dark:text-gray-300 whitespace-nowrap">
-                                {item.label}
-                              </span>
-                              <span className="text-right text-gray-900 dark:text-gray-100 truncate max-w-[60%]">
-                                {item.value}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
+                      <div className="mt-2 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden bg-white dark:bg-gray-900 shadow-sm">
+                        <table className="w-full border-collapse text-xs sm:text-sm">
+                          <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+                            {[0, 1, 2, 3, 4, 5].map((i) => (
+                              <tr key={i} className="flex flex-col md:table-row">
+                                {/* Left Pair */}
+                                <td className="md:w-1/4 px-4 py-3 bg-gray-50/50 dark:bg-gray-800/30 font-bold text-gray-900 dark:text-gray-100 border-r border-gray-200 dark:border-gray-800">
+                                  {specItemsLeft[i]?.label}
+                                </td>
+                                <td className="md:w-1/4 px-4 py-3 text-gray-700 dark:text-gray-300 border-r border-gray-200 dark:border-gray-800">
+                                  {specItemsLeft[i]?.value}
+                                </td>
+                                {/* Right Pair - Hidden on mobile, shown as separate rows or joined */}
+                                <td className="md:w-1/4 px-4 py-3 bg-gray-50/50 dark:bg-gray-800/30 font-bold text-gray-900 dark:text-gray-100 border-r border-gray-200 dark:border-gray-800">
+                                  {specItemsRight[i]?.label}
+                                </td>
+                                <td className="md:w-1/4 px-4 py-3 text-gray-700 dark:text-gray-300">
+                                  {specItemsRight[i]?.value}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
                     )}
+                  </div>
+                </div>
+
+                {/* Narrative sections - Restored and Styled */}
+                <div className="space-y-12 pt-4 px-2 pb-10">
+                  {/* Narrative sections - Restored and Unified Design */}
+                  <div className="space-y-8 pt-4 pb-10">
+                    {/* Highlights Section */}
+                    <section className="relative">
+                      <div className="flex items-center gap-3 mb-4 px-1">
+                        <div className="h-6 w-1 bg-blue-600 rounded-full" />
+                        <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Highlights</h2>
+                      </div>
+                      <div className="bg-white dark:bg-gray-800/40 border border-gray-100 dark:border-gray-800/60 p-6 rounded-2xl shadow-sm">
+                        <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                          THIS... is a {car?.year} {car?.make} {car?.model}, finished in {car?.color || "original factory color"} with a {car?.interiorColor || "distinguished"} interior.
+                        </p>
+                        <ul className="space-y-3 text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                          <li className="flex items-start gap-3">
+                            <span className="text-blue-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500" />
+                            <span>The odometer currently indicates approximately {car?.mileage?.toLocaleString()} km.</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <span className="text-blue-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500" />
+                            <span>{car?.accidentHistory ? "The vehicle has a recorded history of repairs." : "Vehicle history indicates no major accidents or insurance claims."}</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <span className="text-blue-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500" />
+                            <span>Power comes from a {car?.engine || "potent engine"} and is delivered via a {car?.transmission || "smooth transmission"}.</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </section>
+
+                    {/* Seller Notes Section */}
+                    <section className="relative">
+                      <div className="flex items-center gap-3 mb-4 px-1">
+                        <div className="h-6 w-1 bg-blue-600 rounded-full" />
+                        <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Seller Notes</h2>
+                      </div>
+                      <div className="bg-white dark:bg-gray-800/40 border border-gray-100 dark:border-gray-800/60 p-6 rounded-2xl shadow-sm">
+                        <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
+                          {car?.sellerNotes || "Ten egzemplarz to wyjątkowo zadbana sztuka, łącząca wysoki komfort z niezawodnością. Pojazd przeszedł pełną inspekcję techniczną i jest gotowy do dalszej eksploatacji bez konieczności ponoszenia dodatkowych nakładów finansowych. Idealny wybór dla osób szukających pewnego auta z pewną historią."}
+                        </p>
+                      </div>
+                    </section>
+
+                    {/* Equipment Section */}
+                    <section className="relative">
+                      <div className="flex items-center gap-3 mb-4 px-1">
+                        <div className="h-6 w-1 bg-blue-600 rounded-full" />
+                        <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Equipment</h2>
+                      </div>
+                      <div className="bg-white dark:bg-gray-800/40 border border-gray-100 dark:border-gray-800/60 p-6 rounded-2xl shadow-sm">
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
+                          {["Automatic climate control", "Satellite navigation system", "Adaptive cruise control", "Heated and ventilated seats", "LED lighting package", "Premium sound system"].map((item, i) => (
+                            <li key={i} className="flex items-start gap-3 text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                              <span className="text-blue-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500" />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </section>
+
+                    {/* Known Flaws Section */}
+                    <section className="relative">
+                      <div className="flex items-center gap-3 mb-4 px-1">
+                        <div className="h-6 w-1 bg-red-600 rounded-full" />
+                        <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Known Flaws</h2>
+                      </div>
+                      <div className="bg-white dark:bg-gray-800/40 border border-gray-100 dark:border-gray-800/60 p-6 rounded-2xl shadow-sm">
+                        <ul className="space-y-3">
+                          {["Minor stone chips on the front bumper", "Typical wear on the driver's seat bolster", "Light scratching on one of the wheels"].map((item, i) => (
+                            <li key={i} className="flex items-start gap-3 text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                              <span className="text-red-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-red-500 opacity-70" />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </section>
+
+                    {/* Ownership History Section */}
+                    <section className="relative">
+                      <div className="flex items-center gap-3 mb-4 px-1">
+                        <div className="h-6 w-1 bg-blue-600 rounded-full" />
+                        <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Ownership History</h2>
+                      </div>
+                      <div className="bg-white dark:bg-gray-800/40 border border-gray-100 dark:border-gray-800/60 p-6 rounded-2xl shadow-sm">
+                        <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
+                          The seller has owned this vehicle since {car?.ownershipStart || "new"} and reports that it has been maintained on schedule with {car?.serviceCount || "regular"} service intervals. Original manuals and two keys are included in the sale.
+                        </p>
+                      </div>
+                    </section>
                   </div>
                 </div>
               </div>
@@ -1299,26 +1380,6 @@ const Page = () => {
         categorizedImages={car?.categorizedImages || []}
       />
       <PhoneModal />
-
-      {/* Mobile Sticky Bottom CTA Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur border-t border-gray-200 dark:border-gray-800 p-4 shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
-        <div className="flex gap-3">
-          <button
-            type="button"
-            onClick={callSeller}
-            className="flex-1 inline-flex items-center justify-center py-3.5 rounded-xl bg-blue-600 dark:bg-blue-500 text-white text-sm font-bold shadow-sm hover:bg-blue-700 active:scale-[0.98] transition-all"
-          >
-            Zadzwoń
-          </button>
-          <button
-            type="button"
-            onClick={startChat}
-            className="flex-1 inline-flex items-center justify-center py-3.5 rounded-xl border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white text-sm font-bold hover:bg-gray-50 active:scale-[0.98] transition-all"
-          >
-            Napisz
-          </button>
-        </div>
-      </div>
     </>
   );
 }
