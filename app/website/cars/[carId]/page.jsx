@@ -763,18 +763,30 @@ const Page = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between gap-4 py-3">
               <div className="min-w-0 flex-1">
-                {stickyTitle && (
-                  <p className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">
-                    {stickyTitle}
+                <div className="flex flex-col">
+                  {stickyTitle && (
+                    <p className="text-sm sm:text-base font-extrabold text-gray-900 dark:text-white truncate">
+                      {stickyTitle}
+                    </p>
+                  )}
+                  {formattedNetPrice && (
+                    <div className="flex items-center gap-1.5 md:hidden">
+                      <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                        {formattedNetPrice}
+                      </span>
+                      <span className="text-[10px] uppercase font-medium text-gray-500">
+                        Netto
+                      </span>
+                    </div>
+                  )}
+                  <p className="hidden md:block text-[11px] text-gray-500 dark:text-gray-400 mt-0.5 truncate">
+                    {locationDisplay}
                   </p>
-                )}
-                <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5 truncate">
-                  {locationDisplay}
-                </p>
+                </div>
               </div>
               <div className="flex items-center gap-4">
                 {formattedNetPrice && (
-                  <div className="flex flex-col items-end leading-tight">
+                  <div className="hidden md:flex flex-col items-end leading-tight">
                     <span className="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
                       Cena netto
                     </span>
@@ -783,7 +795,7 @@ const Page = () => {
                     </span>
                   </div>
                 )}
-                <div className="flex items-center gap-2">
+                <div className="hidden md:flex items-center gap-2">
                   <button
                     type="button"
                     onClick={callSeller}
@@ -1046,9 +1058,9 @@ const Page = () => {
                         return (
                           <button
                             key={tab}
-                            className={`px-4 py-1.5 sm:px-5 sm:py-2 rounded-full font-semibold text-xs sm:text-sm transition-all duration-200 ${activeTab === tab
-                              ? "bg-gray-900 text-white shadow-md shadow-gray-200/50 dark:shadow-blue-900/30 dark:bg-blue-600 dark:text-white"
-                              : "bg-gray-50 text-gray-600 hover:bg-gray-100 dark:bg-gray-700/50 dark:text-gray-300 dark:hover:bg-gray-700"
+                            className={`px-5 py-2.5 sm:px-6 sm:py-3 rounded-full font-bold text-[13px] sm:text-base transition-all duration-200 uppercase tracking-wide shadow-sm ${activeTab === tab
+                              ? "bg-gray-900 text-white dark:bg-blue-600 dark:text-white"
+                              : "bg-gray-100/80 text-gray-600 hover:bg-gray-200/80 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
                               }`}
                             onClick={() => setActiveTab(tab)}
                           >
@@ -1058,7 +1070,7 @@ const Page = () => {
                       })}
                     </div>
                     {/* Two-column spec table - only for OPIS tab */}
-                    {renderContent()}
+                    {activeTab !== "opis" && renderContent()}
                     {activeTab === "opis" && (
                       <div className="grid grid-cols-1 md:grid-cols-2 mt-2 gap-0 md:gap-8 mb-8 text-sm">
                         <div className="divide-y divide-gray-400 dark:divide-gray-500 border border-gray-400 dark:border-gray-500 rounded-lg overflow-hidden bg-gray-50/60 dark:bg-gray-900/40">
@@ -1095,132 +1107,10 @@ const Page = () => {
                     )}
                   </div>
                 </div>
-
-
-
-                {/* Narrative sections with dummy content */}
-                <div className="space-y-10">
-                  <section>
-                    <h2 className="text-xl font-semibold mb-3">Highlights</h2>
-                    <p className="text-sm text-gray-700 mb-3">
-                      This is a well-presented example of a modern performance car, combining
-                      everyday usability with strong performance and a high level of factory
-                      equipment. The car in this listing benefits from a clean history,
-                      carefully selected options, and a specification focused on both comfort
-                      and driver engagement.
-                    </p>
-                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
-                      <li>Odometer currently indicates a sensible mileage for its age.</li>
-                      <li>
-                        Vehicle history reports no major accidents or mileage discrepancies
-                        to date.
-                      </li>
-                      <li>
-                        Factory equipment includes comfort and convenience features normally
-                        reserved for higher trims.
-                      </li>
-                      <li>
-                        No major modifications reported; presents largely in original factory
-                        condition.
-                      </li>
-                      <li>
-                        Power is delivered smoothly through a proven engine and transmission
-                        combination.
-                      </li>
-                    </ul>
-                  </section>
-
-                  <section>
-                    <h2 className="text-xl font-semibold mb-3">Equipment</h2>
-                    <p className="text-sm text-gray-700 mb-3">
-                      A selection of notable equipment reported by the seller includes:
-                    </p>
-                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
-                      <li>Automatic climate control and multi-zone cabin ventilation.</li>
-                      <li>Heated and power-adjustable front seats with memory function.</li>
-                      <li>Leather-wrapped steering wheel with multifunction controls.</li>
-                      <li>Parking sensors and driver-assistance features where equipped.</li>
-                      <li>Factory infotainment system with Bluetooth and navigation.</li>
-                    </ul>
-                  </section>
-
-                  <section>
-                    <h2 className="text-xl font-semibold mb-3">Known Flaws</h2>
-                    <p className="text-sm text-gray-700 mb-3">
-                      The seller reports the following cosmetic or age-related imperfections:
-                    </p>
-                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
-                      <li>Minor stone chips and light marks around the exterior.</li>
-                      <li>Typical wear on interior touch-points such as seat bolsters.</li>
-                      <li>Light scratching on wheels consistent with regular road use.</li>
-                      <li>General age-related patina appropriate for the model year.</li>
-                    </ul>
-                  </section>
-
-                  <section>
-                    <h2 className="text-xl font-semibold mb-3">Recent Service History</h2>
-                    <p className="text-sm text-gray-700 mb-3">
-                      According to the seller, recent maintenance includes the following
-                      items:
-                    </p>
-                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
-                      <li>Engine oil and filter changed within the last 12 months.</li>
-                      <li>General inspection carried out with no major issues reported.</li>
-                      <li>Routine wear items checked and replaced where necessary.</li>
-                    </ul>
-                  </section>
-
-                  <section>
-                    <h2 className="text-xl font-semibold mb-3">Other Items Included in Sale</h2>
-                    <p className="text-sm text-gray-700 mb-3">
-                      The sale is reported to include the following additional items:
-                    </p>
-                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
-                      <li>Two keys or key fobs, where originally supplied.</li>
-                      <li>Owner&apos;s manuals and basic documentation set.</li>
-                      <li>Any remaining service booklets or invoices available to the seller.</li>
-                    </ul>
-                  </section>
-
-                  <section>
-                    <h2 className="text-xl font-semibold mb-3">Ownership History</h2>
-                    <p className="text-sm text-gray-700">
-                      The seller reports that the vehicle has been maintained on schedule and
-                      used primarily for regular road driving rather than track use. Exact
-                      ownership count and registration history may vary by market and can be
-                      confirmed with the seller or relevant registration authority.
-                    </p>
-                  </section>
-
-                  {/* FAQs */}
-                  <section>
-                    <h2 className="text-xl font-semibold mb-3">Najczęściej zadawane pytania</h2>
-                    <div className="space-y-3">
-                      <div>
-                        <h3 className="text-sm font-semibold text-gray-900">Czy mogę umówić się na oględziny samochodu?</h3>
-                        <p className="text-sm text-gray-700">
-                          Tak, skontaktuj się ze sprzedawcą za pomocą przycisków „Zadzwoń” lub „Napisz”, aby ustalić termin oględzin.
-                        </p>
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-semibold text-gray-900">Czy cena jest do negocjacji?</h3>
-                        <p className="text-sm text-gray-700">
-                          Możliwość negocjacji zależy od sprzedawcy. Zapytaj bezpośrednio podczas kontaktu.
-                        </p>
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-semibold text-gray-900">Czy mogę sprawdzić historię serwisową pojazdu?</h3>
-                        <p className="text-sm text-gray-700">
-                          Jeżeli sprzedawca posiada książkę serwisową lub faktury, może je udostępnić podczas oględzin lub w rozmowie.
-                        </p>
-                      </div>
-                    </div>
-                  </section>
-                </div>
               </div>
 
               {/* Right column: seller profile + similar vehicles */}
-              <aside className="space-y-6">
+              <aside className="lg:sticky lg:top-24 space-y-6">
                 {/* Seller profile card */}
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 flex flex-col gap-4">
                   <div className="flex items-center justify-between gap-3">
@@ -1310,7 +1200,7 @@ const Page = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div >
 
       {isWarrantyModalOpen &&
         car?.condition === "New" &&
@@ -1393,6 +1283,26 @@ const Page = () => {
         categorizedImages={car?.categorizedImages || []}
       />
       <PhoneModal />
+
+      {/* Mobile Sticky Bottom CTA Bar */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur border-t border-gray-200 dark:border-gray-800 p-4 shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={callSeller}
+            className="flex-1 inline-flex items-center justify-center py-3.5 rounded-xl bg-blue-600 dark:bg-blue-500 text-white text-sm font-bold shadow-sm hover:bg-blue-700 active:scale-[0.98] transition-all"
+          >
+            Zadzwoń
+          </button>
+          <button
+            type="button"
+            onClick={startChat}
+            className="flex-1 inline-flex items-center justify-center py-3.5 rounded-xl border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white text-sm font-bold hover:bg-gray-50 active:scale-[0.98] transition-all"
+          >
+            Napisz
+          </button>
+        </div>
+      </div>
     </>
   );
 }
