@@ -22,20 +22,20 @@ const ConditionTab = ({ carCondition }) => {
         {/* Left Column */}
         <div className="space-y-6">
           <div>
-            <p className="text-[11px] sm:text-xs uppercase tracking-widest text-gray-500 font-bold mb-1">LAKIER I KAROSERIA</p>
-            <p className="text-sm sm:text-base font-medium text-gray-900 dark:text-white">
+            <p className="text-base font-bold text-gray-900 dark:text-white mb-1 uppercase tracking-wide">LAKIER I KAROSERIA</p>
+            <p className="text-base text-gray-500 dark:text-gray-400">
               {translateCondition(carCondition?.paintandBody)}
             </p>
           </div>
           <div>
-            <p className="text-[11px] sm:text-xs uppercase tracking-widest text-gray-500 font-bold mb-1">PODWOZIE I RAMA</p>
-            <p className="text-sm sm:text-base font-medium text-gray-900 dark:text-white">
+            <p className="text-base font-bold text-gray-900 dark:text-white mb-1 uppercase tracking-wide">PODWOZIE I RAMA</p>
+            <p className="text-base text-gray-500 dark:text-gray-400">
               {translateCondition(carCondition?.frameandUnderbody)}
             </p>
           </div>
           <div>
-            <p className="text-[11px] sm:text-xs uppercase tracking-widest text-gray-500 font-bold mb-1">OGÓLNY</p>
-            <p className="text-sm sm:text-base font-medium text-gray-900 dark:text-white">
+            <p className="text-base font-bold text-gray-900 dark:text-white mb-1 uppercase tracking-wide">OGÓLNY</p>
+            <p className="text-base text-gray-500 dark:text-gray-400">
               {translateCondition(carCondition?.overall)}
             </p>
           </div>
@@ -44,14 +44,14 @@ const ConditionTab = ({ carCondition }) => {
         {/* Right Column */}
         <div className="space-y-6">
           <div>
-            <p className="text-[11px] sm:text-xs uppercase tracking-widest text-gray-500 font-bold mb-1">WNĘTRZE</p>
-            <p className="text-sm sm:text-base font-medium text-gray-900 dark:text-white">
+            <p className="text-base font-bold text-gray-900 dark:text-white mb-1 uppercase tracking-wide">WNĘTRZE</p>
+            <p className="text-base text-gray-500 dark:text-gray-400">
               {translateCondition(carCondition?.interior)}
             </p>
           </div>
           <div>
-            <p className="text-[11px] sm:text-xs uppercase tracking-widest text-gray-500 font-bold mb-1">MECHANICZNY</p>
-            <p className="text-sm sm:text-base font-medium text-gray-900 dark:text-white">
+            <p className="text-base font-bold text-gray-900 dark:text-white mb-1 uppercase tracking-wide">MECHANICZNY</p>
+            <p className="text-base text-gray-500 dark:text-gray-400">
               {translateCondition(carCondition?.mechanical)}
             </p>
           </div>

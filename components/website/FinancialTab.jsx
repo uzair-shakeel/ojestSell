@@ -31,30 +31,27 @@ const translateSellerType = (val) => {
 
 const FinancialTab = ({ financialInfo }) => {
   return (
-    <div>
-      {/* Condition Sections */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-20 gap-y-5 text-gray-700">
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Opcje sprzedaży</p>
-          <ul className="text-base font-medium text-black dark:text-white list-disc sm:ms-5">
-            {/* Render each option in sellOptions as a list item */}
+    <div className="py-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-8">
+        <div className="space-y-2">
+          <p className="text-base font-bold text-gray-900 dark:text-white uppercase tracking-wide">Opcje sprzedaży</p>
+          <ul className="text-base text-gray-500 dark:text-gray-400 list-disc ml-5">
             {financialInfo.sellOptions.map((option, index) => (
               <li key={index}>{translateSellOption(option)}</li>
             ))}
           </ul>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Opcje faktury</p>
-          <ul className="font-medium text-black dark:text-white list-disc sm:ms-5">
-            {/* Render each option in invoiceOptions as a list item */}
+        <div className="space-y-2">
+          <p className="text-base font-bold text-gray-900 dark:text-white uppercase tracking-wide">Opcje faktury</p>
+          <ul className="text-base text-gray-500 dark:text-gray-400 list-disc ml-5">
             {financialInfo.invoiceOptions.map((option, index) => (
               <li key={index}>{translateInvoiceOption(option)}</li>
             ))}
           </ul>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-1 w-full">
-          <p className="text-xs uppercase">Typ sprzedającego</p>
-          <p className="font-medium text-black dark:text-white">{translateSellerType(financialInfo.sellerType)}</p>
+        <div className="space-y-2">
+          <p className="text-base font-bold text-gray-900 dark:text-white uppercase tracking-wide">Typ sprzedającego</p>
+          <p className="text-base text-gray-500 dark:text-gray-400">{translateSellerType(financialInfo.sellerType)}</p>
         </div>
       </div>
     </div>
