@@ -122,7 +122,6 @@ const Page = () => {
 
   const images = car?.images || ["/images/hamer1.png"];
 
-  // Logic for dynamic desktop gallery layout
   let galleryMode = "full"; // default 1 main + 8 thumbs (for 9+ images)
   if (images.length < 5) {
     galleryMode = "single"; // just 1 main image
@@ -658,32 +657,36 @@ const Page = () => {
 
   const formattedNetPrice = formatCurrency(basePriceNetto);
 
-  const specItemsLeft = [
-    { label: "Marka", value: car?.make || "-" },
+  const allSpecs = [
+    { label: "Make", value: car?.make || "-" },
     { label: "Model", value: car?.model || "-" },
     {
-      label: "Przebieg",
+      label: "Mileage",
       value:
         typeof car?.mileage === "number"
-          ? `${car.mileage.toLocaleString("pl-PL")} km`
+          ? `${car.mileage.toLocaleString("en-US")}`
           : "-",
     },
     { label: "VIN", value: car?.vin || "-" },
-    { label: "Lokalizacja", value: locationDisplay },
-    { label: "Sprzedawca", value: sellerName },
+    { label: "Engine", value: car?.engine || car?.financialInfo?.engine || "-" },
+    { label: "Drivetrain", value: car?.drivetrain || "-" },
+    { label: "Transmission", value: car?.transmission || "-" },
+    { label: "Body Style", value: car?.type || "-" },
+    { label: "Exterior Color", value: car?.color || "-" },
+    { label: "Interior Color", value: car?.interiorColor || "-" },
+    { label: "Title Status", value: car?.titleStatus || "Clean" },
+    { label: "Location", value: locationDisplay },
+    { label: "Seller", value: sellerName },
+    { label: "Seller Type", value: sellerTypeLabel },
   ];
 
-  const specItemsRight = [
-    { label: "Silnik", value: car?.engine || car?.financialInfo?.engine || "-" },
-    { label: "Napęd", value: car?.drivetrain || "-" },
-    { label: "Skrzynia biegów", value: car?.transmission || "-" },
-    { label: "Typ nadwozia", value: car?.type || "-" },
-    { label: "Kolor zewnętrzny", value: car?.color || "-" },
-    {
-      label: "Typ sprzedawcy",
-      value: sellerTypeLabel,
-    },
-  ];
+  const breadcrumbs = [
+    "Auctions",
+    car?.transmission,
+    car?.make,
+    car?.model,
+    car?.year
+  ].filter(Boolean);
 
   const stickyTitle = `${car?.year || ""} ${car?.make || ""} ${car?.model || ""}`
     .replace(/\s+/g, " ")
@@ -1068,9 +1071,9 @@ const Page = () => {
                         return (
                           <button
                             key={tab}
-                            className={`px-5 py-2.5 sm:px-6 sm:py-3 rounded-full font-bold text-[13px] sm:text-base transition-all duration-200 uppercase tracking-wide shadow-sm ${activeTab === tab
-                              ? "bg-gray-900 text-white dark:bg-blue-600 dark:text-white"
-                              : "bg-gray-100/80 text-gray-600 hover:bg-gray-200/80 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+                            className={`px-6 py-2 sm:px-8 sm:py-2.5 rounded-full font-bold text-xs sm:text-[13px] transition-all duration-300 uppercase tracking-widest ${activeTab === tab
+                              ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30"
+                              : "bg-gray-100 dark:bg-[#1f2937] text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
                               }`}
                             onClick={() => setActiveTab(tab)}
                           >
@@ -1079,307 +1082,342 @@ const Page = () => {
                         );
                       })}
                     </div>
-                    {/* Two-column spec table - only for OPIS tab */}
-                    {activeTab !== "opis" && renderContent()}
-                    {activeTab === "opis" && (
-                      <div className="mt-2 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden bg-white dark:bg-gray-900 shadow-sm">
-                        <table className="w-full border-collapse text-xs sm:text-sm">
-                          <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
-                            {[0, 1, 2, 3, 4, 5].map((i) => (
-                              <tr key={i} className="flex flex-col md:table-row">
-                                {/* Left Pair */}
-                                <td className="md:w-1/4 px-4 py-3 bg-gray-50/50 dark:bg-gray-800/30 font-bold text-gray-900 dark:text-gray-100 border-r border-gray-200 dark:border-gray-800">
-                                  {specItemsLeft[i]?.label}
-                                </td>
-                                <td className="md:w-1/4 px-4 py-3 text-gray-700 dark:text-gray-300 border-r border-gray-200 dark:border-gray-800">
-                                  {specItemsLeft[i]?.value}
-                                </td>
-                                {/* Right Pair - Hidden on mobile, shown as separate rows or joined */}
-                                <td className="md:w-1/4 px-4 py-3 bg-gray-50/50 dark:bg-gray-800/30 font-bold text-gray-900 dark:text-gray-100 border-r border-gray-200 dark:border-gray-800">
-                                  {specItemsRight[i]?.label}
-                                </td>
-                                <td className="md:w-1/4 px-4 py-3 text-gray-700 dark:text-gray-300">
-                                  {specItemsRight[i]?.value}
-                                </td>
-                              </tr>
+                    {/* Content below tabs */}
+                    <div className=" rounded-2xl ">
+                      {/* Two-column spec table - only for OPIS tab */}
+                      {activeTab !== "opis" && renderContent()}
+                      {activeTab === "opis" && (
+                        <div className="space-y-0 text-gray-900 dark:text-gray-100">
+
+
+                          {/* List format technical specs - Styled to match reference */}
+                          {/* Technical Specs Table - Semantic HTML Table with Grid Borders */}
+                          <div className="mt-2 w-full border border-gray-400 dark:border-gray-600 rounded-md overflow-hidden">
+                            <table className="w-full text-left border-collapse">
+                              <tbody>
+                                {allSpecs && allSpecs.map((item, idx) => {
+                                  const isLink = ["Make", "Model", "Location"].includes(item.label);
+                                  return (
+                                    <tr
+                                      key={idx}
+                                      className="border-b border-gray-400 dark:border-gray-6  00 last:border-0"
+                                    >
+                                      {/* Label Cell - Added vertical border-r */}
+                                      <td className="py-3 px-4 w-[180px] sm:w-[240px] align-middle font-bold text-gray-900 dark:text-white text-base border-r border-gray-400 dark:border-gray-600 bg-gray-50/30 dark:bg-gray-800/20">
+                                        {item.label}
+                                      </td>
+
+                                      {/* Value Cell */}
+                                      <td className="py-3 px-4 align-middle">
+                                        <div className="flex items-center gap-2">
+                                          {item.label === "Seller" ? (
+                                            <div className="flex items-center gap-2">
+                                              <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0 overflow-hidden relative">
+                                                {seller?.image ? (
+                                                  <img src={formatImageUrl(seller?.image)} alt="" className="w-full h-full object-cover" />
+                                                ) : (
+                                                  <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-500">?</div>
+                                                )}
+                                              </div>
+                                              <span className="font-medium text-gray-900 dark:text-gray-100">{item.value}</span>
+                                            </div>
+                                          ) : (
+                                            <span className={`text-base ${isLink ? "underline decoration-1 underline-offset-2 hover:text-blue-600 cursor-pointer text-blue-600 dark:text-blue-400 font-medium" : "text-gray-900 dark:text-gray-100"}`}>
+                                              {item.value}
+                                            </span>
+                                          )}
+
+                                          {item.label === "Model" && (
+                                            <button className="text-gray-400 hover:text-gray-600 transition-colors ml-2 flex-shrink-0">
+                                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                                              </svg>
+                                            </button>
+                                          )}
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Narrative sections - Restored and Styled */}
+                  <div className="space-y-12 pt-4 px-2 pb-10">
+                    {/* Narrative sections - Restored and Unified Design */}
+                    <div className="space-y-8 pt-4 pb-10">
+                      {/* Highlights Section */}
+                      <section className="relative">
+                        <div className="flex items-center gap-3 mb-4 px-1">
+                          <div className="h-6 w-1 bg-blue-600 rounded-full" />
+                          <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Highlights</h2>
+                        </div>
+                        <div className="">
+                          <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                            THIS... is a {car?.year} {car?.make} {car?.model}, finished in {car?.color || "original factory color"} with a {car?.interiorColor || "distinguished"} interior.
+                          </p>
+                          <ul className="space-y-3 text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                            <li className="flex items-start gap-3">
+                              <span className="text-blue-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500" />
+                              <span>The odometer currently indicates approximately {car?.mileage?.toLocaleString()} km.</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                              <span className="text-blue-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500" />
+                              <span>{car?.accidentHistory ? "The vehicle has a recorded history of repairs." : "Vehicle history indicates no major accidents or insurance claims."}</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                              <span className="text-blue-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500" />
+                              <span>Power comes from a {car?.engine || "potent engine"} and is delivered via a {car?.transmission || "smooth transmission"}.</span>
+                            </li>
+                          </ul>
+                        </div>
+                      </section>
+
+                      {/* Seller Notes Section */}
+                      <section className="relative">
+                        <div className="flex items-center gap-3 mb-4 px-1">
+                          <div className="h-6 w-1 bg-blue-600 rounded-full" />
+                          <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Seller Notes</h2>
+                        </div>
+                        <div className="">
+                          <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
+                            {car?.sellerNotes || "Ten egzemplarz to wyjątkowo zadbana sztuka, łącząca wysoki komfort z niezawodnością. Pojazd przeszedł pełną inspekcję techniczną i jest gotowy do dalszej eksploatacji bez konieczności ponoszenia dodatkowych nakładów finansowych. Idealny wybór dla osób szukających pewnego auta z pewną historią."}
+                          </p>
+                        </div>
+                      </section>
+
+                      {/* Equipment Section */}
+                      <section className="relative">
+                        <div className="flex items-center gap-3 mb-4 px-1">
+                          <div className="h-6 w-1 bg-blue-600 rounded-full" />
+                          <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Equipment</h2>
+                        </div>
+                        <div className="">
+                          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
+                            {["Automatic climate control", "Satellite navigation system", "Adaptive cruise control", "Heated and ventilated seats", "LED lighting package", "Premium sound system"].map((item, i) => (
+                              <li key={i} className="flex items-start gap-3 text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                                <span className="text-blue-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500" />
+                                <span>{item}</span>
+                              </li>
                             ))}
-                          </tbody>
-                        </table>
+                          </ul>
+                        </div>
+                      </section>
+
+                      {/* Known Flaws Section */}
+                      <section className="relative">
+                        <div className="flex items-center gap-3 mb-4 px-1">
+                          <div className="h-6 w-1 bg-red-600 rounded-full" />
+                          <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Known Flaws</h2>
+                        </div>
+                        <div className="">
+                          <ul className="space-y-3">
+                            {["Minor stone chips on the front bumper", "Typical wear on the driver's seat bolster", "Light scratching on one of the wheels"].map((item, i) => (
+                              <li key={i} className="flex items-start gap-3 text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                                <span className="text-red-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-red-500 opacity-70" />
+                                <span>{item}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </section>
+
+                      {/* Ownership History Section */}
+                      <section className="relative">
+                        <div className="flex items-center gap-3 mb-4 px-1">
+                          <div className="h-6 w-1 bg-blue-600 rounded-full" />
+                          <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Ownership History</h2>
+                        </div>
+                        <div className="">
+                          <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
+                            The seller has owned this vehicle since {car?.ownershipStart || "new"} and reports that it has been maintained on schedule with {car?.serviceCount || "regular"} service intervals. Original manuals and two keys are included in the sale.
+                          </p>
+                        </div>
+                      </section>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right column: seller profile + similar vehicles */}
+                <aside className="lg:sticky lg:top-24 space-y-6">
+                  {/* Seller profile card */}
+                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 flex flex-col gap-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="relative w-14 h-14 rounded-full overflow-hidden border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-900 flex-shrink-0">
+                          <img
+                            src={formatImageUrl(seller?.image)}
+                            alt={sellerName}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                            {sellerName}
+                          </span>
+                          <span className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                            {sellerTypeLabel}
+                          </span>
+                          {locationDisplay && (
+                            <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">
+                              {locationDisplay}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <span className="hidden sm:inline-flex px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-900 text-[10px] font-semibold tracking-wide uppercase text-gray-600 dark:text-gray-300">
+                        Sprzedający
+                      </span>
+                    </div>
+
+                    {socialMediaLinks.length > 0 && (
+                      <div className="flex items-center gap-3 pt-2 border-t border-dashed border-gray-200 dark:border-gray-700">
+                        <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">
+                          Media społecznościowe
+                        </span>
+                        <div className="flex items-center gap-2">
+                          {socialMediaLinks.map((link) => (
+                            <a
+                              key={link.platform}
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-8 h-8 inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 text-sm"
+                            >
+                              {link.icon}
+                            </a>
+                          ))}
+                        </div>
                       </div>
                     )}
+
+                    <div className="mt-1 grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={callSeller}
+                        className="inline-flex items-center justify-center w-full px-4 py-2.5 rounded-lg bg-blue-600 dark:bg-blue-500 text-white text-xs sm:text-sm font-semibold hover:bg-blue-700 dark:hover:bg-blue-400 transition-colors"
+                      >
+                        Zadzwoń
+                      </button>
+                      <button
+                        type="button"
+                        onClick={startChat}
+                        className="inline-flex items-center justify-center w-full px-4 py-2.5 rounded-lg bg-gray-900 text-white text-xs sm:text-sm font-semibold hover:bg-black transition-colors"
+                      >
+                        Napisz
+                      </button>
+                    </div>
                   </div>
-                </div>
 
-                {/* Narrative sections - Restored and Styled */}
-                <div className="space-y-12 pt-4 px-2 pb-10">
-                  {/* Narrative sections - Restored and Unified Design */}
-                  <div className="space-y-8 pt-4 pb-10">
-                    {/* Highlights Section */}
-                    <section className="relative">
-                      <div className="flex items-center gap-3 mb-4 px-1">
-                        <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                        <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Highlights</h2>
-                      </div>
-                      <div className="bg-white dark:bg-gray-800/40 border border-gray-100 dark:border-gray-800/60 p-6 rounded-2xl shadow-sm">
-                        <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-                          THIS... is a {car?.year} {car?.make} {car?.model}, finished in {car?.color || "original factory color"} with a {car?.interiorColor || "distinguished"} interior.
-                        </p>
-                        <ul className="space-y-3 text-sm sm:text-base text-gray-700 dark:text-gray-300">
-                          <li className="flex items-start gap-3">
-                            <span className="text-blue-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500" />
-                            <span>The odometer currently indicates approximately {car?.mileage?.toLocaleString()} km.</span>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <span className="text-blue-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500" />
-                            <span>{car?.accidentHistory ? "The vehicle has a recorded history of repairs." : "Vehicle history indicates no major accidents or insurance claims."}</span>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <span className="text-blue-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500" />
-                            <span>Power comes from a {car?.engine || "potent engine"} and is delivered via a {car?.transmission || "smooth transmission"}.</span>
-                          </li>
-                        </ul>
-                      </div>
-                    </section>
-
-                    {/* Seller Notes Section */}
-                    <section className="relative">
-                      <div className="flex items-center gap-3 mb-4 px-1">
-                        <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                        <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Seller Notes</h2>
-                      </div>
-                      <div className="bg-white dark:bg-gray-800/40 border border-gray-100 dark:border-gray-800/60 p-6 rounded-2xl shadow-sm">
-                        <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
-                          {car?.sellerNotes || "Ten egzemplarz to wyjątkowo zadbana sztuka, łącząca wysoki komfort z niezawodnością. Pojazd przeszedł pełną inspekcję techniczną i jest gotowy do dalszej eksploatacji bez konieczności ponoszenia dodatkowych nakładów finansowych. Idealny wybór dla osób szukających pewnego auta z pewną historią."}
+                  {/* Similar vehicles */}
+                  <div className="">
+                    <div className="flex items-center justify-between mb-2">
+                      <div>
+                        <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
+                          Podobne pojazdy
+                        </h2>
+                        <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                          Inne oferty, które mogą Cię zainteresować
                         </p>
                       </div>
-                    </section>
-
-                    {/* Equipment Section */}
-                    <section className="relative">
-                      <div className="flex items-center gap-3 mb-4 px-1">
-                        <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                        <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Equipment</h2>
-                      </div>
-                      <div className="bg-white dark:bg-gray-800/40 border border-gray-100 dark:border-gray-800/60 p-6 rounded-2xl shadow-sm">
-                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
-                          {["Automatic climate control", "Satellite navigation system", "Adaptive cruise control", "Heated and ventilated seats", "LED lighting package", "Premium sound system"].map((item, i) => (
-                            <li key={i} className="flex items-start gap-3 text-sm sm:text-base text-gray-700 dark:text-gray-300">
-                              <span className="text-blue-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500" />
-                              <span>{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </section>
-
-                    {/* Known Flaws Section */}
-                    <section className="relative">
-                      <div className="flex items-center gap-3 mb-4 px-1">
-                        <div className="h-6 w-1 bg-red-600 rounded-full" />
-                        <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Known Flaws</h2>
-                      </div>
-                      <div className="bg-white dark:bg-gray-800/40 border border-gray-100 dark:border-gray-800/60 p-6 rounded-2xl shadow-sm">
-                        <ul className="space-y-3">
-                          {["Minor stone chips on the front bumper", "Typical wear on the driver's seat bolster", "Light scratching on one of the wheels"].map((item, i) => (
-                            <li key={i} className="flex items-start gap-3 text-sm sm:text-base text-gray-700 dark:text-gray-300">
-                              <span className="text-red-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-red-500 opacity-70" />
-                              <span>{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </section>
-
-                    {/* Ownership History Section */}
-                    <section className="relative">
-                      <div className="flex items-center gap-3 mb-4 px-1">
-                        <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                        <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Ownership History</h2>
-                      </div>
-                      <div className="bg-white dark:bg-gray-800/40 border border-gray-100 dark:border-gray-800/60 p-6 rounded-2xl shadow-sm">
-                        <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
-                          The seller has owned this vehicle since {car?.ownershipStart || "new"} and reports that it has been maintained on schedule with {car?.serviceCount || "regular"} service intervals. Original manuals and two keys are included in the sale.
-                        </p>
-                      </div>
-                    </section>
+                    </div>
+                    <div className="-mx-2">
+                      <SimilarVehicles />
+                    </div>
                   </div>
-                </div>
+                </aside>
               </div>
+            </div>
+          </div>
+        </div >
 
-              {/* Right column: seller profile + similar vehicles */}
-              <aside className="lg:sticky lg:top-24 space-y-6">
-                {/* Seller profile card */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 flex flex-col gap-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="relative w-14 h-14 rounded-full overflow-hidden border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-900 flex-shrink-0">
-                        <img
-                          src={formatImageUrl(seller?.image)}
-                          alt={sellerName}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="flex flex-col min-w-0">
-                        <span className="text-sm font-bold text-gray-900 dark:text-white truncate">
-                          {sellerName}
-                        </span>
-                        <span className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                          {sellerTypeLabel}
-                        </span>
-                        {locationDisplay && (
-                          <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">
-                            {locationDisplay}
+        {isWarrantyModalOpen &&
+          car?.condition === "New" &&
+          Array.isArray(car?.warranties) &&
+          car.warranties.length > 0 && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+              <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[80vh] flex flex-col">
+                <div className="flex items-center justify-between px-4 py-3 border-b">
+                  <h3 className="text-lg font-semibold">Wybierz gwarancję</h3>
+                  <button
+                    type="button"
+                    className="text-gray-500 hover:text-gray-700 text-sm"
+                    onClick={() => setIsWarrantyModalOpen(false)}
+                  >
+                    Zamknij
+                  </button>
+                </div>
+                <div className="px-4 py-3 text-sm text-gray-600 border-b">
+                  Wybierz jedną z dostępnych opcji gwarancji, aby zobaczyć szczegóły.
+                </div>
+                <div className="px-4 py-3 space-y-3 overflow-y-auto">
+                  {car.warranties.map((w, idx) => {
+                    const isSelected = selectedWarrantyIndex === idx;
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => {
+                          setSelectedWarrantyIndex(idx);
+                          setIsWarrantyModalOpen(false);
+                        }}
+                        className={`w-full text-left border rounded-md px-3 py-2 text-sm transition-colors ${isSelected
+                          ? "border-blue-500 bg-blue-50"
+                          : "border-gray-200 bg-white hover:bg-gray-50"
+                          }`}
+                      >
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium text-black">
+                            {w.years ? `${w.years} lata` : "Gwarancja"}
                           </span>
+                        </div>
+                        {typeof w.mileageLimit === "number" && (
+                          <p className="text-xs text-gray-600 mt-1">
+                            Do przebiegu: {w.mileageLimit.toLocaleString("pl-PL")} km
+                          </p>
                         )}
-                      </div>
-                    </div>
-                    <span className="hidden sm:inline-flex px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-900 text-[10px] font-semibold tracking-wide uppercase text-gray-600 dark:text-gray-300">
-                      Sprzedający
-                    </span>
-                  </div>
-
-                  {socialMediaLinks.length > 0 && (
-                    <div className="flex items-center gap-3 pt-2 border-t border-dashed border-gray-200 dark:border-gray-700">
-                      <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">
-                        Media społecznościowe
-                      </span>
-                      <div className="flex items-center gap-2">
-                        {socialMediaLinks.map((link) => (
-                          <a
-                            key={link.platform}
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-8 h-8 inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 text-sm"
-                          >
-                            {link.icon}
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="mt-1 grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={callSeller}
-                      className="inline-flex items-center justify-center w-full px-4 py-2.5 rounded-lg bg-blue-600 dark:bg-blue-500 text-white text-xs sm:text-sm font-semibold hover:bg-blue-700 dark:hover:bg-blue-400 transition-colors"
-                    >
-                      Zadzwoń
-                    </button>
-                    <button
-                      type="button"
-                      onClick={startChat}
-                      className="inline-flex items-center justify-center w-full px-4 py-2.5 rounded-lg bg-gray-900 text-white text-xs sm:text-sm font-semibold hover:bg-black transition-colors"
-                    >
-                      Napisz
-                    </button>
-                  </div>
+                        {w.description && (
+                          <p className="text-xs text-gray-600 mt-1">
+                            {w.description}
+                          </p>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
-
-                {/* Similar vehicles */}
-                <div className="">
-                  <div className="flex items-center justify-between mb-2">
-                    <div>
-                      <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
-                        Podobne pojazdy
-                      </h2>
-                      <p className="text-[11px] text-gray-500 dark:text-gray-400">
-                        Inne oferty, które mogą Cię zainteresować
-                      </p>
-                    </div>
-                  </div>
-                  <div className="-mx-2">
-                    <SimilarVehicles />
-                  </div>
+                <div className="px-4 py-3 border-t flex justify-end">
+                  <button
+                    type="button"
+                    className="px-4 py-2 text-sm rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
+                    onClick={() => setIsWarrantyModalOpen(false)}
+                  >
+                    Zamknij
+                  </button>
                 </div>
-              </aside>
+              </div>
             </div>
-          </div>
-        </div>
+          )
+        }
+
+        {/* Image Categorization Modal */}
+        <ImageCategorizationModal
+          isOpen={isCategorizationModalOpen}
+          onClose={() => {
+            setIsCategorizationModalOpen(false);
+            setClickedImageUrl(null);
+          }}
+          images={images}
+          carId={carId}
+          clickedImageUrl={clickedImageUrl}
+          categorizedImages={car?.categorizedImages || []}
+        />
+        <PhoneModal />
       </div >
-
-      {isWarrantyModalOpen &&
-        car?.condition === "New" &&
-        Array.isArray(car?.warranties) &&
-        car.warranties.length > 0 && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[80vh] flex flex-col">
-              <div className="flex items-center justify-between px-4 py-3 border-b">
-                <h3 className="text-lg font-semibold">Wybierz gwarancję</h3>
-                <button
-                  type="button"
-                  className="text-gray-500 hover:text-gray-700 text-sm"
-                  onClick={() => setIsWarrantyModalOpen(false)}
-                >
-                  Zamknij
-                </button>
-              </div>
-              <div className="px-4 py-3 text-sm text-gray-600 border-b">
-                Wybierz jedną z dostępnych opcji gwarancji, aby zobaczyć szczegóły.
-              </div>
-              <div className="px-4 py-3 space-y-3 overflow-y-auto">
-                {car.warranties.map((w, idx) => {
-                  const isSelected = selectedWarrantyIndex === idx;
-                  return (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => {
-                        setSelectedWarrantyIndex(idx);
-                        setIsWarrantyModalOpen(false);
-                      }}
-                      className={`w-full text-left border rounded-md px-3 py-2 text-sm transition-colors ${isSelected
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-gray-200 bg-white hover:bg-gray-50"
-                        }`}
-                    >
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium text-black">
-                          {w.years ? `${w.years} lata` : "Gwarancja"}
-                        </span>
-                      </div>
-                      {typeof w.mileageLimit === "number" && (
-                        <p className="text-xs text-gray-600 mt-1">
-                          Do przebiegu: {w.mileageLimit.toLocaleString("pl-PL")} km
-                        </p>
-                      )}
-                      {w.description && (
-                        <p className="text-xs text-gray-600 mt-1">
-                          {w.description}
-                        </p>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-              <div className="px-4 py-3 border-t flex justify-end">
-                <button
-                  type="button"
-                  className="px-4 py-2 text-sm rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
-                  onClick={() => setIsWarrantyModalOpen(false)}
-                >
-                  Zamknij
-                </button>
-              </div>
-            </div>
-          </div>
-        )
-      }
-
-      {/* Image Categorization Modal */}
-      <ImageCategorizationModal
-        isOpen={isCategorizationModalOpen}
-        onClose={() => {
-          setIsCategorizationModalOpen(false);
-          setClickedImageUrl(null);
-        }}
-        images={images}
-        carId={carId}
-        clickedImageUrl={clickedImageUrl}
-        categorizedImages={car?.categorizedImages || []}
-      />
-      <PhoneModal />
     </>
   );
 }
