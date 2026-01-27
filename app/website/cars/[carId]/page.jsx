@@ -776,11 +776,9 @@ const Page = () => {
               <div className="min-w-0 flex-1">
                 <div className="flex flex-col">
                   {stickyTitle && (
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <p className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-900 dark:text-white truncate uppercase tracking-tight">
-                        {stickyTitle}
-                      </p>
-                    </div>
+                    <p className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-900 dark:text-white uppercase tracking-tight leading-none break-words whitespace-normal">
+                      {stickyTitle}
+                    </p>
                   )}
                   {formattedNetPrice && (
                     <div className="flex items-center gap-2 md:hidden">
@@ -830,7 +828,7 @@ const Page = () => {
         {/* Full Page Gallery */}
         <div className="relative w-full">
           {/* Gallery with peek effect on mobile */}
-          <div className="max-w-7xl mx-auto md:px-4 lg:px-8">
+          <div className="max-w-7xl mx-auto px-0 md:px-4 lg:px-8">
 
 
             {/* Desktop / tablet gallery: Dynamic layout based on image count */}
@@ -940,9 +938,10 @@ const Page = () => {
             </div>
 
             {/* Mobile gallery: horizontally scrollable carousel with PEEK effect */}
-            <div className="flex md:hidden overflow-x-auto snap-x snap-mandatory scrollbar-hide scroll-x-touch min-h-[250px] w-full gap-[3px]">
+            {/* Force full width breakout for single image on mobile if inside padding */}
+            <div className={`flex md:hidden overflow-x-auto snap-x snap-mandatory scrollbar-hide scroll-x-touch min-h-[250px] w-full ${images.length > 1 ? "gap-[3px]" : ""}`}>
               {/* Slide 1: Main Image */}
-              <div className="snap-start shrink-0 w-[88vw] aspect-[4/3] relative overflow-hidden bg-white dark:bg-gray-900">
+              <div className={`snap-start shrink-0 ${images.length === 1 ? "w-full" : "w-[88vw]"} aspect-[4/3] relative overflow-hidden bg-white dark:bg-gray-900`}>
                 <img
                   src={mainImage || images[currentImageIndex] || images[0]}
                   alt={`${car?.make} ${car?.model} - Image 1`}
@@ -1060,27 +1059,48 @@ const Page = () => {
                 {/* Details Tab Card with spec table inside */}
                 <div className=" overflow-hidden">
                   <div className="p-2">
-                    <div className="flex flex-nowrap items-center gap-2 md:gap-3 mb-6 border-b border-gray-200 dark:border-gray-700 pb-4 overflow-x-auto scrollbar-hide -mx-2 px-2">
-                      {["opis", "stan", "lokalizacja", "finanse"].map((tab) => {
-                        // Get the display name for the tab
-                        let displayName = tab.charAt(0).toUpperCase() + tab.slice(1);
-                        if (tab === "stan" && car?.condition === "New") {
-                          displayName = "Gwarancja";
-                        }
+                    <div className="flex flex-col gap-4 mb-6">
+                      <div className="flex flex-wrap items-center gap-4">
+                        {/* Opis Tab - Styled like CARFAX button */}
+                        <button
+                          onClick={() => setActiveTab("opis")}
+                          className={`flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-bold text-sm transition-all border ${activeTab === "opis"
+                            ? "bg-blue-500 text-gray-900 border-gray-300 shadow-sm"
+                            : "bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100"
+                            }`}
+                        >
+                          <div className="flex items-center justify-center gap-2">
+                            <span className="uppercase tracking-wide">Specyfikacja</span>
+                          </div>
+                        </button>
 
-                        return (
-                          <button
-                            key={tab}
-                            className={`px-6 py-2 sm:px-8 sm:py-2.5 rounded-full font-bold text-xs sm:text-[13px] transition-all duration-300 uppercase tracking-widest ${activeTab === tab
-                              ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30"
-                              : "bg-gray-100 dark:bg-[#1f2937] text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
-                              }`}
-                            onClick={() => setActiveTab(tab)}
-                          >
-                            {displayName}
-                          </button>
-                        );
-                      })}
+                        {/* Lokalizacja Tab */}
+                        <button
+                          onClick={() => setActiveTab("lokalizacja")}
+                          className={`flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-bold text-sm transition-all border ${activeTab === "lokalizacja"
+                            ? "bg-blue-500 text-gray-900 border-gray-300 shadow-sm"
+                            : "bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100"
+                            }`}
+                        >
+                          Lokalizacja
+                        </button>
+
+                        {/* Share Button (Mock functionality for UI match) - Hidden on mobile */}
+                        <button className="hidden sm:flex flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-bold text-sm bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100 transition-all items-center justify-center gap-2">
+                          <span>Share</span>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+                        </button>
+                      </div>
+
+                      {/* Breadcrumbs - Moved here to be below buttons */}
+                      <div className="flex flex-nowrap items-center gap-2 text-sm text-gray-500 px-1 uppercase tracking-wider font-semibold text-xs overflow-x-auto scrollbar-hide whitespace-nowrap">
+                        {breadcrumbs && breadcrumbs.map((crumb, idx) => (
+                          <React.Fragment key={idx}>
+                            <span className="hover:underline cursor-pointer transition-colors whitespace-nowrap">{crumb}</span>
+                            {idx < breadcrumbs.length - 1 && <span className="text-gray-400">›</span>}
+                          </React.Fragment>
+                        ))}
+                      </div>
                     </div>
                     {/* Content below tabs */}
                     <div className=" rounded-2xl ">
@@ -1159,7 +1179,7 @@ const Page = () => {
                         </div>
                         <div className="">
                           <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-                            THIS... is a {car?.year} {car?.make} {car?.model}, finished in {car?.color || "original factory color"} with a {car?.interiorColor || "distinguished"} interior.
+                            is a {car?.year} {car?.make} {car?.model}, finished in {car?.color || "original factory color"} with a {car?.interiorColor || "distinguished"} interior.
                           </p>
                           <ul className="space-y-3 text-sm sm:text-base text-gray-700 dark:text-gray-300">
                             <li className="flex items-start gap-3">
@@ -1237,6 +1257,27 @@ const Page = () => {
                           <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
                             The seller has owned this vehicle since {car?.ownershipStart || "new"} and reports that it has been maintained on schedule with {car?.serviceCount || "regular"} service intervals. Original manuals and two keys are included in the sale.
                           </p>
+                        </div>
+                      </section>
+                      {/* Condition Section - Moved from Tabs to Static */}
+                      <section className="relative">
+                        <div className="flex items-center gap-3 mb-4 px-1">
+                          <div className="h-6 w-1 bg-blue-600 rounded-full" />
+                          <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Condition</h2>
+                        </div>
+                        <div className="">
+                          <ConditionTab carCondition={car?.condition} />
+                        </div>
+                      </section>
+
+                      {/* Financial Section - Moved from Tabs to Static */}
+                      <section className="relative">
+                        <div className="flex items-center gap-3 mb-4 px-1">
+                          <div className="h-6 w-1 bg-blue-600 rounded-full" />
+                          <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Financial</h2>
+                        </div>
+                        <div className="">
+                          <FinancialTab financialInfo={car?.financialInfo} />
                         </div>
                       </section>
                     </div>
