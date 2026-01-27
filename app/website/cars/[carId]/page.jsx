@@ -1109,10 +1109,8 @@ const Page = () => {
                       {activeTab === "opis" && (
                         <div className="space-y-0 text-gray-900 dark:text-gray-100">
 
-
-                          {/* List format technical specs - Styled to match reference */}
                           {/* Technical Specs Table - Semantic HTML Table with Grid Borders */}
-                          <div className="mt-2 w-full border border-gray-400 dark:border-gray-600 rounded-md overflow-hidden">
+                          <div className="mt-2 w-full  border-gray-400 dark:border-gray-600 rounded-md overflow-hidden">
                             <table className="w-full text-left border-collapse">
                               <tbody>
                                 {allSpecs && allSpecs.map((item, idx) => {
@@ -1123,7 +1121,7 @@ const Page = () => {
                                       className="border-b border-gray-400 dark:border-gray-6  00 last:border-0"
                                     >
                                       {/* Label Cell - Added vertical border-r */}
-                                      <td className="py-3 px-4 w-[180px] sm:w-[240px] align-middle font-bold text-gray-900 dark:text-white text-base border-r border-gray-400 dark:border-gray-600 bg-gray-50/30 dark:bg-gray-800/20">
+                                      <td className="py-3 px-4 w-[100px] sm:w-[240px] align-middle font-bold text-gray-900 dark:text-white text-base border-r border-gray-400 dark:border-gray-600 ">
                                         {item.label}
                                       </td>
 
