@@ -693,6 +693,43 @@ const Page = () => {
     .replace(/\s+/g, " ")
     .trim();
 
+  const renderSpecValue = (item) => {
+    const isLink = ["Make", "Model", "Location"].includes(item.label);
+    if (item.label === "Seller") {
+      return (
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0 overflow-hidden relative">
+            {seller?.image ? (
+              <img src={formatImageUrl(seller?.image)} alt="" className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-500">?</div>
+            )}
+          </div>
+          <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{item.value}</span>
+        </div>
+      );
+    }
+    return (
+      <div className="flex items-center gap-2">
+        <span className={`text-sm ${isLink ? "underline decoration-1 underline-offset-2 hover:text-blue-600 cursor-pointer text-blue-600 dark:text-blue-400 font-medium" : "text-gray-900 dark:text-gray-100"}`}>
+          {item.value}
+        </span>
+        {item.label === "Model" && (
+          <button className="text-gray-400 hover:text-gray-600 transition-colors ml-2 flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+            </svg>
+          </button>
+        )}
+      </div>
+    );
+  };
+
+  const specPairs = [];
+  for (let i = 0; i < allSpecs.length; i += 2) {
+    specPairs.push([allSpecs[i], allSpecs[i + 1]]);
+  }
+
   return (
     <>
       {/* Fullscreen Image Modal */}
@@ -1052,9 +1089,9 @@ const Page = () => {
 
 
           {/* Content below gallery */}
-          <div className="max-w-7xl mx-auto  px-1 sm:px-6 lg:px-8 mt-6 space-y-8">
+          <div className="max-w-7xl mx-auto px-1 sm:px-6 lg:px-8 mt-6 space-y-8">
             {/* Main details + similar vehicles side column */}
-            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,3fr)_minmax(0,1.4fr)] gap-6 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-[minmax(0,3fr)_minmax(0,1.4fr)] gap-6 items-start">
               {/* Left: tabs, specs, narrative */}
               <div className="space-y-8">
                 {/* Details Tab Card with spec table inside */}
@@ -1086,11 +1123,7 @@ const Page = () => {
                           Lokalizacja
                         </button>
 
-                        {/* Share Button (Mock functionality for UI match) - Hidden on mobile */}
-                        <button className="hidden sm:flex flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-bold text-sm bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100 transition-all items-center justify-center gap-2">
-                          <span>Share</span>
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
-                        </button>
+
                       </div>
 
                       {/* Breadcrumbs - Moved here to be below buttons */}
@@ -1110,56 +1143,64 @@ const Page = () => {
                       {activeTab === "opis" && (
                         <div className="space-y-0 text-gray-900 dark:text-gray-100">
 
-                          {/* Technical Specs Table - Semantic HTML Table with Grid Borders */}
-                          <div className="mt-2 w-full  border-gray-400 dark:border-gray-600 rounded-md overflow-hidden">
-                            <table className="w-full text-left border-collapse">
-                              <tbody>
-                                {allSpecs && allSpecs.map((item, idx) => {
-                                  const isLink = ["Make", "Model", "Location"].includes(item.label);
-                                  return (
+                          {/* Technical Specs Table - Responsive Table */}
+                          <div className="mt-2 w-full border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm">
+                            {/* Desktop View - 4 column grid matching reference */}
+                            <div className="hidden sm:block">
+                              <table className="w-full text-left border-collapse">
+                                <tbody>
+                                  {specPairs.map((pair, rowIdx) => (
+                                    <tr key={rowIdx} className="border-b border-gray-200 dark:border-gray-700/50 last:border-0">
+                                      {/* First Spec in Pair */}
+                                      <td className="py-2.5 px-4 w-[160px] bg-gray-50/50 dark:bg-gray-800/30 font-bold text-sm text-gray-900 dark:text-gray-100 border-r border-gray-200 dark:border-gray-700/50">
+                                        {pair[0].label}
+                                      </td>
+                                      <td className="py-2.5 px-4 text-sm border-r border-gray-200 dark:border-gray-700/50">
+                                        {renderSpecValue(pair[0])}
+                                      </td>
+
+                                      {/* Second Spec in Pair (if exists) */}
+                                      {pair[1] ? (
+                                        <>
+                                          <td className="py-2.5 px-4 w-[160px] bg-gray-50/50 dark:bg-gray-800/30 font-bold text-sm text-gray-900 dark:text-gray-100 border-r border-gray-200 dark:border-gray-700/50">
+                                            {pair[1].label}
+                                          </td>
+                                          <td className="py-2.5 px-4 text-sm">
+                                            {renderSpecValue(pair[1])}
+                                          </td>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <td className="py-2.5 px-4 bg-gray-50/50 dark:bg-gray-800/30 border-r border-gray-200 dark:border-gray-700/50"></td>
+                                          <td className="py-2.5 px-4"></td>
+                                        </>
+                                      )}
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+
+                            {/* Mobile View - 2 column list */}
+                            <div className="sm:hidden">
+                              <table className="w-full text-left border-collapse">
+                                <tbody>
+                                  {allSpecs && allSpecs.map((item, idx) => (
                                     <tr
                                       key={idx}
-                                      className="border-b text-sm border-gray-400 dark:border-gray-600 last:border-0"
+                                      className="border-b text-sm border-gray-200 dark:border-gray-700/50 last:border-0"
                                     >
-                                      {/* Label Cell - Added vertical border-r */}
-                                      <td className="py-2.5 px-4 w-[100px] sm:w-[240px] align-middle font-bold text-gray-900 dark:text-white text-sm border-r border-gray-400 dark:border-gray-600 ">
+                                      <td className="py-2.5 px-4 w-[120px] bg-gray-50/50 dark:bg-gray-800/30 font-bold text-gray-900 dark:text-gray-100 text-sm border-r border-gray-200 dark:border-gray-700/50">
                                         {item.label}
                                       </td>
-
-                                      {/* Value Cell */}
                                       <td className="py-2.5 px-4 align-middle">
-                                        <div className="flex items-center gap-2">
-                                          {item.label === "Seller" ? (
-                                            <div className="flex items-center gap-2">
-                                              <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0 overflow-hidden relative">
-                                                {seller?.image ? (
-                                                  <img src={formatImageUrl(seller?.image)} alt="" className="w-full h-full object-cover" />
-                                                ) : (
-                                                  <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-500">?</div>
-                                                )}
-                                              </div>
-                                              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{item.value}</span>
-                                            </div>
-                                          ) : (
-                                            <span className={`text-sm ${isLink ? "underline decoration-1 underline-offset-2 hover:text-blue-600 cursor-pointer text-blue-600 dark:text-blue-400 font-medium" : "text-gray-900 dark:text-gray-100"}`}>
-                                              {item.value}
-                                            </span>
-                                          )}
-
-                                          {item.label === "Model" && (
-                                            <button className="text-gray-400 hover:text-gray-600 transition-colors ml-2 flex-shrink-0">
-                                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                                              </svg>
-                                            </button>
-                                          )}
-                                        </div>
+                                        {renderSpecValue(item)}
                                       </td>
                                     </tr>
-                                  );
-                                })}
-                              </tbody>
-                            </table>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
                           </div>
                         </div>
                       )}
@@ -1283,95 +1324,95 @@ const Page = () => {
                   </div>
                 </div>
 
-                {/* Right column: seller profile + similar vehicles */}
-                <aside className="lg:sticky lg:top-24 space-y-6">
-                  {/* Seller profile card */}
-                  <div className="px-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 flex flex-col gap-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="relative w-14 h-14 rounded-full overflow-hidden border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-900 flex-shrink-0">
-                          <img
-                            src={formatImageUrl(seller?.image)}
-                            alt={sellerName}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="flex flex-col min-w-0">
-                          <span className="text-sm font-bold text-gray-900 dark:text-white truncate">
-                            {sellerName}
-                          </span>
-                          <span className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                            {sellerTypeLabel}
-                          </span>
-                          {locationDisplay && (
-                            <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">
-                              {locationDisplay}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <span className="hidden sm:inline-flex px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-900 text-[10px] font-semibold tracking-wide uppercase text-gray-600 dark:text-gray-300">
-                        Sprzedający
-                      </span>
-                    </div>
-
-                    {socialMediaLinks.length > 0 && (
-                      <div className="flex items-center gap-3 pt-2 border-t border-dashed border-gray-200 dark:border-gray-700">
-                        <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">
-                          Media społecznościowe
-                        </span>
-                        <div className="flex items-center gap-2">
-                          {socialMediaLinks.map((link) => (
-                            <a
-                              key={link.platform}
-                              href={link.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="w-8 h-8 inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 text-sm"
-                            >
-                              {link.icon}
-                            </a>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="mt-1 grid grid-cols-2 gap-2">
-                      <button
-                        type="button"
-                        onClick={callSeller}
-                        className="inline-flex items-center justify-center w-full px-4 py-2.5 rounded-lg bg-blue-600 dark:bg-blue-500 text-white text-xs sm:text-sm font-semibold hover:bg-blue-700 dark:hover:bg-blue-400 transition-colors"
-                      >
-                        Zadzwoń
-                      </button>
-                      <button
-                        type="button"
-                        onClick={startChat}
-                        className="inline-flex items-center justify-center w-full px-4 py-2.5 rounded-lg bg-gray-900 text-white text-xs sm:text-sm font-semibold hover:bg-black transition-colors"
-                      >
-                        Napisz
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Similar vehicles */}
-                  <div className="">
-                    <div className="flex items-center justify-between mb-2">
-                      <div>
-                        <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
-                          Podobne pojazdy
-                        </h2>
-                        <p className="text-[11px] text-gray-500 dark:text-gray-400">
-                          Inne oferty, które mogą Cię zainteresować
-                        </p>
-                      </div>
-                    </div>
-                    <div className="-mx-2">
-                      <SimilarVehicles />
-                    </div>
-                  </div>
-                </aside>
               </div>
+              {/* Right column: seller profile + similar vehicles */}
+              <aside className="md:sticky mx-2 md:top-24 space-y-6">
+                {/* Seller profile card */}
+                <div className="px-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 flex flex-col gap-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="relative w-14 h-14 rounded-full overflow-hidden border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-900 flex-shrink-0">
+                        <img
+                          src={formatImageUrl(seller?.image)}
+                          alt={sellerName}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                          {sellerName}
+                        </span>
+                        <span className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                          {sellerTypeLabel}
+                        </span>
+                        {locationDisplay && (
+                          <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">
+                            {locationDisplay}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <span className="hidden sm:inline-flex px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-900 text-[10px] font-semibold tracking-wide uppercase text-gray-600 dark:text-gray-300">
+                      Sprzedający
+                    </span>
+                  </div>
+
+                  {socialMediaLinks.length > 0 && (
+                    <div className="flex items-center gap-3 pt-2 border-t border-dashed border-gray-200 dark:border-gray-700">
+                      <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">
+                        Media społecznościowe
+                      </span>
+                      <div className="flex items-center gap-2">
+                        {socialMediaLinks.map((link) => (
+                          <a
+                            key={link.platform}
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-8 h-8 inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 text-sm"
+                          >
+                            {link.icon}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="mt-1 grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={callSeller}
+                      className="inline-flex items-center justify-center w-full px-4 py-2.5 rounded-lg bg-blue-600 dark:bg-blue-500 text-white text-xs sm:text-sm font-semibold hover:bg-blue-700 dark:hover:bg-blue-400 transition-colors"
+                    >
+                      Zadzwoń
+                    </button>
+                    <button
+                      type="button"
+                      onClick={startChat}
+                      className="inline-flex items-center justify-center w-full px-4 py-2.5 rounded-lg bg-gray-900 text-white text-xs sm:text-sm font-semibold hover:bg-black transition-colors"
+                    >
+                      Napisz
+                    </button>
+                  </div>
+                </div>
+
+                {/* Similar vehicles */}
+                <div className="">
+                  <div className="flex items-center justify-between mb-2">
+                    <div>
+                      <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
+                        Podobne pojazdy
+                      </h2>
+                      <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                        Inne oferty, które mogą Cię zainteresować
+                      </p>
+                    </div>
+                  </div>
+                  <div className="-mx-2">
+                    <SimilarVehicles />
+                  </div>
+                </div>
+              </aside>
             </div>
           </div>
         </div >

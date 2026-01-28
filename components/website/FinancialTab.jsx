@@ -53,7 +53,7 @@ const FinancialTab = ({ financialInfo }) => {
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-16">
+      <div className="grid grid-cols-1  gap-x-16">
         {sections.map((section, idx) => (
           <div
             key={idx}
