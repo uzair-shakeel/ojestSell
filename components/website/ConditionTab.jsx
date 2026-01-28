@@ -5,9 +5,9 @@ const ConditionTab = ({ carCondition }) => {
     if (!value || typeof value !== "string") return value || "-";
     const key = value.trim().toLowerCase();
     const map = {
-      "very good": "Dobry", // As seen in screenshot "Dobry" for "Good" or similar
+      "very good": "Bardzo Dobry",
       good: "Dobry",
-      normal: "Normal",
+      normal: "Normalny",
       excellent: "Doskonały",
       fair: "Umiarkowany",
       "like new": "Jak nowy",
@@ -16,46 +16,30 @@ const ConditionTab = ({ carCondition }) => {
     return map[key] || value;
   };
 
-  return (
-    <div className="py-2">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
-        {/* Left Column */}
-        <div className="space-y-6">
-          <div>
-            <p className="text-base font-bold text-gray-900 dark:text-white mb-1 uppercase tracking-wide">LAKIER I KAROSERIA</p>
-            <p className="text-base text-gray-500 dark:text-gray-400">
-              {translateCondition(carCondition?.paintandBody)}
-            </p>
-          </div>
-          <div>
-            <p className="text-base font-bold text-gray-900 dark:text-white mb-1 uppercase tracking-wide">PODWOZIE I RAMA</p>
-            <p className="text-base text-gray-500 dark:text-gray-400">
-              {translateCondition(carCondition?.frameandUnderbody)}
-            </p>
-          </div>
-          <div>
-            <p className="text-base font-bold text-gray-900 dark:text-white mb-1 uppercase tracking-wide">OGÓLNY</p>
-            <p className="text-base text-gray-500 dark:text-gray-400">
-              {translateCondition(carCondition?.overall)}
-            </p>
-          </div>
-        </div>
+  const sections = [
+    { label: "LAKIER I KAROSERIA", value: carCondition?.paintandBody },
+    { label: "PODWOZIE I RAMA", value: carCondition?.frameandUnderbody },
+    { label: "WNĘTRZE", value: carCondition?.interior },
+    { label: "MECHANICZNY", value: carCondition?.mechanical },
+    { label: "STAN OGÓLNY", value: carCondition?.overall },
+  ];
 
-        {/* Right Column */}
-        <div className="space-y-6">
-          <div>
-            <p className="text-base font-bold text-gray-900 dark:text-white mb-1 uppercase tracking-wide">WNĘTRZE</p>
-            <p className="text-base text-gray-500 dark:text-gray-400">
-              {translateCondition(carCondition?.interior)}
-            </p>
+  return (
+    <div className="w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-16">
+        {sections.map((section, idx) => (
+          <div
+            key={idx}
+            className="flex items-center justify-between py-3 border-b border-gray-100 dark:border-gray-800 last:border-0 sm:last:border-b"
+          >
+            <span className="text-[15px] sm:text-[16px]  text-gray-700 dark:text-gray-300 leading-relaxed">
+              {section.label}
+            </span>
+            <span className="text-[15px] sm:text-[16px] font-medium text-gray-500 dark:text-gray-400 capitalize">
+              {translateCondition(section.value)}
+            </span>
           </div>
-          <div>
-            <p className="text-base font-bold text-gray-900 dark:text-white mb-1 uppercase tracking-wide">MECHANICZNY</p>
-            <p className="text-base text-gray-500 dark:text-gray-400">
-              {translateCondition(carCondition?.mechanical)}
-            </p>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );

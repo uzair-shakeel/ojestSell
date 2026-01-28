@@ -681,11 +681,12 @@ const Page = () => {
   ];
 
   const breadcrumbs = [
-    "Auctions",
-    car?.transmission,
+
     car?.make,
     car?.model,
-    car?.year
+    car?.mileage,
+    car?.year,
+    car?.transmission,
   ].filter(Boolean);
 
   const stickyTitle = `${car?.year || ""} ${car?.make || ""} ${car?.model || ""}`
@@ -776,16 +777,16 @@ const Page = () => {
               <div className="min-w-0 flex-1">
                 <div className="flex flex-col">
                   {stickyTitle && (
-                    <p className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-900 dark:text-white uppercase tracking-tight leading-none break-words whitespace-normal">
+                    <p className="text-[20px] sm:text-3xl md:text-4xl font-black text-gray-900 dark:text-white uppercase tracking-tight leading-none break-words whitespace-normal">
                       {stickyTitle}
                     </p>
                   )}
                   {formattedNetPrice && (
                     <div className="flex items-center gap-2 md:hidden">
-                      <span className="text-2xl font-black text-blue-600 dark:text-blue-400">
+                      <span className="text-[20px] font-black text-blue-600 dark:text-blue-400">
                         {formattedNetPrice}
                       </span>
-                      <span className="text-[9px] uppercase font-bold text-gray-400 border border-gray-200 dark:border-gray-700 px-1 rounded">
+                      <span className="text-[10px] uppercase font-bold text-gray-400 border border-gray-200 dark:border-gray-700 px-1 rounded">
                         Netto
                       </span>
                     </div>
@@ -1051,7 +1052,7 @@ const Page = () => {
 
 
           {/* Content below gallery */}
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-8">
+          <div className="max-w-7xl mx-auto  px-1 sm:px-6 lg:px-8 mt-6 space-y-8">
             {/* Main details + similar vehicles side column */}
             <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,3fr)_minmax(0,1.4fr)] gap-6 items-start">
               {/* Left: tabs, specs, narrative */}
@@ -1118,15 +1119,15 @@ const Page = () => {
                                   return (
                                     <tr
                                       key={idx}
-                                      className="border-b border-gray-400 dark:border-gray-6  00 last:border-0"
+                                      className="border-b text-sm border-gray-400 dark:border-gray-600 last:border-0"
                                     >
                                       {/* Label Cell - Added vertical border-r */}
-                                      <td className="py-3 px-4 w-[100px] sm:w-[240px] align-middle font-bold text-gray-900 dark:text-white text-base border-r border-gray-400 dark:border-gray-600 ">
+                                      <td className="py-2.5 px-4 w-[100px] sm:w-[240px] align-middle font-bold text-gray-900 dark:text-white text-sm border-r border-gray-400 dark:border-gray-600 ">
                                         {item.label}
                                       </td>
 
                                       {/* Value Cell */}
-                                      <td className="py-3 px-4 align-middle">
+                                      <td className="py-2.5 px-4 align-middle">
                                         <div className="flex items-center gap-2">
                                           {item.label === "Seller" ? (
                                             <div className="flex items-center gap-2">
@@ -1137,10 +1138,10 @@ const Page = () => {
                                                   <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-500">?</div>
                                                 )}
                                               </div>
-                                              <span className="font-medium text-gray-900 dark:text-gray-100">{item.value}</span>
+                                              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{item.value}</span>
                                             </div>
                                           ) : (
-                                            <span className={`text-base ${isLink ? "underline decoration-1 underline-offset-2 hover:text-blue-600 cursor-pointer text-blue-600 dark:text-blue-400 font-medium" : "text-gray-900 dark:text-gray-100"}`}>
+                                            <span className={`text-sm ${isLink ? "underline decoration-1 underline-offset-2 hover:text-blue-600 cursor-pointer text-blue-600 dark:text-blue-400 font-medium" : "text-gray-900 dark:text-gray-100"}`}>
                                               {item.value}
                                             </span>
                                           )}
@@ -1173,13 +1174,13 @@ const Page = () => {
                       <section className="relative">
                         <div className="flex items-center gap-3 mb-4 px-1">
                           <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                          <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Highlights</h2>
+                          <h2 className="text-[18px] font-black text-gray-900 dark:text-white uppercase tracking-tight">Highlights</h2>
                         </div>
                         <div className="">
-                          <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                          <p className="text-[15px] text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
                             is a {car?.year} {car?.make} {car?.model}, finished in {car?.color || "original factory color"} with a {car?.interiorColor || "distinguished"} interior.
                           </p>
-                          <ul className="space-y-3 text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                          <ul className="space-y-3 text-[15px] text-gray-700 dark:text-gray-300">
                             <li className="flex items-start gap-3">
                               <span className="text-blue-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500" />
                               <span>The odometer currently indicates approximately {car?.mileage?.toLocaleString()} km.</span>
@@ -1200,10 +1201,10 @@ const Page = () => {
                       <section className="relative">
                         <div className="flex items-center gap-3 mb-4 px-1">
                           <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                          <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Seller Notes</h2>
+                          <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-white uppercase tracking-tight">Seller Notes</h2>
                         </div>
                         <div className="">
-                          <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
+                          <p className="text-[15px] sm:text-[16px] text-gray-700 dark:text-gray-300 leading-relaxed ">
                             {car?.sellerNotes || "Ten egzemplarz to wyjątkowo zadbana sztuka, łącząca wysoki komfort z niezawodnością. Pojazd przeszedł pełną inspekcję techniczną i jest gotowy do dalszej eksploatacji bez konieczności ponoszenia dodatkowych nakładów finansowych. Idealny wybór dla osób szukających pewnego auta z pewną historią."}
                           </p>
                         </div>
@@ -1213,12 +1214,12 @@ const Page = () => {
                       <section className="relative">
                         <div className="flex items-center gap-3 mb-4 px-1">
                           <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                          <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Equipment</h2>
+                          <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-white uppercase tracking-tight">Equipment</h2>
                         </div>
                         <div className="">
                           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
                             {["Automatic climate control", "Satellite navigation system", "Adaptive cruise control", "Heated and ventilated seats", "LED lighting package", "Premium sound system"].map((item, i) => (
-                              <li key={i} className="flex items-start gap-3 text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                              <li key={i} className="flex items-start gap-3 text-[15px] sm:text-[16px] text-gray-700 dark:text-gray-300">
                                 <span className="text-blue-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500" />
                                 <span>{item}</span>
                               </li>
@@ -1231,12 +1232,12 @@ const Page = () => {
                       <section className="relative">
                         <div className="flex items-center gap-3 mb-4 px-1">
                           <div className="h-6 w-1 bg-red-600 rounded-full" />
-                          <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Known Flaws</h2>
+                          <h2 className="text-[18px]  sm:text-[20px] font-black text-gray-900 dark:text-white uppercase tracking-tight">Known Flaws</h2>
                         </div>
                         <div className="">
                           <ul className="space-y-3">
                             {["Minor stone chips on the front bumper", "Typical wear on the driver's seat bolster", "Light scratching on one of the wheels"].map((item, i) => (
-                              <li key={i} className="flex items-start gap-3 text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                              <li key={i} className="flex items-start gap-3 text-[15px] sm:text-[16px] text-gray-700 dark:text-gray-300">
                                 <span className="text-red-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-red-500 opacity-70" />
                                 <span>{item}</span>
                               </li>
@@ -1249,10 +1250,10 @@ const Page = () => {
                       <section className="relative">
                         <div className="flex items-center gap-3 mb-4 px-1">
                           <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                          <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Ownership History</h2>
+                          <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-white uppercase tracking-tight">Ownership History</h2>
                         </div>
                         <div className="">
-                          <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
+                          <p className="text-[15px] sm:text-[16px] text-gray-700 dark:text-gray-300 leading-relaxed">
                             The seller has owned this vehicle since {car?.ownershipStart || "new"} and reports that it has been maintained on schedule with {car?.serviceCount || "regular"} service intervals. Original manuals and two keys are included in the sale.
                           </p>
                         </div>
@@ -1261,7 +1262,7 @@ const Page = () => {
                       <section className="relative">
                         <div className="flex items-center gap-3 mb-4 px-1">
                           <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                          <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Condition</h2>
+                          <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-white uppercase tracking-tight">Condition</h2>
                         </div>
                         <div className="">
                           <ConditionTab carCondition={car?.condition} />
@@ -1272,7 +1273,7 @@ const Page = () => {
                       <section className="relative">
                         <div className="flex items-center gap-3 mb-4 px-1">
                           <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                          <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Financial</h2>
+                          <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-white uppercase tracking-tight">Financial</h2>
                         </div>
                         <div className="">
                           <FinancialTab financialInfo={car?.financialInfo} />
@@ -1285,7 +1286,7 @@ const Page = () => {
                 {/* Right column: seller profile + similar vehicles */}
                 <aside className="lg:sticky lg:top-24 space-y-6">
                   {/* Seller profile card */}
-                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 flex flex-col gap-4">
+                  <div className="px-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 flex flex-col gap-4">
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="relative w-14 h-14 rounded-full overflow-hidden border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-900 flex-shrink-0">

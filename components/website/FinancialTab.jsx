@@ -5,6 +5,8 @@ const translateSellOption = (val) => {
   const key = String(val).trim().toLowerCase();
   const map = {
     'long term rental': 'Wynajem długoterminowy',
+    'leasing': 'Leasing',
+    'loan': 'Kredyt',
   };
   return map[key] || val;
 };
@@ -15,6 +17,8 @@ const translateInvoiceOption = (val) => {
   const map = {
     invoice: 'Faktura',
     'selling agreement': 'Umowa sprzedaży',
+    'invoice vat 23%': 'Faktura VAT 23%',
+    'invoice vat margin': 'Faktura VAT marża',
   };
   return map[key] || val;
 };
@@ -24,35 +28,45 @@ const translateSellerType = (val) => {
   const key = String(val).trim().toLowerCase();
   const map = {
     company: 'Firma',
-    private: 'Sprzedawca prywatny',
+    private: 'Osoba prywatna',
   };
   return map[key] || val;
 };
 
 const FinancialTab = ({ financialInfo }) => {
+  if (!financialInfo) return null;
+
+  const sections = [
+    {
+      label: "OPCJE SPRZEDAŻY",
+      value: financialInfo.sellOptions?.map(opt => translateSellOption(opt)).join(", ") || "-"
+    },
+    {
+      label: "OPCJE FAKTURY",
+      value: financialInfo.invoiceOptions?.map(opt => translateInvoiceOption(opt)).join(", ") || "-"
+    },
+    {
+      label: "TYP SPRZEDAJĄCEGO",
+      value: translateSellerType(financialInfo.sellerType) || "-"
+    },
+  ];
+
   return (
-    <div className="py-2">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-8">
-        <div className="space-y-2">
-          <p className="text-base font-bold text-gray-900 dark:text-white uppercase tracking-wide">Opcje sprzedaży</p>
-          <ul className="text-base text-gray-500 dark:text-gray-400 list-disc ml-5">
-            {financialInfo.sellOptions.map((option, index) => (
-              <li key={index}>{translateSellOption(option)}</li>
-            ))}
-          </ul>
-        </div>
-        <div className="space-y-2">
-          <p className="text-base font-bold text-gray-900 dark:text-white uppercase tracking-wide">Opcje faktury</p>
-          <ul className="text-base text-gray-500 dark:text-gray-400 list-disc ml-5">
-            {financialInfo.invoiceOptions.map((option, index) => (
-              <li key={index}>{translateInvoiceOption(option)}</li>
-            ))}
-          </ul>
-        </div>
-        <div className="space-y-2">
-          <p className="text-base font-bold text-gray-900 dark:text-white uppercase tracking-wide">Typ sprzedającego</p>
-          <p className="text-base text-gray-500 dark:text-gray-400">{translateSellerType(financialInfo.sellerType)}</p>
-        </div>
+    <div className="w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-16">
+        {sections.map((section, idx) => (
+          <div
+            key={idx}
+            className="flex items-center justify-between py-3 border-b border-gray-100 dark:border-gray-800 last:border-0 sm:last:border-b"
+          >
+            <span className="text-[15px] sm:text-[16px] text-gray-700 dark:text-gray-300 leading-relaxed">
+              {section.label}
+            </span>
+            <span className="text-[15px] sm:text-[16px] text-gray-700 dark:text-gray-300 leading-relaxed">
+              {section.value}
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );
