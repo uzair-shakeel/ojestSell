@@ -684,7 +684,6 @@ const Page = () => {
 
     car?.make,
     car?.model,
-    car?.mileage,
     car?.year,
     car?.transmission,
   ].filter(Boolean);
@@ -915,7 +914,7 @@ const Page = () => {
               {/* Thumbnail Grid - Right Side - Show conditionally based on count */}
               {galleryMode !== "single" && (
                 <div className="w-full md:w-[320px] flex-shrink-0 h-full overflow-hidden">
-                  <div className={`grid grid-cols-2 gap-2 h-full ${galleryMode === "mini" ? "grid-rows-2" : "grid-rows-4"}`}>
+                  <div className={`grid gap-2 h-full ${galleryMode === "mini" ? "grid-cols-1 grid-rows-4" : "grid-cols-2 grid-rows-4"}`}>
                     {thumbnailImages.map((img, index) => {
                       const realIndex = useThumbnailOffset ? index + 1 : index;
                       const isAllPhotosTile = index === (maxThumbnailsToShow - 1) && images.length > (useThumbnailOffset ? (maxThumbnailsToShow + 1) : maxThumbnailsToShow);
@@ -1098,7 +1097,7 @@ const Page = () => {
                 <div className=" overflow-hidden">
                   <div className="p-2">
                     <div className="flex flex-col gap-4 mb-6">
-                      <div className="flex flex-wrap items-center gap-4">
+                      <div className="flex flex-wrap items-center gap-1">
                         {/* Opis Tab - Styled like CARFAX button */}
                         <button
                           onClick={() => setActiveTab("opis")}
@@ -1108,7 +1107,7 @@ const Page = () => {
                             }`}
                         >
                           <div className="flex items-center justify-center gap-2">
-                            <span className="uppercase tracking-wide">Specyfikacja</span>
+                            <span className=" tracking-wide">Specyfikacja</span>
                           </div>
                         </button>
 
@@ -1328,71 +1327,88 @@ const Page = () => {
               {/* Right column: seller profile + similar vehicles */}
               <aside className="md:sticky mx-2 md:top-24 space-y-6">
                 {/* Seller profile card */}
-                <div className="px-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 flex flex-col gap-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="relative w-14 h-14 rounded-full overflow-hidden border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-900 flex-shrink-0">
-                        <img
-                          src={formatImageUrl(seller?.image)}
-                          alt={sellerName}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="flex flex-col min-w-0">
-                        <span className="text-sm font-bold text-gray-900 dark:text-white truncate">
-                          {sellerName}
-                        </span>
-                        <span className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                          {sellerTypeLabel}
-                        </span>
-                        {locationDisplay && (
-                          <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">
-                            {locationDisplay}
-                          </span>
-                        )}
+                {/* Seller profile card - Premium Upgrade */}
+                <div className="relative group rounded-2xl p-6 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
+
+                  {/* Decorative gradient blob */}
+                  <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+
+                  <div className="relative flex flex-col gap-6">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-center gap-4 min-w-0">
+                        <div className="relative">
+                          <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white dark:border-gray-700 shadow-md ring-2 ring-gray-50 dark:ring-gray-800">
+                            <img
+                              src={formatImageUrl(seller?.image)}
+                              alt={sellerName}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          {/* Online indicator dot example - optional */}
+                          <div className="absolute bottom-1 right-1 w-3.5 h-3.5 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
+                        </div>
+
+                        <div className="flex flex-col min-w-0 pt-1">
+                          <h3 className="text-lg font-bold text-gray-900 dark:text-white truncate leading-tight">
+                            {sellerName}
+                          </h3>
+                          <p className="text-xs font-medium uppercase tracking-wider text-blue-600 dark:text-blue-400 mt-1">
+                            {sellerTypeLabel}
+                          </p>
+                          {locationDisplay && (
+                            <div className="flex items-center gap-1.5 mt-1.5 text-gray-500 dark:text-gray-400">
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5">
+                                <path fillRule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.45-.96 2.337-1.774C15.33 14.98 18 11.782 18 8.5 18 4.686 14.686 1 10 1s-8 3.314-8 7.5c0 3.282 2.669 6.48 4.303 8.082.887.814 1.716 1.39 2.337 1.774.31.193.57.337.757.433a5.61 5.61 0 00.28.14l.019.008.006.003h.002zM10 11a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" clipRule="evenodd" />
+                              </svg>
+                              <span className="text-xs truncate">{locationDisplay}</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                    <span className="hidden sm:inline-flex px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-900 text-[10px] font-semibold tracking-wide uppercase text-gray-600 dark:text-gray-300">
-                      Sprzedający
-                    </span>
-                  </div>
 
-                  {socialMediaLinks.length > 0 && (
-                    <div className="flex items-center gap-3 pt-2 border-t border-dashed border-gray-200 dark:border-gray-700">
-                      <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">
-                        Media społecznościowe
-                      </span>
-                      <div className="flex items-center gap-2">
-                        {socialMediaLinks.map((link) => (
-                          <a
-                            key={link.platform}
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-8 h-8 inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 text-sm"
-                          >
-                            {link.icon}
-                          </a>
-                        ))}
-                      </div>
+                    <div className="space-y-3">
+                      <button
+                        type="button"
+                        onClick={callSeller}
+                        className="group relative w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:from-blue-500 hover:to-blue-400 transition-all active:scale-[0.98]"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 opacity-90">
+                          <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                        </svg>
+                        <span>Zadzwoń</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={startChat}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white dark:bg-gray-700 border-2 border-gray-100 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-bold hover:bg-gray-50 dark:hover:bg-gray-600 hover:border-gray-200 dark:hover:border-gray-500 transition-all active:scale-[0.98]"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 opacity-70">
+                          <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                          <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                        </svg>
+                        <span>Napisz wiadomość</span>
+                      </button>
                     </div>
-                  )}
 
-                  <div className="mt-1 grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={callSeller}
-                      className="inline-flex items-center justify-center w-full px-4 py-2.5 rounded-lg bg-blue-600 dark:bg-blue-500 text-white text-xs sm:text-sm font-semibold hover:bg-blue-700 dark:hover:bg-blue-400 transition-colors"
-                    >
-                      Zadzwoń
-                    </button>
-                    <button
-                      type="button"
-                      onClick={startChat}
-                      className="inline-flex items-center justify-center w-full px-4 py-2.5 rounded-lg bg-gray-900 text-white text-xs sm:text-sm font-semibold hover:bg-black transition-colors"
-                    >
-                      Napisz
-                    </button>
+                    {socialMediaLinks.length > 0 && (
+                      <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
+                        <div className="flex items-center justify-center gap-4">
+                          {socialMediaLinks.map((link) => (
+                            <a
+                              key={link.platform}
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-gray-600 dark:hover:text-blue-400 transition-all hover:scale-110"
+                            >
+                              {React.cloneElement(link.icon, { className: "w-5 h-5" })}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
