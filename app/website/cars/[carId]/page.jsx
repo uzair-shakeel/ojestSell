@@ -799,7 +799,7 @@ const Page = () => {
         </div>
       )}
 
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 overflow-x-clip">
         {/* Sticky Price / Actions Bar - Now at the VERY top of the gallery section */}
         <div className="sticky top-0 z-40 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm transition-all duration-300">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -857,7 +857,7 @@ const Page = () => {
         </div>
 
         {/* Full Page Gallery */}
-        <div className="relative w-full">
+        <div className="relative w-full overflow-x-clip">
           {/* Gallery with peek effect on mobile */}
           <div className="max-w-7xl mx-auto px-0 md:px-4 lg:px-8">
 
@@ -1322,7 +1322,7 @@ const Page = () => {
               <aside className="md:sticky mx-2 md:top-24 space-y-6">
                 {/* Seller profile card */}
                 {/* Seller profile card - Premium Upgrade */}
-                <div className="relative group rounded-2xl p-6 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
+                <div className="relative group rounded-2xl p-6 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] overflow-hidden">
 
                   {/* Decorative gradient blob */}
                   <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -1418,7 +1418,7 @@ const Page = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="-mx-2">
+                  <div className="">
                     <SimilarVehicles />
                   </div>
                 </div>

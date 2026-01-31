@@ -135,7 +135,9 @@ export default function CarCard({ car, viewMode = 'grid' }) {
           }
         }}
       >
-        <div className="mx-2 bg-white dark:bg-gray-900 rounded-2xl overflow-hidden relative shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-800">
+        <div className="mx-2 bg-white dark:bg-gray-900 rounded-2xl overflow-hidden relative shadow-sm transition-all duration-300 border border-gray-100 dark:border-gray-800">
+          {/* Hover overlay shade */}
+          <div className="absolute inset-0 bg-black/0 hover:bg-black/20 dark:hover:bg-white/20 transition-all duration-300 z-10 pointer-events-none rounded-2xl" />
           <div className="relative h-[260px] md:h-48 lg:h-[220px] overflow-hidden">
             {car?.isFeatured && (car?.images?.length ?? 0) >= 3 ? (
               <div className="grid grid-cols-2 grid-rows-2 h-full gap-0.5">
@@ -224,7 +226,7 @@ export default function CarCard({ car, viewMode = 'grid' }) {
               </div>
             </div>
 
-            <div className="pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
+            <div className="pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center">
               <div className="flex items-center gap-2">
                 <div className="relative">
                   <img
@@ -246,9 +248,6 @@ export default function CarCard({ car, viewMode = 'grid' }) {
                     {getSellerType()}
                   </span>
                 </div>
-              </div>
-              <div className="text-blue-600 dark:text-blue-400 font-black text-[10px] flex items-center gap-1 uppercase tracking-widest">
-                Szczegóły <Zap className="w-2.5 h-2.5" />
               </div>
             </div>
           </div>

@@ -89,13 +89,13 @@ export function Footer() {
             <p className="text-gray-400 mb-4">
               Subskrybuj nasz newsletter i otrzymuj najnowsze aktualności.
             </p>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <input
                 type="email"
                 placeholder="Wprowadź swój adres e-mail"
                 className="bg-gray-800 border-gray-700 rounded-xl px-4 py-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder:text-gray-500"
               />
-              <button className="bg-white text-gray-900 font-bold px-6 py-3 rounded-xl hover:bg-gray-100 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+              <button className="bg-white text-gray-900 font-bold px-6 py-3 rounded-xl hover:bg-gray-100 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap">
                 Subskrybuj
               </button>
             </div>

@@ -583,7 +583,7 @@ const CarsContent = () => {
           <div
             className={
               viewMode === "grid"
-                ? "grid gap-6 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1 -mt-[5px] lg:mt-4"
+                ? "grid gap-1 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1 -mt-[5px] lg:mt-4"
                 : "flex flex-col space-y-4 -mt-[5px] lg:mt-4"
             }
           >
