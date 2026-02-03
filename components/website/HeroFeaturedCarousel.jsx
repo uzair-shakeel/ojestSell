@@ -135,7 +135,7 @@ export default function HeroFeaturedCarousel() {
               <Link href={`/website/cars/${s.id}`} className="block h-full w-full">
                 <div className="grid grid-cols-5 gap-2 h-full bg-black/5">
                   {/* Big image left (col-span-3) */}
-                  <div className="relative col-span-5 md:col-span-3 h-[180px] sm:h-full">
+                  <div className="relative col-span-3 h-full">
                     <Image
                       src={s.images[0] || "/placeholder.svg"}
                       alt={s.title || "Featured car"}
@@ -149,7 +149,7 @@ export default function HeroFeaturedCarousel() {
                         <FaTags className="w-3 h-3" /> PROMOWANY
                       </div>
                     </div>
-              
+
                     {/* Bottom left price (if available) */}
                     {typeof s.price === "number" && (
                       <div className="absolute bottom-2 left-2 bg-white/95 backdrop-blur-sm px-2 py-1 rounded-md shadow-lg hover:shadow-xl transition-all duration-300">
@@ -160,16 +160,16 @@ export default function HeroFeaturedCarousel() {
                     )}
                   </div>
 
-                  {/* Four thumbnails on the right (2x2) */}
-                  <div className="hidden md:grid col-span-2 grid-cols-2 grid-rows-2 gap-2">
+                  {/* Four thumbnails on the right (2x2 on desktop, 1x2 on mobile) */}
+                  <div className="grid col-span-2 grid-cols-1 md:grid-cols-2 grid-rows-2 gap-1 md:gap-2">
                     {s.images.slice(1, 5).map((img, i) => (
-                      <div key={i} className="relative">
+                      <div key={i} className={`relative ${i >= 2 ? "hidden md:block" : ""}`}>
                         <Image
                           src={img || "/placeholder.svg"}
                           alt={`Thumb ${i + 1}`}
                           fill
                           className="object-cover"
-                          sizes="40vw"
+                          sizes="(max-width: 768px) 40vw, 20vw"
                         />
                       </div>
                     ))}

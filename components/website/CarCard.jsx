@@ -135,7 +135,7 @@ export default function CarCard({ car, viewMode = 'grid' }) {
           }
         }}
       >
-        <div className="mx-2 bg-white dark:bg-gray-900 rounded-2xl overflow-hidden relative shadow-sm transition-all duration-300 border border-gray-100 dark:border-gray-800">
+        <div className="mx-2 bg-transparent rounded-2xl overflow-hidden relative transition-all duration-300">
           {/* Hover overlay shade */}
           <div className="absolute inset-0 bg-black/0 hover:bg-black/20 dark:hover:bg-white/20 transition-all duration-300 z-10 pointer-events-none rounded-2xl" />
           <div className="relative h-[260px] md:h-48 lg:h-[220px] overflow-hidden">
@@ -157,7 +157,7 @@ export default function CarCard({ car, viewMode = 'grid' }) {
                 </div>
                 <div className="relative col-start-2 col-end-3 row-start-2 row-end-3">
                   {(car?.images?.length ?? 0) >= 4 ? (
-                    <div className="grid grid-cols-2 gap-0.5 h-full">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-0.5 h-full">
                       <img
                         src={formatCarImage(car.images[2])}
                         alt={`${car.year} ${car.make} ${car.model} - 3`}
@@ -166,7 +166,7 @@ export default function CarCard({ car, viewMode = 'grid' }) {
                       <img
                         src={formatCarImage(car.images[3])}
                         alt={`${car.year} ${car.make} ${car.model} - 4`}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover hidden md:block"
                       />
                     </div>
                   ) : (
@@ -204,50 +204,29 @@ export default function CarCard({ car, viewMode = 'grid' }) {
             )}
           </div>
 
-          <div className="p-4 bg-white dark:bg-gray-900">
+          <div className="py-4 px-1 bg-transparent">
             <div className="mb-1">
-              <h3 className="text-lg font-black text-gray-900 dark:text-white mb-1 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-none tracking-tight">
+              <h3 className="text-[21px] font-bold text-gray-900 dark:text-white leading-tight group-hover:text-blue-600 transition-colors">
                 {car.year} {car.make} {car.model}
               </h3>
             </div>
 
-            <div className="space-y-1.5 mb-4">
-              <div className="text-xs font-bold text-gray-600 dark:text-gray-400 flex items-center gap-1.5">
-                {car.mileage || '0'} km
-                <div className="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-500" />
-                {translateFuelType(car.fuel) || 'N/A'}
-                <div className="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-500" />
-                {car.engine ? `${car.engine} cm3` : 'N/A'}
-                <div className="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-500" />
-                {translateTransmission(car.transmission) || 'N/A'}
-              </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400 font-bold flex items-center gap-1">
-                {locationDetails.city || 'Polska'}
-              </div>
-            </div>
-
-            <div className="pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center">
+            <div className="space-y-1.5">
               <div className="flex items-center gap-2">
-                <div className="relative">
-                  <img
-                    src={getSellerImage()}
-                    alt={getSellerName()}
-                    className="w-6 h-6 rounded-full object-cover border border-gray-200 dark:border-gray-700"
-                  />
-                  {getSellerType() === "Firma" && (
-                    <div className="absolute -bottom-0.5 -right-0.5 bg-blue-500 rounded-full p-0.5 border border-white dark:border-gray-900">
-                      <ShieldCheck className="w-1.5 h-1.5 text-white" />
-                    </div>
-                  )}
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-xs font-black text-gray-900 dark:text-white truncate max-w-[100px] leading-none mb-0.5">
-                    {getSellerName()}
-                  </span>
-                  <span className="text-[10px] text-gray-500 dark:text-gray-400 uppercase font-bold">
-                    {getSellerType()}
-                  </span>
-                </div>
+                <span className="text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-wider">
+                  {translateTransmission(car.transmission) || 'N/A'}
+                </span>
+                <span className="text-[15px] font-medium text-gray-700 dark:text-gray-300">
+                  • {car.engine ? `${car.engine} cm3` : 'N/A'} • {translateFuelType(car.fuel) || 'N/A'}
+                </span>
+              </div>
+
+              <p className="text-[15px] text-gray-600 dark:text-gray-400 line-clamp-2 leading-snug">
+                {car.mileage ? `${car.mileage.toLocaleString('pl-PL')} km przebiegu.` : ''} Stan techniczny i wizualny oceniany jako wzorowy.
+              </p>
+
+              <div className="text-[15px] text-gray-400 dark:text-gray-500 font-bold pt-1 uppercase tracking-tight">
+                {getSellerName()}
               </div>
             </div>
           </div>
