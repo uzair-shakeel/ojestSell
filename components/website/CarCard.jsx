@@ -212,17 +212,13 @@ export default function CarCard({ car, viewMode = 'grid' }) {
             </div>
 
             <div className="space-y-1.5">
-              <div className="flex items-center gap-2">
-                <span className="text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-wider">
-                  {translateTransmission(car.transmission) || 'N/A'}
-                </span>
-                <span className="text-[15px] font-medium text-gray-700 dark:text-gray-300">
-                  • {car.engine ? `${car.engine} cm3` : 'N/A'} • {translateFuelType(car.fuel) || 'N/A'}
-                </span>
-              </div>
-
               <p className="text-[15px] text-gray-600 dark:text-gray-400 line-clamp-2 leading-snug">
-                {car.mileage ? `${car.mileage.toLocaleString('pl-PL')} km przebiegu.` : ''} Stan techniczny i wizualny oceniany jako wzorowy.
+                {[
+                  car.mileage ? `${car.mileage.toLocaleString('pl-PL')} km` : null,
+                  translateTransmission(car.transmission),
+                  car.engine ? `${car.engine} cm3` : null,
+                  translateFuelType(car.fuel)
+                ].filter(Boolean).join(', ')}. Stan techniczny i wizualny oceniany jako wzorowy.
               </p>
 
               <div className="text-[15px] text-gray-400 dark:text-gray-500 font-bold pt-1 uppercase tracking-tight">
