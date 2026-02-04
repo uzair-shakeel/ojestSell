@@ -981,7 +981,7 @@ export default function ImageEditStep({
 
   return (
     <>
-      <div className="bg-white dark:bg-gray-800 rounded-lg w-full transition-colors">
+      <div className="bg-white dark:bg-black/80 rounded-lg w-full transition-colors">
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">Krok 3: Zdjęcia Pojazdu</h2>
           {isUploading && (
@@ -997,7 +997,7 @@ export default function ImageEditStep({
 
         {formData.images.length === 0 ? (
           <div className="mb-6">
-            <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center bg-gray-50 dark:bg-gray-700/50">
+            <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center bg-gray-50 dark:bg-black/70/50">
               <p className="text-gray-700 dark:text-gray-300 font-medium mb-2">Załaduj zdjęcia (1-100)</p>
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Dodaj zdjęcia auta tutaj. Możesz je edytować od razu po załadowaniu.</p>
               <label className="inline-block cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
@@ -1015,7 +1015,7 @@ export default function ImageEditStep({
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Image Thumbnails */}
-            <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg">
+            <div className="bg-gray-50 dark:bg-black/90/50 p-4 rounded-lg">
               <h3 className="font-semibold mb-3 text-gray-900 dark:text-white">Dodane zdjęcia</h3>
               <div className="mb-3">
                 <label className="inline-flex items-center gap-2 cursor-pointer text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-bold uppercase tracking-wider">
@@ -1157,13 +1157,13 @@ export default function ImageEditStep({
 
             {/* Image Editor Area */}
             <div className="md:col-span-2">
-              <div className="bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden h-full flex flex-col">
-                <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800">
+              <div className="bg-gray-50 dark:bg-black/90 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden h-full flex flex-col">
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-black/80">
                   <h3 className="font-bold text-gray-900 dark:text-white">Edytor Zdjęć</h3>
                 </div>
                 <div
                   ref={containerRef}
-                  className="relative w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden bg-white dark:bg-gray-800 flex items-center justify-center mb-4"
+                  className="relative w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden bg-white dark:bg-black/80 flex items-center justify-center mb-4"
                 >
                   {activeImage ? (
                     <div className="relative w-full h-full flex items-center justify-center">
@@ -1282,7 +1282,7 @@ export default function ImageEditStep({
       {/* Presets Modal */}
       {showPresetsModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-white/10">
+          <div className="bg-white dark:bg-black/80 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-white/10">
             <div className="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 p-6">
               <h3 className="text-xl font-bold text-gray-900 dark:text-white">Filtry i Ulepszenia</h3>
               <button
@@ -1316,10 +1316,10 @@ export default function ImageEditStep({
                   }}
                   className={`p-4 rounded-2xl border-2 transition-all duration-200 flex flex-col items-center group/preset ${activeFilter === presetKey
                     ? "border-blue-500 bg-blue-50/50 dark:bg-blue-900/30"
-                    : "border-gray-50 dark:border-gray-700/50 bg-white dark:bg-gray-900 hover:border-blue-300 dark:hover:border-blue-700"
+                    : "border-gray-50 dark:border-gray-700/50 bg-white dark:bg-black/90 hover:border-blue-300 dark:hover:border-blue-700"
                     }`}
                 >
-                  <div className="w-full pb-[56.25%] relative mb-3 bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden">
+                  <div className="w-full pb-[56.25%] relative mb-3 bg-gray-100 dark:bg-black/80 rounded-xl overflow-hidden">
                     <div className="absolute inset-0 flex items-center justify-center">
                       {/* This would ideally display a thumbnail preview of the effect */}
                       <div className="w-12 h-12 flex items-center justify-center">

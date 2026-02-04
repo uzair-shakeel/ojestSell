@@ -10,9 +10,9 @@ const BlogPage = () => {
   const blogPosts = useBlogPosts();
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-white py-4 dark:bg-black/80 min-h-screen">
       {/* Hero Banner Section with Image */}
-      <div className="mt-4 mx-4 text-center rounded-3xl overflow-hidden bg-cover bg-center bg-no-repeat relative">
+      <div className=" mx-4 text-center rounded-3xl overflow-hidden bg-cover bg-center bg-no-repeat relative">
         <div
           className="w-full h-[300px] md:h-[500px] relative"
           style={{

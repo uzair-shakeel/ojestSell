@@ -29,7 +29,7 @@ export default function EditCarPage() {
       try {
         setLoading(true);
         const carData = await getCarById(carId);
-        
+
         setFormData({
           title: carData.title || "",
           description: carData.description || "",
@@ -86,7 +86,7 @@ export default function EditCarPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-4xl mx-auto p-6 dark:bg-black/80">
       <h1 className="text-3xl font-bold mb-6">Edit Car</h1>
 
       {error && (
@@ -98,7 +98,7 @@ export default function EditCarPage() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <h2 className="text-xl font-semibold mb-4">Basic Information</h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Title *</label>
@@ -107,10 +107,10 @@ export default function EditCarPage() {
                 required
                 className="w-full p-3 border border-gray-300 rounded-lg"
                 value={formData.title}
-                onChange={(e) => setFormData({...formData, title: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Make *</label>
               <input
@@ -118,10 +118,10 @@ export default function EditCarPage() {
                 required
                 className="w-full p-3 border border-gray-300 rounded-lg"
                 value={formData.make}
-                onChange={(e) => setFormData({...formData, make: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, make: e.target.value })}
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Model *</label>
               <input
@@ -129,20 +129,20 @@ export default function EditCarPage() {
                 required
                 className="w-full p-3 border border-gray-300 rounded-lg"
                 value={formData.model}
-                onChange={(e) => setFormData({...formData, model: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, model: e.target.value })}
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
               <input
                 type="text"
                 className="w-full p-3 border border-gray-300 rounded-lg"
                 value={formData.year}
-                onChange={(e) => setFormData({...formData, year: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, year: e.target.value })}
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Price *</label>
               <input
@@ -152,18 +152,18 @@ export default function EditCarPage() {
                 value={formData.financialInfo.priceNetto}
                 onChange={(e) => setFormData({
                   ...formData,
-                  financialInfo: {...formData.financialInfo, priceNetto: e.target.value}
+                  financialInfo: { ...formData.financialInfo, priceNetto: e.target.value }
                 })}
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Mileage</label>
               <input
                 type="text"
                 className="w-full p-3 border border-gray-300 rounded-lg"
                 value={formData.mileage}
-                onChange={(e) => setFormData({...formData, mileage: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, mileage: e.target.value })}
               />
             </div>
           </div>
@@ -174,7 +174,7 @@ export default function EditCarPage() {
               rows={4}
               className="w-full p-3 border border-gray-300 rounded-lg"
               value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             />
           </div>
 
@@ -186,7 +186,7 @@ export default function EditCarPage() {
                 id="isFeatured"
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                 checked={formData.isFeatured}
-                onChange={(e) => setFormData({...formData, isFeatured: e.target.checked})}
+                onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
               />
               <label htmlFor="isFeatured" className="text-sm font-medium text-gray-700">
                 Mark as Featured Car

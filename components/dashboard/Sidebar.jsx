@@ -185,13 +185,13 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
             animate={{ opacity: 0.5 }}
             exit={{ opacity: 0 }}
             onClick={toggleSidebar}
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 md:hidden"
+            className="fixed inset-0 bg-black/20 dark:bg-black/60 backdrop-blur-sm z-30 md:hidden"
           />
         )}
       </AnimatePresence>
 
       <motion.div
-        className={`fixed inset-y-0 left-0 bg-[#181818] border-r border-[#2C2C2C] shadow-2xl z-40 w-64 flex flex-col transition-all duration-300 ease-in-out
+        className={`fixed inset-y-0 left-0 bg-[#181818] dark:bg-black/60 border-r border-[#2C2C2C] shadow-2xl z-40 w-64 flex flex-col transition-all duration-300 ease-in-out
           ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
       >
         {/* Header / Logo */}

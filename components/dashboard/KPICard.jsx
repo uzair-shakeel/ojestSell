@@ -8,7 +8,7 @@ export default function KPICard({
 }) {
   return (
     <div
-      className={`relative overflow-hidden rounded-xl shadow-sm ring-1 ring-black/5 dark:ring-gray-700 bg-white dark:bg-gray-800800 border border-gray-200 dark:border-gray-700`}
+      className={`relative overflow-hidden rounded-xl shadow-sm ring-1 ring-black/5 dark:ring-gray-700 bg-white dark:bg-black/80800 border border-gray-200 dark:border-gray-700`}
     >
       <div className="p-4 flex items-center gap-4">
         <div

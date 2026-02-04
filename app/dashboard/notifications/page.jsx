@@ -46,7 +46,7 @@ export default function NotificationsPage() {
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-md px-2 py-1 text-sm"
+            className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-black/80 rounded-md px-2 py-1 text-sm"
           >
             <option value="all">Wszystkie</option>
             <option value="unread">Nieprzeczytane</option>
@@ -64,7 +64,7 @@ export default function NotificationsPage() {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
+      <div className="bg-white dark:bg-black/80 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
         {items.length === 0 ? (
           <div className="text-sm text-gray-500 dark:text-gray-400">Brak powiadomień</div>
         ) : (
@@ -72,15 +72,14 @@ export default function NotificationsPage() {
             {items.map((n) => (
               <li key={n.id} className={` flex items-start gap-3 ${n.read ? "opacity-50 p-3" : "p-3 "}`}>
                 <span
-                  className={`mt-1 text-[10px] px-2 py-0.5 rounded-full border ${
-                    n.type === "message"
+                  className={`mt-1 text-[10px] px-2 py-0.5 rounded-full border ${n.type === "message"
                       ? "bg-blue-100 text-blue-700 border-blue-200"
                       : n.type === "car"
-                      ? "bg-emerald-100 text-emerald-700 border-emerald-200"
-                      : n.type === "status"
-                      ? "bg-amber-100 text-amber-700 border-amber-200"
-                      : "bg-gray-100 text-gray-700 border-gray-200"
-                  }`}
+                        ? "bg-emerald-100 text-emerald-700 border-emerald-200"
+                        : n.type === "status"
+                          ? "bg-amber-100 text-amber-700 border-amber-200"
+                          : "bg-gray-100 text-gray-700 border-gray-200"
+                    }`}
                 >
                   {n.type}
                 </span>

@@ -95,7 +95,7 @@ export default function DashboardStats({ user: userProp }) {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Cars Card */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+        <div className="bg-white dark:bg-black/80 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
           <div className="absolute right-0 top-0 w-32 h-32 bg-blue-50 dark:bg-blue-900/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
           <div className="relative z-10">
             <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center mb-4 text-xl">
@@ -104,7 +104,7 @@ export default function DashboardStats({ user: userProp }) {
             <h3 className="text-gray-500 dark:text-gray-400 font-bold uppercase text-xs tracking-wider mb-1">Twoje Auta</h3>
             <div className="text-4xl font-extrabold text-gray-900 dark:text-white">
               {loading ? (
-                <div className="h-10 w-16 bg-gray-200 dark:bg-gray-700 animate-pulse rounded-lg"></div>
+                <div className="h-10 w-16 bg-gray-200 dark:bg-black/70 animate-pulse rounded-lg"></div>
               ) : (
                 carsCount
               )}
@@ -116,7 +116,7 @@ export default function DashboardStats({ user: userProp }) {
         </div>
 
         {/* Messages Card */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+        <div className="bg-white dark:bg-black/80 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
           <div className="absolute right-0 top-0 w-32 h-32 bg-emerald-50 dark:bg-emerald-900/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
           <div className="relative z-10">
             <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center mb-4 text-xl">
@@ -125,7 +125,7 @@ export default function DashboardStats({ user: userProp }) {
             <h3 className="text-gray-500 dark:text-gray-400 font-bold uppercase text-xs tracking-wider mb-1">Wiadomości</h3>
             <div className="text-4xl font-extrabold text-gray-900 dark:text-white">
               {loading ? (
-                <div className="h-10 w-16 bg-gray-200 dark:bg-gray-700 animate-pulse rounded-lg"></div>
+                <div className="h-10 w-16 bg-gray-200 dark:bg-black/70 animate-pulse rounded-lg"></div>
               ) : (
                 chatsCount
               )}
@@ -137,7 +137,7 @@ export default function DashboardStats({ user: userProp }) {
         </div>
 
         {/* Profile Card */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+        <div className="bg-white dark:bg-black/80 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
           <div className="absolute right-0 top-0 w-32 h-32 bg-purple-50 dark:bg-purple-900/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
           <div className="relative z-10">
             <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400 rounded-2xl flex items-center justify-center mb-4 text-xl">

@@ -245,7 +245,7 @@ export default function CarCard({ car, viewMode = 'grid' }) {
         }
       }}
     >
-      <div className="mx-2 bg-white dark:bg-gray-900 rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-row border border-gray-100 dark:border-gray-800 h-[140px] xs:h-[160px] sm:h-[200px] md:h-[260px]">
+      <div className="mx-2 bg-white dark:bg-black/90 rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-row border border-gray-100 dark:border-gray-800 h-[140px] xs:h-[160px] sm:h-[200px] md:h-[260px]">
         {/* Image Section */}
         <div className="relative w-[120px] xs:w-[150px] sm:w-[200px] md:w-[400px] h-full flex-shrink-0 overflow-hidden">
           {car?.isFeatured && (car?.images?.length ?? 0) >= 3 ? (
@@ -295,7 +295,7 @@ export default function CarCard({ car, viewMode = 'grid' }) {
         </div>
 
         {/* Content Section */}
-        <div className="flex-1 p-3 xs:p-4 md:p-8 flex flex-col justify-between bg-white dark:bg-gray-900 min-w-0">
+        <div className="flex-1 p-3 xs:p-4 md:p-8 flex flex-col justify-between bg-white dark:bg-black/90 min-w-0">
           <div className="flex flex-col md:flex-row justify-between items-start gap-1 md:gap-4">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1 md:gap-2 mb-0.5 md:mb-1">

@@ -123,7 +123,7 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg w-full p-1 transition-colors">
+    <div className="bg-white dark:bg-black/80 rounded-lg w-full p-1 transition-colors">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-bold text-gray-900 dark:text-white">Krok 2: Szczegóły Pojazdu</h2>
         {formData.vinFields?.length > 0 && (
@@ -141,7 +141,7 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
           <input
             type="text"
             placeholder="Np. BMW M5 F90 Competition 2021"
-            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-600"
+            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-black/80 dark:text-white placeholder-gray-400 dark:placeholder-gray-600"
             value={localData.title}
             onChange={(e) =>
               setLocalData({ ...localData, title: e.target.value })
@@ -154,7 +154,7 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 uppercase tracking-wider">Notatki Sprzedającego / Opis</label>
           <textarea
             placeholder="Wpisz dodatkowe informacje o aucie, np. historia, dodatkowe wyposażenie, stan..."
-            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl min-h-[120px] focus:border-blue-500 transition-all font-semibold bg-white dark:bg-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-600"
+            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl min-h-[120px] focus:border-blue-500 transition-all font-semibold bg-white dark:bg-black/80 dark:text-white placeholder-gray-400 dark:placeholder-gray-600"
             value={localData.description}
             onChange={(e) =>
               setLocalData({ ...localData, description: e.target.value })
@@ -222,7 +222,7 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
             <div className="col-span-2 md:col-span-1">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 uppercase tracking-wider">Marka</label>
               <select
-                className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-gray-800 dark:text-white"
+                className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-black/80 dark:text-white"
                 value={localData.make}
                 onChange={(e) =>
                   setLocalData({ ...localData, make: e.target.value, model: "" })
@@ -242,7 +242,7 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
             <div className="col-span-2 md:col-span-1">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 uppercase tracking-wider">Model</label>
               <select
-                className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-gray-800 dark:text-white"
+                className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-black/80 dark:text-white"
                 value={localData.model}
                 onChange={(e) =>
                   setLocalData({ ...localData, model: e.target.value })
@@ -266,7 +266,7 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
           <input
             type="text"
             placeholder="Np. Competition, M-Package"
-            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-600"
+            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-black/80 dark:text-white placeholder-gray-400 dark:placeholder-gray-600"
             value={localData.trim}
             onChange={(e) => setLocalData({ ...localData, trim: e.target.value })}
           />
@@ -274,7 +274,7 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
 
         <FieldWrapper label="Typ Nadwozia" auto={isAutoFilled("type")}>
           <select
-            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-gray-800 dark:text-white"
+            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-black/80 dark:text-white"
             value={localData.type}
             onChange={(e) => setLocalData({ ...localData, type: e.target.value })}
           >
@@ -294,7 +294,7 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
 
         <FieldWrapper label="Rok Produkcji" auto={isAutoFilled("year")}>
           <select
-            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-gray-800 dark:text-white"
+            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-black/80 dark:text-white"
             value={localData.year}
             onChange={(e) => setLocalData({ ...localData, year: e.target.value })}
           >
@@ -307,7 +307,7 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
 
         <FieldWrapper label="Kolor" auto={isAutoFilled("color")}>
           <select
-            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-gray-800 dark:text-white"
+            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-black/80 dark:text-white"
             value={colors.includes(localData.color) ? localData.color : (localData.color ? "__OTHER__" : "")}
             onChange={(e) => {
               const v = e.target.value;
@@ -329,7 +329,7 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
           <input
             type="number"
             placeholder="0"
-            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-600"
+            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-black/80 dark:text-white placeholder-gray-400 dark:placeholder-gray-600"
             value={localData.mileage}
             onChange={(e) => setLocalData({ ...localData, mileage: e.target.value })}
           />
@@ -337,7 +337,7 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
 
         <FieldWrapper label="Napęd" auto={isAutoFilled("drivetrain")}>
           <select
-            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-gray-800 dark:text-white"
+            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-black/80 dark:text-white"
             value={localData.drivetrain}
             onChange={(e) => setLocalData({ ...localData, drivetrain: e.target.value })}
           >
@@ -350,7 +350,7 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
 
         <FieldWrapper label="Skrzynia Biegów" auto={isAutoFilled("transmission")}>
           <select
-            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-gray-800 dark:text-white"
+            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-black/80 dark:text-white"
             value={localData.transmission}
             onChange={(e) => setLocalData({ ...localData, transmission: e.target.value })}
           >
@@ -362,7 +362,7 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
 
         <FieldWrapper label="Paliwo" auto={isAutoFilled("fuel")}>
           <select
-            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-gray-800 dark:text-white"
+            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-black/80 dark:text-white"
             value={localData.fuel}
             onChange={(e) => setLocalData({ ...localData, fuel: e.target.value })}
           >
@@ -379,7 +379,7 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
           <input
             type="number"
             placeholder="KM"
-            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-600"
+            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-black/80 dark:text-white placeholder-gray-400 dark:placeholder-gray-600"
             value={localData.horsepower}
             onChange={(e) => setLocalData({ ...localData, horsepower: e.target.value })}
           />
@@ -390,7 +390,7 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
             list="engines"
             type="text"
             placeholder="Np. 1998"
-            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-600"
+            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-black/80 dark:text-white placeholder-gray-400 dark:placeholder-gray-600"
             value={localData.engine}
             onChange={(e) => setLocalData({ ...localData, engine: e.target.value })}
           />
@@ -403,7 +403,7 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
           <input
             type="text"
             placeholder="Np. Niemcy"
-            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-600"
+            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-black/80 dark:text-white placeholder-gray-400 dark:placeholder-gray-600"
             value={localData.country}
             onChange={(e) => setLocalData({ ...localData, country: e.target.value })}
           />
@@ -411,7 +411,7 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
 
         <FieldWrapper label="Bezwypadkowość" auto={isAutoFilled("accidentHistory")}>
           <select
-            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-gray-800 dark:text-white"
+            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-black/80 dark:text-white"
             value={localData.accidentHistory}
             onChange={(e) => setLocalData({ ...localData, accidentHistory: e.target.value })}
           >
@@ -423,7 +423,7 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
 
         <FieldWrapper label="Historia Serwisowa" auto={isAutoFilled("serviceHistory")}>
           <select
-            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-gray-800 dark:text-white"
+            className="border-2 border-gray-100 dark:border-gray-700 p-4 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-semibold bg-white dark:bg-black/80 dark:text-white"
             value={localData.serviceHistory}
             onChange={(e) => setLocalData({ ...localData, serviceHistory: e.target.value })}
           >
@@ -437,7 +437,7 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
         <div className="col-span-2">
           <div className="border-2 border-gray-50 dark:border-gray-700 rounded-2xl overflow-hidden shadow-sm">
             <div
-              className="flex items-center justify-between bg-gray-50 dark:bg-gray-700 p-5 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+              className="flex items-center justify-between bg-gray-50 dark:bg-black/70 p-5 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
               onClick={() => setShowMap(!showMap)}
             >
               <div className="flex items-center gap-3">
@@ -455,7 +455,7 @@ export default function StepOne({ nextStep, prevStep, updateFormData, formData, 
             </div>
 
             <div className={`transition-all duration-300 ease-in-out overflow-hidden ${showMap ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}>
-              <div className="p-4 bg-white dark:bg-gray-800">
+              <div className="p-4 bg-white dark:bg-black/80">
                 <CustomMap
                   location={localData.location}
                   setLocation={handleLocationChange}

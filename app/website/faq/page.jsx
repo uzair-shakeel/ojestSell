@@ -69,7 +69,7 @@ const FAQPage = () => {
   return (
     <div className="bg-gradient-to-b from-gray-50 to-white dark:from-black dark:to-black transition-colors duration-300">
       {/* Hero Section */}
-      <section className="relative h-[600px] w-[98%] mx-auto my-[10px] rounded-2xl overflow-hidden">
+      <section className="relative h-[600px] w-[98%] mx-auto py-[10px] rounded-2xl overflow-hidden">
         <div className="absolute inset-0">
           <Image
             src="/IMG_4469.jpg"
@@ -86,7 +86,7 @@ const FAQPage = () => {
               {t("faq.hero.title")}
             </h1>
           </div>
-          <div className="absolute md:bottom-20 bottom-10 left-5 right-5 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm p-2 rounded-xl shadow-lg max-w-3xl mx-auto transition-colors duration-300">
+          <div className="absolute md:bottom-20 bottom-10 left-5 right-5 bg-white/70 dark:bg-black/80/70 backdrop-blur-sm p-2 rounded-xl shadow-lg max-w-3xl mx-auto transition-colors duration-300">
             <FAQItem question={firstFaq.question} answer={firstFaq.answer} />
           </div>
         </div>

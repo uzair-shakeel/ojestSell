@@ -122,15 +122,15 @@ export default function StepFive({
   );
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg transition-colors duration-300">
+    <div className="bg-white dark:bg-black/80 rounded-lg transition-colors duration-300">
       <h2 className="text-xl font-bold mb-6 text-gray-900 dark:text-white transition-colors duration-300">
         Krok 7: Przejrzyj i Potwierdź
       </h2>
 
       <div className="space-y-8">
         {/* Basic Info Section */}
-        <div className="bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
-          <div className="px-6 py-4 bg-gray-100/50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-700">
+        <div className="bg-gray-50/50 dark:bg-black/80 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+          <div className="px-6 py-4 bg-gray-100/50 dark:bg-black/80 border-b border-gray-100 dark:border-gray-700">
             <h3 className="font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest text-xs">Informacje Podstawowe</h3>
           </div>
           <div className="p-6">
@@ -164,8 +164,8 @@ export default function StepFive({
         </div>
 
         {/* Condition Section */}
-        <div className="bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
-          <div className="px-6 py-4 bg-gray-100/50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-700">
+        <div className="bg-gray-50/50 dark:bg-black/80 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+          <div className="px-6 py-4 bg-gray-100/50 dark:bg-black/80 border-b border-gray-100 dark:border-gray-700">
             <h3 className="font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest text-xs">Stan Pojazdu</h3>
           </div>
           <div className="p-6">
@@ -182,8 +182,8 @@ export default function StepFive({
         </div>
 
         {/* Financial Info Section */}
-        <div className="bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
-          <div className="px-6 py-4 bg-gray-100/50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-700">
+        <div className="bg-gray-50/50 dark:bg-black/80 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+          <div className="px-6 py-4 bg-gray-100/50 dark:bg-black/80 border-b border-gray-100 dark:border-gray-700">
             <h3 className="font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest text-xs">Finanse i Sprzedaż</h3>
           </div>
           <div className="p-6">
@@ -204,13 +204,13 @@ export default function StepFive({
         </div>
 
         {/* Location Section */}
-        <div className="bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
-          <div className="px-6 py-4 bg-gray-100/50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-700">
+        <div className="bg-gray-50/50 dark:bg-black/80 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+          <div className="px-6 py-4 bg-gray-100/50 dark:bg-black/80 border-b border-gray-100 dark:border-gray-700">
             <h3 className="font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest text-xs">Lokalizacja</h3>
           </div>
           <div className="p-6">
             {locationDetails.city && (
-              <div className="flex items-center gap-3 mb-6 p-4 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-sm">
+              <div className="flex items-center gap-3 mb-6 p-4 bg-white dark:bg-black/80 border border-gray-100 dark:border-gray-700 rounded-xl shadow-sm">
                 <div className="bg-blue-600 p-2 rounded-lg">
                   <FaMapMarkerAlt className="text-white" size={16} />
                 </div>
@@ -275,7 +275,7 @@ export default function StepFive({
       {/* Global Processing Overlay if loading */}
       {loading && (
         <div className="fixed inset-0 bg-black/50 z-50 flex flex-col items-center justify-center text-white backdrop-blur-sm">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-2xl flex flex-col items-center text-gray-900 dark:text-white">
+          <div className="bg-white dark:bg-black/80 p-6 rounded-xl shadow-2xl flex flex-col items-center text-gray-900 dark:text-white">
             <div className="w-16 h-16 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin mb-4"></div>
             <h3 className="text-xl font-bold mb-2">Tworzenie Twojego Ogłoszenia</h3>
             <p className="text-sm text-gray-500 dark:text-gray-400">Przetwarzanie zdjęć i danych...</p>

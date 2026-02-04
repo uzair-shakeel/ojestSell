@@ -94,7 +94,7 @@ export function BrowseLocations() {
   };
 
   return (
-    <section className="block py-16 bg-white dark:bg-gray-800 transition-colors duration-300">
+    <section className="block py-16 bg-white dark:bg-black/80 transition-colors duration-300">
       <div className="max-w-[1400px] w-[98%] mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white transition-colors duration-300">
           Typy Aut
@@ -104,7 +104,7 @@ export function BrowseLocations() {
           {/* Left scroll button */}
           <button
             onClick={() => scroll("left")}
-            className="absolute left-0 top-[40%] -translate-y-1/2 -translate-x-5 z-10 w-10 h-10 bg-white dark:bg-gray-900 rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-300 border border-gray-200 dark:border-gray-700"
+            className="absolute left-0 top-[40%] -translate-y-1/2 -translate-x-5 z-10 w-10 h-10 bg-white dark:bg-black/90 rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-300 border border-gray-200 dark:border-gray-700"
             aria-label={t("homepage.browseLocations.scrollLeft")}
           >
             <ChevronLeft className="h-6 w-6 text-gray-600 dark:text-white" />
@@ -144,7 +144,7 @@ export function BrowseLocations() {
           {/* Right scroll button */}
           <button
             onClick={() => scroll("right")}
-            className="absolute right-0 top-[40%] -translate-y-1/2 translate-x-5 z-10 w-10 h-10 bg-white dark:bg-gray-900 rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-300 border border-gray-200 dark:border-gray-700"
+            className="absolute right-0 top-[40%] -translate-y-1/2 translate-x-5 z-10 w-10 h-10 bg-white dark:bg-black/90 rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-300 border border-gray-200 dark:border-gray-700"
             aria-label={t("homepage.browseLocations.scrollRight")}
           >
             <ChevronRight className="h-6 w-6 text-gray-600 dark:text-white" />

@@ -120,8 +120,7 @@ const PendingApprovalScreen = ({ user }) => {
           alert("❌ Your account has been rejected. Please contact support.");
         } else {
           alert(
-            `Status refreshed! Current status: ${
-              updatedUser.approvalStatus || "Unknown"
+            `Status refreshed! Current status: ${updatedUser.approvalStatus || "Unknown"
             }`
           );
         }
@@ -138,7 +137,7 @@ const PendingApprovalScreen = ({ user }) => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-slate-950 dark:bg-black/80 flex items-center justify-center p-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -159,7 +158,7 @@ const PendingApprovalScreen = ({ user }) => {
         </div>
 
         {/* Status Card */}
-        <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 rounded-xl p-8 mb-8">
+        <div className="bg-slate-900/50 dark:bg-black backdrop-blur-xl border border-slate-700/50 rounded-xl p-8 mb-8">
           <div className="flex items-center space-x-4 mb-6">
             <div className="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
               <FiShield className="w-6 h-6 text-yellow-400" />
@@ -182,7 +181,7 @@ const PendingApprovalScreen = ({ user }) => {
         </div>
 
         {/* What Happens Next */}
-        <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 rounded-xl p-8 mb-8">
+        <div className="bg-slate-900/50 dark:bg-black backdrop-blur-xl border border-slate-700/50 rounded-xl p-8 mb-8">
           <h3 className="text-xl font-semibold text-slate-200 mb-4">
             What Happens Next?
           </h3>
@@ -226,7 +225,7 @@ const PendingApprovalScreen = ({ user }) => {
         </div>
 
         {/* Contact Support */}
-        <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 rounded-xl p-6 text-center">
+        <div className="bg-slate-900/50 dark:bg-black backdrop-blur-xl border border-slate-700/50 rounded-xl p-6 text-center">
           <div className="flex items-center justify-center space-x-2 mb-3">
             <FiMail className="w-5 h-5 text-slate-400" />
             <span className="text-slate-400">Need help?</span>
@@ -245,11 +244,10 @@ const PendingApprovalScreen = ({ user }) => {
           <button
             onClick={handleRefreshStatus}
             disabled={isRefreshing}
-            className={`flex items-center justify-center space-x-2 mx-auto px-6 py-3 rounded-lg transition-colors font-medium ${
-              isRefreshing
-                ? "bg-blue-800 text-blue-200 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700 text-white"
-            }`}
+            className={`flex items-center justify-center space-x-2 mx-auto px-6 py-3 rounded-lg transition-colors font-medium ${isRefreshing
+              ? "bg-blue-800 text-blue-200 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700 text-white"
+              }`}
           >
             <FiRefreshCw
               className={`w-5 h-5 ${isRefreshing ? "animate-spin" : ""}`}

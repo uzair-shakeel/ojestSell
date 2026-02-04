@@ -209,7 +209,7 @@ export default function AuthTabs() {
     return (
       <div className="min-h-screen flex">
         {/* Left Side - Form Section */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-gray-800 transition-colors duration-300">
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-black/80 transition-colors duration-300">
           <div className="w-full max-w-md">
             <div className="text-center mb-8">
               <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">
@@ -239,11 +239,10 @@ export default function AuthTabs() {
                       onKeyDown={(e) => handleOtpKeyDown(index, e)}
                       onPaste={handleOtpPaste}
                       ref={otpRefs[index]}
-                      className={`w-12 h-12 text-center text-xl font-semibold border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white ${
-                        otp[index]
-                          ? "border-green-500 bg-green-50"
-                          : "border-gray-300 hover:border-gray-400"
-                      }`}
+                      className={`w-12 h-12 text-center text-xl font-semibold border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white ${otp[index]
+                        ? "border-green-500 bg-green-50"
+                        : "border-gray-300 hover:border-gray-400"
+                        }`}
                       placeholder=""
                       autoComplete="one-time-code"
                     />
@@ -333,14 +332,14 @@ export default function AuthTabs() {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Form Section */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-black/70">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">
               Dołącz do Ojest
             </h1>
             <p className="text-lg text-gray-600">
-Załóż konto i rozpocznij podróż z handlem premium            </p>
+              Załóż konto i rozpocznij podróż z handlem premium            </p>
           </div>
 
           {/* Tab Navigation */}
@@ -481,7 +480,7 @@ Załóż konto i rozpocznij podróż z handlem premium            </p>
                 className="mt-1 mr-3 h-4 w-4 text-blue-600 border-gray-300 rounded"
               />
               <label htmlFor="terms" className="text-sm text-gray-700">
-                Zgadzam  
+                Zgadzam
                 {" "}
                 <a href="/terms" className="text-blue-600 hover:underline">się z Regulaminem </a>
                 {" "}i  {" "}

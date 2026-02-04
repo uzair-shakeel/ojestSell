@@ -80,14 +80,14 @@ export default function StepFour({ nextStep, prevStep, updateFormData, formData 
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg w-full transition-colors">
+    <div className="bg-white dark:bg-black/80 rounded-lg w-full transition-colors">
       <div className="mb-8">
         <h2 className="text-xl font-bold text-gray-900 dark:text-white">Krok 5: Finansowe Informacje</h2>
         <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Skonfiguruj cenę i opcje sprzedaży swojego pojazdu.</p>
       </div>
 
       <div className="space-y-8">
-        <div className="bg-gray-50/50 dark:bg-gray-900/50 p-6 rounded-2xl border border-gray-100 dark:border-gray-700">
+        <div className="bg-gray-50/50 dark:bg-black/80 p-6 rounded-2xl border border-gray-100 dark:border-gray-700">
           <label className="block text-sm font-semibold mb-4 uppercase tracking-wider text-gray-700 dark:text-gray-300">
             Opcje Sprzedaży
           </label>
@@ -95,13 +95,13 @@ export default function StepFour({ nextStep, prevStep, updateFormData, formData 
             {sellOptionsList.map((option, index) => (
               <label
                 key={index}
-                className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all cursor-pointer ${localData.sellOptions.includes(option.value) ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-900/30 shadow-sm' : 'border-gray-50 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gray-200 dark:hover:border-gray-600'}`}
+                className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all cursor-pointer ${localData.sellOptions.includes(option.value) ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-900/30 shadow-sm' : 'border-gray-50 dark:border-gray-700 bg-white dark:bg-black/80 hover:border-gray-200 dark:hover:border-gray-600'}`}
               >
                 <input
                   type="checkbox"
                   checked={localData.sellOptions.includes(option.value)}
                   onChange={() => handleCheckboxChange("sellOptions", option.value)}
-                  className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 bg-white dark:bg-gray-700"
+                  className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 bg-white dark:bg-black/70"
                 />
                 <span className={`text-sm font-bold ${localData.sellOptions.includes(option.value) ? 'text-blue-700 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300'}`}>{option.label}</span>
               </label>
@@ -109,7 +109,7 @@ export default function StepFour({ nextStep, prevStep, updateFormData, formData 
           </div>
         </div>
 
-        <div className="bg-gray-50/50 dark:bg-gray-900/50 p-6 rounded-2xl border border-gray-100 dark:border-gray-700">
+        <div className="bg-gray-50/50 dark:bg-black/80 p-6 rounded-2xl border border-gray-100 dark:border-gray-700">
           <label className="block text-sm font-semibold mb-4 uppercase tracking-wider text-gray-700 dark:text-gray-300">
             Sposób Sprzedaży
           </label>
@@ -117,13 +117,13 @@ export default function StepFour({ nextStep, prevStep, updateFormData, formData 
             {invoiceOptionsList.map((option, index) => (
               <label
                 key={index}
-                className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all cursor-pointer ${localData.invoiceOptions.includes(option.value) ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-900/30 shadow-sm' : 'border-gray-50 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gray-200 dark:hover:border-gray-600'}`}
+                className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all cursor-pointer ${localData.invoiceOptions.includes(option.value) ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-900/30 shadow-sm' : 'border-gray-50 dark:border-gray-700 bg-white dark:bg-black/80 hover:border-gray-200 dark:hover:border-gray-600'}`}
               >
                 <input
                   type="checkbox"
                   checked={localData.invoiceOptions.includes(option.value)}
                   onChange={() => handleCheckboxChange("invoiceOptions", option.value)}
-                  className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 bg-white dark:bg-gray-700"
+                  className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 bg-white dark:bg-black/70"
                 />
                 <span className={`text-sm font-bold ${localData.invoiceOptions.includes(option.value) ? 'text-blue-700 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300'}`}>{option.label}</span>
               </label>
@@ -140,7 +140,7 @@ export default function StepFour({ nextStep, prevStep, updateFormData, formData 
                   <input
                     type="number"
                     placeholder="Wprowadź cenę netto"
-                    className="border-2 border-gray-100 dark:border-gray-700 p-4 pl-12 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-bold text-lg bg-white dark:bg-gray-800 dark:text-white"
+                    className="border-2 border-gray-100 dark:border-gray-700 p-4 pl-12 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-bold text-lg bg-white dark:bg-black/80 dark:text-white"
                     value={localData.priceNetto}
                     onChange={(e) =>
                       setLocalData({ ...localData, priceNetto: e.target.value })
@@ -158,7 +158,7 @@ export default function StepFour({ nextStep, prevStep, updateFormData, formData 
                 <input
                   type="number"
                   placeholder="Wprowadź cenę"
-                  className="border-2 border-gray-100 dark:border-gray-700 p-4 pl-12 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-bold text-lg bg-white dark:bg-gray-800 dark:text-white"
+                  className="border-2 border-gray-100 dark:border-gray-700 p-4 pl-12 w-full rounded-xl h-14 focus:border-blue-500 transition-all font-bold text-lg bg-white dark:bg-black/80 dark:text-white"
                   value={localData.priceNetto}
                   onChange={(e) =>
                     setLocalData({ ...localData, priceNetto: e.target.value })
@@ -176,7 +176,7 @@ export default function StepFour({ nextStep, prevStep, updateFormData, formData 
               <input
                 type="checkbox"
                 id="isFeatured"
-                className="w-5 h-5 text-blue-600 bg-white dark:bg-gray-700 border-blue-200 dark:border-blue-500 rounded-lg focus:ring-blue-500"
+                className="w-5 h-5 text-blue-600 bg-white dark:bg-black/70 border-blue-200 dark:border-blue-500 rounded-lg focus:ring-blue-500"
                 checked={localData.isFeatured}
                 onChange={(e) => setLocalData({ ...localData, isFeatured: e.target.checked })}
               />

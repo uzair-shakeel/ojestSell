@@ -140,7 +140,7 @@ export function BrowseCategories() {
   };
 
   return (
-    <section className="py-14 bg-white dark:bg-gray-900 transition-colors duration-300">
+    <section className="py-14 bg-white dark:bg-black/90 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-end justify-between mb-6">
           <div>
@@ -183,14 +183,14 @@ export function BrowseCategories() {
           {/* <button
             aria-label="Scroll left"
             onClick={() => scroll("left")}
-            className="absolute left-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full border border-gray-300 dark:border-gray-700 flex items-center justify-center bg-white/70 dark:bg-gray-900/60 backdrop-blur text-gray-700 dark:text-gray-200"
+            className="absolute left-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full border border-gray-300 dark:border-gray-700 flex items-center justify-center bg-white/70 dark:bg-black/90/60 backdrop-blur text-gray-700 dark:text-gray-200"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
           <button
             aria-label="Scroll right"
             onClick={() => scroll("right")}
-            className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full border border-gray-300 dark:border-gray-700 flex items-center justify-center bg-white/70 dark:bg-gray-900/60 backdrop-blur text-gray-700 dark:text-gray-200"
+            className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full border border-gray-300 dark:border-gray-700 flex items-center justify-center bg-white/70 dark:bg-black/90/60 backdrop-blur text-gray-700 dark:text-gray-200"
           >
             <ChevronRight className="h-5 w-5" />
           </button> */}
@@ -218,7 +218,7 @@ function CountryCard({ country, className = "" }) {
   return (
     <Link
       href={{ pathname: "/website/cars", query }}
-      className={`relative group rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all duration-300 ${className}`}
+      className={`relative  group rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all duration-300 ${className}`}
     >
       <div className="aspect-[16/10] w-full bg-gradient-to-br from-gray-200 to-gray-100 dark:from-gray-800 dark:to-gray-900">
         {/* Background image (optional). If missing, gradient remains */}
@@ -243,9 +243,9 @@ function CountryCard({ country, className = "" }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
 
         {/* Top-left flag chip */}
-        <div className="absolute top-3 left-3 flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 dark:bg-gray-900/80 backdrop-blur text-sm shadow">
+        <div className="absolute top-3 left-3 flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 dark:bg-black/90 backdrop-blur text-sm shadow">
           <img src={flag} alt="" width={18} height={12} className="rounded-sm" />
-          <span className="font-medium text-gray-800 dark:text-gray-200">{name}</span>
+          <span className="font-medium text-gray-800">{name}</span>
         </div>
 
         {/* Title + tagline + CTA */}

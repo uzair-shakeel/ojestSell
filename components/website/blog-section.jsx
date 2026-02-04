@@ -43,7 +43,7 @@ export function BlogSection() {
   const { t } = useLanguage();
 
   return (
-    <section className="py-12 bg-white dark:bg-gray-800 transition-colors duration-300">
+    <section className="py-12 bg-white dark:bg-black/80 transition-colors duration-300">
       <div className=" mx-auto px-4 max-w-7xl">
         <h2 className="text-3xl md:text-4xl font-extrabold mb-10 text-gray-900 dark:text-white transition-colors duration-300 tracking-tight">
           {t("homepage.blogSection.title")}
@@ -52,7 +52,7 @@ export function BlogSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {BLOG_POSTS.map((post) => (
             <Link key={post.id} href={`/blog/${post.id}`} className="group block h-full">
-              <div className="bg-white dark:bg-gray-900 rounded-3xl overflow-hidden shadow-sm group-hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 h-full flex flex-col">
+              <div className="bg-white dark:bg-black/90 rounded-3xl overflow-hidden shadow-sm group-hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 h-full flex flex-col">
                 <div className="relative h-56 overflow-hidden">
                   <Image
                     src={post.image || "/placeholder.svg"}
@@ -60,7 +60,7 @@ export function BlogSection() {
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-500"
                   />
-                  <div className="absolute top-4 left-4 text-xs font-bold px-3 py-1.5 rounded-full bg-white/90 dark:bg-gray-900/90 backdrop-blur text-gray-900 dark:text-white shadow-lg">
+                  <div className="absolute top-4 left-4 text-xs font-bold px-3 py-1.5 rounded-full bg-white/90 dark:bg-black/60 backdrop-blur text-gray-900 dark:text-white shadow-lg">
                     {t(`homepage.blogSection.categories.${post.categoryKey}`)}
                   </div>
                 </div>
@@ -78,7 +78,7 @@ export function BlogSection() {
         </div>
 
         <div className="text-center">
-          <button className="px-8 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-full text-sm font-bold text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 inline-flex items-center gap-2">
+          <button className="px-8 py-3 bg-white dark:bg-black/80 border border-gray-200 dark:border-gray-600 rounded-full text-sm font-bold text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 inline-flex items-center gap-2">
             {t("homepage.blogSection.viewAll")} <span className="text-lg">→</span>
           </button>
         </div>

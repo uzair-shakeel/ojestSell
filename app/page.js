@@ -33,7 +33,7 @@ function HomeContent() {
   }, [searchParams, router]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-white dark:bg-gray-800 transition-colors duration-300">
+    <div className="flex flex-col min-h-screen bg-white dark:bg-black/80 transition-colors duration-300">
       <Navbar />
 
       {/* Hero Section */}

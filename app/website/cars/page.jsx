@@ -478,16 +478,18 @@ const CarsContent = () => {
   // Render
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-800">
+    <div className="min-h-screen bg-white dark:bg-black/80">
       {/* Hero Section */}
-      <HeroFeaturedCarousel />
+      <div className="dark:bg-black/80 py-3">
+        <HeroFeaturedCarousel />
+      </div>
 
       {/* Horizontal Filter Navbar */}
       <div className="w-full">
         <FilterNavbar onApplyFilters={handleApplyFilters} />
       </div>
 
-      <div className="max-w-screen-2xl mx-auto sm:py-12 flex flex-row lg:space-x-4 h-full mt-4">
+      <div className="max-w-screen-2xl dark:bg-black/80 mx-auto sm:py-12 flex flex-row lg:space-x-4 h-full ">
         {/* Desktop Sidebar (Hidden in favor of navbar) */}
         <aside className="w-[380px] hidden sticky top-0 self-start h-fit">
           <FilterSidebar onApplyFilters={handleApplyFilters} />
@@ -496,7 +498,7 @@ const CarsContent = () => {
         {/* Main Content Area */}
         <main className="h-full w-full px-0 sm:px-4">
           {/* Controls: View Toggle & Sort */}
-          <div className="bg-white dark:bg-gray-800 flex flex-col lg:flex-row justify-between items-center py-1 pb-2 px-[10px] sm:px-2 gap-2 lg:gap-4">
+          <div className="bg-white dark:bg-black/80 flex flex-col lg:flex-row justify-between items-center py-1 pb-2 px-[10px] sm:px-2 gap-2 lg:gap-4">
 
             {/* View Toggle Buttons */}
             <div className="hidden lg:flex justify-center lg:justify-end w-full lg:w-auto order-1 lg:order-2">

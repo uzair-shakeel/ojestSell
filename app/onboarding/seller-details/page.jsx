@@ -243,7 +243,7 @@ const SellerDetailsPage = () => {
       }}
     >
       <div className="w-full max-w-2xl ">
-        <div className="bg-white/80 backdrop-blur-sm  rounded-2xl shadow ring-1 ring-black/5 p-6">
+        <div className="bg-white/80 dark:bg-black/80 backdrop-blur-sm  rounded-2xl shadow ring-1 ring-black/5 p-6">
           {/* Progress */}
           <div className="mb-6">
             <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-800 mb-2 transition-colors duration-300">
@@ -261,48 +261,72 @@ const SellerDetailsPage = () => {
           </div>
 
           {/* Question */}
-          <h2 className="text-2xl font-semibold text-gray-900  mb-4 text-center transition-colors duration-300">
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white  mb-4 text-center transition-colors duration-300">
             {current?.title}
           </h2>
           {current?.key === "sellerType" && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Private seller */}
               <button
                 type="button"
                 onClick={() => setSellerType("private")}
-                className={`p-4 rounded-xl border text-left transition ${
-                  sellerType === "private"
-                    ? "border-blue-600 ring-1 ring-blue-200 bg-blue-50"
-                    : "border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 group"
-                }`}
+                className={`p-4 rounded-xl border text-left transition
+      ${sellerType === "private"
+                    ? "border-blue-500 ring-1 ring-blue-500/30 bg-blue-50 dark:bg-blue-900/30 dark:border-blue-400"
+                    : "border-gray-200 bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800"
+                  }`}
               >
-                <div className={`font-medium transition-colors duration-300 ${
-                  sellerType === "private" ? "text-gray-900" : "text-gray-900 group-hover:dark:text-white"
-                }`}>Private seller</div>
-                <div className={`text-xs mt-1 transition-colors duration-300 ${
-                  sellerType === "private" ? "text-gray-600" : "text-gray-600 group-hover:dark:text-gray-500"
-                }`}>
+                <div
+                  className={`font-medium transition-colors
+        ${sellerType === "private"
+                      ? "text-gray-900 dark:text-white"
+                      : "text-gray-900 dark:text-gray-200"
+                    }`}
+                >
+                  Private seller
+                </div>
+                <div
+                  className={`text-xs mt-1 transition-colors
+        ${sellerType === "private"
+                      ? "text-gray-600 dark:text-gray-300"
+                      : "text-gray-600 dark:text-gray-400"
+                    }`}
+                >
                   Ideal for individuals listing personal vehicles
                 </div>
               </button>
+
+              {/* Company */}
               <button
                 type="button"
                 onClick={() => setSellerType("company")}
-                className={`p-4 rounded-xl border text-left transition ${
-                  sellerType === "company"
-                    ? "border-blue-600 ring-1 ring-blue-200 bg-blue-50"
-                    : "border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 group"
-                }`}
+                className={`p-4 rounded-xl border text-left transition
+      ${sellerType === "company"
+                    ? "border-blue-500 ring-1 ring-blue-500/30 bg-blue-50 dark:bg-blue-900/30 dark:border-blue-400"
+                    : "border-gray-200 bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800"
+                  }`}
               >
-                <div className={`font-medium transition-colors duration-300 ${
-                  sellerType === "company" ? "text-gray-900" : "text-gray-900 group-hover:dark:text-white"
-                }`}>Company</div>
-                <div className={`text-xs mt-1 transition-colors duration-300 ${
-                  sellerType === "company" ? "text-gray-600" : "text-gray-600 group-hover:dark:text-gray-500"
-                }`}>
+                <div
+                  className={`font-medium transition-colors
+        ${sellerType === "company"
+                      ? "text-gray-900 dark:text-white"
+                      : "text-gray-900 dark:text-gray-200"
+                    }`}
+                >
+                  Company
+                </div>
+                <div
+                  className={`text-xs mt-1 transition-colors
+        ${sellerType === "company"
+                      ? "text-gray-600 dark:text-gray-300"
+                      : "text-gray-600 dark:text-gray-400"
+                    }`}
+                >
                   Great for dealerships and automotive businesses
                 </div>
               </button>
             </div>
+
           )}
 
           {/* Field by step */}
@@ -423,11 +447,10 @@ const SellerDetailsPage = () => {
                           return { ...prev, brands: Array.from(list) };
                         });
                       }}
-                      className={`px-3 py-2 rounded-md text-sm border transition ${
-                        active
-                          ? "bg-blue-600 text-white border-blue-600"
-                          : "border-gray-200 hover:bg-gray-50"
-                      }`}
+                      className={`px-3 py-2 rounded-md text-sm border transition ${active
+                        ? "bg-blue-600 text-white border-blue-600"
+                        : "border-gray-200 hover:bg-gray-50"
+                        }`}
                     >
                       {brand}
                     </button>
@@ -496,11 +519,10 @@ const SellerDetailsPage = () => {
               type="button"
               onClick={back}
               disabled={stepIndex === 0}
-              className={`px-4 py-2 rounded-md border text-black transition-colors duration-300 ${
-                stepIndex === 0
-                  ? "opacity-40 cursor-not-allowed text-black"
-                  : "hover:bg-gray-50 dark:hover:bg-gray-800"
-              }`}
+              className={`px-4 py-2 rounded-md border text-black dark:text-white transition-colors duration-300 ${stepIndex === 0
+                ? "opacity-40 cursor-not-allowed text-black"
+                : "hover:bg-gray-50 dark:hover:bg-gray-800"
+                }`}
             >
               Back
             </button>
@@ -510,7 +532,7 @@ const SellerDetailsPage = () => {
                 <button
                   type="button"
                   onClick={skip}
-                  className="px-4 py-2 rounded-md text-gray-700 dark:text-black hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-300"
+                  className="px-4 py-2 rounded-md text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-300"
                 >
                   Skip
                 </button>
@@ -521,11 +543,10 @@ const SellerDetailsPage = () => {
                   type="button"
                   onClick={next}
                   disabled={!canProceed()}
-                  className={`px-6 py-2 rounded-md ${
-                    canProceed()
-                      ? "bg-blue-600 hover:bg-blue-700 text-white"
-                      : "bg-gray-200 text-gray-500 cursor-not-allowed"
-                  }`}
+                  className={`px-6 py-2 rounded-md ${canProceed()
+                    ? "bg-blue-600 hover:bg-blue-700 text-white"
+                    : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                    }`}
                 >
                   Next
                 </button>
@@ -534,11 +555,10 @@ const SellerDetailsPage = () => {
                   type="button"
                   onClick={handleSubmit}
                   disabled={loading}
-                  className={`px-6 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
-                    loading
-                      ? "bg-blue-400 cursor-not-allowed"
-                      : "bg-blue-600 hover:bg-blue-700 text-white"
-                  }`}
+                  className={`px-6 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${loading
+                    ? "bg-blue-400 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-700 text-white"
+                    }`}
                 >
                   {loading ? "Saving..." : "Finish"}
                 </button>

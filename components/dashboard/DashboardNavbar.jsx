@@ -43,7 +43,7 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
   const handleNotifClick = async (n) => {
     try {
       if (!n.read) await markRead(n.id);
-    } catch {}
+    } catch { }
     setOpenNotif(false);
     router.push(getNotifTarget(n));
   };
@@ -73,12 +73,12 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
   // Logout moved to Sidebar
 
   return (
-    <header className="w-full h-16 px-4 bg-white dark:bg-gray-900 shadow-md flex justify-between md:justify-end items-center z-30 sticky top-0 transition-colors duration-300">
+    <header className="w-full h-16 px-4 bg-white dark:bg-black/90 shadow-md flex justify-between md:justify-end items-center z-30 sticky top-0 transition-colors duration-300">
       {/* Logo */}
       <Link href="/">
         <img src="/logo.png" alt="Ojest Logo" className="h-10 w-auto md:hidden" />
       </Link>
-    
+
 
       <div className="flex items-center space-x-3 sm:mx-4">
         {/* Theme Toggle */}
@@ -98,7 +98,7 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
             )}
           </button>
           {openNotif && (
-            <div className="absolute right-0 mt-2 w-80 max-w-[90vw] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden">
+            <div className="absolute right-0 mt-2 w-80 max-w-[90vw] bg-white dark:bg-black/80 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden">
               <div className="flex items-center justify-between px-3 py-2 border-b border-gray-100 dark:border-gray-700">
                 <div className="text-sm font-semibold text-gray-900 dark:text-white">Powiadomienia</div>
                 <button onClick={markAll} className="text-xs text-blue-600 hover:underline">Oznacz wszystkie jako przeczytane</button>
@@ -154,7 +154,7 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
         {/* Add Listing Button */}
         <button
           onClick={() => router.push("/dashboard/cars/add")}
-          className="hidden md:block bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 px-4 py-2 rounded-full shadow hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white transition-colors duration-300"
+          className="hidden md:block bg-white dark:bg-black/90 border border-gray-300 dark:border-gray-700 px-4 py-2 rounded-full shadow hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white transition-colors duration-300"
         >
           Add Listing
         </button>
@@ -184,13 +184,13 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
             <FiX className="w-6 h-6" />
           ) : (
             <>
-            <FiMenu className="w-6 h-6 hidden md:block" />
-            <Avatar
-              src={user.image || user.profilePicture}
-              alt={user.firstName || user.email || "User"}
-              size={24}
-              className="md:hidden"
-            />
+              <FiMenu className="w-6 h-6 hidden md:block" />
+              <Avatar
+                src={user.image || user.profilePicture}
+                alt={user.firstName || user.email || "User"}
+                size={24}
+                className="md:hidden"
+              />
             </>
           )}
         </button>

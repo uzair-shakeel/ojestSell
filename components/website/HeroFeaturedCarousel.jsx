@@ -120,7 +120,7 @@ export default function HeroFeaturedCarousel() {
   }
 
   return (
-    <section className="relative max-w-screen-2xl mx-auto w-[98%] my-3 rounded-2xl overflow-hidden">
+    <section className="relative  max-w-screen-2xl mx-auto w-[98%] rounded-2xl overflow-hidden">
       <div className="relative">
         <Swiper
           modules={[Navigation, Autoplay, A11y]}

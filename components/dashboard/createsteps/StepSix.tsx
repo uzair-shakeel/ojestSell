@@ -110,7 +110,7 @@ export default function StepSix({ nextStep, prevStep, formData, updateFormData }
     };
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8 max-w-3xl mx-auto transition-colors">
+        <div className="bg-white dark:bg-black/80 rounded-xl shadow-sm p-8 max-w-3xl mx-auto transition-colors">
             <div className="text-center mb-10">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-50 dark:bg-blue-900/30 rounded-full mb-4">
                     <Sparkles className="text-blue-600 dark:text-blue-400 w-8 h-8" />
@@ -122,9 +122,9 @@ export default function StepSix({ nextStep, prevStep, formData, updateFormData }
                 </p>
             </div>
 
-            <div className="bg-gray-50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-700 p-8 min-h-[400px] relative">
+            <div className="bg-gray-50 dark:bg-black/80 rounded-2xl border border-gray-100 dark:border-gray-700 p-8 min-h-[400px] relative">
                 {isGenerating ? (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl z-10">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 dark:bg-black/80/80 backdrop-blur-sm rounded-2xl z-10">
                         <Loader2 className="w-12 h-12 text-blue-600 animate-spin mb-4" />
                         <p className="text-gray-900 dark:text-white font-bold text-lg">Generowanie opisu...</p>
                         <p className="text-gray-500 dark:text-gray-400 text-sm mt-2">To może potrwać kilka sekund</p>

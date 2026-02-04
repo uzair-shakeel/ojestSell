@@ -281,7 +281,7 @@ export default function FilterNavbar({ onApplyFilters }) {
     <>
       <div
         ref={filterRef}
-        className={`bg-white max-w-[1480px] mx-auto dark:bg-gray-800 z-50 ${isSticky
+        className={`bg-white max-w-[1480px] mx-auto dark:bg-black/70 z-50 ${isSticky
           ? 'fixed top-0 left-0 right-0 shadow-xl backdrop-blur-sm bg-white/70'
           : 'relative'
           }`}

@@ -18,7 +18,7 @@ const Pagination = ({
     const calculateDisplayPages = () => {
       const pages = [];
       const maxVisiblePages = 5;
-      
+
       if (totalPages <= maxVisiblePages) {
         // Show all pages if total is small
         for (let i = 1; i <= totalPages; i++) {
@@ -37,7 +37,7 @@ const Pagination = ({
           pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
         }
       }
-      
+
       setDisplayPages(pages);
     };
 
@@ -65,8 +65,8 @@ const Pagination = ({
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   return (
-    <div className={`w-full flex flex-col sm:flex-row justify-center items-center py-6 px-4 bg-white dark:bg-gray-800 ${className}`}>
-     
+    <div className={`w-full flex flex-col sm:flex-row justify-center items-center py-6 px-4 bg-white dark:bg-black/10  ${className}`}>
+
 
       {/* Pagination controls */}
       <div className="flex items-center gap-1">
@@ -74,11 +74,10 @@ const Pagination = ({
         <button
           onClick={() => handlePageChange(1)}
           disabled={currentPage === 1}
-          className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-            currentPage === 1
-              ? "text-gray-400 cursor-not-allowed"
-              : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-          }`}
+          className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${currentPage === 1
+            ? "text-gray-400 cursor-not-allowed"
+            : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+            }`}
           aria-label="First page"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,11 +89,10 @@ const Pagination = ({
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-            currentPage === 1
-              ? "text-gray-400 cursor-not-allowed"
-              : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-          }`}
+          className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${currentPage === 1
+            ? "text-gray-400 cursor-not-allowed"
+            : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+            }`}
           aria-label="Previous page"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -120,11 +118,10 @@ const Pagination = ({
               <button
                 key={page}
                 onClick={() => handlePageChange(page)}
-                className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                  currentPage === page
-                    ? "bg-blue-500 text-white shadow-sm"
-                    : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                }`}
+                className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${currentPage === page
+                  ? "bg-blue-500 text-white shadow-sm"
+                  : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  }`}
                 aria-label={`Page ${page}`}
                 aria-current={currentPage === page ? "page" : undefined}
               >
@@ -138,11 +135,10 @@ const Pagination = ({
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-            currentPage === totalPages
-              ? "text-gray-400 cursor-not-allowed"
-              : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-          }`}
+          className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${currentPage === totalPages
+            ? "text-gray-400 cursor-not-allowed"
+            : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+            }`}
           aria-label="Next page"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -154,11 +150,10 @@ const Pagination = ({
         <button
           onClick={() => handlePageChange(totalPages)}
           disabled={currentPage === totalPages}
-          className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-            currentPage === totalPages
-              ? "text-gray-400 cursor-not-allowed"
-              : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-          }`}
+          className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${currentPage === totalPages
+            ? "text-gray-400 cursor-not-allowed"
+            : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+            }`}
           aria-label="Last page"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

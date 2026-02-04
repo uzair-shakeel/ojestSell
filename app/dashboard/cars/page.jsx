@@ -43,7 +43,7 @@ export default function DashboardCarsPage() {
   // Handle the case when there's no user or still loading
   if (isLoading || !user) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-gray-800">
+      <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-black/80">
         <div className="w-16 h-16 border-4 border-blue-100 dark:border-blue-900 border-t-blue-600 rounded-full animate-spin mb-4"></div>
         <p className="text-gray-400 dark:text-gray-500 font-medium">Ładowanie...</p>
       </div>
@@ -51,7 +51,7 @@ export default function DashboardCarsPage() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="p-8 max-w-7xl mx-auto dark:bg-black/80">
       <div className="flex justify-between items-end mb-12">
         <div>
           <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight transition-colors">Moje Auta</h1>
@@ -88,8 +88,8 @@ export default function DashboardCarsPage() {
           <p className="text-gray-400 dark:text-gray-500 font-medium animate-pulse">Ładowanie Twoich aut...</p>
         </div>
       ) : cars.length === 0 ? (
-        <div className="text-center py-24 bg-gray-50 dark:bg-gray-800/50 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-700 transition-colors">
-          <div className="w-24 h-24 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-gray-100 dark:border-gray-700">
+        <div className="text-center py-24 bg-gray-50 dark:bg-black/80/50 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-700 transition-colors">
+          <div className="w-24 h-24 bg-white dark:bg-black/80 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-gray-100 dark:border-gray-700">
             <svg
               className="h-10 w-10 text-gray-300 dark:text-gray-600"
               fill="none"

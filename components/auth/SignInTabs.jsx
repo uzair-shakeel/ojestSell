@@ -116,14 +116,14 @@ export default function SignInTabs() {
       </div>
 
       {/* Right Side - Form Section */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-black/70">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">
               Witamy ponownie
             </h1>
             <p className="text-lg text-gray-600">
-Zaloguj się, aby uzyskać dostęp do swojego konta i kontynuować podróż razem z Nami            </p>
+              Zaloguj się, aby uzyskać dostęp do swojego konta i kontynuować podróż razem z Nami            </p>
           </div>
 
           {/* Tab Navigation */}
@@ -232,7 +232,7 @@ Zaloguj się, aby uzyskać dostęp do swojego konta i kontynuować podróż raze
 
           <div className="mt-8 text-center">
             <p className="text-gray-600">
-              Nie masz konta? 
+              Nie masz konta?
               <Link
                 href="/sign-up"
                 className="text-blue-600 ml-2 hover:text-blue-700 font-medium"
