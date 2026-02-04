@@ -343,7 +343,7 @@ const BuyerRequestsDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6 transition-colors duration-300">
+    <div className="min-h-screen bg-gray-50 dark:bg-black/70 p-6 transition-colors duration-300">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">

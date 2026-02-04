@@ -40,6 +40,14 @@ export default function CarCard({ car, viewMode = 'grid' }) {
     return translations[fuel] || fuel;
   };
 
+  const toTitleCase = (text) =>
+    text
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+
+
   const translateTransmission = (transmission) => {
     const translations = {
       'Automatic': 'Automat',
@@ -138,7 +146,7 @@ export default function CarCard({ car, viewMode = 'grid' }) {
         <div className="mx-2 bg-transparent rounded-2xl overflow-hidden relative transition-all duration-300">
           {/* Hover overlay shade */}
           <div className="absolute inset-0 bg-black/0 hover:bg-black/20 dark:hover:bg-white/20 transition-all duration-300 z-10 pointer-events-none rounded-2xl" />
-          <div className="relative h-[260px] md:h-48 lg:h-[220px] overflow-hidden">
+          <div className="relative h-[260px] md:h-48 lg:h-[220px] overflow-hidden rounded-2xl">
             {car?.isFeatured && (car?.images?.length ?? 0) >= 3 ? (
               <div className="grid grid-cols-2 grid-rows-2 h-full gap-0.5">
                 <div className="relative col-span-2 row-span-1">
@@ -197,8 +205,9 @@ export default function CarCard({ car, viewMode = 'grid' }) {
 
             {car?.isFeatured && (
               <div className="absolute top-3 right-3">
-                <div className="inline-flex items-center gap-1.5 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full shadow-xl border border-white/20">
-                  <Zap className="w-3 h-3 fill-current" /> Promowany
+                <div className="inline-flex items-center gap-1.5 bg-white/80 text-black text-[10px] font-black uppercase tracking-wider px-1.5 py-1 rounded-full shadow-xl">
+                  <img src="/logo-icon.png" alt="" width={28} height={28} />
+
                 </div>
               </div>
             )}
@@ -207,8 +216,10 @@ export default function CarCard({ car, viewMode = 'grid' }) {
           <div className="py-4 px-1 bg-transparent">
             <div className="mb-1">
               <h3 className="text-[21px] font-bold text-gray-900 dark:text-white leading-tight group-hover:text-blue-600 transition-colors">
-                {car.year} {car.make} {car.model}
+                {toTitleCase(`${car.year} ${car.make} ${car.model}`)}
               </h3>
+
+
             </div>
 
             <div className="space-y-1.5">
@@ -221,8 +232,8 @@ export default function CarCard({ car, viewMode = 'grid' }) {
                 ].filter(Boolean).join(', ')}. Stan techniczny i wizualny oceniany jako wzorowy.
               </p>
 
-              <div className="text-[15px] text-gray-400 dark:text-gray-500 font-bold pt-1 uppercase tracking-tight">
-                {getSellerName()}
+              <div className="text-[12px] text-gray-800 dark:text-gray-800 font-bold  uppercase tracking-tight">
+                {locationDetails.city || 'POLSKA'}
               </div>
             </div>
           </div>
