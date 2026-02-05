@@ -116,13 +116,13 @@ export function CarsNearMe() {
             </Swiper>
 
             {/* Custom Navigation Buttons */}
-            <button className="cars-swiper-prev absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 dark:bg-black/80/90 backdrop-blur-sm shadow-xl rounded-full p-4 hover:scale-110 active:scale-95 transition-all duration-300 -ml-5 border border-white/20 dark:border-gray-700 text-gray-800 dark:text-white group">
+            <button className="cars-swiper-prev absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 dark:bg-black/80 backdrop-blur-sm shadow-xl rounded-full p-4 hover:scale-110 active:scale-95 transition-all duration-300 -ml-5 border border-white/20 dark:border-gray-700 text-gray-800 dark:text-white group">
               <FaChevronLeft
                 size={20}
                 className="group-hover:-translate-x-0.5 transition-transform"
               />
             </button>
-            <button className="cars-swiper-next absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 dark:bg-black/80/90 backdrop-blur-sm shadow-xl rounded-full p-4 hover:scale-110 active:scale-95 transition-all duration-300 -mr-5 border border-white/20 dark:border-gray-700 text-gray-800 dark:text-white group">
+            <button className="cars-swiper-next absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 dark:bg-black/80 backdrop-blur-sm shadow-xl rounded-full p-4 hover:scale-110 active:scale-95 transition-all duration-300 -mr-5 border border-white/20 dark:border-gray-700 text-gray-800 dark:text-white group">
               <FaChevronRight
                 size={20}
                 className="group-hover:translate-x-0.5 transition-transform"

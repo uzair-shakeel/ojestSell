@@ -196,29 +196,36 @@ export default function CarCard({ car, viewMode = 'grid' }) {
 
             {/* Price overlay */}
             <div className="absolute bottom-3 left-3 bg-gray-900/90 backdrop-blur-md px-3 py-1.5 rounded-xl shadow-lg border border-white/10">
-              <div className="text-sm font-black text-white tracking-tighter">
+              <div className="text-sm font-semibold  text-white">
                 {car.financialInfo?.priceNetto
                   ? `${car.financialInfo.priceNetto.toLocaleString('pl-PL')} zł`
                   : 'Cena do negocjacji'}
               </div>
             </div>
 
+            {/* Simple Featured Shade & Logo */}
             {car?.isFeatured && (
-              <div className="absolute top-3 right-3">
-                <div className="inline-flex items-center gap-1.5 bg-white/80 text-black text-[10px] font-black uppercase tracking-wider px-1.5 py-1 rounded-full shadow-xl">
-                  <img src="/logo-icon.png" alt="" width={28} height={28} />
-
-                </div>
+              <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-bl from-blue-900/30 to-transparent pointer-events-none z-20 flex items-start justify-end p-3 rounded-tr-2xl">
+                <img
+                  src="/logooo.png"
+                  alt="Premium"
+                  className="w-8 h-8 object-contain brightness-0 invert opacity-70"
+                />
               </div>
             )}
+
+
+
           </div>
 
           <div className="py-4 px-1 bg-transparent">
             <div className="mb-1">
-              <h3 className="text-[21px] font-bold text-gray-900 dark:text-white leading-tight group-hover:text-blue-600 transition-colors">
-                {toTitleCase(`${car.year} ${car.make} ${car.model}`)}
-              </h3>
 
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="text-[21px] font-bold text-gray-900 dark:text-white leading-tight group-hover:text-blue-600 transition-colors">
+                  {toTitleCase(`${car.year} ${car.make} ${car.model}`)}
+                </h3>
+              </div>
 
             </div>
 
@@ -232,7 +239,7 @@ export default function CarCard({ car, viewMode = 'grid' }) {
                 ].filter(Boolean).join(', ')}. Stan techniczny i wizualny oceniany jako wzorowy.
               </p>
 
-              <div className="text-[12px] text-gray-800 dark:text-gray-800 font-bold  uppercase tracking-tight">
+              <div className="text-[15px] text-gray-600 dark:text-gray-400 line-clamp-2 leading-snug">
                 {locationDetails.city || 'POLSKA'}
               </div>
             </div>
@@ -256,9 +263,11 @@ export default function CarCard({ car, viewMode = 'grid' }) {
         }
       }}
     >
-      <div className="mx-2 bg-white dark:bg-black/90 rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-row border border-gray-100 dark:border-gray-800 h-[140px] xs:h-[160px] sm:h-[200px] md:h-[260px]">
+      <div className="mx-2 bg-transparent rounded-2xl overflow-hidden transition-all duration-500 flex flex-row h-[140px] xs:h-[160px] sm:h-[200px] md:h-[260px] relative">
+        {/* Hover overlay shade */}
+        <div className="absolute inset-0 bg-black/0 hover:bg-black/20 dark:hover:bg-white/20 transition-all duration-300 z-10 pointer-events-none rounded-2xl" />
         {/* Image Section */}
-        <div className="relative w-[120px] xs:w-[150px] sm:w-[200px] md:w-[400px] h-full flex-shrink-0 overflow-hidden">
+        <div className="relative w-[120px] xs:w-[150px] sm:w-[200px] md:w-[400px] h-full flex-shrink-0 overflow-hidden rounded-2xl">
           {car?.isFeatured && (car?.images?.length ?? 0) >= 3 ? (
             <div className="flex h-full w-full gap-0.5">
               <div className="relative w-2/3 h-full">
@@ -296,86 +305,48 @@ export default function CarCard({ car, viewMode = 'grid' }) {
           {/* Gradient Overlay for badges */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60" />
 
+          {/* Simple Featured Shade & Logo (List View) */}
           {car?.isFeatured && (
-            <div className="absolute top-2 left-2 md:top-4 md:left-4">
-              <div className="inline-flex items-center gap-1 md:gap-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[7px] xs:text-[8px] md:text-[10px] font-black uppercase tracking-widest px-1.5 py-0.5 md:px-3 md:py-1 rounded-full shadow-xl border border-white/20">
-                <Zap className="w-2 h-2 md:w-3 md:h-3 fill-current" /> Promowany
-              </div>
+            <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-bl from-black/50 to-transparent pointer-events-none z-20 flex items-start justify-end p-2 sm:p-4">
+              <img
+                src="/logooo.png"
+                alt="Premium"
+                className="w-5 h-5 sm:w-8 sm:h-8 object-contain brightness-0 invert opacity-70"
+              />
             </div>
           )}
+
+
+
         </div>
 
         {/* Content Section */}
-        <div className="flex-1 p-3 xs:p-4 md:p-8 flex flex-col justify-between bg-white dark:bg-black/90 min-w-0">
-          <div className="flex flex-col md:flex-row justify-between items-start gap-1 md:gap-4">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-1 md:gap-2 mb-0.5 md:mb-1">
+        <div className="flex-1 p-3 xs:p-4 md:p-8 flex flex-col justify-center bg-transparent min-w-0">
+          <div className="flex flex-col gap-1 md:gap-3">
+            <h3 className="text-sm xs:text-base sm:text-lg md:text-3xl font-bold text-gray-900 dark:text-white group-hover:text-blue-600 transition-colors leading-tight truncate">
+              {car.year} {car.make} {car.model}
+            </h3>
 
+            <p className="text-[10px] xs:text-xs md:text-[17px] text-gray-600 dark:text-gray-400 line-clamp-2 md:line-clamp-none leading-snug">
+              {[
+                car.mileage ? `${car.mileage.toLocaleString('pl-PL')} km` : null,
+                translateTransmission(car.transmission),
+                car.engine ? `${car.engine} cm3` : null,
+                translateFuelType(car.fuel)
+              ].filter(Boolean).join(', ')}. Stan techniczny i wizualny oceniany jako wzorowy.
+            </p>
+
+            <div className="flex flex-row justify-between items-center mt-1 md:mt-4">
+              <div className="text-[10px] md:text-[16px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-tight">
+                {locationDetails.city || 'POLSKA'}
               </div>
-              <h3 className="text-sm xs:text-base sm:text-lg md:text-3xl font-black text-gray-900 dark:text-white mb-1 md:mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-none tracking-tight truncate">
-                {car.year} {car.make} {car.model}
-              </h3>
 
-              <div className="flex flex-wrap items-center gap-1.5 md:gap-2 text-gray-600 dark:text-gray-300 mb-2 md:mb-3">
-                <span className="text-[10px] md:text-sm font-bold">{car.mileage || '0'} km</span>
-                <div className="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-500" />
-                <span className="text-[10px] md:text-sm font-bold">{translateFuelType(car.fuel) || 'N/A'}</span>
-                <div className="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-500" />
-                <span className="text-[10px] md:text-sm font-bold">{car.engine ? `${car.engine} cm3` : 'N/A'}</span>
-                <div className="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-500" />
-                <span className="text-[10px] md:text-sm font-bold">{translateTransmission(car.transmission) || 'N/A'}</span>
-              </div>
-
-              <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
-                <span className="text-[10px] md:text-sm font-bold truncate max-w-[150px]">
-                  {locationDetails.city ? `${locationDetails.city}, ${locationDetails.state}` : 'Polska'}
-                </span>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-start md:items-end">
-              <div className="text-base xs:text-lg sm:text-xl md:text-4xl font-black text-gray-900 dark:text-white tracking-tighter leading-none">
+              <div className="text-sm xs:text-base sm:text-xl md:text-4xl font-black text-gray-900 dark:text-white tracking-tighter">
                 {car.financialInfo?.priceNetto
                   ? `${car.financialInfo.priceNetto.toLocaleString('pl-PL')} zł`
                   : 'Cena do negocjacji'}
               </div>
-              {car.financialInfo?.vat && (
-                <div className="inline-flex items-center gap-1 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 px-1.5 py-0.5 rounded-md text-[7px] md:text-[10px] font-black uppercase tracking-widest mt-1 md:mt-2 border border-blue-100 dark:border-blue-800">
-                  FV 23% <div className="hidden md:block w-1 h-1 rounded-full bg-blue-400" /> <span className="hidden md:inline">Leasing</span>
-                </div>
-              )}
             </div>
-          </div>
-
-          <div className="pt-2 md:pt-6 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between mt-auto">
-            <div className="flex items-center gap-2 md:gap-4">
-              <div className="relative">
-                <img
-                  src={getSellerImage()}
-                  alt={getSellerName()}
-                  className="w-6 h-6 xs:w-8 xs:h-8 md:w-12 md:h-12 rounded-lg md:rounded-2xl object-cover border border-gray-100 dark:border-gray-800 shadow-md"
-                />
-                {getSellerType() === "Firma" && (
-                  <div className="absolute -bottom-0.5 -right-0.5 md:-bottom-1 md:-right-1 bg-blue-600 rounded-md md:rounded-lg p-0.5 md:p-1 border border-white dark:border-gray-900 shadow-lg">
-                    <ShieldCheck className="w-1.5 h-1.5 md:w-3 md:h-3 text-white" />
-                  </div>
-                )}
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[10px] xs:text-xs md:text-base font-black text-gray-900 dark:text-white leading-none mb-0.5 md:mb-1 truncate max-w-[80px] xs:max-w-[120px] md:max-w-none">
-                  {getSellerName()}
-                </span>
-                <span className="text-[7px] md:text-[10px] text-gray-500 dark:text-gray-400 font-black uppercase tracking-widest">
-                  {getSellerType()}
-                </span>
-              </div>
-            </div>
-
-            <button className="bg-blue-600 dark:bg-blue-500 text-white px-3 py-1.5 xs:px-4 xs:py-2 md:px-8 md:py-3.5 rounded-lg md:rounded-2xl text-[10px] md:text-sm font-black hover:bg-blue-700 dark:hover:bg-blue-400 transition-all duration-300 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 flex items-center gap-1 md:gap-2 group/btn">
-              <span className="hidden xs:inline">Zobacz ofertę</span>
-              <span className="xs:hidden">Oferta</span>
-              <Zap className="w-3 h-3 md:w-4 md:h-4 fill-current group-hover/btn:scale-125 transition-transform" />
-            </button>
           </div>
         </div>
       </div>
