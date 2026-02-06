@@ -14,6 +14,7 @@ import { BlogSection } from "../components/website/blog-section.jsx";
 import { Footer } from "../components/website/Footer.jsx";
 import VideoSection from "../components/website/VideoSection";
 import { FeaturedCars } from "../components/website/FeaturedCars.jsx";
+import { CarsGridSection } from "../components/website/CarsGridSection.jsx";
 import { useLanguage } from "../lib/i18n/LanguageContext";
 
 // Component that uses useSearchParams
@@ -70,14 +71,16 @@ function HomeContent() {
       </section>
 
       {/* Video Section */}
-      <VideoSection />
+      {/* <VideoSection /> */}
 
       <main className="flex-grow text-gray-900">
+        {/* <FeaturedCars /> */}
         <CarsNearMe />
-        <FeaturedCategories />
+        {/* <FeaturedCategories /> */}
         <BrowseCategories />
         <BrowseLocations />
-        <BrowseByMake />
+        <CarsGridSection />
+        {/* <BrowseByMake /> */}
         <BlogSection />
       </main>
       <Footer />
