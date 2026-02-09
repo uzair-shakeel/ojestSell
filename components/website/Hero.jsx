@@ -7,7 +7,7 @@ const Hero = () => {
     console.log("Searching with filters:", filters);
   };
   return (
-    <div className="flex w-full min-h-screen h-auto bg-blue-500 dark:bg-black/90 p-4 bg-[url('/website/hero.webp')] dark:bg-[url('/website/hero.webp')] bg-cover bg-center transition-colors duration-300">
+    <div className="flex w-full min-h-screen h-auto bg-blue-500 dark:bg-dark-panel/90 p-4 bg-[url('/website/hero.webp')] dark:bg-[url('/website/hero.webp')] bg-cover bg-center transition-colors duration-300">
 
       <div className="relative w-full mx-auto flex flex-col items-center pt-20">
         <h1 className="sm:text-6xl text-4xl font-bold text-white dark:text-white text-center transition-colors duration-300">Find Your Next Car</h1>

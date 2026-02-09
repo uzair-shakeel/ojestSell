@@ -247,10 +247,10 @@ const SellerOpportunitiesPage = () => {
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+            <h1 className="text-3xl font-extrabold text-gray-100 tracking-tight">
               Możliwości Sprzedaży 🚀
             </h1>
-            <p className="text-gray-500 font-medium mt-2 text-lg">
+            <p className="text-gray-500 dark:text-gray-300 font-medium mt-2 text-lg">
               Przeglądaj zapytania kupujących i składaj oferty swoimi samochodami.
             </p>
           </div>
@@ -287,7 +287,7 @@ const SellerOpportunitiesPage = () => {
               <div className="bg-gray-50 p-4 rounded-full mb-4">
                 <FiList className="h-8 w-8 text-gray-400" />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-1">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-gray-200 mb-1">
                 Brak aktywnych ofert
               </h3>
               <p className="text-gray-500 max-w-sm mx-auto">
@@ -321,7 +321,7 @@ const SellerOpportunitiesPage = () => {
                     {myOffers.map((offer) => (
                       <tr key={offer._id} className="hover:bg-gray-50/50 transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-bold text-gray-900">
+                          <div className="text-sm font-bold text-gray-900 dark:text-gray-200">
                             {offer.title}
                           </div>
                           <div className="text-xs text-gray-500 font-medium mt-0.5">
@@ -330,7 +330,7 @@ const SellerOpportunitiesPage = () => {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-bold text-gray-900 bg-gray-100 px-2 py-1 rounded-lg w-fit">
+                          <div className="text-sm font-bold text-gray-900 dark:text-gray-200 bg-gray-100 px-2 py-1 rounded-lg w-fit">
                             ${offer.price.toLocaleString()}
                           </div>
                         </td>
@@ -362,7 +362,7 @@ const SellerOpportunitiesPage = () => {
         <section>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
             <div>
-              <h2 className="text-2xl font-extrabold text-gray-900 flex items-center gap-2">
+              <h2 className="text-2xl font-extrabold text-gray-900 dark:text-gray-200 flex items-center gap-2">
                 <span className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg">
                   <FiSearch />
                 </span>
@@ -397,7 +397,7 @@ const SellerOpportunitiesPage = () => {
                     type="text"
                     value={filters.make}
                     onChange={handleFilterChange}
-                    className="w-full px-4 py-3 bg-gray-50 border-2 border-transparent rounded-xl focus:bg-white focus:border-blue-500 focus:ring-0 transition-all outline-none font-medium text-gray-900 placeholder:text-gray-400"
+                    className="w-full px-4 py-3 bg-gray-50 border-2 border-transparent rounded-xl focus:bg-white focus:border-blue-500 focus:ring-0 transition-all outline-none font-medium text-gray-900 dark:text-gray-200 placeholder:text-gray-400"
                     placeholder="Np. BMW"
                   />
                 </div>
@@ -410,7 +410,7 @@ const SellerOpportunitiesPage = () => {
                     type="text"
                     value={filters.model}
                     onChange={handleFilterChange}
-                    className="w-full px-4 py-3 bg-gray-50 border-2 border-transparent rounded-xl focus:bg-white focus:border-blue-500 focus:ring-0 transition-all outline-none font-medium text-gray-900 placeholder:text-gray-400"
+                    className="w-full px-4 py-3 bg-gray-50 border-2 border-transparent rounded-xl focus:bg-white focus:border-blue-500 focus:ring-0 transition-all outline-none font-medium text-gray-900 dark:text-gray-200 placeholder:text-gray-400"
                     placeholder="Np. X5"
                   />
                 </div>
@@ -478,7 +478,7 @@ const SellerOpportunitiesPage = () => {
                         <span className="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
                           <TbCar />
                         </span>
-                        <span className="font-bold text-gray-900">
+                        <span className="font-bold text-gray-900 dark:text-gray-200">
                           {request.make} {request.model}
                         </span>
                       </div>
@@ -488,7 +488,7 @@ const SellerOpportunitiesPage = () => {
                     </div>
 
                     <div className="p-6">
-                      <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-1">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-gray-200 mb-2 line-clamp-1">
                         {request.title}
                       </h3>
 
@@ -552,7 +552,7 @@ const SellerOpportunitiesPage = () => {
                     >
                       ←
                     </button>
-                    <span className="px-4 py-2 text-sm font-bold text-gray-900 flex items-center">
+                    <span className="px-4 py-2 text-sm font-bold text-gray-900 dark:text-gray-200 flex items-center">
                       {page} / {totalPages}
                     </span>
                     <button
@@ -575,7 +575,7 @@ const SellerOpportunitiesPage = () => {
         <section>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
             <div>
-              <h2 className="text-2xl font-extrabold text-gray-900 flex items-center gap-2">
+              <h2 className="text-2xl font-extrabold text-gray-900 dark:text-gray-200 flex items-center gap-2">
                 <span className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-lg">
                   <TbCarGarage />
                 </span>
@@ -602,7 +602,7 @@ const SellerOpportunitiesPage = () => {
               <div className="bg-gray-50 p-4 rounded-full mb-4 inline-block">
                 <TbCarGarage className="h-8 w-8 text-indigo-500" />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-gray-200 mb-2">
                 Brak wystawionych samochodów
               </h3>
               <p className="text-gray-500 mb-6 font-medium">
@@ -640,7 +640,7 @@ const SellerOpportunitiesPage = () => {
                     </div>
                   </div>
                   <div className="p-5">
-                    <h3 className="font-bold text-gray-900 mb-1 line-clamp-1">
+                    <h3 className="font-bold text-gray-900 dark:text-gray-200 mb-1 line-clamp-1">
                       {car.make} {car.model}
                     </h3>
                     <div className="flex items-center gap-2 mb-4">

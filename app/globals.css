@@ -12,9 +12,8 @@
   }
 
   .dark {
-    --background: rgba(0, 0, 0, 0.8);
-    /* black/80 */
-    --foreground: #f9fafb;
+    --background: #212121;
+    --foreground: #ffffff;
   }
 
   html {
@@ -208,28 +207,28 @@ html:not(.loading-active) body>*:not(.loader-container) {
 
   /* Dark mode text colors */
   .dark .text-gray-800 {
-    @apply text-gray-200;
+    @apply text-white;
   }
 
   .dark .text-gray-700 {
-    @apply text-gray-300;
+    @apply text-[#e6e6e6];
   }
 
   .dark .text-gray-600 {
-    @apply text-gray-400;
+    @apply text-[#c2c2c2];
   }
 
   /* Dark mode background colors */
   .dark .bg-white {
-    @apply bg-gray-800;
+    @apply bg-[#202020];
   }
 
   .dark .bg-gray-50 {
-    @apply bg-gray-800;
+    @apply bg-[#181818];
   }
 
   .dark .bg-gray-100 {
-    @apply bg-gray-800;
+    @apply bg-[#212121];
   }
 
   /* Normalize any remaining dark surfaces to gray-800 */
@@ -243,10 +242,10 @@ html:not(.loading-active) body>*:not(.loader-container) {
 
   /* Dark mode border colors */
   .dark .border-gray-200 {
-    @apply border-gray-700;
+    @apply border-[#232323];
   }
 
   .dark .border-gray-300 {
-    @apply border-gray-600;
+    @apply border-[#303030];
   }
 }

@@ -41,7 +41,7 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="bg-gray-50 py-4 dark:bg-black/80 transition-colors duration-300">
+    <div className="bg-gray-50 py-4 dark:bg-dark-main transition-colors duration-300">
       {/* Hero Banner Section with Image */}
       <div className=" mx-4 text-center rounded-3xl overflow-hidden bg-cover bg-center bg-no-repeat relative">
         <div
@@ -64,7 +64,7 @@ const ContactPage = () => {
       </div>
       <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
+          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-gray-200 sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
             {t("contact.main.title")}
           </h2>
           <p className="mt-4 text-xl text-gray-600">
@@ -75,7 +75,7 @@ const ContactPage = () => {
         <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Contact Information */}
           <div className="bg-white rounded-xl shadow-xl hover:shadow-2xl overflow-hidden p-6 dark:bg-gradient-to-br dark:from-gray-900 dark:to-black dark:border dark:border-gray-600 dark:shadow-2xl dark:shadow-blue-500/20 transition-all duration-500 transform hover:scale-[1.02] dark:hover:shadow-blue-500/30">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 transition-colors duration-300 dark:bg-gradient-to-r dark:from-white dark:to-blue-200 dark:bg-clip-text dark:text-transparent">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-200 dark:text-white mb-6 transition-colors duration-300 dark:bg-gradient-to-r dark:from-white dark:to-blue-200 dark:bg-clip-text dark:text-transparent">
               {t("contact.main.info.title")}
             </h3>
 
@@ -135,7 +135,7 @@ const ContactPage = () => {
 
           {/* Contact Form */}
           <div className="bg-white rounded-xl shadow-xl hover:shadow-2xl overflow-hidden p-6 dark:bg-gradient-to-br dark:from-gray-900 dark:to-black dark:border dark:border-gray-600 dark:shadow-2xl dark:shadow-blue-500/20 transition-all duration-500 transform hover:scale-[1.02] dark:hover:shadow-blue-500/30">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 transition-colors duration-300 dark:bg-gradient-to-r dark:from-white dark:to-blue-200 dark:bg-clip-text dark:text-transparent">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-200 dark:text-white mb-6 transition-colors duration-300 dark:bg-gradient-to-r dark:from-white dark:to-blue-200 dark:bg-clip-text dark:text-transparent">
               {t("contact.main.form.title")}
             </h3>
 

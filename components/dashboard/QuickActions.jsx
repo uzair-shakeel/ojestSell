@@ -28,8 +28,8 @@ export default function QuickActions() {
   ];
 
   return (
-    <div className="p-4 bg-white dark:bg-black/80 shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 transition-colors duration-300">
-      <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white transition-colors duration-300">
+    <div className="p-4 bg-white dark:bg-dark-panel shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+      <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-200 dark:text-white transition-colors duration-300">
         Szybkie akcje
       </h3>
       <div className="space-y-2 gap-3">

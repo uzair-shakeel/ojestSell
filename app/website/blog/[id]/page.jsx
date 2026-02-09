@@ -12,7 +12,7 @@ const BlogPost = ({ params }) => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-4">
             Post not found
           </h1>
           <Link
@@ -91,7 +91,7 @@ const BlogPost = ({ params }) => {
                 </div>
               </div>
               <div className="ml-4">
-                <h3 className="text-lg font-medium text-gray-900">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-200">
                   {post.author}
                 </h3>
                 <p className="text-sm text-gray-500">Author</p>
@@ -102,7 +102,7 @@ const BlogPost = ({ params }) => {
 
         {/* Related Posts */}
         <div className="mt-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6">
             Related Posts
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -129,7 +129,7 @@ const BlogPost = ({ params }) => {
                     </div>
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-200 dark:text-white mb-2 transition-colors duration-300">
                       {relatedPost.title}
                     </h3>
                     <p className="text-gray-600">{relatedPost.excerpt}</p>

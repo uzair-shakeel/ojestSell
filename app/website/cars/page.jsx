@@ -478,9 +478,9 @@ const CarsContent = () => {
   // Render
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black/80">
+    <div className="min-h-screen bg-white dark:bg-dark-main">
       {/* Hero Section */}
-      <div className="dark:bg-black/80 py-3">
+      <div className="dark:bg-dark-main py-3">
         <HeroFeaturedCarousel />
       </div>
 
@@ -489,7 +489,7 @@ const CarsContent = () => {
         <FilterNavbar onApplyFilters={handleApplyFilters} />
       </div>
 
-      <div className="max-w-screen-2xl dark:bg-black/80 mx-auto sm:py-12 flex flex-row lg:space-x-4 h-full ">
+      <div className="max-w-screen-2xl dark:bg-dark-main mx-auto sm:py-12 flex flex-row lg:space-x-4 h-full ">
         {/* Desktop Sidebar (Hidden in favor of navbar) */}
         <aside className="w-[380px] hidden sticky top-0 self-start h-fit">
           <FilterSidebar onApplyFilters={handleApplyFilters} />
@@ -498,7 +498,7 @@ const CarsContent = () => {
         {/* Main Content Area */}
         <main className="h-full w-full px-0 sm:px-4">
           {/* Controls: View Toggle & Sort */}
-          <div className="bg-white dark:bg-black/80 flex flex-col lg:flex-row justify-between items-center py-1 pb-2 px-[10px] sm:px-2 gap-2 lg:gap-4">
+          <div className="bg-white dark:bg-dark-main flex flex-col lg:flex-row justify-between items-center py-1 pb-2 px-[10px] sm:px-2 gap-2 lg:gap-4">
 
             {/* View Toggle Buttons */}
             <div className="hidden lg:flex justify-center lg:justify-end w-full lg:w-auto order-1 lg:order-2">
@@ -508,7 +508,7 @@ const CarsContent = () => {
                   onClick={() => setViewMode("grid")}
                   className={`px-3 py-2 lg:px-4 lg:py-3 rounded-md text-sm font-medium transition-all duration-200 flex items-center justify-center ${viewMode === "grid"
                     ? "bg-blue-500 text-white shadow-md"
-                    : "text-gray-600 dark:text-gray-300 hover:text-gray-900 hover:bg-gray-100 dark:hover:text-gray-300 dark:hover:bg-transparent"
+                    : "text-gray-600 dark:text-dark-text-secondary hover:text-gray-900 dark:text-gray-200 hover:bg-gray-100 dark:hover:text-dark-text-primary dark:hover:bg-transparent"
                     }`}
                 >
                   {/* Grid Icon */}
@@ -521,7 +521,7 @@ const CarsContent = () => {
                   onClick={() => setViewMode("list")}
                   className={`px-3 py-2 lg:px-4 lg:py-3 rounded-md text-sm font-medium transition-all duration-200 flex items-center justify-center ${viewMode === "list"
                     ? "bg-blue-500 text-white shadow-md"
-                    : "text-gray-600 dark:text-gray-300 hover:text-gray-900 hover:bg-gray-100 dark:hover:text-gray-300 dark:hover:bg-transparent"
+                    : "text-gray-600 dark:text-dark-text-secondary hover:text-gray-900 dark:text-gray-200 hover:bg-gray-100 dark:hover:text-dark-text-primary dark:hover:bg-transparent"
                     }`}
                 >
                   {/* List Icon */}
@@ -539,8 +539,8 @@ const CarsContent = () => {
                   <button
                     onClick={() => handleSort("best-match")}
                     className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "best-match"
-                      ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
-                      : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"
+                      ? "text-gray-900 dark:text-gray-200 dark:text-dark-text-primary border-gray-900 dark:border-dark-text-primary relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
+                      : "text-gray-500 dark:text-dark-text-muted border-transparent hover:text-gray-700 dark:hover:text-dark-text-primary"
                       } bg-transparent focus:outline-none appearance-none`}
                   >
                     Najlepsze dopasowanie
@@ -548,32 +548,32 @@ const CarsContent = () => {
                 </li>
                 {/* Additional Sort Options */}
                 <li className="sort-option pr-3 flex-none">
-                  <button onClick={() => handleSort("lowest-price")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "lowest-price" ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"} bg-transparent focus:outline-none appearance-none`}>
+                  <button onClick={() => handleSort("lowest-price")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "lowest-price" ? "text-gray-900 dark:text-gray-200 dark:text-dark-text-primary border-gray-900 dark:border-dark-text-primary relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-dark-text-muted border-transparent hover:text-gray-700 dark:hover:text-dark-text-primary"} bg-transparent focus:outline-none appearance-none`}>
                     Najniższa cena
                   </button>
                 </li>
                 <li className="sort-option pr-3 flex-none">
-                  <button onClick={() => handleSort("highest-price")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "highest-price" ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"} bg-transparent focus:outline-none appearance-none`}>
+                  <button onClick={() => handleSort("highest-price")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "highest-price" ? "text-gray-900 dark:text-gray-200 dark:text-dark-text-primary border-gray-900 dark:border-dark-text-primary relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-dark-text-muted border-transparent hover:text-gray-700 dark:hover:text-dark-text-primary"} bg-transparent focus:outline-none appearance-none`}>
                     Najwyższa cena
                   </button>
                 </li>
                 <li className="sort-option pr-3 flex-none">
-                  <button onClick={() => handleSort("lowest-mileage")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "lowest-mileage" ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"} bg-transparent focus:outline-none appearance-none`}>
+                  <button onClick={() => handleSort("lowest-mileage")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "lowest-mileage" ? "text-gray-900 dark:text-gray-200 dark:text-dark-text-primary border-gray-900 dark:border-dark-text-primary relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-dark-text-muted border-transparent hover:text-gray-700 dark:hover:text-dark-text-primary"} bg-transparent focus:outline-none appearance-none`}>
                     Najniższy przebieg
                   </button>
                 </li>
                 <li className="sort-option pr-3 flex-none">
-                  <button onClick={() => handleSort("highest-mileage")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "highest-mileage" ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"} bg-transparent focus:outline-none appearance-none`}>
+                  <button onClick={() => handleSort("highest-mileage")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "highest-mileage" ? "text-gray-900 dark:text-gray-200 dark:text-dark-text-primary border-gray-900 dark:border-dark-text-primary relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-dark-text-muted border-transparent hover:text-gray-700 dark:hover:text-dark-text-primary"} bg-transparent focus:outline-none appearance-none`}>
                     Najwyższy przebieg
                   </button>
                 </li>
                 <li className="sort-option pr-3 flex-none">
-                  <button onClick={() => handleSort("newest-year")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "newest-year" ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"} bg-transparent focus:outline-none appearance-none`}>
+                  <button onClick={() => handleSort("newest-year")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "newest-year" ? "text-gray-900 dark:text-gray-200 dark:text-dark-text-primary border-gray-900 dark:border-dark-text-primary relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-dark-text-muted border-transparent hover:text-gray-700 dark:hover:text-dark-text-primary"} bg-transparent focus:outline-none appearance-none`}>
                     Najnowszy rok
                   </button>
                 </li>
                 <li className="sort-option pr-3 flex-none">
-                  <button onClick={() => handleSort("oldest-year")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "oldest-year" ? "text-gray-900 dark:text-white border-gray-900 dark:border-white relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-gray-300 border-transparent hover:text-gray-700 dark:hover:text-white"} bg-transparent focus:outline-none appearance-none`}>
+                  <button onClick={() => handleSort("oldest-year")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "oldest-year" ? "text-gray-900 dark:text-gray-200 dark:text-dark-text-primary border-gray-900 dark:border-dark-text-primary relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-dark-text-muted border-transparent hover:text-gray-700 dark:hover:text-dark-text-primary"} bg-transparent focus:outline-none appearance-none`}>
                     Najstarszy rok
                   </button>
                 </li>
@@ -617,7 +617,7 @@ const CarsContent = () => {
               ))
             ) : (
               <div className="text-center py-12">
-                <h3 className="text-lg font-medium text-gray-900">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-200">
                   {t("cars.noResults.title")}
                 </h3>
                 <p className="mt-2 text-sm text-gray-500">

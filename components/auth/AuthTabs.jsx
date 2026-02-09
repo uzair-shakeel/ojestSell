@@ -209,10 +209,10 @@ export default function AuthTabs() {
     return (
       <div className="min-h-screen flex">
         {/* Left Side - Form Section */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-black/80 transition-colors duration-300">
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-dark-main transition-colors duration-300">
           <div className="w-full max-w-md">
             <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">
+              <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-200 dark:text-white mb-3 transition-colors duration-300">
                 Verify Your Account
               </h1>
               <p className="text-lg text-gray-600 dark:text-gray-300 transition-colors duration-300">
@@ -332,10 +332,10 @@ export default function AuthTabs() {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Form Section */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-black/70">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-dark-card">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-200 dark:text-white mb-3 transition-colors duration-300">
               Dołącz do Ojest
             </h1>
             <p className="text-lg text-gray-600">
@@ -349,7 +349,7 @@ export default function AuthTabs() {
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                 activeTab === "email"
                   ? "bg-white text-blue-600 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
+                  : "text-gray-600 hover:text-gray-900 dark:text-gray-200"
               }`}
             >
               Email
@@ -359,7 +359,7 @@ export default function AuthTabs() {
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                 activeTab === "phone"
                   ? "bg-white text-blue-600 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
+                  : "text-gray-600 hover:text-gray-900 dark:text-gray-200"
               }`}
             >
               Phone Number

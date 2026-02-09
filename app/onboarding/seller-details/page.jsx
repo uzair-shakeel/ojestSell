@@ -243,7 +243,7 @@ const SellerDetailsPage = () => {
       }}
     >
       <div className="w-full max-w-2xl ">
-        <div className="bg-white/80 dark:bg-black/80 backdrop-blur-sm  rounded-2xl shadow ring-1 ring-black/5 p-6">
+        <div className="bg-white/80 dark:bg-dark-main backdrop-blur-sm  rounded-2xl shadow ring-1 ring-black/5 p-6">
           {/* Progress */}
           <div className="mb-6">
             <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-800 mb-2 transition-colors duration-300">
@@ -261,7 +261,7 @@ const SellerDetailsPage = () => {
           </div>
 
           {/* Question */}
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white  mb-4 text-center transition-colors duration-300">
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-200 dark:text-white  mb-4 text-center transition-colors duration-300">
             {current?.title}
           </h2>
           {current?.key === "sellerType" && (
@@ -279,8 +279,8 @@ const SellerDetailsPage = () => {
                 <div
                   className={`font-medium transition-colors
         ${sellerType === "private"
-                      ? "text-gray-900 dark:text-white"
-                      : "text-gray-900 dark:text-gray-200"
+                      ? "text-gray-900 dark:text-gray-200 dark:text-white"
+                      : "text-gray-900 dark:text-gray-200 dark:text-gray-200"
                     }`}
                 >
                   Private seller
@@ -309,8 +309,8 @@ const SellerDetailsPage = () => {
                 <div
                   className={`font-medium transition-colors
         ${sellerType === "company"
-                      ? "text-gray-900 dark:text-white"
-                      : "text-gray-900 dark:text-gray-200"
+                      ? "text-gray-900 dark:text-gray-200 dark:text-white"
+                      : "text-gray-900 dark:text-gray-200 dark:text-gray-200"
                     }`}
                 >
                   Company
@@ -362,7 +362,7 @@ const SellerDetailsPage = () => {
                       setPreviewUrl(null);
                       setValue("image", null);
                     }}
-                    className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-300"
+                    className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white transition-colors duration-300"
                   >
                     Remove
                   </button>

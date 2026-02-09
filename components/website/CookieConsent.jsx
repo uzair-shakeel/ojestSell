@@ -106,7 +106,7 @@ const CookieConsent = () => {
                     >
                       <Cookie />
                     </motion.div>
-                    <h3 className="text-xl font-bold text-gray-900">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-200">
                       Czas Ciasteczek!
                     </h3>
                   </div>
@@ -114,14 +114,14 @@ const CookieConsent = () => {
                   <p className="text-gray-700 mb-2">
                     {
                       funCookieMessages[
-                        Math.floor(Math.random() * funCookieMessages.length)
+                      Math.floor(Math.random() * funCookieMessages.length)
                       ]
                     }
                   </p>
 
                   <p className="text-gray-600 text-sm mb-4">
-                   Do tych ciasteczek nie potrzebne jest mleko!
-Używamy ciasteczek aby wzmocnić twoje doświadczenia podczas przeglądania, analizować ruch i dostarczać spersonalizowane treści. Klikając "Akceptuj Wszystkie", pozwalasz nam na swoje ciasteczka 
+                    Do tych ciasteczek nie potrzebne jest mleko!
+                    Używamy ciasteczek aby wzmocnić twoje doświadczenia podczas przeglądania, analizować ruch i dostarczać spersonalizowane treści. Klikając "Akceptuj Wszystkie", pozwalasz nam na swoje ciasteczka
 
                   </p>
                 </div>
@@ -133,7 +133,7 @@ Używamy ciasteczek aby wzmocnić twoje doświadczenia podczas przeglądania, an
                     onClick={acceptCookies}
                     className="flex-1 py-2 px-4 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
                   >
-                    <BsEmojiLaughing /> Akceptuj Wszystkie                        
+                    <BsEmojiLaughing /> Akceptuj Wszystkie
 
                   </motion.button>
 
@@ -158,7 +158,7 @@ Używamy ciasteczek aby wzmocnić twoje doświadczenia podczas przeglądania, an
                     onClick={() => window.open("/website/privacy", "_blank")}
                     className="text-blue-600 text-sm font-medium hover:underline"
                   >
-                    Polityka Prywatności 
+                    Polityka Prywatności
                   </button>
                 </div>
               </>

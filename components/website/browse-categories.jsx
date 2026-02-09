@@ -140,11 +140,11 @@ export function BrowseCategories() {
   };
 
   return (
-    <section className="py-14 bg-white dark:bg-black/90 transition-colors duration-300">
+    <section className="py-14 bg-white dark:bg-dark-card transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-end justify-between mb-6">
           <div>
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-gray-200 dark:text-white">
               Przeglądaj auta po krajach Producentów
             </h2>
             <p className="text-gray-500 dark:text-gray-400 mt-1">
@@ -183,14 +183,14 @@ export function BrowseCategories() {
           {/* <button
             aria-label="Scroll left"
             onClick={() => scroll("left")}
-            className="absolute left-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full border border-gray-300 dark:border-gray-700 flex items-center justify-center bg-white/70 dark:bg-black/90/60 backdrop-blur text-gray-700 dark:text-gray-200"
+            className="absolute left-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full border border-gray-300 dark:border-gray-700 flex items-center justify-center bg-white/70 dark:bg-dark-card/60 backdrop-blur text-gray-700 dark:text-gray-200"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
           <button
             aria-label="Scroll right"
             onClick={() => scroll("right")}
-            className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full border border-gray-300 dark:border-gray-700 flex items-center justify-center bg-white/70 dark:bg-black/90/60 backdrop-blur text-gray-700 dark:text-gray-200"
+            className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full border border-gray-300 dark:border-gray-700 flex items-center justify-center bg-white/70 dark:bg-dark-card/60 backdrop-blur text-gray-700 dark:text-gray-200"
           >
             <ChevronRight className="h-5 w-5" />
           </button> */}
@@ -243,7 +243,7 @@ function CountryCard({ country, className = "" }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
 
         {/* Top-left flag chip */}
-        <div className="absolute top-3 left-3 flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 dark:bg-black/90 backdrop-blur text-sm shadow">
+        <div className="absolute top-3 left-3 flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 dark:bg-dark-card backdrop-blur text-sm shadow">
           <img src={flag} alt="" width={18} height={12} className="rounded-sm" />
           <span className="font-medium text-gray-800">{name}</span>
         </div>
@@ -255,7 +255,7 @@ function CountryCard({ country, className = "" }) {
             {tagline && <div className="text-sm opacity-90">{tagline}</div>}
           </div> */}
 
-          <div className="mt-3 hidden md:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 text-gray-900 font-medium shadow translate-x-[200px] group-hover:translate-x-[-12px] transition-transform">
+          <div className="mt-3 hidden md:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 text-gray-900 dark:text-gray-200 font-medium shadow translate-x-[200px] group-hover:translate-x-[-12px] transition-transform">
             <span className="hidden ">Explore</span>
             <MousePointerClick className="w-5 h-5" />
           </div>

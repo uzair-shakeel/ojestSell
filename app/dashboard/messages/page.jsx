@@ -688,17 +688,17 @@ const MessagesPage = () => {
   const chatCount = chats.length;
 
   return (
-    <div className="flex h-[calc(100vh-70px)] bg-gray-50 dark:bg-black/90 font-sans overflow-hidden relative transition-colors duration-300">
+    <div className="flex h-[calc(100vh-70px)] bg-gray-50 dark:bg-dark-card font-sans overflow-hidden relative transition-colors duration-300">
       {/* Sidebar - Floating Card Style */}
       <div
         className={`absolute md:relative inset-y-0 left-0 z-20 h-full w-full sm:w-[360px] md:w-[380px] flex flex-col transform transition-transform duration-300 ${showSidebar ? "translate-x-0" : "-translate-x-full"
           } md:translate-x-0 p-4 md:pr-0`}
       >
-        <div className="bg-white dark:bg-black/80 rounded-3xl shadow-xl h-full flex flex-col border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">
+        <div className="bg-white dark:bg-dark-main rounded-3xl shadow-xl h-full flex flex-col border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">
           {/* Sidebar Header */}
-          <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center shrink-0 bg-white dark:bg-black/80 transition-colors">
+          <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center shrink-0 bg-white dark:bg-dark-panel transition-colors">
             <div>
-              <h2 className="font-extrabold text-2xl text-gray-900 dark:text-white tracking-tight">Wiadomości</h2>
+              <h2 className="font-extrabold text-2xl text-gray-900 dark:text-gray-200 dark:text-white tracking-tight">Wiadomości</h2>
               <p className="text-xs text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest mt-1">Twoje konwersacje</p>
             </div>
             {totalUnread > 0 && (
@@ -716,7 +716,7 @@ const MessagesPage = () => {
                   key={chat._id}
                   className={`flex items-center gap-4 p-4 rounded-2xl cursor-pointer transition-all border-2 ${selectedChat && selectedChat._id === chat._id
                     ? "bg-blue-50 dark:bg-blue-900/20 border-blue-500 shadow-sm"
-                    : "bg-white dark:bg-black/80 border-transparent hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-100 dark:hover:border-gray-600"
+                    : "bg-white dark:bg-dark-main border-transparent hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-100 dark:hover:border-gray-600"
                     }`}
                   onClick={() => handleSelectChat(chat)}
                 >
@@ -732,16 +732,16 @@ const MessagesPage = () => {
 
                   <div className="flex-grow min-w-0">
                     <div className="flex justify-between items-center mb-1">
-                      <div className={`text-sm truncate ${chat.unreadCount > 0 ? "font-bold text-gray-900 dark:text-white" : "font-semibold text-gray-700 dark:text-gray-300"}`}>
+                      <div className={`text-sm truncate ${chat.unreadCount > 0 ? "font-bold text-gray-900 dark:text-gray-200 dark:text-white" : "font-semibold text-gray-700 dark:text-gray-300"}`}>
                         {getParticipantName(chat)}
                       </div>
                       {chat.lastMessage && (
-                        <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-black/70 px-2 py-1 rounded-lg">
+                        <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-dark-card px-2 py-1 rounded-lg">
                           {fmtTime(chat.lastMessage.timestamp)}
                         </span>
                       )}
                     </div>
-                    <div className={`truncate w-full text-sm ${chat.unreadCount > 0 ? "text-gray-900 dark:text-white font-medium" : "text-gray-500 dark:text-gray-400"}`}>
+                    <div className={`truncate w-full text-sm ${chat.unreadCount > 0 ? "text-gray-900 dark:text-gray-200 dark:text-white font-medium" : "text-gray-500 dark:text-gray-400"}`}>
                       {chat.lastMessage ? (
                         <>
                           <span className="font-semibold text-gray-400 dark:text-gray-500 mr-1">
@@ -758,7 +758,7 @@ const MessagesPage = () => {
               ))
             ) : (
               <div className="text-center py-12">
-                <div className="w-16 h-16 bg-gray-100 dark:bg-black/70 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400 dark:text-gray-500">
+                <div className="w-16 h-16 bg-gray-100 dark:bg-dark-card rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400 dark:text-gray-500">
                   <FaEnvelope size={24} />
                 </div>
                 <p className="text-gray-500 dark:text-gray-400 font-medium text-sm">Brak wiadomości</p>
@@ -770,14 +770,14 @@ const MessagesPage = () => {
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden relative p-4 pl-0 md:pl-4 transition-colors duration-300">
-        <div className="bg-white dark:bg-black/80 rounded-3xl shadow-xl h-full flex flex-col border border-gray-100 dark:border-gray-700 overflow-hidden relative transition-colors duration-300">
+        <div className="bg-white dark:bg-dark-main rounded-3xl shadow-xl h-full flex flex-col border border-gray-100 dark:border-gray-700 overflow-hidden relative transition-colors duration-300">
           {/* Chat Header */}
-          <div className="p-4 md:p-6 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between shrink-0 bg-white dark:bg-black/80 z-10 transition-colors">
+          <div className="p-4 md:p-6 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between shrink-0 bg-white dark:bg-dark-panel z-10 transition-colors">
             <div className="flex items-center gap-4">
               {/* Mobile: sidebar toggle */}
               <button
                 type="button"
-                className="md:hidden inline-flex items-center justify-center h-10 w-10 rounded-xl bg-gray-100 dark:bg-black/70 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                className="md:hidden inline-flex items-center justify-center h-10 w-10 rounded-xl bg-gray-100 dark:bg-dark-card text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                 onClick={() => setShowSidebar((prev) => !prev)}
               >
                 <FaBars className="h-4 w-4" />
@@ -791,7 +791,7 @@ const MessagesPage = () => {
                     imgClassName="rounded-xl shadow-sm border border-gray-100 dark:border-gray-700"
                   />
                   <div>
-                    <div className="font-bold text-lg text-gray-900 dark:text-white transition-colors">
+                    <div className="font-bold text-lg text-gray-900 dark:text-gray-200 dark:text-white transition-colors">
                       {getParticipantName(selectedChat)}
                     </div>
                     {selectedChat.carId && (
@@ -808,7 +808,7 @@ const MessagesPage = () => {
           </div>
 
           {/* Messages Container */}
-          <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 bg-gray-50/30 dark:bg-black/90/10 custom-scrollbar transition-colors">
+          <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 bg-gray-50/30 dark:bg-dark-card/10 custom-scrollbar transition-colors">
             {selectedChat ? (
               messages.length > 0 ? (
                 <>
@@ -828,7 +828,7 @@ const MessagesPage = () => {
                           <div
                             className={`px-6 py-4 rounded-2xl shadow-sm text-sm whitespace-pre-line relative transition-all duration-200 ${isMe
                               ? "bg-blue-600 text-white rounded-br-none shadow-blue-900/20"
-                              : "bg-white dark:bg-black/70 text-gray-800 dark:text-gray-100 border border-gray-100 dark:border-gray-600 rounded-bl-none shadow-black/5"
+                              : "bg-white dark:bg-dark-card text-gray-800 dark:text-gray-100 border border-gray-100 dark:border-gray-600 rounded-bl-none shadow-black/5"
                               } ${message.pending ? "opacity-80" : "opacity-100"}`}
                           >
                             {String(message.sender) !== String(myUserId) &&
@@ -860,7 +860,7 @@ const MessagesPage = () => {
                   })}
                   {typing && (
                     <div className="flex justify-start">
-                      <div className="bg-white dark:bg-black/70 border border-gray-100 dark:border-gray-600 px-6 py-4 rounded-2xl rounded-bl-none shadow-sm flex items-center gap-2">
+                      <div className="bg-white dark:bg-dark-card border border-gray-100 dark:border-gray-600 px-6 py-4 rounded-2xl rounded-bl-none shadow-sm flex items-center gap-2">
                         <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
                         <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                         <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
@@ -877,7 +877,7 @@ const MessagesPage = () => {
               )
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-gray-300 dark:text-gray-600">
-                <div className="w-24 h-24 bg-gray-100 dark:bg-black/70 rounded-full flex items-center justify-center mb-6">
+                <div className="w-24 h-24 bg-gray-100 dark:bg-dark-card rounded-full flex items-center justify-center mb-6">
                   <FaPaperPlane size={32} className="ml-2" />
                 </div>
                 <p className="font-bold text-lg text-gray-400 dark:text-gray-500">Wybierz czat aby rozpocząć rozmowę</p>
@@ -887,13 +887,13 @@ const MessagesPage = () => {
 
           {/* Message Input - Floating */}
           {selectedChat && (
-            <div className="p-4 md:p-6 bg-white dark:bg-black/80 border-t border-gray-100 dark:border-gray-700 z-10 transition-colors">
-              <div className="flex items-center gap-3 bg-gray-50 dark:bg-black/90 border-2 border-gray-100 dark:border-gray-700 rounded-2xl p-2 pr-2 focus-within:border-blue-500 dark:focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-50/50 dark:focus-within:ring-blue-900/20 transition-all">
+            <div className="p-4 md:p-6 bg-white dark:bg-dark-main border-t border-gray-100 dark:border-gray-700 z-10 transition-colors">
+              <div className="flex items-center gap-3 bg-gray-50 dark:bg-dark-card border-2 border-gray-100 dark:border-gray-700 rounded-2xl p-2 pr-2 focus-within:border-blue-500 dark:focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-50/50 dark:focus-within:ring-blue-900/20 transition-all">
                 <input
                   type="text"
                   value={newMessage}
                   onChange={handleTyping}
-                  className="flex-1 bg-transparent border-none focus:ring-0 p-3 pl-4 text-sm font-medium text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+                  className="flex-1 bg-transparent outline-none border-none focus:ring-0 p-3 pl-4 text-sm font-medium text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                   placeholder="Napisz wiadomość..."
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {

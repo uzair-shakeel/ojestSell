@@ -49,7 +49,7 @@ export default function ForgotPasswordPage() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">Zapomniałeś hasła</h1>
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-200 mb-2">Zapomniałeś hasła</h1>
             <p className="text-base text-gray-600">Wyślemy Ci link do zresetowania hasła</p>
           </div>
 

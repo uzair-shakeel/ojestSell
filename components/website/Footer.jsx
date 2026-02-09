@@ -9,7 +9,7 @@ export function Footer() {
   const { t } = useLanguage();
 
   return (
-    <footer className="bg-gray-900 dark:bg-slate-950 text-white pt-20 pb-10 transition-colors duration-300 border-t border-gray-100 dark:border-gray-800">
+    <footer className="bg-dark-panel text-white pt-20 pb-10 transition-colors duration-300 border-t border-gray-100 dark:border-gray-800">
       <div className="mx-auto px-4 max-w-7xl">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           <div>
@@ -95,7 +95,7 @@ export function Footer() {
                 placeholder="Wprowadź swój adres e-mail"
                 className="bg-gray-800 border-gray-700 rounded-xl px-4 py-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder:text-gray-500"
               />
-              <button className="bg-white text-gray-900 font-bold px-6 py-3 rounded-xl hover:bg-gray-100 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap">
+              <button className="bg-white text-gray-900 dark:text-gray-200 font-bold px-6 py-3 rounded-xl hover:bg-gray-100 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap">
                 Subskrybuj
               </button>
             </div>

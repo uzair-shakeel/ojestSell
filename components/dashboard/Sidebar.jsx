@@ -185,17 +185,17 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
             animate={{ opacity: 0.5 }}
             exit={{ opacity: 0 }}
             onClick={toggleSidebar}
-            className="fixed inset-0 bg-black/20 dark:bg-black/60 backdrop-blur-sm z-30 md:hidden"
+            className="fixed inset-0 bg-black/20 dark:bg-dark-elevation-4 backdrop-blur-sm z-30 md:hidden"
           />
         )}
       </AnimatePresence>
 
       <motion.div
-        className={`fixed inset-y-0 left-0 bg-[#181818] dark:bg-black/60 border-r border-[#2C2C2C] shadow-2xl z-40 w-64 flex flex-col transition-all duration-300 ease-in-out
+        className={`fixed inset-y-0 left-0 bg-dark-panel dark:bg-dark-panel border-r border-dark-divider shadow-2xl z-40 w-64 flex flex-col transition-all duration-300 ease-in-out
           ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
       >
         {/* Header / Logo */}
-        <div className="h-20 flex items-center justify-between px-6 border-b border-[#2C2C2C] flex-shrink-0">
+        <div className="h-20 flex items-center justify-between px-6 border-b border-dark-divider flex-shrink-0">
           <Link href="/" className="block">
             <img src="/whitelogo.png" alt="Ojest" className="h-8 w-auto object-contain" />
           </Link>
@@ -218,7 +218,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                 src={profileImage}
                 alt="User"
                 size={40}
-                imgClassName="ring-2 ring-[#2C2C2C] relative z-10"
+                imgClassName="ring-2 ring-dark-divider relative z-10"
               />
               <div className="min-w-0 flex-1 relative z-10">
                 <h3 className="text-sm font-bold text-white truncate">

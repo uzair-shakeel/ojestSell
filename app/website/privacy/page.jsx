@@ -33,14 +33,14 @@ const PrivacyPolicyPage = () => {
       {/* Privacy Policy Content */}
       <div className="max-w-5xl mx-auto px-4 py-12">
         <div className="bg-white p-6 md:p-8 rounded-xl shadow-md">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6">
             {t("privacy.sections.introduction.title")}
           </h2>
           <p className="text-gray-700 mb-4">
             {t("privacy.sections.introduction.content")}
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6 mt-8">
             {t("privacy.sections.informationWeCollect.title")}
           </h2>
           <p className="text-gray-700 mb-4">
@@ -53,7 +53,7 @@ const PrivacyPolicyPage = () => {
             <li>{t("privacy.sections.informationWeCollect.items.device")}</li>
           </ul>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6 mt-8">
             {t("privacy.sections.howWeCollect.title")}
           </h2>
           <p className="text-gray-700 mb-4">
@@ -67,7 +67,7 @@ const PrivacyPolicyPage = () => {
             ))}
           </ul>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6 mt-8">
             {t("privacy.sections.howWeUse.title")}
           </h2>
           <p className="text-gray-700 mb-4">
@@ -81,7 +81,7 @@ const PrivacyPolicyPage = () => {
             )}
           </ul>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6 mt-8">
             {t("privacy.sections.cookies.title")}
           </h2>
           <p className="text-gray-700 mb-4">
@@ -100,7 +100,7 @@ const PrivacyPolicyPage = () => {
             {t("privacy.sections.cookies.control")}
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6 mt-8">
             6. Information Sharing and Disclosure
           </h2>
           <p className="text-gray-700 mb-4">
@@ -115,7 +115,7 @@ const PrivacyPolicyPage = () => {
             <li>Business partners with your consent</li>
           </ul>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6 mt-8">
             7. Data Security
           </h2>
           <p className="text-gray-700 mb-4">
@@ -125,7 +125,7 @@ const PrivacyPolicyPage = () => {
             and we cannot guarantee absolute security.
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6 mt-8">
             8. Your Privacy Rights
           </h2>
           <p className="text-gray-700 mb-4">
@@ -144,7 +144,7 @@ const PrivacyPolicyPage = () => {
             provided below.
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6 mt-8">
             9. Children's Privacy
           </h2>
           <p className="text-gray-700 mb-4">
@@ -154,7 +154,7 @@ const PrivacyPolicyPage = () => {
             information, please contact us.
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6 mt-8">
             10. Changes to This Privacy Policy
           </h2>
           <p className="text-gray-700 mb-4">
@@ -163,7 +163,7 @@ const PrivacyPolicyPage = () => {
             and updating the "Last Updated" date.
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6 mt-8">
             11. Contact Information
           </h2>
           <p className="text-gray-700 mb-4">

@@ -34,14 +34,14 @@ const TermsPage = () => {
       {/* Terms & Conditions Content */}
       <div className="max-w-5xl mx-auto px-4 py-12">
         <div className="bg-white p-6 md:p-8 rounded-xl shadow-md">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6">
             {t("terms.sections.introduction.title")}
           </h2>
           <p className="text-gray-700 mb-4">
             {t("terms.sections.introduction.content")}
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6 mt-8">
             {t("terms.sections.definitions.title")}
           </h2>
           <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
@@ -51,14 +51,14 @@ const TermsPage = () => {
             <li>{t("terms.sections.definitions.items.content")}</li>
           </ul>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6 mt-8">
             {t("terms.sections.accountRegistration.title")}
           </h2>
           <p className="text-gray-700 mb-4">
             {t("terms.sections.accountRegistration.content")}
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6 mt-8">
             {t("terms.sections.listingRules.title")}
           </h2>
           <p className="text-gray-700 mb-4">
@@ -72,7 +72,7 @@ const TermsPage = () => {
             ))}
           </ul>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6 mt-8">
             {t("terms.sections.prohibitedActivities.title")}
           </h2>
           <p className="text-gray-700 mb-4">
@@ -86,56 +86,56 @@ const TermsPage = () => {
             ))}
           </ul>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6 mt-8">
             {t("terms.sections.feesAndPayments.title")}
           </h2>
           <p className="text-gray-700 mb-4">
             {t("terms.sections.feesAndPayments.content")}
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6 mt-8">
             {t("terms.sections.intellectualProperty.title")}
           </h2>
           <p className="text-gray-700 mb-4">
             {t("terms.sections.intellectualProperty.content")}
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6 mt-8">
             {t("terms.sections.privacy.title")}
           </h2>
           <p className="text-gray-700 mb-4">
             {t("terms.sections.privacy.content")}
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6 mt-8">
             {t("terms.sections.limitationOfLiability.title")}
           </h2>
           <p className="text-gray-700 mb-4">
             {t("terms.sections.limitationOfLiability.content")}
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6 mt-8">
             {t("terms.sections.disputeResolution.title")}
           </h2>
           <p className="text-gray-700 mb-4">
             {t("terms.sections.disputeResolution.content")}
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6 mt-8">
             {t("terms.sections.termination.title")}
           </h2>
           <p className="text-gray-700 mb-4">
             {t("terms.sections.termination.content")}
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6 mt-8">
             {t("terms.sections.changes.title")}
           </h2>
           <p className="text-gray-700 mb-4">
             {t("terms.sections.changes.content")}
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6 mt-8">
             {t("terms.sections.contact.title")}
           </h2>
           <p className="text-gray-700 mb-4">

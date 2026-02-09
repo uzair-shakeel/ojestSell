@@ -10,7 +10,7 @@ const BlogPage = () => {
   const blogPosts = useBlogPosts();
 
   return (
-    <div className="bg-white py-4 dark:bg-black/80 min-h-screen">
+    <div className="bg-white py-4 dark:bg-dark-main min-h-screen">
       {/* Hero Banner Section with Image */}
       <div className=" mx-4 text-center rounded-3xl overflow-hidden bg-cover bg-center bg-no-repeat relative">
         <div
@@ -65,7 +65,7 @@ const BlogPage = () => {
                     {post.readTime} {t("blog.minuteRead")}
                   </span>
                 </div>
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-200 dark:text-white mb-2 transition-colors duration-300">
                   {post.title}
                 </h2>
                 <p className="text-gray-600">{post.excerpt}</p>

@@ -73,7 +73,7 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
   // Logout moved to Sidebar
 
   return (
-    <header className="w-full h-16 px-4 bg-white dark:bg-black/90 shadow-md flex justify-between md:justify-end items-center z-30 sticky top-0 transition-colors duration-300">
+    <header className="w-full h-16 px-4 bg-white dark:bg-dark-panel shadow-md flex justify-between md:justify-end items-center z-30 sticky top-0 transition-colors duration-300">
       {/* Logo */}
       <Link href="/">
         <img src="/logo.png" alt="Ojest Logo" className="h-10 w-auto md:hidden" />
@@ -88,7 +88,7 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
         <div className="relative" ref={notifRef}>
           <button
             onClick={() => setOpenNotif((v) => !v)}
-            className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
+            className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-dark-raised text-gray-700 dark:text-dark-text-secondary"
           >
             <FiBell className="w-5 h-5" />
             {unreadCount > 0 && (
@@ -98,26 +98,26 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
             )}
           </button>
           {openNotif && (
-            <div className="absolute right-0 mt-2 w-80 max-w-[90vw] bg-white dark:bg-black/80 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden">
-              <div className="flex items-center justify-between px-3 py-2 border-b border-gray-100 dark:border-gray-700">
-                <div className="text-sm font-semibold text-gray-900 dark:text-white">Powiadomienia</div>
+            <div className="absolute right-0 mt-2 w-80 max-w-[90vw] bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-divider rounded-xl shadow-xl z-50 overflow-hidden">
+              <div className="flex items-center justify-between px-3 py-2 border-b border-gray-100 dark:border-dark-divider">
+                <div className="text-sm font-semibold text-gray-900 dark:text-gray-200 dark:text-white">Powiadomienia</div>
                 <button onClick={markAll} className="text-xs text-blue-600 hover:underline">Oznacz wszystkie jako przeczytane</button>
               </div>
               <div className="max-h-96 overflow-auto">
                 {(notifications || []).length === 0 ? (
                   <div className="px-3 py-4 text-sm text-gray-500">Brak powiadomień</div>
                 ) : (
-                  <ul className="divide-y divide-gray-100 dark:divide-gray-700">
+                  <ul className="divide-y divide-gray-100 dark:divide-dark-divider">
                     {(notifications || []).slice(0, 8).map((n) => (
                       <li
                         key={n.id}
-                        className={`px-3 py-2 flex items-start gap-3 ${n.read ? "opacity-80" : ""} cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700`}
+                        className={`px-3 py-2 flex items-start gap-3 ${n.read ? "opacity-80" : ""} cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-raised`}
                         onClick={() => handleNotifClick(n)}
                       >
                         <div className={`mt-1 w-2 h-2 rounded-full ${n.read ? "bg-gray-300" : "bg-blue-500"}`} />
                         <div className="min-w-0 flex-1">
-                          <div className="text-sm font-medium text-gray-900 dark:text-white truncate">{n.title}</div>
-                          {n.body && <div className="text-xs text-gray-600 dark:text-gray-300 truncate">{n.body}</div>}
+                          <div className="text-sm font-medium text-gray-900 dark:text-gray-200 dark:text-dark-text-primary truncate">{n.title}</div>
+                          {n.body && <div className="text-xs text-gray-600 dark:text-dark-text-muted truncate">{n.body}</div>}
                           <div className="text-[10px] text-gray-400 mt-1">{new Date(n.createdAt).toLocaleString()}</div>
                         </div>
                         <div className="flex items-center gap-2">
@@ -142,7 +142,7 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
                   </ul>
                 )}
               </div>
-              <div className="px-3 py-2 border-t border-gray-100 dark:border-gray-700 text-right">
+              <div className="px-3 py-2 border-t border-gray-100 dark:border-dark-divider text-right">
                 <Link href="/dashboard/notifications" onClick={() => setOpenNotif(false)} className="text-sm text-blue-600 hover:underline">
                   Zobacz wszystkie
                 </Link>
@@ -154,7 +154,7 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
         {/* Add Listing Button */}
         <button
           onClick={() => router.push("/dashboard/cars/add")}
-          className="hidden md:block bg-white dark:bg-black/90 border border-gray-300 dark:border-gray-700 px-4 py-2 rounded-full shadow hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white transition-colors duration-300"
+          className="hidden md:block bg-white dark:bg-dark-raised border border-gray-300 dark:border-dark-divider px-4 py-2 rounded-full shadow hover:bg-gray-100 dark:hover:bg-dark-elevation-3 text-black dark:text-white transition-colors duration-300"
         >
           Add Listing
         </button>
@@ -168,9 +168,9 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
               size={24}
             />
           ) : (
-            <IoPersonCircleOutline className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+            <IoPersonCircleOutline className="w-6 h-6 text-gray-700 dark:text-dark-text-secondary" />
           )}
-          <span className="hidden md:block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <span className="hidden md:block text-sm font-medium text-gray-700 dark:text-dark-text-secondary">
             {user?.firstName || user?.email || "User"}
           </span>
         </div>
@@ -178,7 +178,7 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
         {/* Mobile Menu Button */}
         <button
           onClick={toggleSidebar}
-          className="text-gray-700 dark:text-gray-300 block md:hidden hover:text-gray-900 dark:hover:text-white transition-colors"
+          className="text-gray-700 dark:text-gray-300 block md:hidden hover:text-gray-900 dark:text-gray-200 dark:hover:text-white transition-colors"
         >
           {isOpen ? (
             <FiX className="w-6 h-6" />

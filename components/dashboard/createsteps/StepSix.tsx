@@ -80,7 +80,7 @@ export default function StepSix({ nextStep, prevStep, formData, updateFormData }
 
             return (
                 <div key={index} className="mb-8 last:mb-0">
-                    <h3 className="text-lg font-black text-gray-900 dark:text-white mb-4 uppercase tracking-tight border-b-2 border-gray-100 dark:border-gray-700 pb-2">
+                    <h3 className="text-lg font-black text-gray-900 dark:text-gray-200 dark:text-white mb-4 uppercase tracking-tight border-b-2 border-gray-100 dark:border-gray-700 pb-2">
                         {title}
                     </h3>
                     <div className="space-y-2">
@@ -110,23 +110,23 @@ export default function StepSix({ nextStep, prevStep, formData, updateFormData }
     };
 
     return (
-        <div className="bg-white dark:bg-black/80 rounded-xl shadow-sm p-8 max-w-3xl mx-auto transition-colors">
+        <div className="bg-white dark:bg-dark-main rounded-xl shadow-sm p-8 max-w-3xl mx-auto transition-colors">
             <div className="text-center mb-10">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-50 dark:bg-blue-900/30 rounded-full mb-4">
                     <Sparkles className="text-blue-600 dark:text-blue-400 w-8 h-8" />
                 </div>
                 <h3 className="text-blue-600 dark:text-blue-400 font-bold text-sm uppercase tracking-widest mb-2">Krok 6</h3>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Twój profesjonalny opis</h2>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 dark:text-white">Twój profesjonalny opis</h2>
                 <p className="text-gray-500 dark:text-gray-400 mt-2">
                     Wygenerowaliśmy czytelny i rzeczowy opis Twojego auta.
                 </p>
             </div>
 
-            <div className="bg-gray-50 dark:bg-black/80 rounded-2xl border border-gray-100 dark:border-gray-700 p-8 min-h-[400px] relative">
+            <div className="bg-gray-50 dark:bg-dark-main rounded-2xl border border-gray-100 dark:border-gray-700 p-8 min-h-[400px] relative">
                 {isGenerating ? (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 dark:bg-black/80/80 backdrop-blur-sm rounded-2xl z-10">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 dark:bg-dark-main/80 backdrop-blur-sm rounded-2xl z-10">
                         <Loader2 className="w-12 h-12 text-blue-600 animate-spin mb-4" />
-                        <p className="text-gray-900 dark:text-white font-bold text-lg">Generowanie opisu...</p>
+                        <p className="text-gray-900 dark:text-gray-200 dark:text-white font-bold text-lg">Generowanie opisu...</p>
                         <p className="text-gray-500 dark:text-gray-400 text-sm mt-2">To może potrwać kilka sekund</p>
                     </div>
                 ) : null}

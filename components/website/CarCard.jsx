@@ -222,7 +222,7 @@ export default function CarCard({ car, viewMode = 'grid' }) {
             <div className="mb-1">
 
               <div className="flex items-center justify-between gap-3">
-                <h3 className="text-[21px] font-bold text-gray-900 dark:text-white leading-tight group-hover:text-blue-600 transition-colors">
+                <h3 className="text-[21px] font-bold text-gray-900 dark:text-gray-200 dark:text-dark-text-primary leading-tight group-hover:text-blue-600 transition-colors">
                   {toTitleCase(`${car.year} ${car.make} ${car.model}`)}
                 </h3>
               </div>
@@ -230,7 +230,7 @@ export default function CarCard({ car, viewMode = 'grid' }) {
             </div>
 
             <div className="space-y-1.5">
-              <p className="text-[15px] text-gray-600 dark:text-gray-400 line-clamp-2 leading-snug">
+              <p className="text-[15px] text-gray-600 dark:text-dark-text-secondary line-clamp-2 leading-snug">
                 {[
                   car.mileage ? `${car.mileage.toLocaleString('pl-PL')} km` : null,
                   translateTransmission(car.transmission),
@@ -239,7 +239,7 @@ export default function CarCard({ car, viewMode = 'grid' }) {
                 ].filter(Boolean).join(', ')}. Stan techniczny i wizualny oceniany jako wzorowy.
               </p>
 
-              <div className="text-[15px] text-gray-600 dark:text-gray-400 line-clamp-2 leading-snug">
+              <div className="text-[15px] text-gray-600 dark:text-dark-text-secondary line-clamp-2 leading-snug">
                 {locationDetails.city || 'POLSKA'}
               </div>
             </div>
@@ -265,7 +265,7 @@ export default function CarCard({ car, viewMode = 'grid' }) {
     >
       <div className="mx-2 bg-transparent rounded-2xl overflow-hidden transition-all duration-500 flex flex-row h-[140px] xs:h-[160px] sm:h-[200px] md:h-[260px] relative">
         {/* Hover overlay shade */}
-        <div className="absolute inset-0 bg-black/0 hover:bg-black/20 dark:hover:bg-white/20 transition-all duration-300 z-10 pointer-events-none rounded-2xl" />
+        <div className="absolute inset-0 bg-black/0 hover:bg-black/20 dark:hover:bg-dark-raised/20 transition-all duration-300 z-10 pointer-events-none rounded-2xl" />
         {/* Image Section */}
         <div className="relative w-[120px] xs:w-[150px] sm:w-[200px] md:w-[400px] h-full flex-shrink-0 overflow-hidden rounded-2xl">
           {car?.isFeatured && (car?.images?.length ?? 0) >= 3 ? (
@@ -323,11 +323,11 @@ export default function CarCard({ car, viewMode = 'grid' }) {
         {/* Content Section */}
         <div className="flex-1 p-3 xs:p-4 md:p-8 flex flex-col justify-center bg-transparent min-w-0">
           <div className="flex flex-col gap-1 md:gap-3">
-            <h3 className="text-sm xs:text-base sm:text-lg md:text-3xl font-bold text-gray-900 dark:text-white group-hover:text-blue-600 transition-colors leading-tight truncate">
+            <h3 className="text-sm xs:text-base sm:text-lg md:text-3xl font-bold text-gray-900 dark:text-gray-200 dark:text-dark-text-primary group-hover:text-blue-600 transition-colors leading-tight truncate">
               {car.year} {car.make} {car.model}
             </h3>
 
-            <p className="text-[10px] xs:text-xs md:text-[17px] text-gray-600 dark:text-gray-400 line-clamp-2 md:line-clamp-none leading-snug">
+            <p className="text-[10px] xs:text-xs md:text-[17px] text-gray-600 dark:text-dark-text-secondary line-clamp-2 md:line-clamp-none leading-snug">
               {[
                 car.mileage ? `${car.mileage.toLocaleString('pl-PL')} km` : null,
                 translateTransmission(car.transmission),
@@ -337,11 +337,11 @@ export default function CarCard({ car, viewMode = 'grid' }) {
             </p>
 
             <div className="flex flex-row justify-between items-center mt-1 md:mt-4">
-              <div className="text-[10px] md:text-[16px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-tight">
+              <div className="text-[10px] md:text-[16px] text-gray-400 dark:text-dark-text-muted font-bold uppercase tracking-tight">
                 {locationDetails.city || 'POLSKA'}
               </div>
 
-              <div className="text-sm xs:text-base sm:text-xl md:text-4xl font-black text-gray-900 dark:text-white tracking-tighter">
+              <div className="text-sm xs:text-base sm:text-xl md:text-4xl font-black text-gray-900 dark:text-gray-200 dark:text-dark-text-primary tracking-tighter">
                 {car.financialInfo?.priceNetto
                   ? `${car.financialInfo.priceNetto.toLocaleString('pl-PL')} zł`
                   : 'Cena do negocjacji'}

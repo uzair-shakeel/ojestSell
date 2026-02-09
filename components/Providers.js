@@ -20,7 +20,7 @@ export default function Providers({ children }) {
               toastOptions={{
                 // Base style
                 className:
-                  "pointer-events-auto rounded-xl shadow-lg ring-1 ring-black/10 dark:ring-white/10 bg-white/95 dark:bg-black/90/95 text-gray-900 dark:text-gray-100 backdrop-blur px-4 py-3",
+                  "pointer-events-auto rounded-xl shadow-lg ring-1 ring-black/10 dark:ring-white/10 bg-white/95 dark:bg-dark-card/95 text-gray-900 dark:text-gray-200 dark:text-gray-100 backdrop-blur px-4 py-3",
                 duration: 3500,
                 success: {
                   className:

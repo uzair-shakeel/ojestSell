@@ -47,13 +47,13 @@ export function FeaturedCars() {
   }
 
   return (
-    <section className="py-12 bg-white dark:bg-black/80 transition-colors duration-300">
+    <section className="py-12 bg-white dark:bg-dark-main transition-colors duration-300">
       <div className="mx-auto px-4 max-w-7xl">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white transition-colors duration-300 tracking-tight">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-gray-200 dark:text-dark-text-primary transition-colors duration-300 tracking-tight">
             Wyróżnione Oferty
           </h2>
-          <button className="px-6 py-2.5 bg-white dark:bg-black/70 border border-gray-200 dark:border-gray-600 rounded-full text-sm font-bold text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-600 hover:shadow-md transition-all duration-300 flex items-center gap-2">
+          <button className="px-6 py-2.5 bg-white dark:bg-dark-raised border border-gray-200 dark:border-dark-divider rounded-full text-sm font-bold text-gray-900 dark:text-gray-200 dark:text-dark-text-primary hover:bg-gray-50 dark:hover:bg-dark-elevation-1 hover:shadow-md transition-all duration-300 flex items-center gap-2">
             Więcej <span className="text-lg">→</span>
           </button>
         </div>
@@ -96,10 +96,10 @@ export function FeaturedCars() {
             </Swiper>
 
             {/* Navigation buttons */}
-            <button className="featured-cars-swiper-prev absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 dark:bg-black/80 backdrop-blur-sm shadow-xl rounded-full p-4 hover:scale-110 active:scale-95 transition-all duration-300 -ml-5 border border-white/20 dark:border-gray-700 text-gray-800 dark:text-white group">
+            <button className="featured-cars-swiper-prev absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 dark:bg-dark-card backdrop-blur-sm shadow-xl rounded-full p-4 hover:scale-110 active:scale-95 transition-all duration-300 -ml-5 border border-white/20 dark:border-dark-divider text-gray-800 dark:text-dark-text-primary group">
               <FaChevronLeft size={20} className="group-hover:-translate-x-0.5 transition-transform" />
             </button>
-            <button className="featured-cars-swiper-next absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 dark:bg-black/80 backdrop-blur-sm shadow-xl rounded-full p-4 hover:scale-110 active:scale-95 transition-all duration-300 -mr-5 border border-white/20 dark:border-gray-700 text-gray-800 dark:text-white group">
+            <button className="featured-cars-swiper-next absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 dark:bg-dark-card backdrop-blur-sm shadow-xl rounded-full p-4 hover:scale-110 active:scale-95 transition-all duration-300 -mr-5 border border-white/20 dark:border-dark-divider text-gray-800 dark:text-dark-text-primary group">
               <FaChevronRight size={20} className="group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>

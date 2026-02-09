@@ -65,7 +65,7 @@ const Pagination = ({
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   return (
-    <div className={`w-full flex flex-col sm:flex-row justify-center items-center py-6 px-4 bg-white dark:bg-black/10  ${className}`}>
+    <div className={`w-full flex flex-col sm:flex-row justify-center items-center py-6 px-4 bg-white dark:bg-dark-elevation-4/10  ${className}`}>
 
 
       {/* Pagination controls */}
@@ -76,7 +76,7 @@ const Pagination = ({
           disabled={currentPage === 1}
           className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${currentPage === 1
             ? "text-gray-400 cursor-not-allowed"
-            : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+            : "text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200"
             }`}
           aria-label="First page"
         >
@@ -91,7 +91,7 @@ const Pagination = ({
           disabled={currentPage === 1}
           className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${currentPage === 1
             ? "text-gray-400 cursor-not-allowed"
-            : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+            : "text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200"
             }`}
           aria-label="Previous page"
         >
@@ -120,7 +120,7 @@ const Pagination = ({
                 onClick={() => handlePageChange(page)}
                 className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${currentPage === page
                   ? "bg-blue-500 text-white shadow-sm"
-                  : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  : "text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200"
                   }`}
                 aria-label={`Page ${page}`}
                 aria-current={currentPage === page ? "page" : undefined}
@@ -137,7 +137,7 @@ const Pagination = ({
           disabled={currentPage === totalPages}
           className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${currentPage === totalPages
             ? "text-gray-400 cursor-not-allowed"
-            : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+            : "text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200"
             }`}
           aria-label="Next page"
         >
@@ -152,7 +152,7 @@ const Pagination = ({
           disabled={currentPage === totalPages}
           className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${currentPage === totalPages
             ? "text-gray-400 cursor-not-allowed"
-            : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+            : "text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200"
             }`}
           aria-label="Last page"
         >

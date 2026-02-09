@@ -74,7 +74,7 @@ const ProfileComponent = () => {
               flex flex-col items-center p-4 rounded-2xl cursor-pointer transition-all duration-300
               ${selectedBrands.includes(brand.name)
                 ? "bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500 shadow-md ring-2 ring-blue-100 dark:ring-blue-900/40"
-                : "bg-white dark:bg-black/80 border-2 border-gray-100 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm"
+                : "bg-white dark:bg-dark-main border-2 border-gray-100 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm"
               }
             `}
             onClick={() => onBrandChange(brand.name)}
@@ -403,27 +403,27 @@ const ProfileComponent = () => {
   };
 
   if (!user) return (
-    <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-black/80">
+    <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-dark-main">
       <div className="w-16 h-16 border-4 border-blue-100 dark:border-blue-900 border-t-blue-600 rounded-full animate-spin mb-4"></div>
       <p className="text-gray-400 dark:text-gray-500 font-medium">Ładowanie profilu...</p>
     </div>
   );
 
   return (
-    <div className="p-8 max-w-7xl mx-auto dark:bg-black/70">
+    <div className="p-8 max-w-7xl mx-auto dark:bg-dark-card">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex items-center justify-between mb-8"
       >
         <div>
-          <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight transition-colors">Twój Profil</h1>
+          <h1 className="text-4xl font-extrabold text-gray-900 dark:text-gray-200 dark:text-white tracking-tight transition-colors">Twój Profil</h1>
           <p className="text-gray-500 dark:text-gray-400 mt-2 font-medium transition-colors">Zarządzaj swoimi danymi osobowymi i ustawieniami konta.</p>
         </div>
         <button
           type="button"
           onClick={() => setIsCpOpen(true)}
-          className="bg-white dark:bg-black/80 text-gray-700 dark:text-gray-200 font-bold border-2 border-gray-100 dark:border-gray-700 px-6 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-200 dark:hover:border-gray-600 transition-all shadow-sm"
+          className="bg-white dark:bg-dark-main text-gray-700 dark:text-gray-200 font-bold border-2 border-gray-100 dark:border-gray-700 px-6 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-200 dark:hover:border-gray-600 transition-all shadow-sm"
         >
           Zmień Hasło
         </button>
@@ -438,8 +438,8 @@ const ProfileComponent = () => {
           className="xl:col-span-2 space-y-8"
         >
           {/* Section: Profile Photo */}
-          <div className="bg-white dark:bg-black/80 p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm relative overflow-hidden group transition-colors">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-widest mb-6">Zdjęcie Profilowe</h2>
+          <div className="bg-white dark:bg-dark-main p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm relative overflow-hidden group transition-colors">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-widest mb-6">Zdjęcie Profilowe</h2>
             <div className="flex items-center gap-8">
               <div className="relative">
                 <Avatar
@@ -468,8 +468,8 @@ const ProfileComponent = () => {
           </div>
 
           {/* Section: Personal Details */}
-          <div className="bg-white dark:bg-black/80 p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm transition-colors">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-widest mb-6">Dane Osobowe</h2>
+          <div className="bg-white dark:bg-dark-main p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm transition-colors">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-widest mb-6">Dane Osobowe</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
                 <label className="block text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">Imię</label>
@@ -478,7 +478,7 @@ const ProfileComponent = () => {
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleInputChange}
-                  className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all font-semibold text-gray-900 dark:text-white bg-gray-50/50 dark:bg-black/70 focus:bg-white dark:focus:bg-gray-900"
+                  className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all font-semibold text-gray-900 dark:text-gray-200 dark:text-white bg-gray-50/50 dark:bg-dark-card focus:bg-white dark:focus:bg-gray-900"
                   required
                 />
               </div>
@@ -489,7 +489,7 @@ const ProfileComponent = () => {
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleInputChange}
-                  className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all font-semibold text-gray-900 dark:text-white bg-gray-50/50 dark:bg-black/50 focus:bg-white dark:focus:bg-gray-900"
+                  className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all font-semibold text-gray-900 dark:text-gray-200 dark:text-white bg-gray-50/50 dark:bg-dark-elevation-4 focus:bg-white dark:focus:bg-gray-900"
                   required
                 />
               </div>
@@ -500,15 +500,15 @@ const ProfileComponent = () => {
                 name="description"
                 value={formData.description}
                 onChange={handleInputChange}
-                className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all text-gray-900 dark:text-white bg-gray-50/50 dark:bg-black/50 focus:bg-white dark:focus:bg-gray-900 min-h-[120px]"
+                className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all text-gray-900 dark:text-gray-200 dark:text-white bg-gray-50/50 dark:bg-dark-elevation-4 focus:bg-white dark:focus:bg-gray-900 min-h-[120px]"
                 placeholder="Napisz kilka słów o sobie..."
               />
             </div>
           </div>
 
           {/* Section: Location */}
-          <div className="bg-white dark:bg-black/80 p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm transition-colors">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-widest mb-6">Lokalizacja</h2>
+          <div className="bg-white dark:bg-dark-main p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm transition-colors">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-widest mb-6">Lokalizacja</h2>
             <div className="rounded-2xl overflow-hidden border-2 border-gray-100 dark:border-gray-700">
               <CustomMap
                 location={formData.location}
@@ -528,8 +528,8 @@ const ProfileComponent = () => {
           className="xl:col-span-1 space-y-8"
         >
           {/* Section: Contact Info */}
-          <div className="bg-white dark:bg-black/80 p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm transition-colors">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-widest mb-6">Kontakt i Firma</h2>
+          <div className="bg-white dark:bg-dark-main p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm transition-colors">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-widest mb-6">Kontakt i Firma</h2>
 
             <div className="space-y-6">
               <div>
@@ -539,24 +539,24 @@ const ProfileComponent = () => {
                   name="email"
                   value={formData.email}
                   disabled
-                  className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl bg-gray-50 dark:bg-black/90 text-gray-500 dark:text-gray-600 font-medium cursor-not-allowed transition-colors"
+                  className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl bg-gray-50 dark:bg-dark-card text-gray-500 dark:text-gray-600 font-medium cursor-not-allowed transition-colors"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">Typ Konta</label>
-                <div className="flex bg-gray-50 dark:bg-black/90 p-1 rounded-xl border border-gray-100 dark:border-gray-700 transition-colors">
+                <div className="flex bg-gray-50 dark:bg-dark-card p-1 rounded-xl border border-gray-100 dark:border-gray-700 transition-colors">
                   <button
                     type="button"
                     onClick={() => setFormData({ ...formData, sellerType: 'private' })}
-                    className={`flex-1 py-3 px-4 rounded-lg text-sm font-bold transition-all ${formData.sellerType === 'private' ? 'bg-white dark:bg-black/80 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}
+                    className={`flex-1 py-3 px-4 rounded-lg text-sm font-bold transition-all ${formData.sellerType === 'private' ? 'bg-white dark:bg-dark-main text-blue-600 dark:text-blue-400 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}
                   >
                     Prywatny
                   </button>
                   <button
                     type="button"
                     onClick={() => setFormData({ ...formData, sellerType: 'company' })}
-                    className={`flex-1 py-3 px-4 rounded-lg text-sm font-bold transition-all ${formData.sellerType === 'company' ? 'bg-white dark:bg-black/80 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}
+                    className={`flex-1 py-3 px-4 rounded-lg text-sm font-bold transition-all ${formData.sellerType === 'company' ? 'bg-white dark:bg-dark-main text-blue-600 dark:text-blue-400 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}
                   >
                     Firma
                   </button>
@@ -571,7 +571,7 @@ const ProfileComponent = () => {
                     name="companyName"
                     value={formData.companyName}
                     onChange={handleInputChange}
-                    className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all font-semibold text-gray-900 dark:text-white bg-gray-50/50 dark:bg-black/50 focus:bg-white dark:focus:bg-gray-900"
+                    className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all font-semibold text-gray-900 dark:text-gray-200 dark:text-white bg-gray-50/50 dark:bg-dark-elevation-4 focus:bg-white dark:focus:bg-gray-900"
                   />
                 </motion.div>
               )}
@@ -586,7 +586,7 @@ const ProfileComponent = () => {
                           country={phone.countryCode?.toLowerCase() || 'pl'}
                           value={phone.phone}
                           onChange={(value, country) => handlePhoneNumberChange(index, value, country)}
-                          inputClass="!w-full !h-12 !text-base !bg-gray-50/50 dark:!bg-gray-900/50 !border-2 !border-gray-100 dark:!border-gray-700 !text-gray-900 dark:!text-white !rounded-xl focus:!border-blue-500 dark:focus:!border-blue-400 !transition-all"
+                          inputClass="!w-full !h-12 !text-base !bg-gray-50/50 dark:!bg-gray-900/50 !border-2 !border-gray-100 dark:!border-gray-700 !text-gray-900 dark:text-gray-200 dark:!text-white !rounded-xl focus:!border-blue-500 dark:focus:!border-blue-400 !transition-all"
                           containerClass="!w-full"
                           buttonClass="!bg-transparent !border-0 !pl-2"
                           dropdownClass="!shadow-xl !rounded-xl !border-gray-100 dark:!border-gray-700 dark:!bg-gray-800"
@@ -618,8 +618,8 @@ const ProfileComponent = () => {
           </div>
 
           {/* Section: Social Media */}
-          <div className="bg-white dark:bg-black/80 p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm transition-colors">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-widest mb-6">Social Media</h2>
+          <div className="bg-white dark:bg-dark-main p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm transition-colors">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-widest mb-6">Social Media</h2>
             <div className="space-y-4">
               {['instagram', 'facebook', 'website'].map((social) => (
                 <div key={social} className="relative group">
@@ -632,7 +632,7 @@ const ProfileComponent = () => {
                     value={formData.socialMedia[social]}
                     onChange={handleInputChange}
                     placeholder="https://..."
-                    className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 pl-24 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all text-sm font-medium text-gray-900 dark:text-white bg-gray-50/50 dark:bg-black/50 focus:bg-white dark:focus:bg-gray-900"
+                    className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 pl-24 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all text-sm font-medium text-gray-900 dark:text-gray-200 dark:text-white bg-gray-50/50 dark:bg-dark-elevation-4 focus:bg-white dark:focus:bg-gray-900"
                   />
                 </div>
               ))}
@@ -646,9 +646,9 @@ const ProfileComponent = () => {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white dark:bg-black/80 p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm mb-8 transition-colors"
+              className="bg-white dark:bg-dark-main p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm mb-8 transition-colors"
             >
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Marki z którymi współpracujesz</h3>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-200 dark:text-white mb-2">Marki z którymi współpracujesz</h3>
               <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">Wybierz marki, w których specjalizuje się Twoja firma.</p>
 
               <BrandSelector
@@ -677,9 +677,9 @@ const ProfileComponent = () => {
         isCpOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onClick={() => setIsCpOpen(false)} />
-            <div className="relative z-10 w-full max-w-lg bg-white dark:bg-black/80 rounded-2xl shadow-2xl p-8 border border-gray-100 dark:border-gray-700 transition-all">
+            <div className="relative z-10 w-full max-w-lg bg-white dark:bg-dark-main rounded-2xl shadow-2xl p-8 border border-gray-100 dark:border-gray-700 transition-all">
               <div className="flex items-center justify-between mb-8">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Zmień Hasło</h3>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-200 dark:text-white">Zmień Hasło</h3>
                 <button
                   type="button"
                   onClick={() => setIsCpOpen(false)}
@@ -695,7 +695,7 @@ const ProfileComponent = () => {
                     type="password"
                     value={cpCurrent}
                     onChange={(e) => setCpCurrent(e.target.value)}
-                    className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all font-semibold text-gray-900 dark:text-white bg-gray-50/50 dark:bg-black/50 focus:bg-white dark:focus:bg-gray-900"
+                    className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all font-semibold text-gray-900 dark:text-gray-200 dark:text-white bg-gray-50/50 dark:bg-dark-elevation-4 focus:bg-white dark:focus:bg-gray-900"
                     required
                   />
                 </div>
@@ -706,7 +706,7 @@ const ProfileComponent = () => {
                     value={cpNew}
                     onChange={(e) => setCpNew(e.target.value)}
                     minLength={6}
-                    className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all font-semibold text-gray-900 dark:text-white bg-gray-50/50 dark:bg-black/50 focus:bg-white dark:focus:bg-gray-900"
+                    className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all font-semibold text-gray-900 dark:text-gray-200 dark:text-white bg-gray-50/50 dark:bg-dark-elevation-4 focus:bg-white dark:focus:bg-gray-900"
                     required
                   />
                 </div>
@@ -717,7 +717,7 @@ const ProfileComponent = () => {
                     value={cpConfirm}
                     onChange={(e) => setCpConfirm(e.target.value)}
                     minLength={6}
-                    className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all font-semibold text-gray-900 dark:text-white bg-gray-50/50 dark:bg-black/50 focus:bg-white dark:focus:bg-gray-900"
+                    className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all font-semibold text-gray-900 dark:text-gray-200 dark:text-white bg-gray-50/50 dark:bg-dark-elevation-4 focus:bg-white dark:focus:bg-gray-900"
                     required
                   />
                 </div>

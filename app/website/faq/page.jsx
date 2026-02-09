@@ -20,7 +20,7 @@ const FAQItem = ({ question, answer }) => {
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
       >
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-200 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
           {question}
         </h3>
         <motion.div
@@ -86,14 +86,14 @@ const FAQPage = () => {
               {t("faq.hero.title")}
             </h1>
           </div>
-          <div className="absolute md:bottom-20 bottom-10 left-5 right-5 bg-white/70 dark:bg-black/80/70 backdrop-blur-sm p-2 rounded-xl shadow-lg max-w-3xl mx-auto transition-colors duration-300">
+          <div className="absolute md:bottom-20 bottom-10 left-5 right-5 bg-white/70 dark:bg-dark-main/70 backdrop-blur-sm p-2 rounded-xl shadow-lg max-w-3xl mx-auto transition-colors duration-300">
             <FAQItem question={firstFaq.question} answer={firstFaq.answer} />
           </div>
         </div>
       </section>
       <div className="max-w-7xl mx-auto py-20 px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400 transition-colors duration-300">
+          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-gray-200 dark:text-white sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400 transition-colors duration-300">
             {t("faq.hero.title")}
           </h2>
           <p className="mt-4 text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto transition-colors duration-300">
@@ -132,7 +132,7 @@ const FAQPage = () => {
         >
           <div className="bg-black/40 flex justify-start  md:justify-end py-4 md:py-24 px-4">
             <div className="flex flex-col items-center  w-full  md:w-1/3 justify-end">
-              <h3 className="text-xl font-extrabold text-gray-900 dark:text-white sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400 transition-colors duration-300">
+              <h3 className="text-xl font-extrabold text-gray-900 dark:text-gray-200 dark:text-white sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400 transition-colors duration-300">
                 {t("faq.moreQuestions.title")}
               </h3>
               <p className="mt-4 text-lg text-white hidden md:block">

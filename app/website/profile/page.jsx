@@ -75,7 +75,7 @@ function ProfileContent({ sellerId }) {
 
     if (error || !user) return (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex flex-col justify-center items-center p-4">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">User not found</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 dark:text-white mb-2">User not found</h2>
             <p className="text-gray-500 dark:text-gray-400">{error || "Please check the link and try again."}</p>
         </motion.div>
     );
@@ -135,7 +135,7 @@ function ProfileContent({ sellerId }) {
                 </motion.div>
 
                 {/* Tabs */}
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="bg-white dark:bg-black/80 rounded-xl shadow-md p-2 mb-8">
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="bg-white dark:bg-dark-main rounded-xl shadow-md p-2 mb-8">
                     <div className="flex gap-2">
                         {["listings", "contact", "location"].map((tab) => (
                             <motion.button key={tab} onClick={() => setActiveTab(tab)} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className={`flex-1 py-3 px-4 text-sm font-medium rounded-lg transition-all duration-300 ${activeTab === tab ? "bg-gradient-to-r from-blue-500 to-blue-800 text-white shadow-lg" : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"}`}>
@@ -157,7 +157,7 @@ function ProfileContent({ sellerId }) {
                                     ))}
                                 </motion.div>
                             ) : (
-                                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-white dark:bg-black/80 rounded-xl p-12 text-center shadow-lg">
+                                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-white dark:bg-dark-main rounded-xl p-12 text-center shadow-lg">
                                     <FaCar className="mx-auto text-6xl text-gray-300 dark:text-gray-600 mb-4" />
                                     <p className="text-gray-500 dark:text-gray-400 text-lg">No cars listed yet.</p>
                                 </motion.div>
@@ -175,12 +175,12 @@ function ProfileContent({ sellerId }) {
                                         sanitized = "+" + sanitized;
                                     }
                                     return (
-                                        <motion.a key={idx} variants={itemVariants} whileHover={{ scale: 1.02, x: 8 }} whileTap={{ scale: 0.98 }} href={`tel:${sanitized}`} className="flex items-center gap-4 p-5 bg-white dark:bg-black/80 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-green-500 dark:hover:border-green-400 transition-all shadow-md hover:shadow-xl group">
+                                        <motion.a key={idx} variants={itemVariants} whileHover={{ scale: 1.02, x: 8 }} whileTap={{ scale: 0.98 }} href={`tel:${sanitized}`} className="flex items-center gap-4 p-5 bg-white dark:bg-dark-main rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-green-500 dark:hover:border-green-400 transition-all shadow-md hover:shadow-xl group">
                                             <motion.div whileHover={{ rotate: 15, scale: 1.1 }} transition={{ type: "spring", stiffness: 300 }} className="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-white shadow-lg">
                                                 <FaPhoneAlt className="text-lg" />
                                             </motion.div>
                                             <div className="flex-1">
-                                                <p className="font-semibold text-gray-900 dark:text-white text-lg">{formatPhoneNumber(phone)}</p>
+                                                <p className="font-semibold text-gray-900 dark:text-gray-200 dark:text-white text-lg">{formatPhoneNumber(phone)}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400">Click to call</p>
                                             </div>
                                             <div className="text-green-500 opacity-0 group-hover:opacity-100 transition-opacity">→</div>
@@ -189,12 +189,12 @@ function ProfileContent({ sellerId }) {
                                 })}
 
                                 {user?.email && (
-                                    <motion.a variants={itemVariants} whileHover={{ scale: 1.02, x: 8 }} whileTap={{ scale: 0.98 }} href={`mailto:${user.email}`} className="flex items-center gap-4 p-5 bg-white dark:bg-black/80 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 transition-all shadow-md hover:shadow-xl group">
+                                    <motion.a variants={itemVariants} whileHover={{ scale: 1.02, x: 8 }} whileTap={{ scale: 0.98 }} href={`mailto:${user.email}`} className="flex items-center gap-4 p-5 bg-white dark:bg-dark-main rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 transition-all shadow-md hover:shadow-xl group">
                                         <motion.div whileHover={{ rotate: 15, scale: 1.1 }} transition={{ type: "spring", stiffness: 300 }} className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white shadow-lg">
                                             <MdEmail className="text-xl" />
                                         </motion.div>
                                         <div className="flex-1">
-                                            <p className="font-semibold text-gray-900 dark:text-white text-lg">{user.email}</p>
+                                            <p className="font-semibold text-gray-900 dark:text-gray-200 dark:text-white text-lg">{user.email}</p>
                                             <p className="text-sm text-gray-500 dark:text-gray-400">Send an email</p>
                                         </div>
                                         <div className="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">→</div>
@@ -214,8 +214,8 @@ function ProfileContent({ sellerId }) {
 
                     {activeTab === "location" && (
                         <motion.div key="location" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.3 }} className="max-w-4xl mx-auto">
-                            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-white dark:bg-black/80 rounded-2xl overflow-hidden shadow-2xl border-2 border-gray-200 dark:border-gray-700">
-                                <div className="h-96 bg-gray-200 dark:bg-black/70 relative">
+                            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-white dark:bg-dark-main rounded-2xl overflow-hidden shadow-2xl border-2 border-gray-200 dark:border-gray-700">
+                                <div className="h-96 bg-gray-200 dark:bg-dark-card relative">
                                     <iframe width="100%" height="100%" style={{ border: 0 }} loading="lazy" allowFullScreen referrerPolicy="no-referrer-when-downgrade" src={`https://www.google.com/maps?q=${mapCenter.lat},${mapCenter.lng}&hl=en;z=14&output=embed`}></iframe>
                                 </div>
                                 <div className="p-8 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
@@ -224,7 +224,7 @@ function ProfileContent({ sellerId }) {
                                             <FaMapMarkerAlt className="text-xl" />
                                         </div>
                                         <div className="flex-1">
-                                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Location</h3>
+                                            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-200 dark:text-white mb-2">Location</h3>
                                             <p className="text-gray-700 dark:text-gray-300 mb-4">{hasLocation ? user.location.address || "Seller's Location" : "Location not specified"}</p>
                                             {hasLocation && <motion.button whileHover={{ scale: 1.05, x: 4 }} whileTap={{ scale: 0.95 }} onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${mapCenter.lat},${mapCenter.lng}`, "_blank")} className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all">Get Directions<FaMapMarkerAlt /></motion.button>}
                                         </div>

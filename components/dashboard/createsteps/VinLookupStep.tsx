@@ -109,13 +109,13 @@ export default function VinLookupStep({ nextStep, updateFormData, formData }) {
     };
 
     return (
-        <div className="bg-white dark:bg-black rounded-xl shadow-sm p-8 max-w-2xl mx-auto transition-colors">
+        <div className="bg-white dark:bg-dark-elevation-4 rounded-xl shadow-sm p-8 max-w-2xl mx-auto transition-colors">
             <div className="text-center mb-8">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-50 rounded-full mb-4">
                     <Sparkles className="text-blue-600 w-8 h-8" />
                 </div>
                 <h3 className="text-blue-600 dark:text-blue-400 font-bold text-sm uppercase tracking-widest mb-2">Krok 1</h3>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Zacznij od numeru VIN</h2>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 dark:text-white">Zacznij od numeru VIN</h2>
                 <p className="text-gray-500 dark:text-gray-400 mt-2">
                     Pobierzemy większość danych o Twoim aucie automatycznie.
                 </p>
@@ -135,7 +135,7 @@ export default function VinLookupStep({ nextStep, updateFormData, formData }) {
                                 onChange={() => updateFormData({ conditionType: "Used" })}
                                 className="peer sr-only"
                             />
-                            <div className="px-8 py-3 rounded-xl border-2 border-gray-100 dark:border-gray-700 bg-white dark:bg-black/80 text-gray-600 dark:text-gray-300 font-bold transition-all peer-checked:border-blue-600 dark:peer-checked:border-blue-500 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/30 peer-checked:text-blue-700 dark:peer-checked:text-blue-300 hover:border-blue-200 dark:hover:border-blue-700">
+                            <div className="px-8 py-3 rounded-xl border-2 border-gray-100 dark:border-gray-700 bg-white dark:bg-dark-main text-gray-600 dark:text-gray-300 font-bold transition-all peer-checked:border-blue-600 dark:peer-checked:border-blue-500 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/30 peer-checked:text-blue-700 dark:peer-checked:text-blue-300 hover:border-blue-200 dark:hover:border-blue-700">
                                 Używany
                             </div>
                         </label>
@@ -148,7 +148,7 @@ export default function VinLookupStep({ nextStep, updateFormData, formData }) {
                                 onChange={() => updateFormData({ conditionType: "New" })}
                                 className="peer sr-only"
                             />
-                            <div className="px-8 py-3 rounded-xl border-2 border-gray-100 dark:border-gray-700 bg-white dark:bg-black/80 text-gray-600 dark:text-gray-300 font-bold transition-all peer-checked:border-blue-600 dark:peer-checked:border-blue-500 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/30 peer-checked:text-blue-700 dark:peer-checked:text-blue-300 hover:border-blue-200 dark:hover:border-blue-700">
+                            <div className="px-8 py-3 rounded-xl border-2 border-gray-100 dark:border-gray-700 bg-white dark:bg-dark-main text-gray-600 dark:text-gray-300 font-bold transition-all peer-checked:border-blue-600 dark:peer-checked:border-blue-500 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/30 peer-checked:text-blue-700 dark:peer-checked:text-blue-300 hover:border-blue-200 dark:hover:border-blue-700">
                                 Nowy
                             </div>
                         </label>
@@ -165,7 +165,7 @@ export default function VinLookupStep({ nextStep, updateFormData, formData }) {
                             <input
                                 type="text"
                                 placeholder="Wpisz numer VIN..."
-                                className="block w-full pl-10 pr-3 py-4 border-2 border-gray-100 dark:border-gray-700 rounded-xl focus:border-blue-500 transition-all text-lg font-mono uppercase tracking-wider bg-white dark:bg-black/80 dark:text-white placeholder-gray-400 dark:placeholder-gray-600"
+                                className="block w-full pl-10 pr-3 py-4 border-2 border-gray-100 dark:border-gray-700 rounded-xl focus:border-blue-500 transition-all text-lg font-mono uppercase tracking-wider bg-white dark:bg-dark-main dark:text-white placeholder-gray-400 dark:placeholder-gray-600"
                                 value={vin}
                                 onChange={(e) => setVin(e.target.value.toUpperCase())}
                                 maxLength={17}
@@ -205,19 +205,19 @@ export default function VinLookupStep({ nextStep, updateFormData, formData }) {
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1">
                                     <span className="text-xs text-green-600 dark:text-green-400 block uppercase font-bold tracking-wider">Marka</span>
-                                    <span className="text-lg font-semibold text-gray-900 dark:text-white">{fetchedData.make}</span>
+                                    <span className="text-lg font-semibold text-gray-900 dark:text-gray-200 dark:text-white">{fetchedData.make}</span>
                                 </div>
                                 <div className="space-y-1">
                                     <span className="text-xs text-green-600 dark:text-green-400 block uppercase font-bold tracking-wider">Model</span>
-                                    <span className="text-lg font-semibold text-gray-900 dark:text-white">{fetchedData.model}</span>
+                                    <span className="text-lg font-semibold text-gray-900 dark:text-gray-200 dark:text-white">{fetchedData.model}</span>
                                 </div>
                                 <div className="space-y-1">
                                     <span className="text-xs text-green-600 dark:text-green-400 block uppercase font-bold tracking-wider">Rok</span>
-                                    <span className="text-lg font-semibold text-gray-900 dark:text-white">{fetchedData.year}</span>
+                                    <span className="text-lg font-semibold text-gray-900 dark:text-gray-200 dark:text-white">{fetchedData.year}</span>
                                 </div>
                                 <div className="space-y-1">
                                     <span className="text-xs text-green-600 dark:text-green-400 block uppercase font-bold tracking-wider">Moc</span>
-                                    <span className="text-lg font-semibold text-gray-900 dark:text-white">{fetchedData.horsepower} KM</span>
+                                    <span className="text-lg font-semibold text-gray-900 dark:text-gray-200 dark:text-white">{fetchedData.horsepower} KM</span>
                                 </div>
                             </div>
                             <button
@@ -258,7 +258,7 @@ export default function VinLookupStep({ nextStep, updateFormData, formData }) {
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.9, opacity: 0 }}
-                            className="relative bg-white dark:bg-black/80 rounded-2xl shadow-2xl max-w-md w-full p-8"
+                            className="relative bg-white dark:bg-dark-main rounded-2xl shadow-2xl max-w-md w-full p-8"
                         >
                             <button
                                 onClick={() => setErrorModal(prev => ({ ...prev, show: false }))}
@@ -271,7 +271,7 @@ export default function VinLookupStep({ nextStep, updateFormData, formData }) {
                                 <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mb-6">
                                     <AlertCircle className="text-red-600 w-10 h-10" />
                                 </div>
-                                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Wystąpił błąd</h3>
+                                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-200 dark:text-white mb-4">Wystąpił błąd</h3>
                                 <p className="text-gray-600 dark:text-gray-300 text-lg mb-2">{errorModal.message}</p>
                                 {errorModal.details && (
                                     <p className="text-gray-400 text-sm italic mb-6">

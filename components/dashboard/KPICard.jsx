@@ -8,7 +8,7 @@ export default function KPICard({
 }) {
   return (
     <div
-      className={`relative overflow-hidden rounded-xl shadow-sm ring-1 ring-black/5 dark:ring-gray-700 bg-white dark:bg-black/80800 border border-gray-200 dark:border-gray-700`}
+      className={`relative overflow-hidden rounded-xl shadow-sm ring-1 ring-black/5 dark:ring-dark-divider bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-divider`}
     >
       <div className="p-4 flex items-center gap-4">
         <div
@@ -20,7 +20,7 @@ export default function KPICard({
           <span className="text-sm text-gray-500 dark:text-gray-400">
             {title}
           </span>
-          <span className="text-2xl font-semibold text-gray-900 dark:text-white">
+          <span className="text-2xl font-semibold text-gray-900 dark:text-gray-200 dark:text-white">
             {value}
           </span>
         </div>

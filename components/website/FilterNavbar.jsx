@@ -280,9 +280,8 @@ export default function FilterNavbar({ onApplyFilters }) {
   return (
     <>
       <div
-        ref={filterRef}
-        className={`bg-white max-w-[1480px] mx-auto dark:bg-black/70 z-50 ${isSticky
-          ? 'fixed top-0 left-0 right-0 shadow-xl backdrop-blur-sm bg-white/70'
+        className={`bg-white max-w-[1480px] mx-auto dark:bg-dark-panel z-50 ${isSticky
+          ? 'fixed top-0 left-0 right-0 shadow-xl backdrop-blur-sm bg-white/70 dark:bg-dark-panel/95'
           : 'relative'
           }`}
       >
@@ -291,7 +290,7 @@ export default function FilterNavbar({ onApplyFilters }) {
           {/* Filter Heading with mobile view toggle on the right - Hidden when sticky */}
           {!isSticky && (
             <div className="flex items-center justify-between mx-[10px] mb-[10px]">
-              <h2 className="font-bold text-gray-900 dark:text-white text-2xl transition-colors duration-300">Filtrowanie</h2>
+              <h2 className="font-bold text-gray-900 dark:text-gray-200 dark:text-dark-text-primary text-2xl transition-colors duration-300">Filtrowanie</h2>
               {/* Mobile inline view toggle (adjacent to heading) */}
               {/* <div className="flex md:hidden items-center gap-1 bg-white rounded-md p-1 shadow-sm border">
                 <button
@@ -330,7 +329,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                     name="make"
                     value={filters.make}
                     onChange={handleInputChange}
-                    className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                    className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 dark:border-dark-divider rounded-md lg:rounded-lg focus:outline-none bg-white dark:bg-dark-raised dark:text-dark-text-primary shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                     disabled={loading}
                   >
                     <option value="">Marka</option>
@@ -595,12 +594,12 @@ export default function FilterNavbar({ onApplyFilters }) {
 
                     {/* Price From (Cena od) */}
                     <div className="relative flex-1">
-                      <input type="number" name="priceFrom" value={filters.priceFrom} onChange={handleInputChange} placeholder="Cena od" className="px-2 py-1.5 text-sm lg:px-4 lg:py-3 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 w-full" />
+                      <input type="number" name="priceFrom" value={filters.priceFrom} onChange={handleInputChange} placeholder="Cena od" className="px-2 py-1.5 text-sm lg:px-4 lg:py-3 lg:text-base font-medium border border-gray-200 dark:border-dark-divider rounded-md lg:rounded-lg focus:outline-none bg-white dark:bg-dark-raised dark:text-dark-text-primary shadow-sm hover:shadow-md transition-all duration-200 w-full" />
                     </div>
 
                     {/* Price To (Cena do) */}
                     <div className="relative flex-1">
-                      <input type="number" name="priceTo" value={filters.priceTo} onChange={handleInputChange} placeholder="Cena do" className="px-2 py-1.5 text-sm lg:px-4 lg:py-3 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 w-full" />
+                      <input type="number" name="priceTo" value={filters.priceTo} onChange={handleInputChange} placeholder="Cena do" className="px-2 py-1.5 text-sm lg:px-4 lg:py-3 lg:text-base font-medium border border-gray-200 dark:border-dark-divider rounded-md lg:rounded-lg focus:outline-none bg-white dark:bg-dark-raised dark:text-dark-text-primary shadow-sm hover:shadow-md transition-all duration-200 w-full" />
                     </div>
                   </div>
                 </>
@@ -611,7 +610,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                 <div className="hidden md:flex items-center justify-center w-full gap-1">
                   <button
                     onClick={handleReset}
-                    className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 rounded-md lg:rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex-1 justify-center"
+                    className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium text-gray-600 dark:text-dark-text-secondary hover:text-gray-900 dark:text-gray-200 dark:hover:text-dark-text-primary hover:bg-gray-50 dark:hover:bg-dark-elevation-1 border border-gray-200 dark:border-dark-divider rounded-md lg:rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex-1 justify-center"
                   >
                     Resetuj
                   </button>
@@ -664,7 +663,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                     name="make"
                     value={filters.make}
                     onChange={handleInputChange}
-                    className="px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none w-full leading-[17px]"
+                    className="px-3 h-10 pr-6 text-sm font-medium border border-gray-200 dark:border-dark-divider rounded-lg focus:outline-none bg-white dark:bg-dark-raised dark:text-dark-text-primary shadow-sm appearance-none w-full leading-[17px]"
                   >
                     <option value="">Marka</option>
                     {getMakes().map((make, index) => (
@@ -684,7 +683,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                     name="model"
                     value={filters.model}
                     onChange={handleInputChange}
-                    className="px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm appearance-none w-full leading-[17px] transition-all duration-200 hover:border-gray-300"
+                    className="px-3 h-10 pr-6 text-sm font-medium border border-gray-200 dark:border-dark-divider rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-dark-raised dark:text-dark-text-primary shadow-sm appearance-none w-full leading-[17px] transition-all duration-200 hover:border-gray-300 dark:hover:border-dark-text-muted"
                   >
                     <option value="">Model</option>
                     {filters.make && getModelsForMake(filters.make).map((model, index) => (
@@ -720,10 +719,10 @@ export default function FilterNavbar({ onApplyFilters }) {
           {showMoreFilters && isMounted && createPortal(
             <div className="md:hidden fixed inset-0 z-[2147483647]">
               <div className="fixed inset-0 bg-black/40" onClick={() => setShowMoreFilters(false)}></div>
-              <div className="fixed inset-0 bg-white shadow-xl p-4 overflow-y-auto">
+              <div className="fixed inset-0 bg-white dark:bg-dark-card shadow-xl p-4 overflow-y-auto">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-lg font-semibold text-gray-900">Filtry</h3>
-                  <button onClick={() => setShowMoreFilters(false)} className="text-sm text-gray-600 border border-gray-200 rounded-md px-2 py-1">Zamknij</button>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-200 dark:text-dark-text-primary">Filtry</h3>
+                  <button onClick={() => setShowMoreFilters(false)} className="text-sm text-gray-600 dark:text-dark-text-secondary border border-gray-200 dark:border-dark-divider rounded-md px-2 py-1">Zamknij</button>
                 </div>
                 <div className="space-y-3">
                   {/* Make + Model */}
@@ -733,7 +732,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                         name="make"
                         value={filters.make}
                         onChange={handleInputChange}
-                        className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
+                        className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 dark:border-dark-divider rounded-lg focus:outline-none bg-white dark:bg-dark-raised dark:text-dark-text-primary shadow-sm appearance-none"
                         disabled={loading}
                       >
                         <option value="">Marka</option>
@@ -770,10 +769,10 @@ export default function FilterNavbar({ onApplyFilters }) {
                   {/* Location + Distance */}
                   <div className="flex items-center justify-between w-full gap-1">
                     <div className="relative flex-1">
-                      <input type="text" name="location" value={filters.location} onChange={handleInputChange} placeholder="Lokalizacja" className="w-full px-3 h-10 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm" />
+                      <input type="text" name="location" value={filters.location} onChange={handleInputChange} placeholder="Lokalizacja" className="w-full px-3 h-10 text-sm font-medium border border-gray-200 dark:border-dark-divider rounded-lg focus:outline-none bg-white dark:bg-dark-raised dark:text-dark-text-primary shadow-sm" />
                     </div>
                     <div className="relative flex-1">
-                      <select name="maxDistance" value={filters.maxDistance} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                      <select name="maxDistance" value={filters.maxDistance} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 dark:border-dark-divider rounded-lg focus:outline-none bg-white dark:bg-dark-raised dark:text-dark-text-primary shadow-sm appearance-none">
                         <option value="">Dystans</option>
                         <option value="10">Within 10 miles</option>
                         <option value="25">Within 25 miles</option>
@@ -789,14 +788,14 @@ export default function FilterNavbar({ onApplyFilters }) {
                   {/* Year From + Year To */}
                   <div className="flex items-center justify-between w-full gap-1">
                     <div className="relative flex-1">
-                      <select name="yearFrom" value={filters.yearFrom} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                      <select name="yearFrom" value={filters.yearFrom} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 dark:border-dark-divider rounded-lg focus:outline-none bg-white dark:bg-dark-raised dark:text-dark-text-primary shadow-sm appearance-none">
                         <option value="">Rok od</option>
                         {Array.from({ length: 30 }, (_, i) => 2025 - i).map(y => <option key={y} value={y}>{y}</option>)}
                       </select>
                       <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
                     </div>
                     <div className="relative flex-1">
-                      <select name="yearTo" value={filters.yearTo} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                      <select name="yearTo" value={filters.yearTo} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 dark:border-dark-divider rounded-lg focus:outline-none bg-white dark:bg-dark-raised dark:text-dark-text-primary shadow-sm appearance-none">
                         <option value="">Rok do</option>
                         {Array.from({ length: 30 }, (_, i) => 2025 - i).map(y => <option key={y} value={y}>{y}</option>)}
                       </select>
@@ -813,7 +812,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                         name="krajPochodzenia"
                         value={filters.krajPochodzenia}
                         onChange={handleInputChange}
-                        className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
+                        className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 dark:border-dark-divider rounded-lg focus:outline-none bg-white dark:bg-dark-raised dark:text-dark-text-primary shadow-sm appearance-none"
                       >
                         <option value="">Kraj Pochodzenia</option>
                         {ORIGIN_COUNTRY_OPTIONS.map(({ value, label }, idx) => (
@@ -829,7 +828,7 @@ export default function FilterNavbar({ onApplyFilters }) {
 
                     {/* Kraj Producenta (Swapped to second) */}
                     <div className="relative flex-1">
-                      <select name="krajProducenta" value={filters.krajProducenta} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                      <select name="krajProducenta" value={filters.krajProducenta} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 dark:border-dark-divider rounded-lg focus:outline-none bg-white dark:bg-dark-raised dark:text-dark-text-primary shadow-sm appearance-none">
                         <option value="">Kraj Producenta</option>
                         {COUNTRY_OPTIONS.map(({ value, label }, idx) => (
                           <option key={`${idx}-${value}`} value={value}>
@@ -850,7 +849,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                         name="bodyType"
                         value={filters.bodyType}
                         onChange={handleInputChange}
-                        className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 rounded-md lg:rounded-lg focus:outline-none bg-white shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
+                        className="px-2 py-1.5 pr-6 text-sm lg:px-4 lg:py-3 lg:pr-10 lg:text-base font-medium border border-gray-200 dark:border-dark-divider rounded-md lg:rounded-lg focus:outline-none bg-white dark:bg-dark-raised dark:text-dark-text-primary shadow-sm hover:shadow-md transition-all duration-200 appearance-none w-full"
                       >
                         <option value="">Typ nadwozia</option>
                         <option value="Bus I Van">Bus I Van</option>
@@ -879,7 +878,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                         name="color"
                         value={filters.color}
                         onChange={handleInputChange}
-                        className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none"
+                        className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 dark:border-dark-divider rounded-lg focus:outline-none bg-white dark:bg-dark-raised dark:text-dark-text-primary shadow-sm appearance-none"
                       >
                         <option value="">Kolor</option>
                         <option value="Biały">Biały</option>
@@ -904,7 +903,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                   {/* Condition + Mileage */}
                   <div className="flex items-center justify-between w-full gap-1">
                     <div className="relative flex-1">
-                      <select name="stan" value={filters.stan} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                      <select name="stan" value={filters.stan} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 dark:border-dark-divider rounded-lg focus:outline-none bg-white dark:bg-dark-raised dark:text-dark-text-primary shadow-sm appearance-none">
                         <option value="">Stan</option>
                         <option value="Demo">Demo</option>
                         <option value="New">Nowy</option>
@@ -915,7 +914,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                       </div>
                     </div>
                     <div className="relative flex-1">
-                      <select name="mileage" value={filters.mileage} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                      <select name="mileage" value={filters.mileage} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 dark:border-dark-divider rounded-lg focus:outline-none bg-white dark:bg-dark-raised dark:text-dark-text-primary shadow-sm appearance-none">
                         <option value="">Przebieg</option>
                         <option value="0-30000">do 30 000 km</option>
                         <option value="30000-50000">od 30 000 km do 50 000 km</option>
@@ -929,7 +928,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                   {/* Fuel + Engine */}
                   <div className="flex items-center justify-between w-full gap-2">
                     <div className="relative flex-1">
-                      <select name="fuel" value={filters.fuel} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                      <select name="fuel" value={filters.fuel} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 dark:border-dark-divider rounded-lg focus:outline-none bg-white dark:bg-dark-raised dark:text-dark-text-primary shadow-sm appearance-none">
                         <option value="">Typ Paliwa</option>
                         <option value="Petrol">Benzyna</option>
                         <option value="Diesel">Diesel</option>
@@ -941,7 +940,7 @@ export default function FilterNavbar({ onApplyFilters }) {
                       <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"><MdKeyboardArrowDown className="w-5 h-5 text-gray-500" /></div>
                     </div>
                     <div className="relative flex-1">
-                      <select name="engineCapacity" value={filters.engineCapacity} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 rounded-lg focus:outline-none bg-white shadow-sm appearance-none">
+                      <select name="engineCapacity" value={filters.engineCapacity} onChange={handleInputChange} className="w-full px-3 h-10 pr-6 text-sm font-medium border border-gray-200 dark:border-dark-divider rounded-lg focus:outline-none bg-white dark:bg-dark-raised dark:text-dark-text-primary shadow-sm appearance-none">
                         <option value="">Pojemność</option>
                         <option value="0-1000">do 1000 cm³</option>
                         <option value="1000-2000">1000 - 2000 cm³</option>

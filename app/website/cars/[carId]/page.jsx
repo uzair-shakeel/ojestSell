@@ -425,8 +425,8 @@ const Page = () => {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
         <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
-          <div className="p-4 border-b flex justify-between items-center bg-gray-50 dark:bg-black/80 dark:border-gray-700">
-            <h3 className="text-lg dark:text-white font-semibold text-gray-900">Wybierz numer telefonu</h3>
+          <div className="p-4 border-b flex justify-between items-center bg-gray-50 dark:bg-dark-main dark:border-gray-700">
+            <h3 className="text-lg dark:text-white font-semibold text-gray-900 dark:text-gray-200">Wybierz numer telefonu</h3>
             <button
               onClick={() => setIsPhoneModalOpen(false)}
               className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-200 transition-colors"
@@ -457,7 +457,7 @@ const Page = () => {
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
                     </div>
                     <div>
-                      <p className="font-medium dark:text-gray-400 group-hover:text-blue-600 text-gray-900">{formatPhoneNumber(number)}</p>
+                      <p className="font-medium dark:text-gray-400 group-hover:text-blue-600 text-gray-900 dark:text-gray-200">{formatPhoneNumber(number)}</p>
                       <p className="text-xs text-gray-500 uppercase">{countryCode}</p>
                     </div>
                   </div>
@@ -697,20 +697,20 @@ const Page = () => {
     if (item.label === "Seller") {
       return (
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-black/70 flex-shrink-0 overflow-hidden relative">
+          <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-dark-card flex-shrink-0 overflow-hidden relative">
             {seller?.image ? (
               <img src={formatImageUrl(seller?.image)} alt="" className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-500">?</div>
             )}
           </div>
-          <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{item.value}</span>
+          <span className="text-sm font-medium text-gray-900 dark:text-gray-200 dark:text-gray-100">{item.value}</span>
         </div>
       );
     }
     return (
       <div className="flex items-center gap-2">
-        <span className={`text-sm ${isLink ? "underline decoration-1 underline-offset-2 hover:text-blue-600 cursor-pointer text-blue-600 dark:text-blue-400 font-medium" : "text-gray-900 dark:text-gray-100"}`}>
+        <span className={`text-sm ${isLink ? "underline decoration-1 underline-offset-2 hover:text-blue-600 cursor-pointer text-blue-600 dark:text-blue-400 font-medium" : "text-gray-900 dark:text-gray-200 dark:text-gray-100"}`}>
           {item.value}
         </span>
 
@@ -799,15 +799,15 @@ const Page = () => {
         </div>
       )}
 
-      <div className="min-h-screen bg-gray-50 dark:bg-black/80 overflow-x-clip">
+      <div className="min-h-screen bg-gray-50 dark:bg-dark-main overflow-x-clip">
         {/* Sticky Price / Actions Bar - Now at the VERY top of the gallery section */}
-        <div className="sticky top-0 z-40 bg-white/80 dark:bg-black/70 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm transition-all duration-300">
+        <div className="sticky top-0 z-40 bg-white/80 dark:bg-dark-card backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm transition-all duration-300">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between gap-4 py-3 md:py-4">
               <div className="min-w-0 flex-1">
                 <div className="flex flex-col">
                   {stickyTitle && (
-                    <p className="text-[20px] sm:text-3xl md:text-4xl font-black text-gray-900 dark:text-white uppercase tracking-tight leading-none break-words whitespace-normal">
+                    <p className="text-[20px] sm:text-3xl md:text-4xl font-black text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-tight leading-none break-words whitespace-normal">
                       {stickyTitle}
                     </p>
                   )}
@@ -846,7 +846,7 @@ const Page = () => {
                   <button
                     type="button"
                     onClick={startChat}
-                    className="inline-flex items-center justify-center px-6 py-2.5 rounded-full border-2 border-gray-900 dark:border-white text-gray-900 dark:text-white text-xs sm:text-sm font-bold hover:bg-black/70 hover:text-white dark:hover:bg-white dark:hover:text-gray-900 hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap"
+                    className="inline-flex items-center justify-center px-6 py-2.5 rounded-full border-2 border-gray-900 dark:border-white text-gray-900 dark:text-gray-200 dark:text-white text-xs sm:text-sm font-bold hover:bg-black/70 hover:text-white dark:hover:bg-white dark:hover:text-gray-900 dark:text-gray-200 hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap"
                   >
                     Napisz
                   </button>
@@ -863,7 +863,7 @@ const Page = () => {
 
 
             {/* Desktop / tablet gallery: Dynamic layout based on image count */}
-            <div className="hidden md:flex md:flex-row gap-2 bg-white dark:bg-black/70 overflow-hidden h-[380px] sm:h-[430px] md:h-[461px] lg:h-[520px] xl:h-[560px] 2xl:h-[600px]">
+            <div className="hidden md:flex md:flex-row gap-2 bg-white dark:bg-dark-card overflow-hidden h-[380px] sm:h-[430px] md:h-[461px] lg:h-[520px] xl:h-[560px] 2xl:h-[600px]">
               {/* Main Image - Left Side */}
               <div className={`relative group h-full ${galleryMode === "single" ? "w-full" : "w-full md:w-[calc(100%-320px)]"}`}>
                 <div className="relative w-full h-full">
@@ -972,7 +972,7 @@ const Page = () => {
             {/* Force full width breakout for single image on mobile if inside padding */}
             <div className={`flex md:hidden overflow-x-auto snap-x snap-mandatory scrollbar-hide scroll-x-touch min-h-[250px] w-full ${images.length > 1 ? "gap-[3px]" : ""}`}>
               {/* Slide 1: Main Image */}
-              <div className={`snap-start shrink-0 ${images.length === 1 ? "w-full" : "w-[88vw]"} aspect-[4/3] relative overflow-hidden bg-white dark:bg-black/70`}>
+              <div className={`snap-start shrink-0 ${images.length === 1 ? "w-full" : "w-[88vw]"} aspect-[4/3] relative overflow-hidden bg-white dark:bg-dark-card`}>
                 <img
                   src={mainImage || images[currentImageIndex] || images[0]}
                   alt={`${car?.make} ${car?.model} - Image 1`}
@@ -1014,7 +1014,7 @@ const Page = () => {
                 return (
                   <div
                     key={gridIdx}
-                    className="snap-start shrink-0 w-[88vw] aspect-[4/3] grid grid-cols-2 grid-rows-2 gap-[2px] bg-white dark:bg-black/70"
+                    className="snap-start shrink-0 w-[88vw] aspect-[4/3] grid grid-cols-2 grid-rows-2 gap-[2px] bg-white dark:bg-dark-card"
                   >
                     {gridThumbs.map((img, i) => {
                       const thumbIndexInThumbnailImages = startIndex + i;
@@ -1096,7 +1096,7 @@ const Page = () => {
                         <button
                           onClick={() => setActiveTab("opis")}
                           className={`flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-bold text-sm transition-all border ${activeTab === "opis"
-                            ? "bg-blue-500 text-gray-900 border-gray-300 shadow-sm"
+                            ? "bg-blue-500 text-gray-900 dark:text-gray-200 border-gray-300 shadow-sm"
                             : "bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100"
                             }`}
                         >
@@ -1109,7 +1109,7 @@ const Page = () => {
                         <button
                           onClick={() => setActiveTab("lokalizacja")}
                           className={`flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-bold text-sm transition-all border ${activeTab === "lokalizacja"
-                            ? "bg-blue-500 text-gray-900 border-gray-300 shadow-sm"
+                            ? "bg-blue-500 text-gray-900 dark:text-gray-200 border-gray-300 shadow-sm"
                             : "bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100"
                             }`}
                         >
@@ -1134,7 +1134,7 @@ const Page = () => {
                       {/* Two-column spec table - only for OPIS tab */}
                       {activeTab !== "opis" && renderContent()}
                       {activeTab === "opis" && (
-                        <div className="space-y-0 text-gray-900 dark:text-gray-100">
+                        <div className="space-y-0 text-gray-900 dark:text-gray-200 dark:text-gray-100">
 
                           {/* Technical Specs Table - Responsive Table */}
                           <div className="mt-2 w-full border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm">
@@ -1145,7 +1145,7 @@ const Page = () => {
                                   {specPairs.map((pair, rowIdx) => (
                                     <tr key={rowIdx} className="border-b border-gray-200 dark:border-gray-700/50 last:border-0">
                                       {/* First Spec in Pair */}
-                                      <td className="py-2.5 px-4 w-[160px] bg-gray-50/50 dark:bg-black/60 font-bold text-sm text-gray-900 dark:text-gray-100 border-r border-gray-200 dark:border-gray-700/50">
+                                      <td className="py-2.5 px-4 w-[160px] bg-gray-50/50  dark:bg-dark-card font-bold text-sm text-gray-900 dark:text-gray-200 dark:text-gray-100 border-r border-gray-200 dark:border-gray-700/50">
                                         {pair[0].label}
                                       </td>
                                       <td className="py-2.5 px-4 text-sm border-r border-gray-200 dark:border-gray-700/50">
@@ -1155,7 +1155,7 @@ const Page = () => {
                                       {/* Second Spec in Pair (if exists) */}
                                       {pair[1] ? (
                                         <>
-                                          <td className="py-2.5 px-4 w-[160px] bg-gray-50/50 dark:bg-black/60 font-bold text-sm text-gray-900 dark:text-gray-100 border-r border-gray-200 dark:border-gray-700/50">
+                                          <td className="py-2.5 px-4 w-[160px] bg-gray-50/50 dark:bg-dark-card font-bold text-sm text-gray-900 dark:text-gray-200 dark:text-gray-100 border-r border-gray-200 dark:border-gray-700/50">
                                             {pair[1].label}
                                           </td>
                                           <td className="py-2.5 px-4 text-sm">
@@ -1164,7 +1164,7 @@ const Page = () => {
                                         </>
                                       ) : (
                                         <>
-                                          <td className="py-2.5 px-4 bg-gray-50/50 dark:bg-black/80/30 border-r border-gray-200 dark:border-gray-700/50"></td>
+                                          <td className="py-2.5 px-4 bg-gray-50/50 dark:bg-dark-main/30 border-r border-gray-200 dark:border-gray-700/50"></td>
                                           <td className="py-2.5 px-4"></td>
                                         </>
                                       )}
@@ -1183,7 +1183,7 @@ const Page = () => {
                                       key={idx}
                                       className="border-b text-sm border-gray-200 dark:border-gray-700/50 last:border-0"
                                     >
-                                      <td className="py-2.5 px-4 w-[120px] bg-gray-50/50 dark:bg-black/80/30 font-bold text-gray-900 dark:text-gray-100 text-sm border-r border-gray-200 dark:border-gray-700/50">
+                                      <td className="py-2.5 px-4 w-[120px] bg-gray-50/50 dark:bg-dark-card font-bold text-gray-900 dark:text-gray-200 dark:text-gray-100 text-sm border-r border-gray-200 dark:border-gray-700/50">
                                         {item.label}
                                       </td>
                                       <td className="py-2.5 px-4 align-middle">
@@ -1208,7 +1208,7 @@ const Page = () => {
                       <section className="relative">
                         <div className="flex items-center gap-3 mb-4 px-1">
                           <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                          <h2 className="text-[18px] font-black text-gray-900 dark:text-white uppercase tracking-tight">Highlights</h2>
+                          <h2 className="text-[18px] font-black text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-tight">Highlights</h2>
                         </div>
                         <div className="">
                           <p className="text-[15px] text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
@@ -1235,7 +1235,7 @@ const Page = () => {
                       <section className="relative">
                         <div className="flex items-center gap-3 mb-4 px-1">
                           <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                          <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-white uppercase tracking-tight">Seller Notes</h2>
+                          <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-tight">Seller Notes</h2>
                         </div>
                         <div className="">
                           <p className="text-[15px] sm:text-[16px] text-gray-700 dark:text-gray-300 leading-relaxed ">
@@ -1248,7 +1248,7 @@ const Page = () => {
                       <section className="relative">
                         <div className="flex items-center gap-3 mb-4 px-1">
                           <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                          <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-white uppercase tracking-tight">Equipment</h2>
+                          <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-tight">Equipment</h2>
                         </div>
                         <div className="">
                           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
@@ -1266,7 +1266,7 @@ const Page = () => {
                       <section className="relative">
                         <div className="flex items-center gap-3 mb-4 px-1">
                           <div className="h-6 w-1 bg-red-600 rounded-full" />
-                          <h2 className="text-[18px]  sm:text-[20px] font-black text-gray-900 dark:text-white uppercase tracking-tight">Known Flaws</h2>
+                          <h2 className="text-[18px]  sm:text-[20px] font-black text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-tight">Known Flaws</h2>
                         </div>
                         <div className="">
                           <ul className="space-y-3">
@@ -1284,7 +1284,7 @@ const Page = () => {
                       <section className="relative">
                         <div className="flex items-center gap-3 mb-4 px-1">
                           <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                          <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-white uppercase tracking-tight">Ownership History</h2>
+                          <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-tight">Ownership History</h2>
                         </div>
                         <div className="">
                           <p className="text-[15px] sm:text-[16px] text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -1296,7 +1296,7 @@ const Page = () => {
                       <section className="relative">
                         <div className="flex items-center gap-3 mb-4 px-1">
                           <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                          <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-white uppercase tracking-tight">Condition</h2>
+                          <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-tight">Condition</h2>
                         </div>
                         <div className="">
                           <ConditionTab carCondition={car?.condition} />
@@ -1307,7 +1307,7 @@ const Page = () => {
                       <section className="relative">
                         <div className="flex items-center gap-3 mb-4 px-1">
                           <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                          <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-white uppercase tracking-tight">Financial</h2>
+                          <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-tight">Financial</h2>
                         </div>
                         <div className="">
                           <FinancialTab financialInfo={car?.financialInfo} />
@@ -1322,7 +1322,7 @@ const Page = () => {
               <aside className="md:sticky mx-2 md:top-24 space-y-6">
                 {/* Seller profile card */}
                 {/* Seller profile card - Premium Upgrade */}
-                <div className="relative group rounded-2xl p-6 bg-white dark:bg-black/80 border border-gray-100 dark:border-gray-700 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] overflow-hidden">
+                <div className="relative group rounded-2xl p-6 bg-white dark:bg-dark-main border border-gray-100 dark:border-gray-700 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] overflow-hidden">
 
                   {/* Decorative gradient blob */}
                   <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -1343,7 +1343,7 @@ const Page = () => {
                         </div>
 
                         <div className="flex flex-col min-w-0 pt-1">
-                          <h3 className="text-lg font-bold text-gray-900 dark:text-white truncate leading-tight">
+                          <h3 className="text-lg font-bold text-gray-900 dark:text-gray-200 dark:text-white truncate leading-tight">
                             {sellerName}
                           </h3>
                           <p className="text-xs font-medium uppercase tracking-wider text-blue-600 dark:text-blue-400 mt-1">
@@ -1376,7 +1376,7 @@ const Page = () => {
                       <button
                         type="button"
                         onClick={startChat}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white dark:bg-black/70 border-2 border-gray-100 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-bold hover:bg-gray-50 dark:hover:bg-gray-600 hover:border-gray-200 dark:hover:border-gray-500 transition-all active:scale-[0.98]"
+                        className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white dark:bg-dark-card border-2 border-gray-100 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-bold hover:bg-gray-50 dark:hover:bg-gray-600 hover:border-gray-200 dark:hover:border-gray-500 transition-all active:scale-[0.98]"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 opacity-70">
                           <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
@@ -1395,7 +1395,7 @@ const Page = () => {
                               href={link.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-50 dark:bg-black/70/50 text-gray-500 dark:text-gray-400 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-gray-600 dark:hover:text-blue-400 transition-all hover:scale-110"
+                              className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-50 dark:bg-dark-card/50 text-gray-500 dark:text-gray-400 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-gray-600 dark:hover:text-blue-400 transition-all hover:scale-110"
                             >
                               {React.cloneElement(link.icon, { className: "w-5 h-5" })}
                             </a>
@@ -1410,7 +1410,7 @@ const Page = () => {
                 <div className="">
                   <div className="flex items-center justify-between mb-2">
                     <div>
-                      <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
+                      <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-200 dark:text-white">
                         Podobne pojazdy
                       </h2>
                       <p className="text-[11px] text-gray-500 dark:text-gray-400">

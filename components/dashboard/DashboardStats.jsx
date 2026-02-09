@@ -78,10 +78,10 @@ export default function DashboardStats({ user: userProp }) {
       {/* Welcome Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight transition-colors">
+          <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-200 dark:text-dark-text-primary tracking-tight transition-colors">
             Witaj, {user?.firstName || "Użytkowniku"}! 👋
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 font-medium mt-1 transition-colors">
+          <p className="text-gray-500 dark:text-dark-text-secondary font-medium mt-1 transition-colors">
             Oto podsumowanie Twojego konta i aktywności.
           </p>
         </div>
@@ -95,16 +95,16 @@ export default function DashboardStats({ user: userProp }) {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Cars Card */}
-        <div className="bg-white dark:bg-black/80 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+        <div className="bg-white dark:bg-dark-card p-6 rounded-3xl border border-gray-100 dark:border-dark-divider shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
           <div className="absolute right-0 top-0 w-32 h-32 bg-blue-50 dark:bg-blue-900/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
           <div className="relative z-10">
             <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center mb-4 text-xl">
               <FaCar />
             </div>
-            <h3 className="text-gray-500 dark:text-gray-400 font-bold uppercase text-xs tracking-wider mb-1">Twoje Auta</h3>
-            <div className="text-4xl font-extrabold text-gray-900 dark:text-white">
+            <h3 className="text-gray-500 dark:text-dark-text-muted font-bold uppercase text-xs tracking-wider mb-1">Twoje Auta</h3>
+            <div className="text-4xl font-extrabold text-gray-900 dark:text-gray-200 dark:text-dark-text-primary">
               {loading ? (
-                <div className="h-10 w-16 bg-gray-200 dark:bg-black/70 animate-pulse rounded-lg"></div>
+                <div className="h-10 w-16 bg-gray-200 dark:bg-dark-elevation-2 animate-pulse rounded-lg"></div>
               ) : (
                 carsCount
               )}
@@ -116,16 +116,16 @@ export default function DashboardStats({ user: userProp }) {
         </div>
 
         {/* Messages Card */}
-        <div className="bg-white dark:bg-black/80 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+        <div className="bg-white dark:bg-dark-card p-6 rounded-3xl border border-gray-100 dark:border-dark-divider shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
           <div className="absolute right-0 top-0 w-32 h-32 bg-emerald-50 dark:bg-emerald-900/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
           <div className="relative z-10">
             <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center mb-4 text-xl">
               <BsChatLeftDots />
             </div>
-            <h3 className="text-gray-500 dark:text-gray-400 font-bold uppercase text-xs tracking-wider mb-1">Wiadomości</h3>
-            <div className="text-4xl font-extrabold text-gray-900 dark:text-white">
+            <h3 className="text-gray-500 dark:text-dark-text-muted font-bold uppercase text-xs tracking-wider mb-1">Wiadomości</h3>
+            <div className="text-4xl font-extrabold text-gray-900 dark:text-gray-200 dark:text-dark-text-primary">
               {loading ? (
-                <div className="h-10 w-16 bg-gray-200 dark:bg-black/70 animate-pulse rounded-lg"></div>
+                <div className="h-10 w-16 bg-gray-200 dark:bg-dark-elevation-2 animate-pulse rounded-lg"></div>
               ) : (
                 chatsCount
               )}
@@ -137,17 +137,17 @@ export default function DashboardStats({ user: userProp }) {
         </div>
 
         {/* Profile Card */}
-        <div className="bg-white dark:bg-black/80 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+        <div className="bg-white dark:bg-dark-card p-6 rounded-3xl border border-gray-100 dark:border-dark-divider shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
           <div className="absolute right-0 top-0 w-32 h-32 bg-purple-50 dark:bg-purple-900/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
           <div className="relative z-10">
             <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400 rounded-2xl flex items-center justify-center mb-4 text-xl">
               <HiOutlineUser />
             </div>
-            <h3 className="text-gray-500 dark:text-gray-400 font-bold uppercase text-xs tracking-wider mb-1">Twój Profil</h3>
-            <div className="text-lg font-bold text-gray-900 dark:text-white truncate">
+            <h3 className="text-gray-500 dark:text-dark-text-muted font-bold uppercase text-xs tracking-wider mb-1">Twój Profil</h3>
+            <div className="text-lg font-bold text-gray-900 dark:text-gray-200 dark:text-white truncate">
               {user?.email || "Brak emaila"}
             </div>
-            <p className="text-xs text-gray-400 dark:text-gray-500 font-medium mb-1">Typ konta: {user?.sellerType === 'company' ? 'Firma' : 'Prywatne'}</p>
+            <p className="text-xs text-gray-400 dark:text-dark-text-muted font-medium mb-1">Typ konta: {user?.sellerType === 'company' ? 'Firma' : 'Prywatne'}</p>
 
             <a href="/dashboard/profile" className="inline-block mt-3 text-sm font-bold text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
               Edytuj profil →

@@ -116,7 +116,7 @@ const Navbar = () => {
   }, [isMenuOpen, isSignedIn, t, user]);
 
   return (
-    <header className="w-full h-16 px-4 bg-white dark:bg-black/90 shadow-md flex justify-between items-center text-black dark:text-white transition-colors duration-300">
+    <header className="w-full h-16 px-4 bg-white dark:bg-dark-panel shadow-md flex justify-between items-center text-black dark:text-dark-text-primary transition-colors duration-300">
       {/* Logo */}
       <div className="">
         <Link href="/website">
@@ -143,9 +143,9 @@ const Navbar = () => {
               )}
             </button>
             {openNotif && (
-              <div className="absolute right-0 mt-2 w-80 max-w-[90vw] bg-white dark:bg-black/80 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden">
+              <div className="absolute right-0 mt-2 w-80 max-w-[90vw] bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-divider rounded-xl shadow-xl z-50 overflow-hidden">
                 <div className="flex items-center justify-between px-3 py-2 border-b border-gray-100 dark:border-gray-700">
-                  <div className="text-sm font-semibold text-gray-900 dark:text-white">Powiadomienia</div>
+                  <div className="text-sm font-semibold text-gray-900 dark:text-gray-200 dark:text-white">Powiadomienia</div>
                   {markAll && (
                     <button onClick={markAll} className="text-xs text-blue-600 hover:underline">
                       Oznacz wszystkie jako przeczytane
@@ -169,7 +169,7 @@ const Navbar = () => {
                           >
                             <div className={`mt-1 w-2 h-2 rounded-full ${n.read ? "bg-gray-300 dark:bg-gray-600" : "bg-blue-500"}`} />
                             <div className="min-w-0 flex-1">
-                              <div className="text-sm font-medium text-gray-900 dark:text-white truncate">{n.title}</div>
+                              <div className="text-sm font-medium text-gray-900 dark:text-gray-200 dark:text-white truncate">{n.title}</div>
                               {n.body && <div className="text-xs text-gray-600 dark:text-gray-300 line-clamp-2">{n.body}</div>}
                               <div className="text-[10px] text-gray-400 dark:text-gray-500 mt-1">{new Date(n.createdAt).toLocaleString()}</div>
                             </div>
@@ -207,7 +207,7 @@ const Navbar = () => {
           <>
             <button
               onClick={() => router.push("/dashboard/home")}
-              className="hidden md:block bg-white dark:bg-black/80800800800800800800800800800 border border-gray-300 dark:border-white px-4 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-900 text-black dark:text-white transition-colors duration-300"
+              className="hidden md:block bg-white dark:bg-dark-raised border border-gray-300 dark:border-dark-divider px-4 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-dark-raised/80 text-black dark:text-dark-text-primary transition-colors duration-300"
             >
               Panel
             </button>
@@ -216,7 +216,7 @@ const Navbar = () => {
         ) : (
           <Link
             href="/sign-up"
-            className="hidden md:block bg-white dark:bg-black/80800800800800800800 border border-gray-300 dark:border-white px-4 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-900 text-black dark:text-white transition-colors duration-300"
+            className="hidden md:block bg-white dark:bg-dark-raised border border-gray-300 dark:border-dark-divider px-4 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-dark-raised/80 text-black dark:text-dark-text-primary transition-colors duration-300"
           >
             {t("navbar.becomeSeller")}
           </Link>
@@ -225,7 +225,7 @@ const Navbar = () => {
         {/* Profile/Menu Button */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-300"
+          className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white transition-colors duration-300"
         >
           {user ? (
             <Avatar
@@ -243,7 +243,7 @@ const Navbar = () => {
       <div
         ref={dropdownRef}
         style={{ maxHeight: dropdownMax }}
-        className={`absolute z-50 right-4 top-16 w-48 bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-lg rounded-lg overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out ${isMenuOpen ? "opacity-100 py-2" : "opacity-0 py-0 pointer-events-none"
+        className={`absolute z-50 right-4 top-16 w-48 bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-divider shadow-lg rounded-lg overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out ${isMenuOpen ? "opacity-100 py-2" : "opacity-0 py-0 pointer-events-none"
           }`}
       >
         {/* Navigation Links for Mobile */}

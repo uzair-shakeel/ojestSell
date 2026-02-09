@@ -34,7 +34,7 @@ function HomeContent() {
   }, [searchParams, router]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-white dark:bg-black/80 transition-colors duration-300">
+    <div className="flex flex-col min-h-screen bg-white dark:bg-dark-main transition-colors duration-300">
       <Navbar />
 
       {/* Hero Section */}
@@ -73,7 +73,7 @@ function HomeContent() {
       {/* Video Section */}
       {/* <VideoSection /> */}
 
-      <main className="flex-grow text-gray-900">
+      <main className="flex-grow text-gray-900 dark:text-gray-200">
         {/* <FeaturedCars /> */}
         <CarsNearMe />
         {/* <FeaturedCategories /> */}

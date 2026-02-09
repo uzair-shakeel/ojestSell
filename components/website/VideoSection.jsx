@@ -263,7 +263,7 @@ const VideoSection = () => {
   };
 
   return (
-    <section className="relative py-20 bg-white dark:bg-black/80 transition-colors duration-300">
+    <section className="relative py-20 bg-white dark:bg-dark-main transition-colors duration-300">
       <div className="container mx-auto px-4 sm:px-6 lg:px-10 max-w-[1920px]">
         <div className="mb-16 grid md:grid-cols-2 gap-8 lg:gap-0">
           {/* Left side - Heading */}
@@ -335,13 +335,13 @@ const VideoSection = () => {
               key={card.id}
               data-card-id={card.id}
               className={`relative group cursor-pointer transition-all duration-1000 ease-out overflow-hidden rounded-3xl shadow-2xl border border-gray-100 flex-shrink-0 ${activeCard === card.id
-                  ? "w-full lg:w-[58.33%] h-[600px] lg:h-full bg-gradient-to-br " +
-                  card.accent
-                  : activeCard
-                    ? "w-full lg:w-[20.83%] h-[100px] lg:h-full bg-gradient-to-br " +
-                    card.background
-                    : "w-full lg:w-[33.33%] h-[100px] lg:h-full bg-gradient-to-br " +
-                    card.background
+                ? "w-full lg:w-[58.33%] h-[600px] lg:h-full bg-gradient-to-br " +
+                card.accent
+                : activeCard
+                  ? "w-full lg:w-[20.83%] h-[100px] lg:h-full bg-gradient-to-br " +
+                  card.background
+                  : "w-full lg:w-[33.33%] h-[100px] lg:h-full bg-gradient-to-br " +
+                  card.background
                 }`}
               onMouseEnter={() => handleCardHover(card.id)}
               onMouseLeave={handleCardLeave}
@@ -415,8 +415,8 @@ const VideoSection = () => {
                             className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-300 ease-out"
                             style={{
                               width: `${duration > 0
-                                  ? (currentTime / duration) * 100
-                                  : 0
+                                ? (currentTime / duration) * 100
+                                : 0
                                 }%`,
                             }}
                           />

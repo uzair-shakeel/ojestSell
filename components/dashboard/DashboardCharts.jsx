@@ -187,17 +187,17 @@ export default function DashboardCharts({
 
   return (
     <div className="grid gap-4 lg:grid-cols-3">
-      <div className="p-4 pb-8 bg-white dark:bg-black/80 shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 h-80 lg:col-span-2 transition-colors duration-300">
+      <div className="p-4 pb-8 bg-white dark:bg-dark-panel  shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 h-80 lg:col-span-2 transition-colors duration-300">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white transition-colors duration-300">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-200 dark:text-white transition-colors duration-300">
             Wystawione Auta
           </h3>
         </div>
         <Line data={lineData} options={commonOptions} />
       </div>
-      <div className="p-4 pb-8 bg-white dark:bg-black/80 shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 h-80 transition-colors duration-300">
+      <div className="p-4 pb-8 bg-white dark:bg-dark-panel shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 h-80 transition-colors duration-300">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white transition-colors duration-300">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-200 dark:text-white transition-colors duration-300">
             Zatwierdzone
           </h3>
         </div>
@@ -211,9 +211,9 @@ export default function DashboardCharts({
           }}
         />
       </div>
-      <div className="p-4 pb-8 bg-white dark:bg-black/80 shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 h-80 lg:col-span-3 transition-colors duration-300">
+      <div className="p-4 pb-8 bg-white dark:bg-dark-panel shadow rounded-xl ring-1 ring-black/5 dark:ring-gray-700 border border-gray-200 dark:border-gray-700 h-80 lg:col-span-3 transition-colors duration-300">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white transition-colors duration-300">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-200 dark:text-white transition-colors duration-300">
             Wiadomości Ostatnie 7 dni
 
           </h3>

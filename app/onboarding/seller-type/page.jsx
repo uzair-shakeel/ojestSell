@@ -65,7 +65,7 @@ const SellerTypePage = () => {
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-200 mb-4">
             Choose Your Seller Type
           </h1>
           <p className="text-lg text-gray-600">
@@ -76,13 +76,12 @@ const SellerTypePage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Company Seller Option */}
           <div
-            className={`relative bg-white rounded-2xl shadow-lg p-8 cursor-pointer transition-all duration-300 ${
-              selectedType === "company"
+            className={`relative bg-white rounded-2xl shadow-lg p-8 cursor-pointer transition-all duration-300 ${selectedType === "company"
                 ? "ring-2 ring-blue-500"
                 : hoveredType === "company"
-                ? "shadow-xl"
-                : ""
-            }`}
+                  ? "shadow-xl"
+                  : ""
+              }`}
             onClick={companySeller}
             onMouseEnter={() => setHoveredType("company")}
             onMouseLeave={() => setHoveredType(null)}
@@ -91,7 +90,7 @@ const SellerTypePage = () => {
               <div className="p-3 bg-blue-100 rounded-lg mr-4">
                 <Building2 className="h-8 w-8 text-blue-600" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-200">
                 Company Seller
               </h2>
             </div>
@@ -118,13 +117,12 @@ const SellerTypePage = () => {
 
           {/* Private Seller Option */}
           <div
-            className={`relative bg-white rounded-2xl shadow-lg p-8 cursor-pointer transition-all duration-300 ${
-              selectedType === "private"
+            className={`relative bg-white rounded-2xl shadow-lg p-8 cursor-pointer transition-all duration-300 ${selectedType === "private"
                 ? "ring-2 ring-blue-500"
                 : hoveredType === "private"
-                ? "shadow-xl"
-                : ""
-            }`}
+                  ? "shadow-xl"
+                  : ""
+              }`}
             onClick={privateSeller}
             onMouseEnter={() => setHoveredType("private")}
             onMouseLeave={() => setHoveredType(null)}
@@ -133,7 +131,7 @@ const SellerTypePage = () => {
               <div className="p-3 bg-green-100 rounded-lg mr-4">
                 <User className="h-8 w-8 text-green-600" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-200">
                 Private Seller
               </h2>
             </div>

@@ -43,7 +43,7 @@ export function CarsGridSection() {
 
     if (loading && cars.length === 0) {
         return (
-            <section className="py-12 bg-white dark:bg-black/80">
+            <section className="py-12 bg-white dark:bg-dark-main">
                 <div className="mx-auto px-4 max-w-7xl">
                     <div className="mb-8 animate-pulse">
                         <div className="h-10 w-64 md:w-80 bg-gray-200 dark:bg-gray-800 rounded-xl mb-3"></div>
@@ -75,14 +75,14 @@ export function CarsGridSection() {
     }
 
     return (
-        <section className="py-12 bg-white dark:bg-black/80 transition-colors duration-300">
+        <section className="py-12 bg-white dark:bg-dark-main transition-colors duration-300">
             <div className="mx-auto px-4 max-w-7xl">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <div>
-                        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white transition-colors duration-300 tracking-tight">
+                        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-gray-200 dark:text-dark-text-primary transition-colors duration-300 tracking-tight">
                             Nasze Najnowsze Oferty
                         </h2>
-                        <p className="mt-2 text-gray-600 dark:text-gray-400">
+                        <p className="mt-2 text-gray-600 dark:text-dark-text-secondary">
                             Przeglądaj szeroką gamę sprawdzonych pojazdów
                         </p>
                     </div>
@@ -109,7 +109,7 @@ export function CarsGridSection() {
                     <div className="flex justify-center">
                         <button
                             onClick={handleLoadMore}
-                            className="px-8 py-3 bg-white dark:bg-black/70 border border-gray-200 dark:border-gray-600 rounded-full text-base font-bold text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-600 hover:shadow-md transition-all duration-300 flex items-center gap-2"
+                            className="px-8 py-3 bg-white dark:bg-dark-raised border border-gray-200 dark:border-dark-divider rounded-full text-base font-bold text-gray-900 dark:text-gray-200 dark:text-white hover:bg-gray-50 dark:hover:bg-dark-elevation-1 hover:shadow-md transition-all duration-300 flex items-center gap-2"
                         >
                             Pokaż Więcej <span className="text-xl">↓</span>
                         </button>

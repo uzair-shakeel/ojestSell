@@ -182,9 +182,9 @@ export default function FilterSidebar({
   };
 
   return (
-    <div className="w-full lg:sticky dark:bg-black/70 lg:top-4 lg:max-w-xs h-full">
-      <div className="border rounded-md bg-white text-gray-900 flex flex-col h-[100vh] md:h-auto">
-        <div className="flex justify-between items-center px-4 py-4 border-b sticky top-0 bg-white z-10">
+    <div className="w-full lg:sticky dark:bg-dark-panel lg:top-4 lg:max-w-xs h-full">
+      <div className="border rounded-md bg-white dark:bg-dark-card border-gray-200 dark:border-dark-divider text-gray-900 dark:text-gray-200 dark:text-dark-text-primary flex flex-col h-[100vh] md:h-auto">
+        <div className="flex justify-between items-center px-4 py-4 border-b border-gray-200 dark:border-dark-divider sticky top-0 bg-white dark:bg-dark-card z-10">
           <div className="flex gap-6 items-center">
             <h2 className="text-2xl font-semibold">Filters</h2>
             <button
@@ -230,13 +230,13 @@ export default function FilterSidebar({
                 value={filters.location}
                 onChange={handleInputChange}
                 placeholder="Enter location"
-                className="w-full p-4 min-h-[50px] rounded-md bg-white border border-gray-300 text-md appearance-none"
+                className="w-full p-4 min-h-[50px] rounded-md bg-white dark:bg-dark-raised border border-gray-300 dark:border-dark-divider text-md dark:text-dark-text-primary appearance-none"
               />
               <select
                 name="maxDistance"
                 value={filters.maxDistance}
                 onChange={handleInputChange}
-                className="w-full p-4 min-h-[50px] rounded-md bg-white border border-gray-300 text-md appearance-none"
+                className="w-full p-4 min-h-[50px] rounded-md bg-white dark:bg-dark-raised border border-gray-300 dark:border-dark-divider text-md dark:text-dark-text-primary appearance-none"
               >
                 <option value="">Select distance</option>
                 <option value="5">5 km</option>
@@ -264,7 +264,7 @@ export default function FilterSidebar({
                 name="make"
                 value={filters.make}
                 onChange={handleInputChange}
-                className="w-full p-4 min-h-[50px] rounded-md bg-white border border-gray-300 text-md appearance-none"
+                className="w-full p-4 min-h-[50px] rounded-md bg-white dark:bg-dark-raised border border-gray-300 dark:border-dark-divider text-md dark:text-dark-text-primary appearance-none"
                 disabled={loading}
               >
                 <option value="">All</option>
@@ -294,7 +294,7 @@ export default function FilterSidebar({
                 name="model"
                 value={filters.model}
                 onChange={handleInputChange}
-                className="w-full p-4 min-h-[50px] rounded-md bg-white border border-gray-300 text-md appearance-none"
+                className="w-full p-4 min-h-[50px] rounded-md bg-white dark:bg-dark-raised border border-gray-300 dark:border-dark-divider text-md dark:text-dark-text-primary appearance-none"
                 disabled={loading || !filters.make}
               >
                 <option value="">All</option>
@@ -324,7 +324,7 @@ export default function FilterSidebar({
                 name="type"
                 value={filters.type}
                 onChange={handleInputChange}
-                className="w-full p-4 min-h-[50px] rounded-md bg-white border border-gray-300 text-md appearance-none"
+                className="w-full p-4 min-h-[50px] rounded-md bg-white dark:bg-dark-raised border border-gray-300 dark:border-dark-divider text-md dark:text-dark-text-primary appearance-none"
               >
                 <option value="">All</option>
                 <option value="SUV">SUV</option>
@@ -352,7 +352,7 @@ export default function FilterSidebar({
                   name="yearFrom"
                   value={filters.yearFrom}
                   onChange={handleInputChange}
-                  className="w-full p-4 min-h-[50px] rounded-md bg-white border border-gray-300 text-md appearance-none"
+                  className="w-full p-4 min-h-[50px] rounded-md bg-white dark:bg-dark-raised border border-gray-300 dark:border-dark-divider text-md dark:text-dark-text-primary appearance-none"
                 >
                   <option value="">From</option>
                   <option value="2015">2015</option>
@@ -368,7 +368,7 @@ export default function FilterSidebar({
                   name="yearTo"
                   value={filters.yearTo}
                   onChange={handleInputChange}
-                  className="w-full p-4 min-h-[50px] rounded-md bg-white border border-gray-300 text-md appearance-none"
+                  className="w-full p-4 min-h-[50px] rounded-md bg-white dark:bg-dark-raised border border-gray-300 dark:border-dark-divider text-md dark:text-dark-text-primary appearance-none"
                 >
                   <option value="">To</option>
                   <option value="2015">2015</option>
@@ -401,7 +401,7 @@ export default function FilterSidebar({
                 name="condition"
                 value={filters.condition}
                 onChange={handleInputChange}
-                className="w-full p-4 min-h-[50px] rounded-md bg-white border border-gray-300 text-md appearance-none"
+                className="w-full p-4 min-h-[50px] rounded-md bg-white dark:bg-dark-raised border border-gray-300 dark:border-dark-divider text-md dark:text-dark-text-primary appearance-none"
               >
                 <option value="">All</option>
                 <option value="New">New</option>
@@ -428,7 +428,7 @@ export default function FilterSidebar({
                   name="minMileage"
                   value={filters.minMileage}
                   onChange={handleInputChange}
-                  className="w-full p-4 min-h-[50px] rounded-md bg-white border border-gray-300 text-md appearance-none"
+                  className="w-full p-4 min-h-[50px] rounded-md bg-white dark:bg-dark-raised border border-gray-300 dark:border-dark-divider text-md dark:text-dark-text-primary appearance-none"
                 >
                   <option value="">From</option>
                   <option value="50000">50,000 km</option>
@@ -440,7 +440,7 @@ export default function FilterSidebar({
                   name="maxMileage"
                   value={filters.maxMileage}
                   onChange={handleInputChange}
-                  className="w-full p-4 min-h-[50px] rounded-md bg-white border border-gray-300 text-md appearance-none"
+                  className="w-full p-4 min-h-[50px] rounded-md bg-white dark:bg-dark-raised border border-gray-300 dark:border-dark-divider text-md dark:text-dark-text-primary appearance-none"
                 >
                   <option value="">To</option>
                   <option value="50000">50,000 km</option>
@@ -469,7 +469,7 @@ export default function FilterSidebar({
                 name="drivetrain"
                 value={filters.drivetrain}
                 onChange={handleInputChange}
-                className="w-full p-4 min-h-[50px] rounded-md bg-white border border-gray-300 text-md appearance-none"
+                className="w-full p-4 min-h-[50px] rounded-md bg-white dark:bg-dark-raised border border-gray-300 dark:border-dark-divider text-md dark:text-dark-text-primary appearance-none"
               >
                 <option value="">All</option>
                 <option value="FWD">FWD</option>
@@ -496,7 +496,7 @@ export default function FilterSidebar({
                 name="transmission"
                 value={filters.transmission}
                 onChange={handleInputChange}
-                className="w-full p-4 min-h-[50px] rounded-md bg-white border border-gray-300 text-md appearance-none"
+                className="w-full p-4 min-h-[50px] rounded-md bg-white dark:bg-dark-raised border border-gray-300 dark:border-dark-divider text-md dark:text-dark-text-primary appearance-none"
               >
                 <option value="">All</option>
                 <option value="Automatic">Automatic</option>
@@ -522,7 +522,7 @@ export default function FilterSidebar({
                 name="fuel"
                 value={filters.fuel}
                 onChange={handleInputChange}
-                className="w-full p-4 min-h-[50px] rounded-md bg-white border border-gray-300 text-md appearance-none"
+                className="w-full p-4 min-h-[50px] rounded-md bg-white dark:bg-dark-raised border border-gray-300 dark:border-dark-divider text-md dark:text-dark-text-primary appearance-none"
               >
                 <option value="">All</option>
                 <option value="Petrol">Petrol</option>
@@ -550,7 +550,7 @@ export default function FilterSidebar({
                 name="engine"
                 value={filters.engine}
                 onChange={handleInputChange}
-                className="w-full p-4 min-h-[50px] rounded-md bg-white border border-gray-300 text-md appearance-none"
+                className="w-full p-4 min-h-[50px] rounded-md bg-white dark:bg-dark-raised border border-gray-300 dark:border-dark-divider text-md dark:text-dark-text-primary appearance-none"
               >
                 <option value="">All</option>
                 <option value="1.6L">1.6L</option>
@@ -582,7 +582,7 @@ export default function FilterSidebar({
                 name="serviceHistory"
                 value={filters.serviceHistory}
                 onChange={handleInputChange}
-                className="w-full p-4 min-h-[50px] rounded-md bg-white border border-gray-300 text-md appearance-none"
+                className="w-full p-4 min-h-[50px] rounded-md bg-white dark:bg-dark-raised border border-gray-300 dark:border-dark-divider text-md dark:text-dark-text-primary appearance-none"
               >
                 <option value="">All</option>
                 <option value="Full">Full</option>
@@ -609,7 +609,7 @@ export default function FilterSidebar({
                 name="accidentHistory"
                 value={filters.accidentHistory}
                 onChange={handleInputChange}
-                className="w-full p-4  rounded-md bg-white border border-gray-300 text-md appearance-none"
+                className="w-full p-4  rounded-md bg-white dark:bg-dark-raised border border-gray-300 dark:border-dark-divider text-md dark:text-dark-text-primary appearance-none"
               >
                 <option value="">All</option>
                 <option value="Yes">Yes</option>

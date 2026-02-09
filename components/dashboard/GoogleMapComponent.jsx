@@ -58,7 +58,7 @@ const CustomMap = ({ location, setLocation }) => {
   // Map is not loaded yet
   if (!isLoaded)
     return (
-      <div className="flex items-center justify-center h-64 bg-gray-100 dark:bg-black/80 rounded-lg">
+      <div className="flex items-center justify-center h-64 bg-gray-100 dark:bg-dark-main rounded-lg">
         <div className="flex flex-col items-center">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 mb-2"></div>
           <p className="text-gray-600 dark:text-gray-400">Loading map...</p>
@@ -83,7 +83,7 @@ const CustomMap = ({ location, setLocation }) => {
             ref={inputRef}
             type="text"
             placeholder="Search for a location or address"
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-black/80 dark:text-white"
+            className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-dark-main dark:text-white"
           />
         </Autocomplete>
       </div>
@@ -93,7 +93,7 @@ const CustomMap = ({ location, setLocation }) => {
         <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800 rounded-lg flex items-center">
           <FaMapMarkerAlt className="text-blue-500 dark:text-blue-400 mr-2" />
           <div className="text-gray-700 dark:text-gray-300">
-            <span className="font-medium text-gray-900 dark:text-gray-100">Selected Location:</span>{" "}
+            <span className="font-medium text-gray-900 dark:text-gray-200 dark:text-gray-100">Selected Location:</span>{" "}
             {locationDetails.city}
             {locationDetails.state ? `, ${locationDetails.state}` : ""}
           </div>

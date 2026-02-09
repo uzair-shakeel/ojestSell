@@ -372,7 +372,7 @@ export default function MultiStepForm() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6 overflow-hidden h-auto border border-gray-200 dark:border-gray-700 shadow-md rounded-lg relative bg-white dark:bg-black/80 transition-colors">
+    <div className="max-w-5xl mx-auto p-6 overflow-hidden h-auto border border-gray-200 dark:border-gray-700 shadow-md rounded-lg relative bg-white dark:bg-dark-main transition-colors">
       {error && <div className="text-red-500 mb-4">{error}</div>}
       <AnimatePresence mode="wait">
         <motion.div
@@ -449,8 +449,8 @@ export default function MultiStepForm() {
             className="absolute inset-0 bg-black/50"
             onClick={() => setShowSuccessModal(false)}
           />
-          <div className="relative bg-white dark:bg-black/80 rounded-lg shadow-xl w-full max-w-md p-6 mx-4 border border-white/10">
-            <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+          <div className="relative bg-white dark:bg-dark-main rounded-lg shadow-xl w-full max-w-md p-6 mx-4 border border-white/10">
+            <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-200 dark:text-white">
               Car created successfully
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-6 font-medium">
