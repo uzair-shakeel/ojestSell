@@ -1,99 +1,114 @@
 {
   "meta": {
-    "description": "This JSON structure represents the ideal 'Sorted Data' payload for a car listing. This structure is designed for easy filtering, sorting, and display on the website.",
-    "version": "1.0"
+    "description": "This JSON structure represents the updated schema for a car listing based on the 11-step AI Wizard flow. It captures all technical details, condition reports, and custom equipment.",
+    "version": "1.1"
   },
   "car_listing": {
     "core_info": {
-      "title": "2023 BMW M4 Competition xDrive",
-      "slug": "2023-bmw-m4-competition-xdrive-warszawa",
-      "visibilty": "public",
-      "status": "active",
+      "vin": "WBS1234567890ABC",
+      "status": "pending_publish",
+      "is_featured": false,
+      "ai_description": "2023 BMW M4 Competition xDrive in Isle of Man Green. Immaculate condition, carbon bucket seats, and full service history.",
       "created_at": "2024-03-15T10:00:00Z"
     },
     "specifications": {
       "make": "BMW",
       "model": "M4",
-      "trim": "Competition xDrive",
       "year": 2023,
+      "trim": "Competition xDrive",
       "body_type": "Coupe",
       "color": "Isle of Man Green",
-      "mileage": {
-        "value": 12500,
-        "unit": "km"
-      },
       "engine": {
         "type": "Petrol",
-        "capacity_liters": 3.0,
         "power_hp": 510,
         "transmission": "Automatic",
         "drivetrain": "AWD"
       },
-      "vin": "WBS1234567890ABC"
+      "mileage": 12500,
+      "registration_status": "Registered in PL"
     },
     "financials": {
-      "price": {
-        "amount": 450000,
-        "currency": "PLN"
-      },
-      "tax_info": {
-        "vat_invoice": true,
-        "vat_deductible": true,
-        "price_type": "Gross"
-      },
-      "financing_available": true
+      "price": 450000,
+      "currency": "PLN",
+      "sale_document": "VAT 23%"
     },
     "condition_report": {
-      "type": "Used",
-      "accident_free": true,
-      "service_history_verified": true,
+      "accident_history": "No Accidents",
+      "service_history": "Full History",
+      "ownership": "First Owner",
+      "storage": "Garage",
+      "known_issues": "None. Car has been recently serviced and is in perfect mechanical order.",
+      "visible_flaws": "Minor stone chip on the front hood, otherwise paint is flawless.",
       "warranty": {
-        "has_warranty": true,
-        "type": "Manufacturer",
+        "provider": "Manufacturer",
         "expiration_date": "2026-05-20",
         "mileage_limit_km": 100000
-      },
-      "details": {
-        "ownership_history": "First Owner",
-        "storage_location": "Garage",
-        "known_issues": [],
-        "visible_flaws": []
       }
     },
     "features_and_equipment": {
-      "highlighted": ["Laser Lights", "Carbon Bucket Seats", "M Drivers Package"],
-      "safety": ["ABS", "Blind Spot Monitor", "Lane Keep Assist"],
-      "comfort": ["Heated Seats", "Ventilated Seats", "Head-Up Display"],
-      "media": ["Apple CarPlay", "Harman Kardon Sound"],
-      "performance": ["Ceramic Brakes", "M Sport Exhaust"],
-      "extras": ["Winter Tires Set", "Car Cover"],
-      "modifications": ["PPF Full Body", "Ceramic Coating"]
-    },
-    "fuel_specifics": {
-      "is_electric": false,
-      "is_hybrid": false,
-      "lpg_installation": null
-    },
-    "location": {
-      "city": "Warsaw",
-      "region": "Mazowieckie",
-      "coordinates": {
-        "lat": 52.2297,
-        "lng": 21.0122
+      "selected_equipment": [
+        "ABS",
+        "Laser Lights",
+        "Heated Seats",
+        "Apple CarPlay",
+        "Harman Kardon Sound"
+      ],
+      "custom_equipment": {
+        "safety": [
+          "Advanced Track Mode ESP"
+        ],
+        "interior": [
+          "Alcantara Steering Wheel"
+        ],
+        "tech": [
+          "Subscription-based Dashcam"
+        ],
+        "exterior": [
+          "M Performance Parts"
+        ]
       }
     },
-    "seller_info": {
-      "type": "Private",
-      "id": "user_882371",
-      "response_time": "Fast"
+    "modifications_and_extras": {
+      "modifications": [
+        "PPF Full Body",
+        "Ceramic Coating"
+      ],
+      "extras": [
+        "Winter Tires Set",
+        "Car Cover",
+        "Rubber Mats"
+      ],
+      "custom_options": {
+        "modifications": [
+          "Stage 1 ECU Remap"
+        ],
+        "extras": [
+          "Custom Key Fob Cover"
+        ]
+      }
+    },
+    "fuel_specifics": {
+      "battery_capacity_kwh": null,
+      "battery_health_percentage": null,
+      "lpg_installation": null
+    },
+    "external_data": {
+      "history_report_status": "Verified",
+      "history_report_url": "https://.../report.pdf"
     },
     "media": {
-      "thumbnail": "https://ojest-images.s3.../thumb.jpg",
-      "gallery": [
-        "https://ojest-images.s3.../img1.jpg",
-        "https://ojest-images.s3.../img2.jpg"
-      ],
-      "history_report_url": "https://.../report.pdf"
+      "photos": [
+        {
+          "id": "p1",
+          "url": "...",
+          "category": "exterior"
+        },
+        {
+          "id": "p2",
+          "url": "...",
+          "category": "interior"
+        }
+      ]
     }
   }
 }

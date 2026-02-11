@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Check, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { ReactNode } from "react";
 
 interface WizardLayoutProps {
@@ -19,9 +19,7 @@ const stepTitles = [
     "Condition",
     "Equipment",
     "Mods & Extras",
-    "Fuel Details",
     "Warranty",
-    "Seller Notes",
     "History",
     "AI Preview",
     "Publish"
@@ -43,8 +41,8 @@ export default function WizardLayout({
                 <div className="max-w-5xl mx-auto px-4 py-4">
                     <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
-                                <Sparkles className="h-5 w-5 text-white" />
+                            <div className="h-10 w-10 flex items-center justify-center">
+                                <img src="/logooo.png" alt="Ojest AI" className="h-8 w-8 object-contain" />
                             </div>
                             <div>
                                 <h1 className="text-lg font-bold text-gray-900 dark:text-white leading-none mb-1">
@@ -87,13 +85,13 @@ export default function WizardLayout({
                         >
                             <div className="flex gap-4">
                                 <div className="flex-shrink-0 relative">
-                                    <div className={`h-12 w-12 rounded-2xl bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center shadow-lg shadow-blue-500/30 ${aiThinking ? "animate-pulse" : ""}`}>
-                                        <Sparkles className="h-6 w-6 text-white" />
+                                    <div className={`h-12 w-12 rounded-2xl bg-white dark:bg-gray-800 flex items-center justify-center shadow-md border border-gray-100 dark:border-gray-700 ${aiThinking ? "animate-pulse" : ""}`}>
+                                        <img src="/logooo.png" alt="Ojest AI" className="h-8 w-8 object-contain" />
                                     </div>
                                     {aiThinking && (
                                         <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
-                                            <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                            <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
                                         </span>
                                     )}
                                 </div>

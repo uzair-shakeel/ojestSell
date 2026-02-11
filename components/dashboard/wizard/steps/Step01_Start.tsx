@@ -240,7 +240,7 @@ export default function Step01_Start({ formData, updateFormData, nextStep }: Ste
                                                 key={fuel}
                                                 onClick={() => updateFormData({ fuel: fuel })}
                                                 className={`px-4 py-3 rounded-xl border transition-all font-medium text-sm flex items-center justify-center gap-2 ${formData.fuel === fuel
-                                                    ? "bg-gray-900 dark:bg-white text-white dark:text-gray-900 border-transparent shadow-lg scale-[1.02]"
+                                                    ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-500/25 scale-[1.02]"
                                                     : "bg-white dark:bg-dark-card border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600"
                                                     }`}
                                             >
