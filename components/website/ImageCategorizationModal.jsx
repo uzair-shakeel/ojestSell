@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Zoom, Navigation } from "swiper/modules";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 import "swiper/css";
 import "swiper/css/zoom";
@@ -333,7 +334,7 @@ export default function ImageCategorizationModal({
   const currentImages = organizedImages[currentCategory] || [];
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black overflow-y-auto overflow-x-hidden h-screen w-screen">
+    <div className="fixed inset-0 z-[100] bg-white dark:bg-dark-main overflow-y-auto overflow-x-hidden h-screen w-screen">
       <style dangerouslySetInnerHTML={{
         __html: `
         .scrollbar-hide::-webkit-scrollbar { display: none; }
@@ -343,7 +344,7 @@ export default function ImageCategorizationModal({
         .swiper-zoom-container > img { max-height: 85vh !important; width: auto !important; object-fit: contain; }
       `}} />
 
-      <div className="w-full sticky top-0 left-0 z-[110] bg-black shadow-lg">
+      <div className="w-full sticky top-0 left-0 z-[110] bg-white dark:bg-dark-main ">
         <div className="max-w-[1600px] mx-auto px-0 md:px-20 py-3.5 flex justify-between items-center gap-0 md:gap-6">
           <div
             className="flex gap-4 overflow-x-auto whitespace-nowrap flex-1 scrollbar-hide px-4"
@@ -354,8 +355,8 @@ export default function ImageCategorizationModal({
                 key={cat}
                 onClick={() => handleCategoryClick(cat)}
                 className={`text-base md:text-sm font-medium pb-1.5 relative transition-colors whitespace-nowrap flex-shrink-0 ${currentCategory === cat
-                  ? "text-white underline underline-offset-2"
-                  : "text-gray-400 hover:text-white"
+                  ? "text-gray-900 dark:text-white underline underline-offset-2"
+                  : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                   }`}
                 style={{ paddingTop: '1px' }}
               >
@@ -364,35 +365,56 @@ export default function ImageCategorizationModal({
             ))}
           </div>
 
-          <div className="flex gap-2 md:gap-4 items-center ml-auto flex-shrink-0 pr-4 md:pr-0">
-            {showSlider && (
-              <div className="hidden md:flex gap-4">
-                <button
-                  onClick={handleZoom}
-                  className="text-white flex items-center justify-center hover:opacity-70 transition-opacity text-xl p-2"
-                  title="Zoom"
-                >
-                  +
-                </button>
-                <button
-                  onClick={handleFullscreen}
-                  className="text-white flex items-center justify-center hover:opacity-70 transition-opacity text-xl p-2"
-                  title="Full Screen"
-                >
-                  ⛶
-                </button>
-              </div>
-            )}
+          <div className="flex gap-2 items-center ml-auto flex-shrink-0 pr-4 md:pr-0">
             <button
               onClick={handleClose}
-              className="text-white flex items-center justify-center hover:opacity-70 transition-opacity text-2xl p-2"
-              style={{ marginTop: '-8px' }}
+              className="h-8 w-8 md:h-9 md:w-9 rounded-full bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 transition-all shadow-sm"
               title="Close"
             >
-              ×
+              <span className="text-xl font-light">×</span>
             </button>
           </div>
         </div>
+
+        {/* Bottom Row: Navigation Controls (only when in slider mode) */}
+        {showSlider && (
+          <div className="max-w-[1600px] mx-auto px-4 md:px-20 pb-3 flex justify-center items-center gap-3 border-t border-gray-100 dark:border-gray-800 pt-3">
+            {/* Compact Chevron Navigation */}
+            <button
+              onClick={handleSwiperPrev}
+              className="h-8 w-8 md:h-9 md:w-9 rounded-full bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 transition-all shadow-sm"
+              aria-label="Previous image"
+            >
+              <IoIosArrowBack className="w-4 h-4 md:w-5 md:h-5" />
+            </button>
+
+            <button
+              onClick={handleSwiperNext}
+              className="h-8 w-8 md:h-9 md:w-9 rounded-full bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 transition-all shadow-sm"
+              aria-label="Next image"
+            >
+              <IoIosArrowForward className="w-4 h-4 md:w-5 md:h-5" />
+            </button>
+
+            {/* Zoom & Fullscreen - Desktop only */}
+            <div className="hidden md:flex gap-2 ml-2">
+              <button
+                onClick={handleZoom}
+                className="h-8 w-8 md:h-9 md:w-9 rounded-full bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 transition-all shadow-sm"
+                title="Zoom"
+              >
+                <span className="text-lg font-bold">+</span>
+              </button>
+              <button
+                onClick={handleFullscreen}
+                className="h-8 w-8 md:h-9 md:w-9 rounded-full bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 transition-all shadow-sm"
+                title="Full Screen"
+              >
+                <span className="text-base">⛶</span>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="max-w-[1600px] mx-auto px-0 md:px-20 py-5">
@@ -408,7 +430,7 @@ export default function ImageCategorizationModal({
         {!showSlider && (
           <>
             <div className="flex justify-end mb-4 px-2">
-              <span className="text-gray-400 text-sm bg-gray-900/50 px-3 py-1 rounded-full">
+              <span className="text-gray-600 dark:text-gray-400 text-sm bg-gray-100 dark:bg-gray-900/50 px-3 py-1 rounded-full">
                 {currentCategory === "all"
                   ? `Total: ${currentImages.length}`
                   : `${capitalizeWord(currentCategory)}: ${currentImages.length}`}
@@ -421,7 +443,7 @@ export default function ImageCategorizationModal({
                   <div
                     key={index}
                     onClick={() => handleImageClick(image, currentCategory)}
-                    className="bg-gray-900 rounded-lg overflow-hidden cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg aspect-[3/2] relative group"
+                    className="bg-gray-100 dark:bg-gray-900 rounded-lg overflow-hidden cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg aspect-[3/2] relative group"
                   >
                     <img
                       src={image.url}
@@ -434,9 +456,9 @@ export default function ImageCategorizationModal({
                 ))}
               </div>
             ) : (
-              <div className="bg-gray-900 rounded-xl p-16 text-center border border-gray-800 m-3 my-auto">
+              <div className="bg-gray-100 dark:bg-gray-900 rounded-xl p-16 text-center border border-gray-200 dark:border-gray-800 m-3 my-auto">
                 <div className="text-6xl mb-5 opacity-30">📷</div>
-                <div className="text-xl text-gray-400">
+                <div className="text-xl text-gray-600 dark:text-gray-400">
                   No photos found in this category
                 </div>
               </div>
@@ -479,32 +501,17 @@ export default function ImageCategorizationModal({
                         <img
                           src={img.url}
                           alt={img.detected_label || "Gallery image"}
-                          className="rounded-none md:rounded-2xl shadow-2xl bg-gray-900"
+                          className="rounded-none md:rounded-2xl shadow-2xl bg-gray-100 dark:bg-gray-900"
                         />
                       </div>
                     </SwiperSlide>
                   ))}
                 </Swiper>
 
-                <div className="fixed bottom-4 right-4 text-white text-lg md:text-base font-medium z-[110] bg-black bg-opacity-70 px-3 py-2 rounded">
+                <div className="fixed bottom-4 right-4 text-white dark:text-white text-lg md:text-base font-medium z-[110] bg-gray-900/70 dark:bg-black/70 px-3 py-2 rounded">
                   {sliderIndex + 1} of {sliderImages.length}
                 </div>
               </div>
-
-              {/* FIX: Removed {sliderImages.length > 1 && ...} check so buttons always appear */}
-              <button
-                onClick={handleSwiperPrev}
-                className="flex text-white text-3xl md:text-4xl items-center justify-center hover:opacity-70 transition-opacity fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-[105] p-4"
-              >
-                ‹
-              </button>
-
-              <button
-                onClick={handleSwiperNext}
-                className="flex text-white text-3xl md:text-4xl items-center justify-center hover:opacity-70 transition-opacity fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-[105] p-4"
-              >
-                ›
-              </button>
             </div>
           </>
         )}

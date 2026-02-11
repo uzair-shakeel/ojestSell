@@ -6,7 +6,7 @@ import { Navigation, Pagination, A11y } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import CarCard from "./CarCard";
 import { getAllCars } from "../../services/carService";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
@@ -52,9 +52,26 @@ export function CarsNearMe() {
           <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-gray-200 dark:text-dark-text-primary transition-colors duration-300 tracking-tight">
             Ostatnio Dodane
           </h2>
-          <button className="px-6 py-2.5 bg-white dark:bg-dark-raised border border-gray-200 dark:border-dark-divider rounded-full text-sm font-bold text-gray-900 dark:text-gray-200 dark:text-dark-text-primary hover:bg-gray-50 dark:hover:bg-dark-elevation-1 hover:shadow-md transition-all duration-300 flex items-center gap-2">
-            Więcej <span className="text-lg">→</span>
-          </button>
+          <div className="flex items-center gap-3">
+            {/* Compact Chevron Navigation */}
+            <div className="flex gap-2">
+              <button
+                className="cars-swiper-prev h-8 w-8 md:h-9 md:w-9 rounded-full bg-white/80 dark:bg-dark-card/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:bg-white dark:hover:bg-dark-card text-gray-700 dark:text-gray-200 transition-all shadow-sm"
+                aria-label="Previous"
+              >
+                <IoIosArrowBack className="w-4 h-4 md:w-5 md:h-5" />
+              </button>
+              <button
+                className="cars-swiper-next h-8 w-8 md:h-9 md:w-9 rounded-full bg-white/80 dark:bg-dark-card/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:bg-white dark:hover:bg-dark-card text-gray-700 dark:text-gray-200 transition-all shadow-sm"
+                aria-label="Next"
+              >
+                <IoIosArrowForward className="w-4 h-4 md:w-5 md:h-5" />
+              </button>
+            </div>
+            <button className="hidden sm:flex px-6 py-2.5 bg-white dark:bg-dark-raised border border-gray-200 dark:border-dark-divider rounded-full text-sm font-bold text-gray-900 dark:text-gray-200 dark:text-dark-text-primary hover:bg-gray-50 dark:hover:bg-dark-elevation-1 hover:shadow-md transition-all duration-300 items-center gap-2">
+              Więcej <span className="text-lg">→</span>
+            </button>
+          </div>
         </div>
         {loading && (
           <p className="text-gray-600 dark:text-dark-text-secondary transition-colors duration-300">
@@ -114,20 +131,6 @@ export function CarsNearMe() {
                 </SwiperSlide>
               ))}
             </Swiper>
-
-            {/* Custom Navigation Buttons */}
-            <button className="cars-swiper-prev absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 dark:bg-dark-card backdrop-blur-sm shadow-xl rounded-full p-4 hover:scale-110 active:scale-95 transition-all duration-300 -ml-5 border border-white/20 dark:border-dark-divider text-gray-800 dark:text-dark-text-primary group">
-              <FaChevronLeft
-                size={20}
-                className="group-hover:-translate-x-0.5 transition-transform"
-              />
-            </button>
-            <button className="cars-swiper-next absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 dark:bg-dark-card backdrop-blur-sm shadow-xl rounded-full p-4 hover:scale-110 active:scale-95 transition-all duration-300 -mr-5 border border-white/20 dark:border-dark-divider text-gray-800 dark:text-dark-text-primary group">
-              <FaChevronRight
-                size={20}
-                className="group-hover:translate-x-0.5 transition-transform"
-              />
-            </button>
           </div>
         )}
       </div>
