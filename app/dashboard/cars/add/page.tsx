@@ -63,7 +63,7 @@ export default function NewCarListingWizard() {
   };
 
   const nextStep = () => {
-    setStep(prev => Math.min(prev + 1, 12));
+    setStep(prev => Math.min(prev + 1, 11));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -188,10 +188,9 @@ export default function NewCarListingWizard() {
       case 6: return "Any special modifications? These make your car unique.";
       case 7: return "Since it's an alternative fuel vehicle, let's get some specific details.";
       case 8: return "Warranty adds significant value. Do you have one tailored for this car?";
-      case 9: return "Almost done. Describe your selling terms.";
-      case 10: return "Vehicle history reports are highly requested by buyers.";
-      case 11: return "I'm writing your listing description now based on everything you told me. Watch this!";
-      case 12: return "Everything looks ready! Click Publish to go live.";
+      case 9: return "Vehicle history reports are highly requested by buyers.";
+      case 10: return "I'm writing your listing description now based on everything you told me. Watch this!";
+      case 11: return "Everything looks ready! Click Publish to go live.";
       default: return "";
     }
   };
@@ -199,7 +198,7 @@ export default function NewCarListingWizard() {
   return (
     <WizardLayout
       currentStep={step}
-      totalSteps={12}
+      totalSteps={11}
       aiMessage={getAIMessage(step)}
     >
       {step === 1 && <Step01_Start formData={formData} updateFormData={updateFormData} nextStep={nextStep} />}
@@ -210,10 +209,9 @@ export default function NewCarListingWizard() {
       {step === 6 && <Step06_ModsExtras formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />}
       {step === 7 && <Step07_FuelSpecific formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />}
       {step === 8 && <Step08_Warranty formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />}
-      {step === 9 && <Step09_SellerNotes formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />}
-      {step === 10 && <Step10_History formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />}
-      {step === 11 && <Step11_AIPreview formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />}
-      {step === 12 && <Step12_Publish formData={formData} updateFormData={updateFormData} prevStep={prevStep} handleSubmit={handleSubmit} loading={loading} />}
+      {step === 9 && <Step10_History formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />}
+      {step === 10 && <Step11_AIPreview formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />}
+      {step === 11 && <Step12_Publish formData={formData} updateFormData={updateFormData} prevStep={prevStep} handleSubmit={handleSubmit} loading={loading} />}
     </WizardLayout>
   );
 }

@@ -43,21 +43,6 @@ export default function Step03_RequiredBasics({ formData, updateFormData, nextSt
                                 className="w-full pl-10 pr-4 py-3 bg-white dark:bg-dark-bg border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                             />
                         </div>
-                        {/* Mileage Source */}
-                        <div className="flex gap-2 mt-2">
-                            {['Seller', 'Document', 'Odometer Photo'].map(source => (
-                                <button
-                                    key={source}
-                                    onClick={() => updateFormData({ mileageSource: source })}
-                                    className={`px-3 py-1 text-xs rounded-full border transition-colors ${formData.mileageSource === source
-                                        ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 font-medium"
-                                        : "bg-gray-50 dark:bg-dark-bg border-gray-200 dark:border-gray-700 text-gray-500"
-                                        }`}
-                                >
-                                    {source}
-                                </button>
-                            ))}
-                        </div>
                     </div>
 
                     {/* Price */}
@@ -179,8 +164,8 @@ export default function Step03_RequiredBasics({ formData, updateFormData, nextSt
                     onClick={nextStep}
                     disabled={!canProceed}
                     className={`px-8 py-2.5 rounded-lg font-bold text-white flex items-center gap-2 transition-all shadow-md hover:shadow-lg ${canProceed
-                        ? "bg-blue-600 hover:bg-blue-700 hover:scale-[1.02] active:scale-95"
-                        : "bg-gray-300 dark:bg-gray-700 cursor-not-allowed opacity-50"
+                            ? "bg-blue-600 hover:bg-blue-700 hover:scale-[1.02] active:scale-95"
+                            : "bg-gray-300 dark:bg-gray-700 cursor-not-allowed opacity-50"
                         }`}
                 >
                     Next Step <ArrowRight className="h-4 w-4" />
