@@ -1,479 +1,219 @@
 "use client";
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useAuth } from "../../../../lib/auth/AuthContext";
-import { useRouter } from "next/navigation";
-import { addCar } from "../../../../services/carService";
-import StepFive from "../../../../components/dashboard/createsteps/StepFive";
-import StepSix from "../../../../components/dashboard/createsteps/StepSix";
-import StepFour from "../../../../components/dashboard/createsteps/StepFour";
-import StepThree from "../../../../components/dashboard/createsteps/StepThree";
-import StepTwo from "../../../../components/dashboard/createsteps/StepTwo";
-import StepOne from "../../../../components/dashboard/createsteps/StepOne";
-import StepPhotoEnhancer from "../../../../components/dashboard/createsteps/StepPhotoEnhancer";
-import { getUserById } from "../../../../services/userService";
-import ImageEditStep from "../../../../components/dashboard/createsteps/ImageEditStep";
-import VinLookupStep from "../../../../components/dashboard/createsteps/VinLookupStep";
-import { useMakesModels } from "../../../../hooks/useMakesModels";
 
-export default function MultiStepForm() {
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../../../../lib/auth/AuthContext";
+import { addCar } from "../../../../services/carService";
+import { getUserById } from "../../../../services/userService";
+import WizardLayout from "../../../../components/dashboard/wizard/WizardLayout";
+
+// Step Components
+import Step01_Start from "../../../../components/dashboard/wizard/steps/Step01_Start";
+import Step02_VINDecode from "../../../../components/dashboard/wizard/steps/Step02_VINDecode";
+import Step03_RequiredBasics from "../../../../components/dashboard/wizard/steps/Step03_RequiredBasics";
+import Step04_Condition from "../../../../components/dashboard/wizard/steps/Step04_Condition";
+import Step05_Equipment from "../../../../components/dashboard/wizard/steps/Step05_Equipment";
+import Step06_ModsExtras from "../../../../components/dashboard/wizard/steps/Step06_ModsExtras";
+import Step07_FuelSpecific from "../../../../components/dashboard/wizard/steps/Step07_FuelSpecific";
+import Step08_Warranty from "../../../../components/dashboard/wizard/steps/Step08_Warranty";
+import Step09_SellerNotes from "../../../../components/dashboard/wizard/steps/Step09_SellerNotes";
+import Step10_History from "../../../../components/dashboard/wizard/steps/Step10_History";
+import Step11_AIPreview from "../../../../components/dashboard/wizard/steps/Step11_AIPreview";
+import Step12_Publish from "../../../../components/dashboard/wizard/steps/Step12_Publish";
+
+export default function NewCarListingWizard() {
   const { getToken, userId } = useAuth();
   const router = useRouter();
-  const makesModelsData = useMakesModels();
+
   const [step, setStep] = useState(1);
-  const [direction, setDirection] = useState(1); // 1 for forward, -1 for backward
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [user, setUser] = useState(null);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-
-  const [formData, setFormData] = useState({
-    // Step 1: Basic Information
-    images: [] as File[], // Store File objects
-    title: "",
-    description: "",
-    imagePreviews: [] as string[], // For image previews
-
-    // Step 2: Car Details
-    make: "",
-    model: "",
-    trim: "",
-    type: "",
-    year: "",
-    color: "",
-    mileage: "",
-    drivetrain: "",
-    transmission: "",
+  const [formData, setFormData] = useState<any>({
+    images: [],
+    imagePreviews: [],
+    conditionType: "", // New/Used/Nearly-new
     fuel: "",
-    engine: "",
-    horsepower: "",
-    accidentHistory: "",
-    serviceHistory: "",
     vin: "",
-    country: "",
-    isFeatured: false,
-
-    // Step 3: Car Condition
-    condition: {
-      interior: "",
-      mechanical: "",
-      paintandBody: "",
-      frameandUnderbody: "",
-      overall: "",
-    },
-    // Explicit used/new flag
-    conditionType: "Used" as "New" | "Used",
-
-    // Step 4: Financial Information
-    financialInfo: {
-      sellOptions: [],
-      invoiceOptions: [],
-      sellerType: "private" as "private" | "company",
-      priceNetto: "",
-      priceWithVat: "",
-    },
-    // Step 5: Location
+    // ... other fields will be added dynamically
+    equipment: [],
+    modifications: [],
+    extras: [],
+    currency: "PLN",
+    sellerType: "Private",
+    registrationStatus: "",
+    // Default location (should be fetched from user profile)
     location: {
       type: "Point",
-      coordinates: [51.5074, -0.1278], // Default to London
-    },
-    createdBy: "",
-    // Track auto-filled fields from VIN
-    vinFields: [] as string[],
-    warranties: [] as any[],
-    generatedListing: "",
+      coordinates: [52.2297, 21.0122] // Warsaw default
+    }
   });
 
+  // Load user location
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        // Ensure authenticated request supplies token for protected endpoint
-        const userData = await getUserById(userId, getToken);
-        setUser(userData);
-        console.log(userData);
-        setFormData({
-          ...formData,
-          location: userData.location,
-          createdBy: userData.clerkUserId,
-        });
-      } catch (err) {
-        console.error("Error fetching user:", err);
-      }
-    };
-
-    if (userId) loadUser();
-  }, [userId]);
-
-  // Check for edited images when component mounts
-  useEffect(() => {
-    const editedImagePath = localStorage.getItem("editedImagePath");
-    const editedImageTimestamp = localStorage.getItem("editedImageTimestamp");
-    const editedImageIndex = localStorage.getItem("editedImageIndex");
-
-    if (editedImagePath && editedImageTimestamp && editedImageIndex) {
-      // Only process if the timestamp is recent (within the last minute)
-      const currentTime = Date.now();
-      const timestamp = parseInt(editedImageTimestamp);
-
-      if (currentTime - timestamp < 60000) {
-        // 60 seconds
-        handleImageUpdate(editedImagePath, parseInt(editedImageIndex));
-
-        // Clear the localStorage items after processing
-        localStorage.removeItem("editedImagePath");
-        localStorage.removeItem("editedImageTimestamp");
-        localStorage.removeItem("editedImageIndex");
-      }
+    if (userId) {
+      getUserById(userId, getToken).then(user => {
+        if (user?.location) {
+          setFormData(prev => ({ ...prev, location: user.location, createdBy: user.clerkUserId }));
+        }
+      }).catch(err => console.error("Failed to load user location", err));
     }
-  }, []);
+  }, [userId, getToken]);
 
-  // Function to handle image updates from the photo enhancer
-  const handleImageUpdate = async (imagePath, index) => {
-    try {
-      // Create a new File object from the edited image URL
-      const response = await fetch(imagePath);
-      const blob = await response.blob();
-      const filename =
-        imagePath.split("/").pop() || `edited-image-${Date.now()}.jpg`;
-      const file = new File([blob], filename, { type: "image/jpeg" });
-
-      // Create a new array of images with the edited image replacing the original
-      const updatedImages = [...formData.images];
-      updatedImages[index] = file;
-
-      // Create a new array of image previews with the edited image preview replacing the original
-      const updatedPreviews = [...formData.imagePreviews];
-      updatedPreviews[index] = imagePath;
-
-      // Update form data with the new images and previews
-      setFormData({
-        ...formData,
-        images: updatedImages,
-        imagePreviews: updatedPreviews,
-      });
-    } catch (error) {
-      console.error("Error updating image:", error);
-      alert("Failed to update the edited image. Please try again.");
-    }
+  const updateFormData = (newData: any) => {
+    setFormData((prev: any) => ({ ...prev, ...newData }));
   };
 
   const nextStep = () => {
-    setDirection(1); // Move from right to left
-    setStep((prev) => prev + 1);
+    setStep(prev => Math.min(prev + 1, 12));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const prevStep = () => {
-    setDirection(-1); // Move from left to right
-    setStep((prev) => prev - 1);
-  };
-
-  const updateFormData = (newData: Partial<typeof formData>) => {
-    setFormData((prev) => ({ ...prev, ...newData }));
-  };
-
-  // Validate form before submission
-  const validateForm = () => {
-    if (!formData.title) return "Title is required.";
-    if (!formData.description) return "Description is required.";
-    if (formData.images.length === 0) return "At least 1 image is required.";
-    if (formData.images.length > 100)
-      return "You can upload a maximum of 100 images.";
-    if (!formData.make) return "Make is required.";
-    if (!formData.model) return "Model is required.";
-    if (!formData.type) return "Type is required.";
-    if (!formData.financialInfo.sellOptions.length)
-      return "At least one sell option is required.";
-    if (!formData.financialInfo.invoiceOptions.length)
-      return "At least one invoice option is required.";
-    if (!formData.financialInfo.sellerType) return "Seller type is required.";
-    if (!formData.financialInfo.priceNetto) return "Price Netto is required.";
-    return null;
+    setStep(prev => Math.max(prev - 1, 1));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSubmit = async () => {
-    setError(null);
     setLoading(true);
-
-    // Validate form
-    const validationError = validateForm();
-    if (validationError) {
-      setError(validationError);
-      setLoading(false);
-      return;
-    }
-
-    // Debug logging for images
-    console.log("Images before submit:", formData.images);
-    formData.images.forEach((img, idx) => {
-      console.log(
-        `Image ${idx}:`,
-        img,
-        img instanceof File ? "File" : typeof img
-      );
-    });
-
     try {
-      // Ensure car condition enums are sent in English
-      const plToEn: Record<string, string> = {
-        "Nowy": "New",
-        "Bardzo Dobry": "Very Good",
-        "Dobry": "Good",
-        "Normalny": "Normal",
-        "Zły": "Bad",
-      };
-      const norm = (v: any) =>
-        typeof v === "string" && plToEn[v] ? plToEn[v] : v || "";
-      const normalizedCondition = {
-        interior: formData.condition?.interior ? norm(formData.condition?.interior) : undefined,
-        mechanical: formData.condition?.mechanical ? norm(formData.condition?.mechanical) : undefined,
-        paintandBody: formData.condition?.paintandBody ? norm(formData.condition?.paintandBody) : undefined,
-        frameandUnderbody: formData.condition?.frameandUnderbody
-          ? norm(formData.condition?.frameandUnderbody)
-          : undefined,
-        overall: formData.condition?.overall ? norm(formData.condition?.overall) : undefined,
-      };
+      // Construct standard car object
+      const title = `${formData.year} ${formData.make} ${formData.model} ${formData.trim || ''}`.trim();
 
-      const effectiveCondition =
-        formData.conditionType ||
-        (normalizedCondition.overall && normalizedCondition.overall === "New"
-          ? "New"
-          : "Used");
+      // Map condition type to backend enum
+      const condition = formData.conditionType === "New" ? "New" : "Used";
 
-      const carData: any = {
-        title: formData.title,
-        description: formData.description,
-        make: formData.make,
-        model: formData.model,
-        trim: formData.trim,
-        type: formData.type,
-        year: formData.year,
-        color: formData.color,
-        condition: effectiveCondition,
-        mileage: formData.mileage,
-        engine: formData.engine,
-        horsepower: formData.horsepower,
-        vin: formData.vin,
-        country: formData.country,
-        isFeatured: formData.isFeatured,
-        carCondition: normalizedCondition,
-        warranties: Array.isArray(formData.warranties)
-          ? formData.warranties
-          : [],
-        location: formData.location,
-        financialInfo: {
-          sellOptions: Array.isArray(formData.financialInfo.sellOptions)
-            ? formData.financialInfo.sellOptions
-            : [],
-          invoiceOptions: Array.isArray(formData.financialInfo.invoiceOptions)
-            ? formData.financialInfo.invoiceOptions
-            : [],
-          sellerType: formData.financialInfo.sellerType,
-          priceNetto: parseFloat(formData.financialInfo.priceNetto),
-        },
-        images: formData.images,
-        createdBy: formData.createdBy || userId || "",
-      };
-
-      // Only include optional enum fields when they have a value
-      if (formData.drivetrain) carData.drivetrain = formData.drivetrain;
-      if (formData.transmission) carData.transmission = formData.transmission;
-      if (formData.fuel) carData.fuel = formData.fuel;
-      if (formData.accidentHistory) carData.accidentHistory = formData.accidentHistory;
-      if (formData.serviceHistory) carData.serviceHistory = formData.serviceHistory;
-
+      // Construct payload
       const formDataToSend = new FormData();
-      for (const key in carData) {
-        if (key === "images") {
-          carData[key].forEach((image: File) => {
-            formDataToSend.append("images", image);
-          });
-        } else if (key === "location") {
-          formDataToSend.append("location", JSON.stringify(carData[key]));
-        } else if (key === "warranties") {
-          formDataToSend.append("warranties", JSON.stringify(carData[key]));
-        } else if (key === "financialInfo") {
-          for (const financialKey in carData[key]) {
-            if (financialKey === "sellOptions" || financialKey === "invoiceOptions") {
-              const arr = Array.isArray(carData[key][financialKey]) ? carData[key][financialKey] : [];
-              arr.forEach((val: string) => {
-                formDataToSend.append(`financialInfo[${financialKey}][]`, val);
-              });
-            } else {
-              formDataToSend.append(
-                `financialInfo[${financialKey}]`,
-                carData[key][financialKey] ?? ""
-              );
-            }
-          }
-        } else if (key === "isFeatured") {
-          // Ensure boolean is sent as string
-          formDataToSend.append("isFeatured", String(carData[key]));
-        } else if (key === "createdBy") {
-          formDataToSend.append("createdBy", String(carData[key] || ""));
-        } else if (key === "carCondition") {
-          for (const conditionKey in carData[key]) {
-            const val = carData[key][conditionKey];
-            if (!val) continue;
-            formDataToSend.append(`carCondition[${conditionKey}]`, val);
-          }
+
+      // Basic fields
+      formDataToSend.append("title", title);
+      formDataToSend.append("description", formData.generatedListing || formData.description || "No description provided.");
+      formDataToSend.append("make", formData.make);
+      formDataToSend.append("model", formData.model);
+      if (formData.trim) formDataToSend.append("trim", formData.trim);
+      formDataToSend.append("type", formData.type || "Other");
+      formDataToSend.append("year", formData.year);
+      if (formData.color) formDataToSend.append("color", formData.color);
+      formDataToSend.append("condition", condition);
+      formDataToSend.append("mileage", formData.mileage);
+      if (formData.engine) formDataToSend.append("engine", formData.engine);
+      if (formData.transmission) formDataToSend.append("transmission", formData.transmission);
+      if (formData.drivetrain) formDataToSend.append("drivetrain", formData.drivetrain);
+      formDataToSend.append("fuel", formData.fuel);
+      if (formData.vin) formDataToSend.append("vin", formData.vin);
+
+      // Images
+      formData.images.forEach((file: File) => {
+        formDataToSend.append("images", file);
+      });
+
+      // Use location from form or user default
+      formDataToSend.append("location", JSON.stringify(formData.location));
+
+      // Financial Info
+      const financialInfo = {
+        sellOptions: ["Cash"], // Default
+        invoiceOptions: [formData.saleDocument],
+        sellerType: formData.sellerType.toLowerCase(),
+        priceNetto: Number(formData.price),
+        currency: formData.currency
+      };
+      // Flatten financial info for FormData
+      Object.keys(financialInfo).forEach(key => {
+        if (Array.isArray(financialInfo[key])) {
+          financialInfo[key].forEach((val: string) => formDataToSend.append(`financialInfo[${key}][]`, val));
         } else {
-          // Coerce non-file values to string for FormData
-          const value =
-            typeof carData[key] === "number" ||
-              typeof carData[key] === "boolean"
-              ? String(carData[key])
-              : (carData[key] as any) ?? "";
-          formDataToSend.append(key, value);
+          formDataToSend.append(`financialInfo[${key}]`, financialInfo[key]);
         }
+      });
+
+      // Car Condition details
+      if (formData.accidentHistory) formDataToSend.append("accidentHistory", formData.accidentHistory.includes("No") ? "No" : "Yes");
+      if (formData.serviceHistory) formDataToSend.append("serviceHistory", formData.serviceHistory.includes("Full") ? "Yes" : "No");
+
+      // Rich Data Fields (Arrays)
+      if (formData.equipment && Array.isArray(formData.equipment)) {
+        formData.equipment.forEach((item: string) => formDataToSend.append("equipment[]", item));
+      }
+      if (formData.modifications && Array.isArray(formData.modifications)) {
+        formData.modifications.forEach((item: string) => formDataToSend.append("modifications[]", item));
+      }
+      if (formData.extras && Array.isArray(formData.extras)) {
+        formData.extras.forEach((item: string) => formDataToSend.append("extras[]", item));
       }
 
-      // Debug: verify isFeatured and full FormData before sending
-      console.log("Submitting car with isFeatured:", carData.isFeatured);
-      try {
-        const entries: any[] = [];
-        (formDataToSend as any).forEach((value: any, key: string) => {
-          const printable =
-            value instanceof File
-              ? `File(name=${value.name}, size=${value.size})`
-              : String(value);
-          entries.push({ key, value: printable });
-        });
-        console.table(entries);
-        console.log(
-          "FormData isFeatured entry:",
-          entries.find((e) => e.key === "isFeatured")?.value
-        );
-      } catch (e) {
-        console.log(
-          "Could not iterate FormData entries in this environment",
-          e
-        );
+      // Complex Objects (JSON Strings)
+      if (formData.warranty) {
+        formDataToSend.append("warrantyDetails", JSON.stringify(formData.warranty));
       }
+      if (formData.fuelSpecific) {
+        formDataToSend.append("fuelDetails", JSON.stringify(formData.fuelSpecific));
+      }
+
+      // Detailed Condition Reports
+      const conditionDetails = {
+        accidentHistory: formData.accidentHistory,
+        serviceHistory: formData.serviceHistory,
+        ownership: formData.ownership,
+        storage: formData.storage,
+        knownIssues: formData.knownIssues,
+        visibleFlaws: formData.visibleFlaws
+      };
+      formDataToSend.append("conditionDetails", JSON.stringify(conditionDetails));
+
+      // History Status
+      if (formData.historyReportStatus) {
+        formDataToSend.append("historyReportStatus", formData.historyReportStatus);
+      }
+
       await addCar(formDataToSend, getToken);
-      try {
-        window.dispatchEvent(
-          new CustomEvent("ojest:notify", {
-            detail: {
-              type: "status",
-              title: "Samochód dodany",
-              body: "Twój samochód oczekuje na zatwierdzenie",
-              meta: { createdAt: Date.now() },
-            },
-          })
-        );
-      } catch { }
-      setShowSuccessModal(true);
-    } catch (err) {
-      setError(err.message || "Failed to create car. Please try again.");
-      console.error("Error creating car:", err);
+
+      // Show success
+      router.push("/dashboard/cars?success=true");
+
+    } catch (error) {
+      console.error("Submission error:", error);
+      alert("Failed to publish listing. Please check required fields and try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <div className="max-w-5xl mx-auto p-6 overflow-hidden h-auto border border-gray-200 dark:border-gray-700 shadow-md rounded-lg relative bg-white dark:bg-dark-main transition-colors">
-      {error && <div className="text-red-500 mb-4">{error}</div>}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={step}
-          initial={{ opacity: 0, x: 100 * direction }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4, ease: "easeInOut" }}
-          className="relative"
-        >
-          {step === 1 && (
-            <VinLookupStep
-              nextStep={nextStep}
-              updateFormData={updateFormData}
-              formData={formData}
-            />
-          )}
-          {step === 2 && (
-            <StepOne
-              nextStep={nextStep}
-              prevStep={prevStep}
-              updateFormData={updateFormData}
-              formData={formData}
-              makesModelsData={makesModelsData}
-            />
-          )}
-          {step === 3 && (
-            <ImageEditStep
-              nextStep={nextStep}
-              prevStep={prevStep}
-              updateFormData={updateFormData}
-              formData={formData}
-            />
-          )}
-          {step === 4 && (
-            <StepThree
-              nextStep={nextStep}
-              prevStep={prevStep}
-              updateFormData={updateFormData}
-              formData={formData}
-            />
-          )}
-          {step === 5 && (
-            <StepFour
-              nextStep={nextStep}
-              prevStep={prevStep}
-              updateFormData={updateFormData}
-              formData={formData}
-            />
-          )}
-          {step === 6 && (
-            <StepSix
-              nextStep={nextStep}
-              prevStep={prevStep}
-              formData={formData}
-              updateFormData={updateFormData}
-            />
-          )}
-          {step === 7 && (
-            <StepFive
-              prevStep={prevStep}
-              handleSubmit={handleSubmit}
-              formData={formData}
-              updateFormData={updateFormData}
-              loading={loading}
-            />
-          )}
-        </motion.div>
-      </AnimatePresence>
+  const getAIMessage = (step: number) => {
+    switch (step) {
+      case 1: return "Hi! I'm your AI assistant. Let's start by uploading some photos. I can detect details from them to save you time.";
+      case 2: return "I've analyzed the VIN. Please verify these details are correct.";
+      case 3: return "Great. Now let's confirm the key selling points: Price and Mileage.";
+      case 4: return "Transparency is key. Being honest about condition builds trust with buyers.";
+      case 5: return "Select all the features this car has. More features often mean a higher value!";
+      case 6: return "Any special modifications? These make your car unique.";
+      case 7: return "Since it's an alternative fuel vehicle, let's get some specific details.";
+      case 8: return "Warranty adds significant value. Do you have one tailored for this car?";
+      case 9: return "Almost done. Describe your selling terms.";
+      case 10: return "Vehicle history reports are highly requested by buyers.";
+      case 11: return "I'm writing your listing description now based on everything you told me. Watch this!";
+      case 12: return "Everything looks ready! Click Publish to go live.";
+      default: return "";
+    }
+  };
 
-      {/* Success Modal */}
-      {showSuccessModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div
-            className="absolute inset-0 bg-black/50"
-            onClick={() => setShowSuccessModal(false)}
-          />
-          <div className="relative bg-white dark:bg-dark-main rounded-lg shadow-xl w-full max-w-md p-6 mx-4 border border-white/10">
-            <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-200 dark:text-white">
-              Car created successfully
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6 font-medium">
-              Your listing has been submitted for review and is currently <span className="font-bold text-yellow-600 dark:text-yellow-400">Pending approval</span>.
-              It will not appear on the public website until an admin approves it. You can track its status in your dashboard.
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                className="px-4 py-2 rounded border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 font-bold transition-all"
-                onClick={() => setShowSuccessModal(false)}
-              >
-                Close
-              </button>
-              <button
-                className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
-                onClick={() => router.push("/dashboard/cars")}
-              >
-                Go to My Cars
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+  return (
+    <WizardLayout
+      currentStep={step}
+      totalSteps={12}
+      aiMessage={getAIMessage(step)}
+    >
+      {step === 1 && <Step01_Start formData={formData} updateFormData={updateFormData} nextStep={nextStep} />}
+      {step === 2 && <Step02_VINDecode formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />}
+      {step === 3 && <Step03_RequiredBasics formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />}
+      {step === 4 && <Step04_Condition formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />}
+      {step === 5 && <Step05_Equipment formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />}
+      {step === 6 && <Step06_ModsExtras formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />}
+      {step === 7 && <Step07_FuelSpecific formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />}
+      {step === 8 && <Step08_Warranty formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />}
+      {step === 9 && <Step09_SellerNotes formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />}
+      {step === 10 && <Step10_History formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />}
+      {step === 11 && <Step11_AIPreview formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />}
+      {step === 12 && <Step12_Publish formData={formData} updateFormData={updateFormData} prevStep={prevStep} handleSubmit={handleSubmit} loading={loading} />}
+    </WizardLayout>
   );
 }
