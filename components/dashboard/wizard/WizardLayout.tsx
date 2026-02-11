@@ -21,6 +21,7 @@ const stepTitles = [
     "Mods & Extras",
     "Warranty",
     "History",
+    "Final Context",
     "AI Preview",
     "Publish"
 ];
