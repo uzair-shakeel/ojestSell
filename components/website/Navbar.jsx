@@ -82,6 +82,8 @@ const Navbar = () => {
 
   const navLinks = [
     { name: t("navbar.links.home"), href: "/website" },
+    { name: "Discovery", href: "/discovery" },
+    { name: "Wishlist", href: "/wishlist" },
     { name: t("navbar.links.blog"), href: "/website/blog" },
     { name: t("navbar.links.faq"), href: "/website/faq" },
     { name: t("navbar.links.contact"), href: "/website/contact" },

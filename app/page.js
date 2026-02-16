@@ -14,6 +14,7 @@ import { BlogSection } from "../components/website/blog-section.jsx";
 import { Footer } from "../components/website/Footer.jsx";
 import VideoSection from "../components/website/VideoSection";
 import { FeaturedCars } from "../components/website/FeaturedCars.jsx";
+import { DiscoveryPromo } from "../components/website/DiscoveryPromo.jsx";
 import { CarsGridSection } from "../components/website/CarsGridSection.jsx";
 import { useLanguage } from "../lib/i18n/LanguageContext";
 
@@ -79,6 +80,7 @@ function HomeContent() {
         {/* <FeaturedCategories /> */}
         <BrowseCategories />
         <BrowseLocations />
+        <DiscoveryPromo />
         <CarsGridSection />
         {/* <BrowseByMake /> */}
         <BlogSection />

@@ -448,3 +448,77 @@ export const deleteUserAccount = async (
 
 // Alias for getUserById to maintain consistency with previous naming
 export const fetchUser = getUserById;
+
+// --- Discovery Interactions ---
+
+export const likeCar = async (
+  carId: string,
+  getToken: () => Promise<string | null>
+) => {
+  try {
+    const token = await getToken();
+    const response = await axios.post(`${API_URL}/users/like/${carId}`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error?.response?.data?.message || "Failed to like car");
+  }
+};
+
+export const passCar = async (
+  carId: string,
+  getToken: () => Promise<string | null>
+) => {
+  try {
+    const token = await getToken();
+    const response = await axios.post(`${API_URL}/users/pass/${carId}`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error?.response?.data?.message || "Failed to pass car");
+  }
+};
+
+export const getWishlist = async (
+  getToken: () => Promise<string | null>
+) => {
+  try {
+    const token = await getToken();
+    const response = await axios.get(`${API_URL}/users/wishlist/all`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error?.response?.data?.message || "Failed to fetch wishlist");
+  }
+};
+
+export const getInteractedCars = async (
+  getToken: () => Promise<string | null>
+) => {
+  try {
+    const token = await getToken();
+    const response = await axios.get(`${API_URL}/users/discovery/interacted`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error?.response?.data?.message || "Failed to fetch interacted cars");
+  }
+};
+
+export const resetDiscoveryInteractions = async (
+  getToken: () => Promise<string | null>
+) => {
+  try {
+    const token = await getToken();
+    const response = await axios.post(`${API_URL}/users/discovery/reset`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error?.response?.data?.message || "Failed to reset discovery");
+  }
+};
