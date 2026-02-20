@@ -64,31 +64,36 @@ export default function DiscoveryPage() {
         }
     };
 
-    const handleSwipe = async (direction, car) => {
+    const handleSwipe = (direction, car) => {
+        // 1. Move to next card immediately for UI smoothness
+        setCurrentIndex(prev => prev + 1);
+
+        // 2. Process data in background
         const isLike = direction === 'right';
         const storageKey = isLike ? 'ojest_liked_cars' : 'ojest_passed_cars';
 
-        // Update Local Storage first for immediate feel
+        // Update Local Storage
         const currentInteracted = JSON.parse(localStorage.getItem(storageKey) || '[]');
         if (!currentInteracted.includes(car._id)) {
             currentInteracted.push(car._id);
             localStorage.setItem(storageKey, JSON.stringify(currentInteracted));
         }
 
-        // Update DB if signed in
+        // Update DB if signed in (non-blocking)
         if (isSignedIn) {
-            try {
-                if (isLike) {
-                    await likeCar(car._id, getToken);
-                } else {
-                    await passCar(car._id, getToken);
+            const updateDB = async () => {
+                try {
+                    if (isLike) {
+                        await likeCar(car._id, getToken);
+                    } else {
+                        await passCar(car._id, getToken);
+                    }
+                } catch (err) {
+                    console.error(`Failed to save ${direction} to DB:`, err);
                 }
-            } catch (err) {
-                console.error(`Failed to save ${direction} to DB:`, err);
-            }
+            };
+            updateDB();
         }
-
-        setCurrentIndex(prev => prev + 1);
     };
 
     return (
@@ -177,15 +182,15 @@ export default function DiscoveryPage() {
                         </motion.div>
                     ) : (
                         <div className="relative h-full w-full perspective-1000">
-                            <AnimatePresence>
+                            <AnimatePresence initial={false}>
                                 {cars.slice(currentIndex, currentIndex + 3).reverse().map((car, index, array) => {
-                                    const arrayIndex = array.length - 1 - index; // 0 is top, 1 is next, etc
+                                    const displayIndex = array.length - 1 - index; // 0 is top
                                     return (
                                         <DiscoveryCard
                                             key={car._id}
                                             car={car}
-                                            index={arrayIndex}
-                                            active={arrayIndex === 0}
+                                            index={displayIndex}
+                                            active={displayIndex === 0}
                                             onSwipe={handleSwipe}
                                         />
                                     );

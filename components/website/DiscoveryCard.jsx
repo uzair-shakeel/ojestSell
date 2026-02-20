@@ -1,11 +1,12 @@
 "use client";
 import React from 'react';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
+import { motion, useMotionValue, useTransform, usePresence } from 'framer-motion';
 import { Fuel, Gauge, Settings2, MapPin, Heart, X, Info, Activity } from 'lucide-react';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 export default function DiscoveryCard({ car, onSwipe, active, index }) {
+    const [isPresent, safeToRemove] = usePresence();
     const x = useMotionValue(0);
     const rotate = useTransform(x, [-200, 200], [-25, 25]);
     const opacity = useTransform(x, [-200, -150, 0, 150, 200], [0, 1, 1, 1, 0]);
@@ -33,20 +34,40 @@ export default function DiscoveryCard({ car, onSwipe, active, index }) {
     const toTitleCase = (text) =>
         text ? text.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : "Car";
 
+    // Capture capturedX for consistent exit animation
+    const currentX = x.get();
+
     return (
         <motion.div
             style={{
                 x,
                 rotate,
                 opacity,
-                zIndex: active ? 50 : 10 - index,
-                scale: active ? 1 : 0.95 - (index * 0.05),
-                y: active ? 0 : index * 10
+            }}
+            initial={{
+                scale: 0.9 - (index * 0.04), // Start even smaller
+                y: (index + 1) * 20, // Start lower
+                opacity: 0,
+            }}
+            animate={{
+                scale: active ? 1 : 0.94 - (index * 0.04),
+                y: active ? 0 : index * 15,
+                opacity: 1,
+                zIndex: isPresent ? (active ? 50 : 10 - index) : 110,
             }}
             drag={active ? "x" : false}
             dragConstraints={{ left: 0, right: 0 }}
             onDragEnd={handleDragEnd}
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            exit={{
+                x: x.get() > 50 ? 1000 : x.get() < -50 ? -1000 : 0,
+                opacity: 0,
+                transition: { duration: 0.3, ease: "easeIn" } // Faster, cleaner exit
+            }}
+            transition={{
+                type: "spring",
+                stiffness: 260, // Slightly tighter for responsiveness
+                damping: 20, // Lower damping for bounce/life
+            }}
             className={`absolute inset-0 select-none ${active ? 'cursor-grab active:cursor-grabbing' : 'pointer-events-none'}`}
         >
             {/* Swiping indicators */}
@@ -55,7 +76,7 @@ export default function DiscoveryCard({ car, onSwipe, active, index }) {
                 className="absolute top-8 left-6 md:top-12 md:left-10 z-30 border-4 border-green-500 rounded-xl px-4 py-1.5 md:px-6 md:py-2 bg-green-500/10 rotate-[-20deg] pointer-events-none"
             >
                 <span className="text-2xl md:text-4xl font-black text-green-500 uppercase tracking-tighter">LIKE</span>
-            </motion.div>
+            </motion.div >
 
             <motion.div
                 style={{ opacity: skipOpacity }}
@@ -137,7 +158,7 @@ export default function DiscoveryCard({ car, onSwipe, active, index }) {
                     </div>
                 </div>
             </div>
-        </motion.div>
+        </motion.div >
     );
 }
 
