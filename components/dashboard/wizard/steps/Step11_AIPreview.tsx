@@ -1,11 +1,33 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowLeft, ArrowRight, Sparkles, RefreshCw, Check, Loader2, AlertCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, RefreshCw, ChevronDown, ChevronUp, AlertCircle, CheckCircle2 } from "lucide-react";
 import QuestionCard from "../shared/QuestionCard";
-import { generateCarListing } from "../../../../services/carService";
 import { useAuth } from "../../../../lib/auth/AuthContext";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+
+// The deployed AI generation service
+const AI_API_URL = "http://64.227.68.1:3002/api/generate";
+
+interface ListingSection {
+    heading: string;
+    content: string;
+    source_tags: string[];
+}
+
+interface AIResponse {
+    success: boolean;
+    sections: ListingSection[];
+    metadata: {
+        vin?: string;
+        make?: string;
+        model?: string;
+        year?: number;
+        generation_mode?: string;
+        model_used?: string;
+        degraded?: boolean;
+    };
+}
 
 interface Step11Props {
     formData: any;
@@ -14,15 +36,133 @@ interface Step11Props {
     prevStep: () => void;
 }
 
+// Maps formData fields to the car_listing payload format the AI API expects
+function buildPayload(formData: any) {
+    return {
+        car_listing: {
+            core_info: {
+                vin: formData.vin || "",
+            },
+            specifications: {
+                make: formData.make || "",
+                model: formData.model || "",
+                year: parseInt(formData.year) || 0,
+                trim: formData.trim || formData.modelClean || null,
+                mileage: parseInt(formData.mileage) || 0,
+                color: formData.color || formData.exteriorColor || null,
+                body_type: formData.bodyType || null,
+                registration_status: formData.registrationStatus || "",
+                engine: {
+                    type: formData.fuelType || formData.fuel || "",
+                    power_hp: formData.powerHp ? parseInt(formData.powerHp) : null,
+                    transmission: formData.transmission || "",
+                    drivetrain: formData.drivetrain || "",
+                },
+            },
+            financials: {
+                price: parseInt(formData.price) || 0,
+                currency: formData.currency || "PLN",
+                sale_document: formData.saleDocument || "",
+            },
+            condition_report: {
+                ownership: formData.ownership || null,
+                accident_history: formData.accidentHistory || "Unknown",
+                service_history: formData.serviceHistory || "Unknown",
+                storage: formData.storage || null,
+                known_issues: formData.knownIssues || "None",
+                visible_flaws: formData.visibleFlaws || null,
+                warranty: formData.hasWarranty || null,
+            },
+            features_and_equipment: {
+                selected_equipment: formData.equipment || [],
+                custom_equipment: formData.customEquipment || {},
+            },
+            modifications_and_extras: {
+                modifications: formData.modifications || [],
+                extras: formData.extras || [],
+                custom_options: formData.customMods || {},
+            },
+            fuel_specifics: {
+                battery_capacity_kwh: formData.batteryKwh || null,
+                lpg_installation: formData.hasLpg || false,
+            },
+        }
+    };
+}
+
+// Section icons and colors for the 7 fixed headings
+const SECTION_CONFIG: Record<string, { color: string; bg: string; darkBg: string; emoji: string }> = {
+    "Highlights": { color: "text-blue-600", bg: "bg-blue-50", darkBg: "dark:bg-blue-900/10", emoji: "⭐" },
+    "Seller Notes": { color: "text-violet-600", bg: "bg-violet-50", darkBg: "dark:bg-violet-900/10", emoji: "💬" },
+    "Equipment": { color: "text-emerald-600", bg: "bg-emerald-50", darkBg: "dark:bg-emerald-900/10", emoji: "🔧" },
+    "Known Flaws": { color: "text-amber-600", bg: "bg-amber-50", darkBg: "dark:bg-amber-900/10", emoji: "⚠️" },
+    "Ownership History": { color: "text-cyan-600", bg: "bg-cyan-50", darkBg: "dark:bg-cyan-900/10", emoji: "📋" },
+    "Condition": { color: "text-indigo-600", bg: "bg-indigo-50", darkBg: "dark:bg-indigo-900/10", emoji: "🔍" },
+    "Financial": { color: "text-green-600", bg: "bg-green-50", darkBg: "dark:bg-green-900/10", emoji: "💰" },
+};
+
+function SectionCard({ section, index }: { section: ListingSection; index: number }) {
+    const [expanded, setExpanded] = useState(index === 0); // First section open by default
+    const config = SECTION_CONFIG[section.heading] || { color: "text-gray-600", bg: "bg-gray-50", darkBg: "dark:bg-gray-900/10", emoji: "📝" };
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.07, duration: 0.35 }}
+            className="border border-gray-100 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm"
+        >
+            <button
+                onClick={() => setExpanded(!expanded)}
+                className="w-full flex items-center justify-between px-5 py-4 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
+            >
+                <div className="flex items-center gap-3">
+                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg ${config.bg} ${config.darkBg}`}>
+                        {config.emoji}
+                    </div>
+                    <span className={`font-bold text-base ${config.color}`}>{section.heading}</span>
+                    {section.source_tags?.includes("seller") && (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-violet-100 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400">
+                            Seller
+                        </span>
+                    )}
+                </div>
+                {expanded
+                    ? <ChevronUp className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                    : <ChevronDown className="h-4 w-4 text-gray-400 flex-shrink-0" />}
+            </button>
+
+            <AnimatePresence initial={false}>
+                {expanded && (
+                    <motion.div
+                        key="content"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: "easeInOut" }}
+                        className="overflow-hidden"
+                    >
+                        <div className={`px-5 py-4 border-t border-gray-100 dark:border-gray-800 ${config.bg} ${config.darkBg}`}>
+                            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+                                {section.content}
+                            </p>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </motion.div>
+    );
+}
+
 export default function Step11_AIPreview({ formData, updateFormData, nextStep, prevStep }: Step11Props) {
-    const { getToken } = useAuth();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [generated, setGenerated] = useState(false);
+    const [sections, setSections] = useState<ListingSection[]>(formData.aiSections || []);
+    const [aiMeta, setAiMeta] = useState<AIResponse["metadata"] | null>(formData.aiMeta || null);
 
-    // Auto-generate on mount if not already done
+    // Auto-generate on first mount if not already done
     useEffect(() => {
-        if (!formData.generatedListing && !generated && !loading) {
+        if (!formData.aiSections?.length) {
             generateListing();
         }
     }, []);
@@ -30,44 +170,37 @@ export default function Step11_AIPreview({ formData, updateFormData, nextStep, p
     const generateListing = async () => {
         setLoading(true);
         setError(null);
+
         try {
-            // Prioritize description field if user wrote something, but also use AI to enhance it?
-            // Or if description is empty, generate it.
-            // Typically we send all data to AI.
+            const payload = buildPayload(formData);
 
-            const promptData = {
-                make: formData.make,
-                model: formData.model,
-                year: formData.year,
-                mileage: formData.mileage,
-                condition: formData.conditionType,
-                equipment: formData.equipment,
-                modifications: formData.modifications,
-                extras: formData.extras,
-                userNotes: formData.description, // User inputs
-            };
+            const response = await fetch(AI_API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
 
-            // Call API
-            // If API fails or is not implemented, fallback to local generation
-            let listingText = "";
-            try {
-                const res = await generateCarListing(promptData, getToken);
-                listingText = res.listing;
-            } catch (e) {
-                console.warn("AI Generation failed, falling back to template", e);
-                // Fallback template
-                listingText = `FOR SALE: ${formData.year} ${formData.make} ${formData.model} ${formData.trim || ''}\n\n` +
-                    `Mileage: ${formData.mileage}km\n` +
-                    `Price: ${formData.price} ${formData.currency}\n\n` +
-                    `This vehicle is in ${formData.conditionType} condition. ` +
-                    (formData.equipment?.length ? `Equipped with: ${formData.equipment.join(", ")}. ` : "") +
-                    (formData.description ? `\n\nSeller Notes: ${formData.description}` : "");
+            if (!response.ok) {
+                throw new Error(`AI service error: ${response.status}`);
             }
 
-            updateFormData({ generatedListing: listingText });
-            setGenerated(true);
-        } catch (err) {
-            setError("Failed to generate listing. You can write it manually.");
+            const data: AIResponse = await response.json();
+
+            setSections(data.sections);
+            setAiMeta(data.metadata);
+
+            // Store in formData so it persists when navigating back/forward
+            updateFormData({
+                aiSections: data.sections,
+                aiMeta: data.metadata,
+                // Also build a plain text version for the final publish step
+                generatedListing: data.sections
+                    .map(s => `${s.heading}\n${s.content}`)
+                    .join("\n\n"),
+            });
+        } catch (err: any) {
+            console.error("AI generation failed:", err);
+            setError(err.message || "Failed to contact the AI service. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -75,51 +208,90 @@ export default function Step11_AIPreview({ formData, updateFormData, nextStep, p
 
     return (
         <div className="space-y-6">
-            <QuestionCard title="AI Listing Preview" subtitle="Our AI has drafted a listing for you based on your inputs.">
-
+            <QuestionCard
+                title="AI Listing Preview"
+                subtitle="Your listing has been drafted by our AI. Review each section below."
+            >
                 {loading ? (
-                    <div className="flex flex-col items-center justify-center py-16 text-center">
-                        <div className="relative">
-                            <div className="h-16 w-16 bg-gradient-to-br from-blue-600 to-sky-500 rounded-full flex items-center justify-center animate-pulse">
-                                <Sparkles className="h-8 w-8 text-white" />
+                    /* ── Loading State ─────────────────────────────── */
+                    <div className="flex flex-col items-center justify-center py-20 text-center">
+                        <div className="relative mb-6">
+                            <div className="h-20 w-20 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-xl border border-gray-100 dark:border-gray-700">
+                                <img src="/logooo.png" alt="Ojest AI" className="h-12 w-12 object-contain animate-pulse" />
                             </div>
-                            <div className="absolute -inset-1 bg-gradient-to-br from-blue-400 to-sky-400 rounded-full blur opacity-30 animate-ping" />
+                            <div className="absolute -inset-2 bg-gradient-to-br from-blue-400 to-sky-300 rounded-full blur-lg opacity-20 animate-ping" />
                         </div>
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mt-6 mb-2">Crafting your listing...</h3>
-                        <p className="text-gray-500 max-w-sm">Analyzing features, condition, and market data to write the perfect description.</p>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                            Crafting your listing...
+                        </h3>
+                        <p className="text-gray-500 dark:text-gray-400 max-w-xs text-sm leading-relaxed">
+                            Our AI is analysing your car's specs, condition, and equipment to write a precise Polish-language listing.
+                        </p>
+                        <div className="mt-6 flex gap-1.5">
+                            {[0, 1, 2].map(i => (
+                                <div
+                                    key={i}
+                                    className="h-2 w-2 rounded-full bg-blue-500 animate-bounce"
+                                    style={{ animationDelay: `${i * 0.15}s` }}
+                                />
+                            ))}
+                        </div>
                     </div>
-                ) : (
-                    <div className="space-y-6">
-                        {/* Generated Content */}
-                        <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm bg-gray-50 dark:bg-dark-bg">
-                            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-card flex justify-between items-center">
+                ) : error ? (
+                    /* ── Error State ───────────────────────────────── */
+                    <div className="flex flex-col items-center justify-center py-16 text-center">
+                        <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-2xl flex items-center justify-center mb-4">
+                            <AlertCircle className="h-8 w-8 text-red-500" />
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Generation Failed</h3>
+                        <p className="text-sm text-red-500 dark:text-red-400 mb-6 max-w-sm">{error}</p>
+                        <button
+                            onClick={generateListing}
+                            className="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors flex items-center gap-2"
+                        >
+                            <RefreshCw className="h-4 w-4" /> Try Again
+                        </button>
+                    </div>
+                ) : sections.length > 0 ? (
+                    /* ── Success State ─────────────────────────────── */
+                    <div className="space-y-3">
+                        {/* Metadata Bar */}
+                        {aiMeta && (
+                            <div className="flex items-center justify-between px-4 py-2.5 bg-gray-50 dark:bg-gray-800/60 rounded-xl mb-4">
                                 <div className="flex items-center gap-2">
-                                    <Sparkles className="h-4 w-4 text-blue-500" />
-                                    <span className="font-semibold text-gray-900 dark:text-white text-sm">AI Draft</span>
+                                    <img src="/logooo.png" alt="Ojest" className="h-5 w-5 object-contain" />
+                                    <span className="text-xs font-semibold text-gray-600 dark:text-gray-400">
+                                        Generated with{" "}
+                                        <span className="text-gray-900 dark:text-white font-black">
+                                            {aiMeta.model_used || "Grok AI"}
+                                        </span>
+                                    </span>
+                                    {aiMeta.degraded && (
+                                        <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 text-[10px] font-black rounded-full uppercase">
+                                            Fallback Mode
+                                        </span>
+                                    )}
                                 </div>
                                 <button
                                     onClick={generateListing}
-                                    className="text-xs text-blue-600 dark:text-blue-400 font-medium hover:underline flex items-center gap-1"
+                                    className="text-xs text-blue-600 dark:text-blue-400 font-bold hover:underline flex items-center gap-1"
                                 >
                                     <RefreshCw className="h-3 w-3" /> Regenerate
                                 </button>
                             </div>
-                            <textarea
-                                value={formData.generatedListing || ""}
-                                onChange={(e) => updateFormData({ generatedListing: e.target.value })}
-                                className="w-full p-6 bg-transparent border-none focus:ring-0 text-gray-700 dark:text-gray-300 min-h-[300px] leading-relaxed resize-y font-serif text-lg"
-                            />
-                            <div className="px-4 py-2 bg-yellow-50 dark:bg-yellow-900/10 text-xs text-yellow-700 dark:text-yellow-400 border-t border-yellow-100 dark:border-yellow-900/20">
-                                Review carefully. Statistics show structured listings sell 2x faster.
-                            </div>
-                        </div>
-                    </div>
-                )}
+                        )}
 
+                        {/* Section Cards */}
+                        {sections.map((section, i) => (
+                            <SectionCard key={section.heading} section={section} index={i} />
+                        ))}
+
+
+                    </div>
+                ) : null}
             </QuestionCard>
 
             {/* Navigation */}
-            {/* Navigation - Static */}
             <div className="mt-8 flex justify-between items-center pt-6 border-t border-gray-100 dark:border-gray-800">
                 <button
                     onClick={prevStep}
@@ -130,7 +302,11 @@ export default function Step11_AIPreview({ formData, updateFormData, nextStep, p
 
                 <button
                     onClick={nextStep}
-                    className="px-8 py-2.5 rounded-lg font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg transition-all flex items-center gap-2"
+                    disabled={loading || sections.length === 0}
+                    className={`px-8 py-2.5 rounded-lg font-bold text-white flex items-center gap-2 transition-all shadow-md hover:shadow-lg ${loading || sections.length === 0
+                        ? "bg-gray-300 dark:bg-gray-700 cursor-not-allowed opacity-50"
+                        : "bg-blue-600 hover:bg-blue-700 hover:scale-[1.02] active:scale-95"
+                        }`}
                 >
                     Review & Publish <ArrowRight className="h-4 w-4" />
                 </button>

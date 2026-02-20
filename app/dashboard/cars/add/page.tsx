@@ -109,36 +109,34 @@ export default function NewCarListingWizard() {
       // Use location from form or user default
       formDataToSend.append("location", JSON.stringify(formData.location));
 
-      // Financial Info
+      // Financial Info — sent as a JSON string so the backend can JSON.parse() it
       const financialInfo = {
-        sellOptions: ["Cash"], // Default
-        invoiceOptions: [formData.saleDocument],
-        sellerType: formData.sellerType.toLowerCase(),
+        sellOptions: ["Cash"],
+        invoiceOptions: [formData.saleDocument || "Private Sale Agreement"],
+        sellerType: (formData.sellerType || "Private").toLowerCase(),
         priceNetto: Number(formData.price),
-        currency: formData.currency
+        currency: formData.currency || "PLN"
       };
-      // Flatten financial info for FormData
-      Object.keys(financialInfo).forEach(key => {
-        if (Array.isArray(financialInfo[key])) {
-          financialInfo[key].forEach((val: string) => formDataToSend.append(`financialInfo[${key}][]`, val));
-        } else {
-          formDataToSend.append(`financialInfo[${key}]`, financialInfo[key]);
-        }
-      });
+      formDataToSend.append("financialInfo", JSON.stringify(financialInfo));
+
+      // AI-generated sections (store as JSON for future use)
+      if (formData.aiSections?.length) {
+        formDataToSend.append("aiSections", JSON.stringify(formData.aiSections));
+      }
 
       // Car Condition details
       if (formData.accidentHistory) formDataToSend.append("accidentHistory", formData.accidentHistory.includes("No") ? "No" : "Yes");
       if (formData.serviceHistory) formDataToSend.append("serviceHistory", formData.serviceHistory.includes("Full") ? "Yes" : "No");
 
-      // Rich Data Fields (Arrays)
-      if (formData.equipment && Array.isArray(formData.equipment)) {
-        formData.equipment.forEach((item: string) => formDataToSend.append("equipment[]", item));
+      // Arrays — send as JSON strings
+      if (formData.equipment?.length) {
+        formDataToSend.append("equipment", JSON.stringify(formData.equipment));
       }
-      if (formData.modifications && Array.isArray(formData.modifications)) {
-        formData.modifications.forEach((item: string) => formDataToSend.append("modifications[]", item));
+      if (formData.modifications?.length) {
+        formDataToSend.append("modifications", JSON.stringify(formData.modifications));
       }
-      if (formData.extras && Array.isArray(formData.extras)) {
-        formData.extras.forEach((item: string) => formDataToSend.append("extras[]", item));
+      if (formData.extras?.length) {
+        formDataToSend.append("extras", JSON.stringify(formData.extras));
       }
 
       // Complex Objects (JSON Strings)

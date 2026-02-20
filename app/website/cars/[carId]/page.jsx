@@ -1200,117 +1200,76 @@ const Page = () => {
                     </div>
                   </div>
 
-                  {/* Narrative sections - Restored and Styled */}
+                  {/* Narrative sections - Dynamic Rendering with Duplicate Prevention */}
                   <div className="space-y-12 pt-4 px-2 pb-10">
-                    {/* Narrative sections - Restored and Unified Design */}
                     <div className="space-y-8 pt-4 pb-10">
-                      {/* Highlights Section */}
+                      {car?.aiSections && car.aiSections.length > 0 ? (
+                        <>
+                          {/* 1. Map AI sections EXCEPT Condition and Financial (to avoid double headings) */}
+                          {car.aiSections
+                            .filter(s => !["Condition", "Financial"].includes(s.heading))
+                            .map((section, idx) => {
+                              const isFlaws = section.heading.toLowerCase().includes("flaw");
+                              const barColor = isFlaws ? "bg-red-600" : "bg-blue-600";
+
+                              return (
+                                <section key={idx} className="relative">
+                                  <div className="flex items-center gap-3 mb-4 px-1">
+                                    <div className={`h-6 w-1 ${barColor} rounded-full`} />
+                                    <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-tight">
+                                      {section.heading}
+                                    </h2>
+                                  </div>
+                                  <div className="">
+                                    <p className="text-[15px] sm:text-[16px] text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+                                      {section.content}
+                                    </p>
+                                  </div>
+                                </section>
+                              );
+                            })}
+                        </>
+                      ) : (
+                        <p className="text-center text-gray-400 text-sm italic mb-10">
+                          Przetwarzanie danych pojazdu...
+                        </p>
+                      )}
+
+                      {/* 2. Condition Section - Merge Structured Tab + AI Content */}
                       <section className="relative">
                         <div className="flex items-center gap-3 mb-4 px-1">
                           <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                          <h2 className="text-[18px] font-black text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-tight">Highlights</h2>
+                          <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-tight">
+                            Condition
+                          </h2>
                         </div>
-                        <div className="">
-                          <p className="text-[15px] text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-                            is a {car?.year} {car?.make} {car?.model}, finished in {car?.color || "original factory color"} with a {car?.interiorColor || "distinguished"} interior.
-                          </p>
-                          <ul className="space-y-3 text-[15px] text-gray-700 dark:text-gray-300">
-                            <li className="flex items-start gap-3">
-                              <span className="text-blue-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500" />
-                              <span>The odometer currently indicates approximately {car?.mileage?.toLocaleString()} km.</span>
-                            </li>
-                            <li className="flex items-start gap-3">
-                              <span className="text-blue-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500" />
-                              <span>{car?.accidentHistory ? "The vehicle has a recorded history of repairs." : "Vehicle history indicates no major accidents or insurance claims."}</span>
-                            </li>
-                            <li className="flex items-start gap-3">
-                              <span className="text-blue-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500" />
-                              <span>Power comes from a {car?.engine || "potent engine"} and is delivered via a {car?.transmission || "smooth transmission"}.</span>
-                            </li>
-                          </ul>
+                        <div className="space-y-4">
+                          <ConditionTab carCondition={car?.carCondition} />
+                          {/* AI Prose for Condition (if exists) */}
+                          {car?.aiSections?.find(s => s.heading === "Condition")?.content && (
+                            <p className="text-[15px] sm:text-[16px] text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+                              {car.aiSections.find(s => s.heading === "Condition").content}
+                            </p>
+                          )}
                         </div>
                       </section>
 
-                      {/* Seller Notes Section */}
+                      {/* 3. Financial Section - Merge Structured Tab + AI Content */}
                       <section className="relative">
                         <div className="flex items-center gap-3 mb-4 px-1">
                           <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                          <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-tight">Seller Notes</h2>
+                          <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-tight">
+                            Financial
+                          </h2>
                         </div>
-                        <div className="">
-                          <p className="text-[15px] sm:text-[16px] text-gray-700 dark:text-gray-300 leading-relaxed ">
-                            {car?.sellerNotes || "Ten egzemplarz to wyjątkowo zadbana sztuka, łącząca wysoki komfort z niezawodnością. Pojazd przeszedł pełną inspekcję techniczną i jest gotowy do dalszej eksploatacji bez konieczności ponoszenia dodatkowych nakładów finansowych. Idealny wybór dla osób szukających pewnego auta z pewną historią."}
-                          </p>
-                        </div>
-                      </section>
-
-                      {/* Equipment Section */}
-                      <section className="relative">
-                        <div className="flex items-center gap-3 mb-4 px-1">
-                          <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                          <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-tight">Equipment</h2>
-                        </div>
-                        <div className="">
-                          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
-                            {["Automatic climate control", "Satellite navigation system", "Adaptive cruise control", "Heated and ventilated seats", "LED lighting package", "Premium sound system"].map((item, i) => (
-                              <li key={i} className="flex items-start gap-3 text-[15px] sm:text-[16px] text-gray-700 dark:text-gray-300">
-                                <span className="text-blue-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500" />
-                                <span>{item}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </section>
-
-                      {/* Known Flaws Section */}
-                      <section className="relative">
-                        <div className="flex items-center gap-3 mb-4 px-1">
-                          <div className="h-6 w-1 bg-red-600 rounded-full" />
-                          <h2 className="text-[18px]  sm:text-[20px] font-black text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-tight">Known Flaws</h2>
-                        </div>
-                        <div className="">
-                          <ul className="space-y-3">
-                            {["Minor stone chips on the front bumper", "Typical wear on the driver's seat bolster", "Light scratching on one of the wheels"].map((item, i) => (
-                              <li key={i} className="flex items-start gap-3 text-[15px] sm:text-[16px] text-gray-700 dark:text-gray-300">
-                                <span className="text-red-500 mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-red-500 opacity-70" />
-                                <span>{item}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </section>
-
-                      {/* Ownership History Section */}
-                      <section className="relative">
-                        <div className="flex items-center gap-3 mb-4 px-1">
-                          <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                          <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-tight">Ownership History</h2>
-                        </div>
-                        <div className="">
-                          <p className="text-[15px] sm:text-[16px] text-gray-700 dark:text-gray-300 leading-relaxed">
-                            The seller has owned this vehicle since {car?.ownershipStart || "new"} and reports that it has been maintained on schedule with {car?.serviceCount || "regular"} service intervals. Original manuals and two keys are included in the sale.
-                          </p>
-                        </div>
-                      </section>
-                      {/* Condition Section - Moved from Tabs to Static */}
-                      <section className="relative">
-                        <div className="flex items-center gap-3 mb-4 px-1">
-                          <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                          <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-tight">Condition</h2>
-                        </div>
-                        <div className="">
-                          <ConditionTab carCondition={car?.condition} />
-                        </div>
-                      </section>
-
-                      {/* Financial Section - Moved from Tabs to Static */}
-                      <section className="relative">
-                        <div className="flex items-center gap-3 mb-4 px-1">
-                          <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                          <h2 className="text-[18px] sm:text-[20px] font-black text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-tight">Financial</h2>
-                        </div>
-                        <div className="">
+                        <div className="space-y-4">
                           <FinancialTab financialInfo={car?.financialInfo} />
+                          {/* AI Prose for Financial (if exists) */}
+                          {car?.aiSections?.find(s => s.heading === "Financial")?.content && (
+                            <p className="text-[15px] sm:text-[16px] text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+                              {car.aiSections.find(s => s.heading === "Financial").content}
+                            </p>
+                          )}
                         </div>
                       </section>
                     </div>
