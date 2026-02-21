@@ -36,9 +36,14 @@ export default function Step03_RequiredBasics({ formData, updateFormData, nextSt
                         <div className="relative">
                             <Gauge className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                             <input
-                                type="number"
-                                value={formData.mileage || ""}
-                                onChange={(e) => updateFormData({ mileage: e.target.value })}
+                                type="text"
+                                value={formData.mileage ? formData.mileage.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : ""}
+                                onChange={(e) => {
+                                    const val = e.target.value.replace(/,/g, "");
+                                    if (/^\d*$/.test(val)) {
+                                        updateFormData({ mileage: val });
+                                    }
+                                }}
                                 placeholder="0"
                                 className="w-full pl-10 pr-4 py-3 bg-white dark:bg-dark-bg border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                             />
@@ -54,10 +59,15 @@ export default function Step03_RequiredBasics({ formData, updateFormData, nextSt
                             <div className="relative flex-1">
                                 <Banknote className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                                 <input
-                                    type="number"
-                                    value={formData.price || ""}
-                                    onChange={(e) => updateFormData({ price: e.target.value })}
-                                    placeholder="0.00"
+                                    type="text"
+                                    value={formData.price ? formData.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : ""}
+                                    onChange={(e) => {
+                                        const val = e.target.value.replace(/,/g, "");
+                                        if (/^\d*$/.test(val)) {
+                                            updateFormData({ price: val });
+                                        }
+                                    }}
+                                    placeholder="0"
                                     className="w-full pl-10 pr-4 py-3 bg-white dark:bg-dark-bg border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                 />
                             </div>
@@ -164,8 +174,8 @@ export default function Step03_RequiredBasics({ formData, updateFormData, nextSt
                     onClick={nextStep}
                     disabled={!canProceed}
                     className={`px-8 py-2.5 rounded-lg font-bold text-white flex items-center gap-2 transition-all shadow-md hover:shadow-lg ${canProceed
-                            ? "bg-blue-600 hover:bg-blue-700 hover:scale-[1.02] active:scale-95"
-                            : "bg-gray-300 dark:bg-gray-700 cursor-not-allowed opacity-50"
+                        ? "bg-blue-600 hover:bg-blue-700 hover:scale-[1.02] active:scale-95"
+                        : "bg-gray-300 dark:bg-gray-700 cursor-not-allowed opacity-50"
                         }`}
                 >
                     Next Step <ArrowRight className="h-4 w-4" />

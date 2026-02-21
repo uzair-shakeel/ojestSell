@@ -69,8 +69,8 @@ function buildPayload(formData: any) {
                 accident_history: formData.accidentHistory || "Unknown",
                 service_history: formData.serviceHistory || "Unknown",
                 storage: formData.storage || null,
-                known_issues: formData.knownIssues || "None",
-                visible_flaws: formData.visibleFlaws || null,
+                known_issues: formData.issues || "None",
+                visible_flaws: null,
                 warranty: formData.hasWarranty || null,
             },
             features_and_equipment: {

@@ -38,67 +38,49 @@ export default function Step04_Condition({ formData, updateFormData, nextStep, p
 
     return (
         <div className="space-y-6">
-            <QuestionCard title="Vehicle History & Condition" subtitle="Be honest - transparency builds trust with buyers.">
+            <QuestionCard title="Vehicle Condition & History" subtitle="Be honest - transparency builds trust with buyers.">
                 <div className="space-y-8">
 
-                    {/* Accident History */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Accident History *</label>
-                        {renderToggleGroup("accidentHistory", ["No Accidents", "Accident Reported", "Unknown"], [ShieldCheck, AlertTriangle, Users])}
+                    <div className="grid grid-cols-1  gap-8">
+                        {/* Accident History */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 ml-1">Accident History *</label>
+                            {renderToggleGroup("accidentHistory", ["No Accidents", "Accident Reported", "Unknown"], [ShieldCheck, AlertTriangle, Users])}
+                        </div>
+
+                        {/* Service History */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 ml-1">Service History</label>
+                            {renderToggleGroup("serviceHistory", ["Full History", "Partial History", "Unknown"], [Wrench, Wrench, Users])}
+                        </div>
+
+                        {/* Ownership */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 ml-1">Previous Owners</label>
+                            {renderToggleGroup("ownership", ["First Owner", "2+ Owners", "Unknown"], [Users, Users, Users])}
+                        </div>
+
+                        {/* Storage */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 ml-1">Where is it kept?</label>
+                            {renderToggleGroup("storage", ["Garage", "Outside", "Mixed"], [Warehouse, Warehouse, Warehouse])}
+                        </div>
                     </div>
 
-                    {/* Service History */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Service History</label>
-                        {renderToggleGroup("serviceHistory", ["Full History", "Partial History", "Unknown"], [Wrench, Wrench, Users])}
-                    </div>
-
-                    {/* Ownership */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Previous Owners</label>
-                        {renderToggleGroup("ownership", ["First Owner", "2+ Owners", "Unknown"], [Users, Users, Users])}
-                    </div>
-
-                    {/* Storage */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Where is it kept?</label>
-                        {renderToggleGroup("storage", ["Garage", "Outside", "Mixed"], [Warehouse, Warehouse, Warehouse])}
-                    </div>
-
-                </div>
-            </QuestionCard>
-
-            <QuestionCard title="Issues & Flaws" subtitle="Optional. Provide a brief description of any known issues or cosmetic flaws.">
-                <div className="space-y-6">
-                    {/* Known Issues */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                    <div className="pt-6 border-t border-gray-100 dark:border-gray-800">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 ml-1 flex items-center gap-2">
                             <AlertTriangle className="h-4 w-4 text-amber-500" />
-                            Known Technical Issues
+                            Known Technical Issues or Cosmetic Flaws
                         </label>
                         <textarea
-                            value={formData.knownIssues || ""}
-                            onChange={(e) => updateFormData({ knownIssues: e.target.value })}
-                            placeholder="Describe any mechanical or electrical issues (e.g. AC needs recharge, minor oil leak...)"
+                            value={formData.issues || ""}
+                            onChange={(e) => updateFormData({ issues: e.target.value })}
+                            placeholder="Describe any mechanical issues or cosmetic imperfections (e.g. AC needs recharge, small scratch on bumper...)"
                             rows={4}
                             className="w-full px-4 py-3 bg-white dark:bg-dark-bg border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all resize-none text-sm"
                         />
                     </div>
 
-                    {/* Visible Flaws */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
-                            <Eye className="h-4 w-4 text-blue-500" />
-                            Visible Flaws (Scratches/Dents)
-                        </label>
-                        <textarea
-                            value={formData.visibleFlaws || ""}
-                            onChange={(e) => updateFormData({ visibleFlaws: e.target.value })}
-                            placeholder="Describe any cosmetic imperfections (e.g. Small scratch on rear bumper, door ding on driver side...)"
-                            rows={4}
-                            className="w-full px-4 py-3 bg-white dark:bg-dark-bg border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all resize-none text-sm"
-                        />
-                    </div>
                 </div>
             </QuestionCard>
 

@@ -161,7 +161,7 @@ export default function Step02_VINDecode({ formData, updateFormData, nextStep, p
                     {renderField("Model", formData.model, "model", models, true)}
                     {renderField("Year", formData.year, "year", years, true)}
                     {renderField("Trim / Version", formData.trim, "trim")}
-                    {renderField("Body Type", formData.type, "type", bodyTypes)}
+                    {/* {renderField("Body Type", formData.type, "type", bodyTypes)} */}
 
                     {renderField("Engine", formData.engine, "engine", ["1.0L", "1.2L", "1.4L", "1.6L", "1.8L", "2.0L", "2.5L", "3.0L", "3.5L", "4.0L", "Electric"])}
                     {renderField("Transmission", formData.transmission, "transmission", ["Automatic", "Manual", "Semi-Automatic", "CVT"])}

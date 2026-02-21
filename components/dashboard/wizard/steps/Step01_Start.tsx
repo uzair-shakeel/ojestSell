@@ -63,8 +63,7 @@ export default function Step01_Start({ formData, updateFormData, nextStep }: Ste
 
     const canProceed =
         formData.images?.length > 0 &&
-        formData.conditionType &&
-        formData.fuel;
+        formData.conditionType;
 
     return (
         <div className="space-y-6">
@@ -194,10 +193,10 @@ export default function Step01_Start({ formData, updateFormData, nextStep }: Ste
                         </QuestionCard>
 
                         {/* Condition Type */}
-                        <QuestionCard title="Condition & Fuel">
+                        <QuestionCard title="Condition">
                             <div className="space-y-6">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 ml-1">Condition</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 ml-1">Vehicle Condition</label>
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                         {["New", "Used", "Nearly-new"].map((type) => (
                                             <button
@@ -224,31 +223,6 @@ export default function Step01_Start({ formData, updateFormData, nextStep }: Ste
                                         ))}
                                     </div>
                                 </div>
-
-                                {/* Fuel Type - Visual separation */}
-                                <motion.div
-                                    initial={false}
-                                    animate={{ opacity: formData.conditionType ? 1 : 0.4, pointerEvents: formData.conditionType ? 'auto' : 'none' }}
-                                >
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 ml-1">Fuel Type</label>
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                                        {[
-                                            "Petrol", "Diesel", "LPG", "Electric",
-                                            "Hybrid", "Plug-in Hybrid", "Mild Hybrid", "Other"
-                                        ].map((fuel) => (
-                                            <button
-                                                key={fuel}
-                                                onClick={() => updateFormData({ fuel: fuel })}
-                                                className={`px-4 py-3 rounded-xl border transition-all font-medium text-sm flex items-center justify-center gap-2 ${formData.fuel === fuel
-                                                    ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-500/25 scale-[1.02]"
-                                                    : "bg-white dark:bg-dark-card border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600"
-                                                    }`}
-                                            >
-                                                {fuel}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </motion.div>
                             </div>
                         </QuestionCard>
                     </motion.div>
