@@ -35,8 +35,8 @@ export function DiscoveryPromo() {
 
                         <p className="text-xl text-gray-600 dark:text-gray-400 mb-10 leading-relaxed max-w-lg">
                             Ditch the boring filters. Experience car shopping like never before with
-                            <span className="text-gray-900 dark:text-white font-bold"> Ojest Discovery. </span>
-                            Swipe through curated listings, find what you love, and skip what you don't.
+                            <span className="text-gray-900 dark:text-white font-bold"> Ojest Discover. </span>
+                            Explore a cinematic feed of curated listings, find what you love, and skip what you don't.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4">
@@ -44,7 +44,7 @@ export function DiscoveryPromo() {
                                 href="/discovery"
                                 className="px-10 py-5 bg-gradient-to-r from-blue-600 to-sky-500 text-white rounded-2xl font-black text-lg shadow-xl shadow-blue-500/25 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 group w-full sm:w-auto"
                             >
-                                Start Swiping <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                                Start Discovering <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                             </Link>
                         </div>
 

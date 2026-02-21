@@ -1,177 +1,111 @@
 "use client";
-import React from 'react';
+import React, { useMemo } from 'react';
 import { motion, useMotionValue, useTransform, usePresence } from 'framer-motion';
 import { Fuel, Gauge, Settings2, MapPin, Heart, X, Info, Activity } from 'lucide-react';
+import Link from 'next/link';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
-export default function DiscoveryCard({ car, onSwipe, active, index }) {
-    const [isPresent, safeToRemove] = usePresence();
-    const x = useMotionValue(0);
-    const rotate = useTransform(x, [-200, 200], [-25, 25]);
-    const opacity = useTransform(x, [-200, -150, 0, 150, 200], [0, 1, 1, 1, 0]);
-
-    // Smooth appearance of "LIKE" and "SKIP" stamps
-    const skipOpacity = useTransform(x, [-150, -50], [1, 0]);
-    const likeOpacity = useTransform(x, [50, 150], [0, 1]);
-
-    const handleDragEnd = (event, info) => {
-        if (info.offset.x > 100) {
-            onSwipe('right', car);
-        } else if (info.offset.x < -100) {
-            onSwipe('left', car);
-        }
-    };
-
-    const formatCarImage = (imagePath) => {
+const DiscoveryCard = React.memo(function DiscoveryCard({ car, onAction, active }) {
+    const imageUrl = useMemo(() => {
+        const imagePath = car.images?.[0];
         if (!imagePath) return "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?q=80&w=1000&auto=format&fit=crop";
         if (typeof imagePath === "string" && /^(https?:)?\/\//i.test(imagePath)) {
             return imagePath;
         }
         return `${API_BASE}/${String(imagePath).replace("\\", "/")}`;
-    };
+    }, [car.images]);
 
-    const toTitleCase = (text) =>
-        text ? text.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : "Car";
-
-    // Capture capturedX for consistent exit animation
-    const currentX = x.get();
+    const displayTitle = useMemo(() => {
+        const toTitleCase = (text) =>
+            text ? text.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : "";
+        return `${car.year} ${toTitleCase(car.make)} ${toTitleCase(car.model)}`;
+    }, [car.year, car.make, car.model]);
 
     return (
-        <motion.div
-            style={{
-                x,
-                rotate,
-                opacity,
-            }}
-            initial={{
-                scale: 0.9 - (index * 0.04), // Start even smaller
-                y: (index + 1) * 20, // Start lower
-                opacity: 0,
-            }}
-            animate={{
-                scale: active ? 1 : 0.94 - (index * 0.04),
-                y: active ? 0 : index * 15,
-                opacity: 1,
-                zIndex: isPresent ? (active ? 50 : 10 - index) : 110,
-            }}
-            drag={active ? "x" : false}
-            dragConstraints={{ left: 0, right: 0 }}
-            onDragEnd={handleDragEnd}
-            exit={{
-                x: x.get() > 50 ? 1000 : x.get() < -50 ? -1000 : 0,
-                opacity: 0,
-                transition: { duration: 0.3, ease: "easeIn" } // Faster, cleaner exit
-            }}
-            transition={{
-                type: "spring",
-                stiffness: 260, // Slightly tighter for responsiveness
-                damping: 20, // Lower damping for bounce/life
-            }}
-            className={`absolute inset-0 select-none ${active ? 'cursor-grab active:cursor-grabbing' : 'pointer-events-none'}`}
-        >
-            {/* Swiping indicators */}
-            <motion.div
-                style={{ opacity: likeOpacity }}
-                className="absolute top-8 left-6 md:top-12 md:left-10 z-30 border-4 border-green-500 rounded-xl px-4 py-1.5 md:px-6 md:py-2 bg-green-500/10 rotate-[-20deg] pointer-events-none"
-            >
-                <span className="text-2xl md:text-4xl font-black text-green-500 uppercase tracking-tighter">LIKE</span>
-            </motion.div >
+        <div className="h-full w-full flex flex-col bg-white dark:bg-gray-950 relative overflow-hidden group">
+            {/* Image Section - Cinematic Style */}
+            <div className="relative flex-1 overflow-hidden">
+                <img
+                    src={imageUrl}
+                    className="h-full w-full object-cover transition-transform duration-10000 ease-linear group-hover:scale-110"
+                    alt={displayTitle}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
 
-            <motion.div
-                style={{ opacity: skipOpacity }}
-                className="absolute top-8 right-6 md:top-12 md:right-10 z-30 border-4 border-red-500 rounded-xl px-4 py-1.5 md:px-6 md:py-2 bg-red-500/10 rotate-[20deg] pointer-events-none"
-            >
-                <span className="text-2xl md:text-4xl font-black text-red-500 uppercase tracking-tighter">SKIP</span>
-            </motion.div>
-
-            {/* Card Content */}
-            <div className="h-full w-full bg-white dark:bg-gray-900 rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.2)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)] border border-gray-100 dark:border-gray-800 flex flex-col">
-                {/* Image Section */}
-                <div className="relative flex-1 group">
-                    <img
-                        src={formatCarImage(car.images?.[0])}
-                        className="h-full w-full object-cover select-none pointer-events-none"
-                        alt={`${car.make} ${car.model}`}
-                    />
-
-                    {/* Overlays */}
-                    <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
-
-                    {/* Top Badges */}
-                    <div className="absolute top-6 left-6 md:top-8 md:left-8 flex flex-col gap-2">
-                        {car.isFeatured && (
-                            <div className="px-3 py-1.5 md:px-4 md:py-2 bg-blue-600 text-white rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest flex items-center gap-1 md:gap-1.5 shadow-lg">
-                                <img src="/logooo.png" alt="Ojest" className="h-2.5 w-2.5 md:h-3 md:w-3" /> Featured
-                            </div>
-                        )}
-                        <div className="px-3 py-1.5 md:px-4 md:py-2 bg-white/20 backdrop-blur-md text-white rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest border border-white/20">
-                            {car.condition || 'Used'}
-                        </div>
+                {/* Badges - Floating Style */}
+                <div className="absolute top-6 left-6 md:top-8 md:left-8 flex flex-col gap-2 md:gap-3">
+                    {car.isFeatured && (
+                        <motion.div
+                            initial={{ x: -20, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            className="px-3 py-1.5 md:px-4 md:py-2 bg-blue-600 text-white rounded-xl text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2 shadow-xl shadow-blue-500/20"
+                        >
+                            <img src="/logooo.png" alt="Ojest" className="h-3 w-3 md:h-3.5 md:w-3.5 animate-pulse" />
+                            Premium Listing
+                        </motion.div>
+                    )}
+                    <div className="px-3 py-1.5 md:px-4 md:py-2 bg-white/10 backdrop-blur-xl text-white border border-white/20 rounded-xl text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] w-fit">
+                        {car.condition || 'Used'}
                     </div>
+                </div>
 
-                    {/* Main Info */}
-                    <div className="absolute bottom-6 left-6 right-6 md:bottom-8 md:left-8 md:right-8 text-white">
-                        <div className="flex flex-col gap-1 mb-3 md:mb-4">
-                            <h2 className="text-2xl md:text-4xl font-black leading-tight tracking-tight drop-shadow-md">
-                                {car.year} {toTitleCase(car.make)} {toTitleCase(car.model)}
-                            </h2>
-                            <div className="flex items-center gap-2">
-                                <MapPin className="h-3.5 w-3.5 md:h-4 md:w-4 text-blue-400" />
-                                <span className="text-xs md:text-sm font-bold text-gray-300">Warsaw, Poland</span>
+                {/* Main Content Overlay */}
+                <div className="absolute bottom-6 left-6 right-6 md:bottom-10 md:left-10 md:right-10 text-white">
+                    <motion.div
+                        initial={{ y: 20, opacity: 0 }}
+                        whileInView={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.1 }}
+                    >
+                        <h2 className="text-2xl md:text-5xl font-black mb-1 md:mb-2 tracking-tighter uppercase italic drop-shadow-2xl leading-none">
+                            {displayTitle}
+                        </h2>
+                        <div className="flex flex-wrap items-center gap-2 md:gap-3 text-gray-300 font-bold mb-4 md:mb-6">
+                            <div className="flex items-center gap-1.5">
+                                <MapPin className="h-3 md:h-4 w-3 md:w-4 text-blue-400" />
+                                <span className="text-[10px] md:text-sm uppercase tracking-wider">Warsaw</span>
                             </div>
+                            <span className="hidden md:block w-1.5 h-1.5 rounded-full bg-blue-400/50" />
+                            <span className="text-[10px] md:text-sm uppercase tracking-wider">{car.mileage?.toLocaleString('pl-PL')} KM</span>
                         </div>
 
                         <div className="flex items-center justify-between">
-                            <div className="text-xl md:text-2xl font-black text-blue-400">
-                                {car.financialInfo?.priceNetto?.toLocaleString('pl-PL') || "Contact"} <span className="text-xs uppercase">zł</span>
+                            <div className="flex flex-col">
+                                <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-blue-400 mb-0.5">Asking Price</span>
+                                <div className="text-2xl md:text-4xl font-black italic tracking-tighter leading-none">
+                                    {car.financialInfo?.priceNetto?.toLocaleString('pl-PL') || "0"} <span className="text-[10px] md:text-sm align-super">zł</span>
+                                </div>
                             </div>
-                            <div className="h-9 w-9 md:h-10 md:w-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/10">
-                                <Info className="h-4 w-4 md:h-5 md:w-5" />
-                            </div>
+
+                            <Link
+                                href={`/website/cars/${car._id}`}
+                                className="h-10 w-10 md:h-16 md:w-16 rounded-xl md:rounded-3xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 hover:bg-white hover:text-black transition-all group/info"
+                            >
+                                <Info className="h-5 w-5 md:h-6 md:w-6 group-hover/info:scale-110 transition-transform" />
+                            </Link>
                         </div>
-                    </div>
-                </div>
-
-                {/* Specs Grid */}
-                <div className="p-6 md:p-8 pb-8 md:pb-10 bg-white dark:bg-gray-950">
-                    <div className="grid grid-cols-2 gap-x-6 md:gap-x-8 gap-y-4 md:gap-y-6 mb-6 md:mb-8">
-                        <SpecItem icon={<Gauge />} label="Mileage" value={`${car.mileage?.toLocaleString('pl-PL') || "0"} km`} />
-                        <SpecItem icon={<Settings2 />} label="Trans" value={car.transmission || "Auto"} />
-                        <SpecItem icon={<Fuel />} label="Fuel" value={car.fuel || "Petrol"} />
-                        <SpecItem icon={<Activity />} label="Engine" value={car.engine ? `${car.engine} cm3` : "2.0 TSI"} />
-                    </div>
-
-                    <div className="flex gap-3 md:gap-4">
-                        <button
-                            onClick={(e) => { e.stopPropagation(); onSwipe('left', car); }}
-                            className="flex-1 py-3.5 md:py-4 bg-gray-50 dark:bg-gray-800 rounded-xl md:rounded-2xl font-black text-xs md:text-sm text-gray-900 dark:text-white hover:bg-gray-100 transition-all flex items-center justify-center gap-1.5 md:gap-2 border border-gray-100 dark:border-gray-700 active:scale-95"
-                        >
-                            <X className="w-4 h-4 md:w-5 md:h-5 text-red-500" /> Pass
-                        </button>
-                        <button
-                            onClick={(e) => { e.stopPropagation(); onSwipe('right', car); }}
-                            className="flex-[2] py-3.5 md:py-4 bg-gradient-to-r from-blue-600 to-sky-500 text-white rounded-xl md:rounded-2xl font-black text-xs md:text-sm shadow-lg shadow-blue-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-1.5 md:gap-2"
-                        >
-                            <Heart className="w-4 h-4 md:w-5 md:h-5 fill-white" /> I'm Interested
-                        </button>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
-        </motion.div >
-    );
-}
 
-function SpecItem({ icon, label, value }) {
-    return (
-        <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-blue-50 dark:bg-blue-900/10 rounded-xl text-blue-600 dark:text-blue-400">
-                {React.cloneElement(icon, { className: "w-5 h-5" })}
-            </div>
-            <div>
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] mb-0.5">{label}</p>
-                <p className="font-bold text-gray-800 dark:text-gray-200 text-sm truncate">{value}</p>
+            {/* Simple Action Bar */}
+            <div className="p-4 md:p-8 bg-white dark:bg-gray-950 flex gap-3 md:gap-6">
+                <button
+                    onClick={() => onAction('pass')}
+                    className="flex-1 py-3.5 md:py-5 bg-gray-50 dark:bg-gray-900 rounded-2xl md:rounded-3xl font-black uppercase tracking-widest text-[10px] text-gray-400 hover:text-red-500 hover:bg-red-500/5 transition-all flex items-center justify-center gap-2 md:gap-3 border border-gray-100 dark:border-gray-800 active:scale-95"
+                >
+                    <X className="w-4 h-4 md:w-5 md:h-5" /> Pass
+                </button>
+                <button
+                    onClick={() => onAction('like')}
+                    className="flex-[1.5] py-3.5 md:py-5 bg-gradient-to-r from-blue-600 to-sky-500 text-white rounded-2xl md:rounded-3xl font-black uppercase tracking-[0.2em] text-[10px] shadow-2xl shadow-blue-500/30 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 md:gap-3"
+                >
+                    <Heart className="w-4 h-4 md:w-5 md:h-5 fill-white" /> Save Car
+                </button>
             </div>
         </div>
     );
-}
+});
+
+export default DiscoveryCard;
+

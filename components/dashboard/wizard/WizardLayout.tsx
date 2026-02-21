@@ -17,11 +17,10 @@ const stepTitles = [
     "VIN Decode",
     "Required Basics",
     "Condition",
-    "Equipment",
-    "Mods & Extras",
+    "Equipment & Mods",
     "Warranty",
     "History",
-    "Final Context",
+    "Seller Notes",
     "AI Preview",
     "Publish"
 ];

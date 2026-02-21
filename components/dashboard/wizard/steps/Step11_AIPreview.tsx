@@ -78,7 +78,9 @@ function buildPayload(formData: any) {
                 custom_equipment: formData.customEquipment || {},
             },
             modifications_and_extras: {
-                modifications: formData.modifications || [],
+                modifications: formData.isModified && formData.modificationsText
+                    ? [formData.modificationsText]
+                    : (formData.modifications || []),
                 extras: formData.extras || [],
                 custom_options: formData.customMods || {},
             },
