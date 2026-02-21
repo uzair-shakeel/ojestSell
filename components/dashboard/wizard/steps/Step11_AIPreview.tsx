@@ -7,7 +7,7 @@ import { useAuth } from "../../../../lib/auth/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 
 // The deployed AI generation service
-const AI_API_URL = "http://64.227.68.1:3002/api/generate";
+const AI_API_URL = "https://ojest.pl/getting/data/api/generate";
 
 interface ListingSection {
     heading: string;
