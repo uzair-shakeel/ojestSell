@@ -78,7 +78,7 @@ const page = () => {
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-200 dark:text-white transition-colors duration-300">
             Witaj z Powrotem{user?.firstName ? ", " + user.firstName : ""}
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">
+          <p className="text-sm text-dark-text-secondary dark:text-dark-text-secondary transition-colors duration-300">
             Oto krótki przegląd Twojej aktywności
           </p>
         </div>

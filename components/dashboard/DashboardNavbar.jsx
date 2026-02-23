@@ -3,11 +3,13 @@ import { useState, useEffect, useRef } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import { useAuth } from "../../lib/auth/AuthContext";
 import { FiMenu, FiX, FiBell } from "react-icons/fi";
+import { BsChatLeftDots } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import ThemeToggle from "../ThemeToggle";
 import Avatar from "../both/Avatar";
 import Link from "next/link";
 import { useNotifications } from "../../lib/notifications/NotificationsContext";
+import UserAccountDropdown from "../both/UserAccountDropdown";
 
 const RAW_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 const buildApiUrl = (path) => {
@@ -73,16 +75,30 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
   // Logout moved to Sidebar
 
   return (
-    <header className="w-full h-16 px-4 bg-white dark:bg-dark-panel shadow-md flex justify-between md:justify-end items-center z-30 sticky top-0 transition-colors duration-300">
-      {/* Logo */}
-      <Link href="/">
-        <img src="/logo.png" alt="Ojest Logo" className="h-10 w-auto md:hidden" />
-      </Link>
+    <header className="w-full h-16 px-4 bg-white dark:bg-dark-panel shadow-md flex justify-between items-center z-30 sticky top-0 transition-colors duration-300">
+      {/* Mobile Sidebar Toggle - Left Side */}
+      <div className="flex items-center">
+        <button
+          onClick={toggleSidebar}
+          className="p-2 text-gray-700 dark:text-gray-300 md:hidden hover:bg-gray-100 dark:hover:bg-dark-raised rounded-xl transition-all"
+          aria-label="Toggle Sidebar"
+        >
+          {isOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
+        </button>
+      </div>
 
-
-      <div className="flex items-center space-x-3 sm:mx-4">
+      <div className="flex items-center space-x-2 md:space-x-3">
         {/* Theme Toggle */}
-        <ThemeToggle size={24} />
+        <ThemeToggle size={22} />
+
+        {/* Messages Icon */}
+        <Link
+          href="/dashboard/messages"
+          className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-dark-raised text-gray-700 dark:text-dark-text-secondary transition-colors"
+          title="Messages"
+        >
+          <BsChatLeftDots className="w-5 h-5" />
+        </Link>
 
         {/* Notifications */}
         <div className="relative" ref={notifRef}>
@@ -120,23 +136,6 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
                           {n.body && <div className="text-xs text-gray-600 dark:text-dark-text-muted truncate">{n.body}</div>}
                           <div className="text-[10px] text-gray-400 mt-1">{new Date(n.createdAt).toLocaleString()}</div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          {n.read ? (
-                            <button
-                              onClick={() => add({ ...n, id: n.id + "-dup", read: false, createdAt: Date.now() })}
-                              className="text-xs text-gray-500 hover:underline"
-                            >
-                              Nieprzeczytane
-                            </button>
-                          ) : (
-                            <button
-                              onClick={(e) => { e.stopPropagation(); markRead(n.id); }}
-                              className="text-xs text-blue-600 hover:underline"
-                            >
-                              Oznacz jako przeczytane
-                            </button>
-                          )}
-                        </div>
                       </li>
                     ))}
                   </ul>
@@ -151,61 +150,9 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
           )}
         </div>
 
-        {/* Add Listing Button */}
-        <button
-          onClick={() => router.push("/dashboard/cars/add")}
-          className="hidden md:block bg-white dark:bg-dark-raised border border-gray-300 dark:border-dark-divider px-4 py-2 rounded-full shadow hover:bg-gray-100 dark:hover:bg-dark-elevation-3 text-black dark:text-white transition-colors duration-300"
-        >
-          Add Listing
-        </button>
-
-        {/* Static user chip (no dropdown) */}
-        <div className="hidden md:flex items-center space-x-2 p-2 rounded-full">
-          {user ? (
-            <Avatar
-              src={user.image || user.profilePicture}
-              alt={user.firstName || user.email || "User"}
-              size={24}
-            />
-          ) : (
-            <IoPersonCircleOutline className="w-6 h-6 text-gray-700 dark:text-dark-text-secondary" />
-          )}
-          <span className="hidden md:block text-sm font-medium text-gray-700 dark:text-dark-text-secondary">
-            {user?.firstName || user?.email || "User"}
-          </span>
-        </div>
-
-        {/* Mobile Menu Button */}
-        <button
-          onClick={toggleSidebar}
-          className="text-gray-700 dark:text-gray-300 block md:hidden hover:text-gray-900 dark:text-gray-200 dark:hover:text-white transition-colors"
-        >
-          {isOpen ? (
-            <FiX className="w-6 h-6" />
-          ) : (
-            <>
-              <FiMenu className="w-6 h-6 hidden md:block" />
-              <Avatar
-                src={user.image || user.profilePicture}
-                alt={user.firstName || user.email || "User"}
-                size={24}
-                className="md:hidden"
-              />
-            </>
-          )}
-        </button>
+        {/* User Dropdown (Unified) */}
+        <UserAccountDropdown />
       </div>
-
-      {/* Mobile Dropdown Menu */}
-      {/* {isMenuOpen && (
-        <div className="absolute right-4 top-16 bg-white border border-gray-200 shadow-lg rounded-lg p-2 w-48 flex flex-col space-y-2 md:hidden">
-          <button className="w-full text-left hover:bg-gray-100 p-1 duration-300">Profile</button>
-          <button className="w-full text-left hover:bg-gray-100 p-1 duration-300">Add Car</button>
-          <SignOutButton>
-            <button className="w-full text-left hover:bg-gray-100 p-1 duration-300">Logout</button>
-          </SignOutButton>
-        </div>
-      )} */}
     </header>
   );
 }

@@ -82,7 +82,7 @@ export function CarsGridSection() {
                         <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-gray-200 dark:text-dark-text-primary transition-colors duration-300 tracking-tight">
                             Nasze Najnowsze Oferty
                         </h2>
-                        <p className="mt-2 text-gray-600 dark:text-dark-text-secondary">
+                        <p className="mt-2 text-dark-text-secondary">
                             Przeglądaj szeroką gamę sprawdzonych pojazdów
                         </p>
                     </div>

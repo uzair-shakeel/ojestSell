@@ -418,7 +418,7 @@ const ProfileComponent = () => {
       >
         <div>
           <h1 className="text-4xl font-extrabold text-gray-900 dark:text-gray-200 dark:text-white tracking-tight transition-colors">Twój Profil</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-2 font-medium transition-colors">Zarządzaj swoimi danymi osobowymi i ustawieniami konta.</p>
+          <p className="text-dark-text-secondary mt-2 font-medium transition-colors">Zarządzaj swoimi danymi osobowymi i ustawieniami konta.</p>
         </div>
         <button
           type="button"
@@ -460,7 +460,7 @@ const ProfileComponent = () => {
                     className="hidden"
                   />
                 </label>
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-3 font-medium">
+                <p className="text-xs text-dark-text-secondary mt-3 font-medium">
                   Zalecany format: JPG, PNG lub WebP. Max 5MB.
                 </p>
               </div>
@@ -472,7 +472,7 @@ const ProfileComponent = () => {
             <h2 className="text-lg font-bold text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-widest mb-6">Dane Osobowe</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
-                <label className="block text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">Imię</label>
+                <label className="block text-xs font-bold text-dark-text-secondary uppercase tracking-widest mb-2">Imię</label>
                 <input
                   type="text"
                   name="firstName"
@@ -483,13 +483,13 @@ const ProfileComponent = () => {
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">Nazwisko</label>
+                <label className="block text-xs font-bold text-dark-text-secondary uppercase tracking-widest mb-2">Nazwisko</label>
                 <input
                   type="text"
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleInputChange}
-                  className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all font-semibold text-gray-900 dark:text-gray-200 dark:text-white bg-gray-50/50 dark:bg-dark-elevation-4 focus:bg-white dark:focus:bg-gray-900"
+                  className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all font-semibold text-gray-900 dark:text-gray-200 dark:text-white bg-gray-50/50 dark:bg-dark-card focus:bg-white dark:focus:bg-gray-900"
                   required
                 />
               </div>
@@ -500,7 +500,7 @@ const ProfileComponent = () => {
                 name="description"
                 value={formData.description}
                 onChange={handleInputChange}
-                className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all text-gray-900 dark:text-gray-200 dark:text-white bg-gray-50/50 dark:bg-dark-elevation-4 focus:bg-white dark:focus:bg-gray-900 min-h-[120px]"
+                className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all text-gray-900 dark:text-gray-200 dark:text-white bg-gray-50/50 dark:bg-dark-card focus:bg-white dark:focus:bg-gray-900 min-h-[120px]"
                 placeholder="Napisz kilka słów o sobie..."
               />
             </div>
@@ -571,7 +571,7 @@ const ProfileComponent = () => {
                     name="companyName"
                     value={formData.companyName}
                     onChange={handleInputChange}
-                    className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all font-semibold text-gray-900 dark:text-gray-200 dark:text-white bg-gray-50/50 dark:bg-dark-elevation-4 focus:bg-white dark:focus:bg-gray-900"
+                    className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all font-semibold text-gray-900 dark:text-gray-200 dark:text-white bg-gray-50/50 dark:bg-dark-card focus:bg-white dark:focus:bg-gray-900"
                   />
                 </motion.div>
               )}
@@ -623,7 +623,7 @@ const ProfileComponent = () => {
             <div className="space-y-4">
               {['instagram', 'facebook', 'website'].map((social) => (
                 <div key={social} className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 dark:text-gray-500 uppercase text-xs font-bold tracking-wider w-24 transition-colors">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-dark-text-secondary uppercase text-xs font-bold tracking-wider w-24 transition-colors">
                     {social}
                   </div>
                   <input
@@ -632,7 +632,7 @@ const ProfileComponent = () => {
                     value={formData.socialMedia[social]}
                     onChange={handleInputChange}
                     placeholder="https://..."
-                    className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 pl-24 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all text-sm font-medium text-gray-900 dark:text-gray-200 dark:text-white bg-gray-50/50 dark:bg-dark-elevation-4 focus:bg-white dark:focus:bg-gray-900"
+                    className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 pl-24 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all text-sm font-medium text-gray-900 dark:text-gray-200 dark:text-white bg-gray-50/50 dark:bg-dark-card focus:bg-white dark:focus:bg-gray-900"
                   />
                 </div>
               ))}
@@ -695,7 +695,7 @@ const ProfileComponent = () => {
                     type="password"
                     value={cpCurrent}
                     onChange={(e) => setCpCurrent(e.target.value)}
-                    className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all font-semibold text-gray-900 dark:text-gray-200 dark:text-white bg-gray-50/50 dark:bg-dark-elevation-4 focus:bg-white dark:focus:bg-gray-900"
+                    className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all font-semibold text-gray-900 dark:text-gray-200 dark:text-white bg-gray-50/50 dark:bg-dark-card focus:bg-white dark:focus:bg-gray-900"
                     required
                   />
                 </div>
@@ -706,7 +706,7 @@ const ProfileComponent = () => {
                     value={cpNew}
                     onChange={(e) => setCpNew(e.target.value)}
                     minLength={6}
-                    className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all font-semibold text-gray-900 dark:text-gray-200 dark:text-white bg-gray-50/50 dark:bg-dark-elevation-4 focus:bg-white dark:focus:bg-gray-900"
+                    className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all font-semibold text-gray-900 dark:text-gray-200 dark:text-white bg-gray-50/50 dark:bg-dark-card focus:bg-white dark:focus:bg-gray-900"
                     required
                   />
                 </div>
@@ -717,7 +717,7 @@ const ProfileComponent = () => {
                     value={cpConfirm}
                     onChange={(e) => setCpConfirm(e.target.value)}
                     minLength={6}
-                    className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all font-semibold text-gray-900 dark:text-gray-200 dark:text-white bg-gray-50/50 dark:bg-dark-elevation-4 focus:bg-white dark:focus:bg-gray-900"
+                    className="w-full border-2 border-gray-100 dark:border-gray-700 p-4 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 transition-all font-semibold text-gray-900 dark:text-gray-200 dark:text-white bg-gray-50/50 dark:bg-dark-card focus:bg-white dark:focus:bg-gray-900"
                     required
                   />
                 </div>

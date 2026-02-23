@@ -55,7 +55,7 @@ export default function DashboardCarsPage() {
       <div className="flex justify-between items-end mb-12">
         <div>
           <h1 className="text-4xl font-extrabold text-gray-900 dark:text-gray-200 dark:text-white tracking-tight transition-colors">Moje Auta</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-2 font-medium transition-colors">Zarządzaj swoją flotą i ogłoszeniami sprzedaży.</p>
+          <p className="text-dark-text-secondary mt-2 font-medium transition-colors">Zarządzaj swoją flotą i ogłoszeniami sprzedaży.</p>
         </div>
         <a
           href="/dashboard/cars/add"

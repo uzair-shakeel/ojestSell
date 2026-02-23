@@ -699,7 +699,7 @@ const MessagesPage = () => {
           <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center shrink-0 bg-white dark:bg-dark-panel transition-colors">
             <div>
               <h2 className="font-extrabold text-2xl text-gray-900 dark:text-gray-200 dark:text-white tracking-tight">Wiadomości</h2>
-              <p className="text-xs text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest mt-1">Twoje konwersacje</p>
+              <p className="text-xs text-dark-text-secondary font-bold uppercase tracking-widest mt-1">Twoje konwersacje</p>
             </div>
             {totalUnread > 0 && (
               <div className="bg-red-500 text-white rounded-xl px-3 py-1 text-xs font-bold shadow-red-200 shadow-md">

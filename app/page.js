@@ -3,6 +3,7 @@
 import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { CarsNearMe } from "../components/website/cars-near-me.jsx";
 import { BrowseCategories } from "../components/website/browse-categories";
 import { BrowseLocations } from "../components/website/browse-locations";
@@ -38,51 +39,45 @@ function HomeContent() {
     <div className="flex flex-col min-h-screen bg-white dark:bg-dark-main transition-colors duration-300">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="relative h-[600px] w-[98%] mx-auto my-[10px] rounded-3xl overflow-hidden shadow-2xl">
+      {/* Hero Section - Restored and Styled Premiumly */}
+      <section className="relative h-[650px] w-[98%] mx-auto my-4 rounded-[2.5rem] overflow-hidden shadow-2xl bg-gray-900">
         <div className="absolute inset-0">
           <Image
             src="/Hero2-QKTSHICM.webp"
             alt="Car sales hero image"
             fill
-            className="object-cover hidden md:block brightness-75 scale-105"
+            className="object-cover hidden md:block brightness-[0.7] scale-105"
             priority
           />
           <Image
             src="/Hero2-QKTSHICM - Copy.webp"
             alt="Car sales hero image"
             fill
-            className="object-cover md:hidden brightness-75 scale-105"
+            className="object-cover md:hidden brightness-[0.7] scale-105"
             priority
           />
+          {/* Subtle Color Overlay */}
+          <div className="absolute inset-0 bg-blue-900/10 mix-blend-multiply" />
         </div>
-        <div className="relative  w-full z-10 h-full flex flex-col justify-between py-[70px]  items-center text-center text-white">
-          <div>
-            <h1 className="text-3xl md:text-6xl font-extrabold mb-4 tracking-tight drop-shadow-lg">
-              Znajdź lub sprzedaj swoje auto
-            </h1>
-            <h2 className="text-2xl md:text-5xl font-extrabold mb-4 tracking-tight text-white/90 drop-shadow-md">
-              Nowy portal handlu autami
-            </h2>
-          </div>
-          <div className="absolute md:bottom-10 bottom-5 left-5 right-5">
+
+        <div className="relative w-full z-10 h-full flex justify-center  items-end text-center text-white pb-24 px-6">
+
+
+          <div className="w-full  max-w-5xl">
             <FilterSearch />
           </div>
         </div>
+
+        {/* Ambient Bottom Fade */}
+        <div className="absolute bottom-0 left-0 w-full h-1/4 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
       </section>
 
-      {/* Video Section */}
-      {/* <VideoSection /> */}
-
       <main className="flex-grow text-gray-900 dark:text-gray-200">
-        {/* <FeaturedCars /> */}
         <CarsNearMe />
-        {/* <FeaturedCategories /> */}
         <BrowseCategories />
         <BrowseLocations />
         <DiscoveryPromo />
         <CarsGridSection />
-        {/* <BrowseByMake /> */}
         <BlogSection />
       </main>
       <Footer />
@@ -96,7 +91,7 @@ export default function Home() {
     <Suspense
       fallback={
         <div className="flex items-center justify-center min-h-screen">
-          Loading...
+          <div className="w-16 h-16 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin" />
         </div>
       }
     >

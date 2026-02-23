@@ -81,7 +81,7 @@ export default function DashboardStats({ user: userProp }) {
           <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-200 dark:text-dark-text-primary tracking-tight transition-colors">
             Witaj, {user?.firstName || "Użytkowniku"}! 👋
           </h1>
-          <p className="text-gray-500 dark:text-dark-text-secondary font-medium mt-1 transition-colors">
+          <p className="text-dark-text-secondary dark:text-dark-text-secondary font-medium mt-1 transition-colors">
             Oto podsumowanie Twojego konta i aktywności.
           </p>
         </div>

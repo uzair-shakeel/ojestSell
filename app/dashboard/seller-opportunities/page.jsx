@@ -250,7 +250,7 @@ const SellerOpportunitiesPage = () => {
             <h1 className="text-3xl font-extrabold text-gray-100 tracking-tight">
               Możliwości Sprzedaży 🚀
             </h1>
-            <p className="text-gray-500 dark:text-gray-300 font-medium mt-2 text-lg">
+            <p className="text-dark-text-secondary font-medium mt-2 text-lg">
               Przeglądaj zapytania kupujących i składaj oferty swoimi samochodami.
             </p>
           </div>
@@ -368,7 +368,7 @@ const SellerOpportunitiesPage = () => {
                 </span>
                 Zapytania Kupujących
               </h2>
-              <p className="text-gray-500 font-medium mt-1 ml-10">
+              <p className="text-dark-text-secondary font-medium mt-1 ml-10">
                 Znaleziono {requests.length} pasujących zapytań
               </p>
             </div>
@@ -452,7 +452,7 @@ const SellerOpportunitiesPage = () => {
                 Nie znaleziono żadnych próśb kupujących
 
               </h2>
-              <p className="text-gray-500 mb-4">
+              <p className="text-dark-text-secondary mb-4">
                 Obecnie nie ma aktywnych zapytań kupujących, które spełniałyby wybrane przez Ciebie filtry..
               </p>
               {Object.values(filters).some(Boolean) && (

@@ -61,7 +61,7 @@ export default function NotificationsWidget() {
       )}
       <div className="grid gap-3">
         {items.length === 0 && (
-          <div className="text-sm text-gray-500 dark:text-gray-400">No notifications</div>
+          <div className="text-sm text-dark-text-secondary">No notifications</div>
         )}
         {items.map((n) => (
           <Link

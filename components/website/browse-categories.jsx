@@ -147,7 +147,7 @@ export function BrowseCategories() {
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-gray-200 dark:text-white">
               Przeglądaj auta po krajach Producentów
             </h2>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">
+            <p className="text-dark-text-secondary mt-1">
               Odkryj samochody według dziedzictwa i kultury.
             </p>
           </div>
