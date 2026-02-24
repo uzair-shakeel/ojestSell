@@ -10,7 +10,7 @@ import { useNotifications } from "../../lib/notifications/NotificationsContext";
 import Avatar from "../both/Avatar";
 import UserAccountDropdown from "../both/UserAccountDropdown";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiBell, FiMenu, FiX } from "react-icons/fi";
+import { FiBell, FiMenu, FiX, FiSearch, FiHeart, FiBook, FiLifeBuoy, FiPhone } from "react-icons/fi";
 import { BsChatLeftDots } from "react-icons/bs";
 
 const Navbar = () => {
@@ -81,12 +81,11 @@ const Navbar = () => {
   };
 
   const navLinks = [
-    { name: "Discover", href: "/discovery" },
-    { name: "Marketplace", href: "/website" },
-    { name: "Wishlist", href: "/wishlist" },
-    { name: "Journal", href: "/website/blog" },
-    { name: "Support", href: "/website/faq" },
-    { name: "Contact", href: "/website/contact" },
+    { name: "Discover", href: "/discovery", icon: <FiSearch className="w-6 h-6" /> },
+    { name: "Wishlist", href: "/wishlist", icon: <FiHeart className="w-6 h-6" /> },
+    { name: "Journal", href: "/website/blog", icon: <FiBook className="w-6 h-6" /> },
+    { name: "Support", href: "/website/faq", icon: <FiLifeBuoy className="w-6 h-6" /> },
+    { name: "Contact", href: "/website/contact", icon: <FiPhone className="w-6 h-6" /> },
   ];
 
   // Close notification popup when clicking outside
@@ -214,9 +213,11 @@ const Navbar = () => {
           </div>
         )}
 
-        {/* User Account Section */}
+        {/* User Account Section - Profile Dropdown Hidden on Mobile */}
         {isSignedIn ? (
-          <UserAccountDropdown />
+          <div className="hidden lg:block">
+            <UserAccountDropdown />
+          </div>
         ) : (
           <button
             onClick={handleSignIn}
@@ -227,18 +228,56 @@ const Navbar = () => {
         )}
       </div>
 
-      {/* Mobile Navigation Dropdown */}
+      {/* Mobile Navigation Dropdown - Full Page Cover */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute top-16 left-0 right-0 bg-white dark:bg-dark-panel border-b border-gray-200 dark:border-dark-divider shadow-2xl z-40 lg:hidden overflow-hidden"
+            className="fixed inset-0 bg-white dark:bg-dark-panel z-[100] lg:hidden overflow-y-auto"
           >
-            <div className="p-5 space-y-6">
-              {/* Primary Mobile Links */}
+            {/* Top Bar for Mobile Menu */}
+            <div className="h-16 px-4 border-b border-gray-100 dark:border-dark-divider flex justify-between items-center sticky top-0 bg-white/80 dark:bg-dark-panel/80 backdrop-blur-md z-10">
+              <button
+                onClick={() => setIsMenuOpen(false)}
+                className="p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-raised rounded-xl transition-all"
+              >
+                <FiX size={24} />
+              </button>
+
+              <div className="flex items-center gap-2">
+                <ThemeToggle size={20} />
+                <Link href="/dashboard/messages" onClick={() => setIsMenuOpen(false)} className="p-2 text-gray-700 dark:text-gray-300">
+                  <BsChatLeftDots size={20} />
+                </Link>
+                {isSignedIn && (
+                  <div className="flex items-center gap-2">
+                    <FiBell size={20} className="text-gray-700 dark:text-gray-300" />
+                    <Avatar src={user?.profilePicture || user?.image} alt="User" size={32} />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="p-5 space-y-8 pb-10">
+              {/* Profile Overview (If signed in) */}
+              {isSignedIn && user && (
+                <div className="flex items-center gap-4 bg-gray-50 dark:bg-dark-card p-5 rounded-[2rem] border border-gray-100 dark:border-dark-divider">
+                  <Avatar src={user?.profilePicture || user?.image} alt="User" size={50} />
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-lg font-black text-gray-900 dark:text-white truncate">
+                      {user?.firstName || "Użytkownik"}
+                    </h3>
+                    <p className="text-xs text-gray-400 font-bold uppercase tracking-widest leading-none mt-1">
+                      Zalogowany
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* TILE GRID (Primary Website Links) */}
               <div className="grid grid-cols-2 gap-3">
                 {navLinks.map((link, idx) => (
                   <motion.div
@@ -249,10 +288,11 @@ const Navbar = () => {
                   >
                     <Link
                       href={link.href}
-                      className="group flex flex-col items-center justify-center h-20 rounded-2xl text-[9px] font-black uppercase tracking-[0.3em] text-gray-900 dark:text-white bg-gray-50 dark:bg-dark-card border border-gray-100 dark:border-dark-divider hover:bg-blue-600 hover:text-white transition-all text-center px-2"
+                      className="group flex flex-col items-center justify-center h-28 rounded-[2rem] text-[10px] font-black uppercase tracking-[0.3em] text-gray-900 dark:text-white bg-gray-50 dark:bg-dark-card border border-gray-100 dark:border-dark-divider hover:bg-blue-600 hover:text-white transition-all text-center px-2 gap-3"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      {link.name}
+                      <span className="text-blue-500 group-hover:text-white transition-colors">{link.icon}</span>
+                      <span>{link.name}</span>
                     </Link>
                   </motion.div>
                 ))}
@@ -264,15 +304,37 @@ const Navbar = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
                   onClick={handleSignIn}
-                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-500 text-white font-black uppercase tracking-widest text-xs shadow-xl shadow-blue-500/25 flex items-center justify-center gap-2"
+                  className="w-full py-5 rounded-[2rem] bg-gradient-to-r from-blue-600 to-blue-500 text-white font-black uppercase tracking-widest text-xs shadow-xl shadow-blue-500/25 flex items-center justify-center gap-2"
                 >
                   Join the Community
                 </motion.button>
               ) : (
-                <div className="pt-2 border-t border-gray-100 dark:border-dark-divider">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4 text-center">Quick Access</p>
-                  <div className="flex justify-center gap-4">
-                    {/* Theme toggle mobile focus if needed or other quick actions */}
+                <div className="pt-6 border-t border-gray-100 dark:border-dark-divider">
+                  <p className="text-[10px] font-black uppercase tracking-[0.5em] text-gray-400 mb-6 text-center">Quick Access</p>
+                  <div className="grid grid-cols-1 gap-2">
+                    <Link
+                      href="/dashboard/home"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="w-full flex items-center justify-between px-6 py-4 rounded-2xl bg-blue-600 text-white text-sm font-black uppercase tracking-widest"
+                    >
+                      <span>Prejdź do Panelu</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                    <Link
+                      href="/dashboard/profile"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="w-full flex items-center justify-between px-6 py-4 rounded-2xl bg-gray-50 dark:bg-white/5 text-sm font-black text-gray-700 dark:text-white uppercase tracking-widest border border-gray-100 dark:border-dark-divider"
+                    >
+                      <span>Mój Profil</span>
+                      <ArrowRight className="w-4 h-4 opacity-30" />
+                    </Link>
+                    <button
+                      onClick={handleSignOut}
+                      className="w-full flex items-center justify-between px-6 py-4 rounded-2xl bg-gray-50 dark:bg-white/5 text-sm font-black text-red-500 uppercase tracking-widest"
+                    >
+                      <span>Wyloguj Się</span>
+                      <FiX size={18} className="rotate-45" />
+                    </button>
                   </div>
                 </div>
               )}
@@ -283,5 +345,7 @@ const Navbar = () => {
     </header>
   );
 };
+
+const ArrowRight = ({ className }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
 
 export default Navbar;

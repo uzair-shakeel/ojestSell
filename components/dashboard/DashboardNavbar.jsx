@@ -150,8 +150,10 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
           )}
         </div>
 
-        {/* User Dropdown (Unified) */}
-        <UserAccountDropdown />
+        {/* User Dropdown (Unified) - Hidden on Mobile */}
+        <div className="hidden md:block">
+          <UserAccountDropdown />
+        </div>
       </div>
     </header>
   );
