@@ -281,41 +281,22 @@ const Navbar = () => {
                 </div>
               )}
 
-              {/* TILE GRID (Primary Website Links) */}
+              {/* UNIFIED TILE GRID (All Actions) */}
               <div className="grid grid-cols-2 gap-3">
-                {navLinks.map((link, idx) => (
-                  <motion.div
+                {/* Website Navigation Links */}
+                {navLinks.map((link) => (
+                  <QuickAccessBubble
                     key={link.name}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: idx * 0.05 }}
-                  >
-                    <Link
-                      href={link.href}
-                      className="group flex flex-col items-center justify-center h-28 rounded-[2rem] text-[10px] font-black uppercase tracking-[0.3em] text-gray-900 dark:text-white bg-gray-50 dark:bg-dark-card border border-gray-100 dark:border-dark-divider hover:bg-blue-600 hover:text-white transition-all text-center px-2 gap-3"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <span className="text-blue-500 group-hover:text-white transition-colors">{link.icon}</span>
-                      <span>{link.name}</span>
-                    </Link>
-                  </motion.div>
+                    href={link.href}
+                    icon={link.icon}
+                    label={link.name}
+                    onClick={() => setIsMenuOpen(false)}
+                  />
                 ))}
-              </div>
 
-              {!isSignedIn ? (
-                <motion.button
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  onClick={handleSignIn}
-                  className="w-full py-5 rounded-[2rem] bg-gradient-to-r from-blue-600 to-blue-500 text-white font-black uppercase tracking-widest text-xs shadow-xl shadow-blue-500/25 flex items-center justify-center gap-2"
-                >
-                  Join the Community
-                </motion.button>
-              ) : (
-                <div className="pt-6 border-t border-gray-100 dark:border-dark-divider">
-                  <p className="text-[10px] font-black uppercase tracking-[0.5em] text-gray-400 mb-6 text-center">Quick Access</p>
-                  <div className="grid grid-cols-2 gap-3">
+                {/* Dashboard Specific Links (Only if signed in) */}
+                {isSignedIn && (
+                  <>
                     <QuickAccessBubble
                       href="/dashboard/home"
                       icon={<RiDashboardHorizontalLine />}
@@ -339,7 +320,7 @@ const Navbar = () => {
                       href="/dashboard/messages"
                       icon={<BsChatLeftDots />}
                       label="Czaty"
-                      badge={chatCount}
+                      badge={chatCount || 0}
                       onClick={() => setIsMenuOpen(false)}
                     />
                     {user?.sellerType === 'private' && (
@@ -370,17 +351,34 @@ const Navbar = () => {
                       label="Profil"
                       onClick={() => setIsMenuOpen(false)}
                     />
-                    <button
-                      onClick={handleSignOut}
-                      className="col-span-2 flex items-center justify-between px-6 py-4 rounded-2xl bg-red-50 dark:bg-red-900/10 text-sm font-black text-red-500 uppercase tracking-widest mt-2"
-                    >
-                      <div className="flex items-center gap-4">
-                        <FiLogOut size={20} />
-                        <span>Wyloguj Się</span>
-                      </div>
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-                  </div>
+                  </>
+                )}
+              </div>
+
+              {!isSignedIn ? (
+                <div className="pt-4">
+                  <motion.button
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    onClick={handleSignIn}
+                    className="w-full py-5 rounded-[2rem] bg-gradient-to-r from-blue-600 to-blue-500 text-white font-black uppercase tracking-widest text-xs shadow-xl shadow-blue-500/25 flex items-center justify-center gap-2"
+                  >
+                    Join the Community
+                  </motion.button>
+                </div>
+              ) : (
+                <div className="pt-2">
+                  <button
+                    onClick={handleSignOut}
+                    className="w-full flex items-center justify-between px-6 py-4 rounded-2xl bg-red-50 dark:bg-red-900/10 text-sm font-black text-red-500 uppercase tracking-widest"
+                  >
+                    <div className="flex items-center gap-4">
+                      <FiLogOut size={20} />
+                      <span>Wyloguj Się</span>
+                    </div>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
                 </div>
               )}
             </div>

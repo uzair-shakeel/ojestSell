@@ -232,35 +232,25 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                 </div>
               )}
 
-              {/* DASHBOARD ACTIONS (Tile Grid) */}
-              <div className="space-y-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.5em] text-gray-400 px-2 text-center">Nawigacja Panelu</p>
-                <div className="grid grid-cols-2 gap-3">
-                  {menuItems.map((item) => (
-                    <MobileTile
-                      key={item.label}
-                      item={item}
-                      onClick={toggleSidebar}
-                      active={isActive(item.href)}
-                      badge={item.label === "Wiadomości" ? chatCount : 0}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* WEBSITE LINKS (Tile Grid) */}
-              <div className="space-y-4 pt-6 border-t border-gray-100 dark:border-dark-divider">
-                <p className="text-[10px] font-black uppercase tracking-[0.5em] text-gray-400 px-2 text-center">Strona Główna</p>
-                <div className="grid grid-cols-2 gap-3">
-                  {websiteLinks.map((link) => (
-                    <MobileTile
-                      key={link.label}
-                      item={link}
-                      onClick={toggleSidebar}
-                      active={isActive(link.href)}
-                    />
-                  ))}
-                </div>
+              {/* UNIFIED TILE GRID (All Actions) */}
+              <div className="grid grid-cols-2 gap-3">
+                {menuItems.map((item) => (
+                  <MobileTile
+                    key={item.label}
+                    item={item}
+                    onClick={toggleSidebar}
+                    active={isActive(item.href)}
+                    badge={item.label === "Wiadomości" ? chatCount : 0}
+                  />
+                ))}
+                {websiteLinks.map((link) => (
+                  <MobileTile
+                    key={link.label}
+                    item={link}
+                    onClick={toggleSidebar}
+                    active={isActive(link.href)}
+                  />
+                ))}
               </div>
 
               {/* Logout button */}
