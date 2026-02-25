@@ -4,7 +4,7 @@ import { FaCar } from "react-icons/fa";
 import { BiAddToQueue } from "react-icons/bi";
 import { BsChatLeftDots, BsPersonGear } from "react-icons/bs";
 import { RiDashboardHorizontalLine } from "react-icons/ri";
-import { FiMenu, FiX, FiShoppingBag, FiClipboard, FiLogOut, FiHome, FiSearch, FiHeart, FiPhone, FiChevronDown } from "react-icons/fi";
+import { FiMenu, FiX, FiShoppingBag, FiClipboard, FiLogOut, FiHome, FiSearch, FiHeart, FiPhone, FiChevronDown, FiBook, FiLifeBuoy } from "react-icons/fi";
 import { MdPhotoFilter } from "react-icons/md";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -149,18 +149,19 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
       icon: <BsPersonGear className="w-6 h-6" />,
     },
 
-    {
-      label: "Wyloguj",
-      icon: <FiLogOut className="w-6 h-6" />,
-      action: async () => {
-        try {
-          await logout();
-        } finally {
-          router.push("/");
-        }
-      },
-    },
   ];
+
+  const logoutItem = {
+    label: "Wyloguj",
+    icon: <FiLogOut className="w-6 h-6" />,
+    action: async () => {
+      try {
+        await logout();
+      } finally {
+        router.push("/");
+      }
+    },
+  };
 
   // Helper to check if link is active
   const isActive = (href) => {
@@ -181,7 +182,9 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
     { label: "Home", href: "/", icon: <FiHome className="w-6 h-6" /> },
     { label: "Discovery", href: "/discovery", icon: <FiSearch className="w-6 h-6" /> },
     { label: "Wishlist", href: "/wishlist", icon: <FiHeart className="w-6 h-6" /> },
-    { label: "Kontakt", href: "/website/contact", icon: <FiPhone className="w-6 h-6" /> },
+    { label: "Blog", href: "/website/blog", icon: <FiBook className="w-6 h-6" /> },
+    { label: "FAQ", href: "/website/faq", icon: <FiLifeBuoy className="w-6 h-6" /> },
+    { label: "Contact", href: "/website/contact", icon: <FiPhone className="w-6 h-6" /> },
   ];
 
   return (
@@ -229,65 +232,41 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                 </div>
               )}
 
-              {/* TILE GRID (Primary Actions) */}
-              <div className="grid grid-cols-2 gap-3">
-                <MobileTile
-                  item={menuItems.find(i => i.label === "Panel")}
-                  onClick={toggleSidebar}
-                  active={isActive("/dashboard/home")}
-                />
-                <MobileTile
-                  item={menuItems.find(i => i.label === "Wystaw Auto")}
-                  onClick={toggleSidebar}
-                  active={isActive("/dashboard/cars/add")}
-                />
-                <MobileTile
-                  item={menuItems.find(i => i.label === "Moje Auta")}
-                  onClick={toggleSidebar}
-                  active={isActive("/dashboard/cars")}
-                />
-                <MobileTile
-                  item={menuItems.find(i => i.label === "Wiadomości")}
-                  onClick={toggleSidebar}
-                  active={isActive("/dashboard/messages")}
-                  badge={chatCount}
-                />
-              </div>
-
-              {/* DASHBOARD LINKS LIST */}
-              <div className="space-y-2">
-                <p className="text-[10px] font-black uppercase tracking-[0.5em] text-gray-400 mb-4 px-2">Nawigacja Panelu</p>
-                {menuItems.map((item) => (
-                  // Skip the items already in tiles and logout
-                  !["Panel", "Wystaw Auto", "Moje Auta", "Wiadomości", "Wyloguj"].includes(item.label) && (
-                    <MobileListLink
+              {/* DASHBOARD ACTIONS (Tile Grid) */}
+              <div className="space-y-4">
+                <p className="text-[10px] font-black uppercase tracking-[0.5em] text-gray-400 px-2 text-center">Nawigacja Panelu</p>
+                <div className="grid grid-cols-2 gap-3">
+                  {menuItems.map((item) => (
+                    <MobileTile
                       key={item.label}
                       item={item}
                       onClick={toggleSidebar}
                       active={isActive(item.href)}
+                      badge={item.label === "Wiadomości" ? chatCount : 0}
                     />
-                  )
-                ))}
+                  ))}
+                </div>
               </div>
 
-              {/* WEBSITE LINKS LIST */}
-              <div className="space-y-2 pt-6 border-t border-gray-100 dark:border-dark-divider">
-                <p className="text-[10px] font-black uppercase tracking-[0.5em] text-gray-400 mb-4 px-2">Strona Główna</p>
-                {websiteLinks.map((link) => (
-                  <MobileListLink
-                    key={link.label}
-                    item={link}
-                    onClick={toggleSidebar}
-                    active={isActive(link.href)}
-                  />
-                ))}
+              {/* WEBSITE LINKS (Tile Grid) */}
+              <div className="space-y-4 pt-6 border-t border-gray-100 dark:border-dark-divider">
+                <p className="text-[10px] font-black uppercase tracking-[0.5em] text-gray-400 px-2 text-center">Strona Główna</p>
+                <div className="grid grid-cols-2 gap-3">
+                  {websiteLinks.map((link) => (
+                    <MobileTile
+                      key={link.label}
+                      item={link}
+                      onClick={toggleSidebar}
+                      active={isActive(link.href)}
+                    />
+                  ))}
+                </div>
               </div>
 
               {/* Logout button */}
               <div className="pt-6">
                 <button
                   onClick={async () => {
-                    const logoutItem = menuItems.find(i => i.label === "Wyloguj");
                     if (logoutItem?.action) await logoutItem.action();
                     toggleSidebar();
                   }}
@@ -339,7 +318,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
         {/* Navigation */}
         <div className="flex-1 overflow-y-auto px-3 py-2 space-y-1 custom-scrollbar">
           {menuItems.map((item, index) => {
-            const active = !item.action && isActive(item.href);
+            const active = isActive(item.href);
             return (
               <motion.div
                 key={item.label}
@@ -347,39 +326,40 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
-                {item.action ? (
-                  <button
-                    onClick={async () => {
-                      await item.action();
-                      if (window.innerWidth < 768) toggleSidebar();
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-400 rounded-xl hover:bg-white/5 transition-all group mt-6"
-                  >
-                    <span className="group-hover:scale-110 transition-transform">{item.icon}</span>
-                    <span>{item.label}</span>
-                  </button>
-                ) : (
-                  <Link
-                    href={item.href}
-                    onClick={() => {
-                      if (window.innerWidth < 768) toggleSidebar();
-                    }}
-                    className={`relative flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-xl transition-all group
-                      ${active ? "bg-blue-600 text-white shadow-lg shadow-blue-900/50" : "text-gray-400 hover:bg-white/5 hover:text-white"}
-                    `}
-                  >
-                    <span className={`transition-transform duration-200 ${active ? "" : "group-hover:scale-110"}`}>{item.icon}</span>
-                    <span className="flex-grow">{item.label}</span>
-                    {item.label === "Wiadomości" && chatCount > 0 && (
-                      <span className={`flex h-5 w-auto min-w-[20px] items-center justify-center rounded-full px-1.5 text-[10px] ${active ? "bg-white text-blue-600" : "bg-red-500 text-white"}`}>
-                        {chatCount}
-                      </span>
-                    )}
-                  </Link>
-                )}
+                <Link
+                  href={item.href}
+                  onClick={() => {
+                    if (window.innerWidth < 768) toggleSidebar();
+                  }}
+                  className={`relative flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-xl transition-all group
+                    ${active ? "bg-blue-600 text-white shadow-lg shadow-blue-900/50" : "text-gray-400 hover:bg-white/5 hover:text-white"}
+                  `}
+                >
+                  <span className={`transition-transform duration-200 ${active ? "" : "group-hover:scale-110"}`}>{item.icon}</span>
+                  <span className="flex-grow">{item.label}</span>
+                  {item.label === "Wiadomości" && chatCount > 0 && (
+                    <span className={`flex h-5 w-auto min-w-[20px] items-center justify-center rounded-full px-1.5 text-[10px] ${active ? "bg-white text-blue-600" : "bg-red-500 text-white"}`}>
+                      {chatCount}
+                    </span>
+                  )}
+                </Link>
               </motion.div>
             );
           })}
+        </div>
+
+        {/* Desktop Logout Button - Separate and Fixed at Bottom */}
+        <div className="p-4 border-t border-dark-divider">
+          <button
+            onClick={async () => {
+              await logoutItem.action();
+              if (window.innerWidth < 768) toggleSidebar();
+            }}
+            className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-500/80 rounded-xl hover:bg-red-500/10 hover:text-red-500 transition-all group"
+          >
+            <span className="group-hover:scale-110 transition-transform">{logoutItem.icon}</span>
+            <span>{logoutItem.label}</span>
+          </button>
         </div>
 
         {/* Footer info */}

@@ -10,8 +10,12 @@ import { useNotifications } from "../../lib/notifications/NotificationsContext";
 import Avatar from "../both/Avatar";
 import UserAccountDropdown from "../both/UserAccountDropdown";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiBell, FiMenu, FiX, FiSearch, FiHeart, FiBook, FiLifeBuoy, FiPhone } from "react-icons/fi";
-import { BsChatLeftDots } from "react-icons/bs";
+import { FiBell, FiMenu, FiX, FiSearch, FiHeart, FiBook, FiLifeBuoy, FiPhone, FiLayout, FiUser, FiLogOut, FiShoppingBag, FiClipboard } from "react-icons/fi";
+import { BsChatLeftDots, BsPersonGear } from "react-icons/bs";
+import { RiDashboardHorizontalLine } from "react-icons/ri";
+import { BiAddToQueue } from "react-icons/bi";
+import { FaCar } from "react-icons/fa";
+import { MdPhotoFilter } from "react-icons/md";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -83,8 +87,8 @@ const Navbar = () => {
   const navLinks = [
     { name: "Discover", href: "/discovery", icon: <FiSearch className="w-6 h-6" /> },
     { name: "Wishlist", href: "/wishlist", icon: <FiHeart className="w-6 h-6" /> },
-    { name: "Journal", href: "/website/blog", icon: <FiBook className="w-6 h-6" /> },
-    { name: "Support", href: "/website/faq", icon: <FiLifeBuoy className="w-6 h-6" /> },
+    { name: "Blog", href: "/website/blog", icon: <FiBook className="w-6 h-6" /> },
+    { name: "FAQ", href: "/website/faq", icon: <FiLifeBuoy className="w-6 h-6" /> },
     { name: "Contact", href: "/website/contact", icon: <FiPhone className="w-6 h-6" /> },
   ];
 
@@ -311,29 +315,70 @@ const Navbar = () => {
               ) : (
                 <div className="pt-6 border-t border-gray-100 dark:border-dark-divider">
                   <p className="text-[10px] font-black uppercase tracking-[0.5em] text-gray-400 mb-6 text-center">Quick Access</p>
-                  <div className="grid grid-cols-1 gap-2">
-                    <Link
+                  <div className="grid grid-cols-2 gap-3">
+                    <QuickAccessBubble
                       href="/dashboard/home"
+                      icon={<RiDashboardHorizontalLine />}
+                      label="Panel"
+                      primary
                       onClick={() => setIsMenuOpen(false)}
-                      className="w-full flex items-center justify-between px-6 py-4 rounded-2xl bg-blue-600 text-white text-sm font-black uppercase tracking-widest"
-                    >
-                      <span>Prejdź do Panelu</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </Link>
-                    <Link
+                    />
+                    <QuickAccessBubble
+                      href="/dashboard/cars/add"
+                      icon={<BiAddToQueue />}
+                      label="Wystaw"
+                      onClick={() => setIsMenuOpen(false)}
+                    />
+                    <QuickAccessBubble
+                      href="/dashboard/cars"
+                      icon={<FaCar />}
+                      label="Moje Auta"
+                      onClick={() => setIsMenuOpen(false)}
+                    />
+                    <QuickAccessBubble
+                      href="/dashboard/messages"
+                      icon={<BsChatLeftDots />}
+                      label="Czaty"
+                      badge={chatCount}
+                      onClick={() => setIsMenuOpen(false)}
+                    />
+                    {user?.sellerType === 'private' && (
+                      <QuickAccessBubble
+                        href="/dashboard/buyer-requests"
+                        icon={<FiShoppingBag />}
+                        label="Zapytania"
+                        onClick={() => setIsMenuOpen(false)}
+                      />
+                    )}
+                    {user?.sellerType === 'company' && (
+                      <QuickAccessBubble
+                        href="/dashboard/seller-opportunities"
+                        icon={<FiClipboard />}
+                        label="Okazje"
+                        onClick={() => setIsMenuOpen(false)}
+                      />
+                    )}
+                    <QuickAccessBubble
+                      href="/dashboard/photo-enhancer"
+                      icon={<MdPhotoFilter />}
+                      label="Zdjęcia"
+                      onClick={() => setIsMenuOpen(false)}
+                    />
+                    <QuickAccessBubble
                       href="/dashboard/profile"
+                      icon={<BsPersonGear />}
+                      label="Profil"
                       onClick={() => setIsMenuOpen(false)}
-                      className="w-full flex items-center justify-between px-6 py-4 rounded-2xl bg-gray-50 dark:bg-white/5 text-sm font-black text-gray-700 dark:text-white uppercase tracking-widest border border-gray-100 dark:border-dark-divider"
-                    >
-                      <span>Mój Profil</span>
-                      <ArrowRight className="w-4 h-4 opacity-30" />
-                    </Link>
+                    />
                     <button
                       onClick={handleSignOut}
-                      className="w-full flex items-center justify-between px-6 py-4 rounded-2xl bg-gray-50 dark:bg-white/5 text-sm font-black text-red-500 uppercase tracking-widest"
+                      className="col-span-2 flex items-center justify-between px-6 py-4 rounded-2xl bg-red-50 dark:bg-red-900/10 text-sm font-black text-red-500 uppercase tracking-widest mt-2"
                     >
-                      <span>Wyloguj Się</span>
-                      <FiX size={18} className="rotate-45" />
+                      <div className="flex items-center gap-4">
+                        <FiLogOut size={20} />
+                        <span>Wyloguj Się</span>
+                      </div>
+                      <ArrowRight className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
@@ -347,5 +392,32 @@ const Navbar = () => {
 };
 
 const ArrowRight = ({ className }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
+
+function QuickAccessBubble({ href, icon, label, onClick, primary = false, badge = 0 }) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className={`
+        group flex flex-col items-center justify-center h-28 rounded-[2rem] text-[10px] font-black uppercase tracking-[0.3em] transition-all text-center px-4 gap-3 relative
+        ${primary
+          ? "bg-blue-600 text-white shadow-lg shadow-blue-500/25"
+          : "bg-gray-50 dark:bg-dark-card text-gray-900 dark:text-white border border-gray-100 dark:border-dark-divider hover:bg-blue-600 hover:text-white"
+        }
+      `}
+    >
+      <span className={`${primary ? "text-white" : "text-blue-500 group-hover:text-white"} transition-colors`}>
+        {React.cloneElement(icon, { className: "w-6 h-6" })}
+      </span>
+      <span>{label}</span>
+
+      {badge > 0 && (
+        <span className={`absolute top-4 right-4 h-5 w-auto min-w-[20px] px-1.5 flex items-center justify-center rounded-full text-[10px] font-black ${primary ? "bg-white text-blue-600" : "bg-red-500 text-white"}`}>
+          {badge}
+        </span>
+      )}
+    </Link>
+  );
+}
 
 export default Navbar;
