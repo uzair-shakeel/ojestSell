@@ -99,7 +99,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
   }, [userId, getToken]);
 
 
-  const menuItems = [
+  const dashboardMenuItems = [
     {
       label: "Panel",
       href: "/dashboard/home",
@@ -115,15 +115,6 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
       href: "/dashboard/cars",
       icon: <FaCar className="w-6 h-6" />,
     },
-    ...(sellerType === "private"
-      ? [
-        {
-          label: "Zapytania Kupujących",
-          href: "/dashboard/buyer-requests",
-          icon: <FiShoppingBag className="w-6 h-6" />,
-        },
-      ]
-      : []),
     ...(sellerType === "company"
       ? [
         {
@@ -132,23 +123,46 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
           icon: <FiClipboard className="w-6 h-6" />,
         },
       ]
-      : []),
-    {
-      label: "Ulepszacz Zdjęć",
-      href: "/dashboard/photo-enhancer",
-      icon: <MdPhotoFilter className="w-6 h-6" />,
-    },
+      : sellerType === "private"
+        ? [
+          {
+            label: "Zapytania Kupujących",
+            href: "/dashboard/buyer-requests",
+            icon: <FiShoppingBag className="w-6 h-6" />,
+          },
+        ]
+        : []),
     {
       label: "Wiadomości",
       href: "/dashboard/messages",
       icon: <BsChatLeftDots className="w-6 h-6" />,
     },
     {
+      label: "Ulepszacz Zdjęć",
+      href: "/dashboard/photo-enhancer",
+      icon: <MdPhotoFilter className="w-6 h-6" />,
+    },
+    {
       label: "Profil",
       href: "/dashboard/profile",
       icon: <BsPersonGear className="w-6 h-6" />,
     },
+  ];
 
+  const websiteLinks = [
+    { label: "Home", href: "/", icon: <FiHome className="w-6 h-6" /> },
+    { label: "Discovery", href: "/discovery", icon: <FiSearch className="w-6 h-6" /> },
+    { label: "Wishlist", href: "/wishlist", icon: <FiHeart className="w-6 h-6" /> },
+    { label: "Blog", href: "/website/blog", icon: <FiBook className="w-6 h-6" /> },
+    { label: "FAQ", href: "/website/faq", icon: <FiLifeBuoy className="w-6 h-6" /> },
+    { label: "Contact", href: "/website/contact", icon: <FiPhone className="w-6 h-6" /> },
+  ];
+
+  // Combined for mobile ONLY (following user requested order)
+  const mobileMenuItems = [
+    websiteLinks[0], // Home
+    ...dashboardMenuItems,
+    ...websiteLinks.slice(1), // Discovery, Wishlist, etc.
   ];
 
   const logoutItem = {
@@ -173,19 +187,8 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
       return false;
     }
 
-    // For other links, startsWith is fine but we add a trailing slash check to be safer
-    // or we just check if it's a sub-path
     return pathname.startsWith(href + '/');
   };
-
-  const websiteLinks = [
-    { label: "Home", href: "/", icon: <FiHome className="w-6 h-6" /> },
-    { label: "Discovery", href: "/discovery", icon: <FiSearch className="w-6 h-6" /> },
-    { label: "Wishlist", href: "/wishlist", icon: <FiHeart className="w-6 h-6" /> },
-    { label: "Blog", href: "/website/blog", icon: <FiBook className="w-6 h-6" /> },
-    { label: "FAQ", href: "/website/faq", icon: <FiLifeBuoy className="w-6 h-6" /> },
-    { label: "Contact", href: "/website/contact", icon: <FiPhone className="w-6 h-6" /> },
-  ];
 
   return (
     <>
@@ -234,21 +237,13 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
 
               {/* UNIFIED TILE GRID (All Actions) */}
               <div className="grid grid-cols-2 gap-3">
-                {menuItems.map((item) => (
+                {mobileMenuItems.map((item) => (
                   <MobileTile
                     key={item.label}
                     item={item}
                     onClick={toggleSidebar}
                     active={isActive(item.href)}
                     badge={item.label === "Wiadomości" ? chatCount : 0}
-                  />
-                ))}
-                {websiteLinks.map((link) => (
-                  <MobileTile
-                    key={link.label}
-                    item={link}
-                    onClick={toggleSidebar}
-                    active={isActive(link.href)}
                   />
                 ))}
               </div>
@@ -270,7 +265,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
               </div>
 
               {/* Footer */}
-              <div className="pt-10 text-center">
+              <div className="pt-2 text-center">
                 <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
                   Ojest.pl &copy; {new Date().getFullYear()}
                 </p>
@@ -307,7 +302,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
 
         {/* Navigation */}
         <div className="flex-1 overflow-y-auto px-3 py-2 space-y-1 custom-scrollbar">
-          {menuItems.map((item, index) => {
+          {dashboardMenuItems.map((item, index) => {
             const active = isActive(item.href);
             return (
               <motion.div

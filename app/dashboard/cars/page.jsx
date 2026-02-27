@@ -51,15 +51,15 @@ export default function DashboardCarsPage() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto dark:bg-dark-main">
-      <div className="flex justify-between items-end mb-12">
+    <div className="p-4 max-w-7xl mx-auto dark:bg-dark-main">
+      <div className="flex flex-col sm:flex-row justify-between items-end gap-4 md:gap-0 mb-12">
         <div>
           <h1 className="text-4xl font-extrabold text-gray-900 dark:text-gray-200 dark:text-white tracking-tight transition-colors">Moje Auta</h1>
           <p className="text-dark-text-secondary mt-2 font-medium transition-colors">Zarządzaj swoją flotą i ogłoszeniami sprzedaży.</p>
         </div>
         <a
           href="/dashboard/cars/add"
-          className="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg dark:shadow-blue-900/40 shadow-blue-200 flex items-center gap-2 hover:-translate-y-1"
+          className="bg-blue-600 text-white px-4 sm:px-8 py-2 sm:py-4 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg dark:shadow-blue-900/40 shadow-blue-200 flex items-center  gap-2 hover:-translate-y-1"
         >
           <span className="text-xl">+</span>
           Dodaj Nowe

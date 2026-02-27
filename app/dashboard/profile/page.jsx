@@ -410,7 +410,7 @@ const ProfileComponent = () => {
   );
 
   return (
-    <div className="p-8 max-w-7xl mx-auto dark:bg-dark-card">
+    <div className="p-4 max-w-7xl mx-auto dark:bg-dark-card">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -438,7 +438,7 @@ const ProfileComponent = () => {
           className="xl:col-span-2 space-y-8"
         >
           {/* Section: Profile Photo */}
-          <div className="bg-white dark:bg-dark-main p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm relative overflow-hidden group transition-colors">
+          <div className="bg-white dark:bg-dark-main p-4 sm:p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm relative overflow-hidden group transition-colors">
             <h2 className="text-lg font-bold text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-widest mb-6">Zdjęcie Profilowe</h2>
             <div className="flex items-center gap-8">
               <div className="relative">
@@ -468,7 +468,7 @@ const ProfileComponent = () => {
           </div>
 
           {/* Section: Personal Details */}
-          <div className="bg-white dark:bg-dark-main p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm transition-colors">
+          <div className="bg-white dark:bg-dark-main p-4 sm:p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm transition-colors">
             <h2 className="text-lg font-bold text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-widest mb-6">Dane Osobowe</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
@@ -507,7 +507,7 @@ const ProfileComponent = () => {
           </div>
 
           {/* Section: Location */}
-          <div className="bg-white dark:bg-dark-main p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm transition-colors">
+          <div className="bg-white dark:bg-dark-main p-4 sm:p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm transition-colors">
             <h2 className="text-lg font-bold text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-widest mb-6">Lokalizacja</h2>
             <div className="rounded-2xl overflow-hidden border-2 border-gray-100 dark:border-gray-700">
               <CustomMap
@@ -528,7 +528,7 @@ const ProfileComponent = () => {
           className="xl:col-span-1 space-y-8"
         >
           {/* Section: Contact Info */}
-          <div className="bg-white dark:bg-dark-main p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm transition-colors">
+          <div className="bg-white dark:bg-dark-main p-4 sm:p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm transition-colors">
             <h2 className="text-lg font-bold text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-widest mb-6">Kontakt i Firma</h2>
 
             <div className="space-y-6">
@@ -618,7 +618,7 @@ const ProfileComponent = () => {
           </div>
 
           {/* Section: Social Media */}
-          <div className="bg-white dark:bg-dark-main p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm transition-colors">
+          <div className="bg-white dark:bg-dark-main p-4 sm:p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm transition-colors">
             <h2 className="text-lg font-bold text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-widest mb-6">Social Media</h2>
             <div className="space-y-4">
               {['instagram', 'facebook', 'website'].map((social) => (
@@ -646,7 +646,7 @@ const ProfileComponent = () => {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white dark:bg-dark-main p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm mb-8 transition-colors"
+              className="bg-white dark:bg-dark-main p-4 sm:p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm mb-8 transition-colors"
             >
               <h3 className="text-xl font-bold text-gray-900 dark:text-gray-200 dark:text-white mb-2">Marki z którymi współpracujesz</h3>
               <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">Wybierz marki, w których specjalizuje się Twoja firma.</p>
@@ -659,7 +659,7 @@ const ProfileComponent = () => {
             </motion.div>
           )}
 
-          <div className="flex justify-end pt-4">
+          <div className="flex justify-center sm:justify-end py-4">
             <button
               type="submit"
               className="bg-blue-600 text-white font-bold px-12 py-5 rounded-xl hover:bg-blue-700 transition-all shadow-xl dark:shadow-blue-900/40 shadow-blue-200 hover:-translate-y-1 text-lg flex items-center gap-2"

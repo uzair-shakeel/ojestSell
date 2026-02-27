@@ -10,7 +10,7 @@ import { useNotifications } from "../../lib/notifications/NotificationsContext";
 import Avatar from "../both/Avatar";
 import UserAccountDropdown from "../both/UserAccountDropdown";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiBell, FiMenu, FiX, FiSearch, FiHeart, FiBook, FiLifeBuoy, FiPhone, FiLayout, FiUser, FiLogOut, FiShoppingBag, FiClipboard } from "react-icons/fi";
+import { FiBell, FiMenu, FiX, FiSearch, FiHeart, FiBook, FiLifeBuoy, FiPhone, FiLayout, FiUser, FiLogOut, FiShoppingBag, FiClipboard, FiHome } from "react-icons/fi";
 import { BsChatLeftDots, BsPersonGear } from "react-icons/bs";
 import { RiDashboardHorizontalLine } from "react-icons/ri";
 import { BiAddToQueue } from "react-icons/bi";
@@ -122,23 +122,13 @@ const Navbar = () => {
 
   return (
     <header className="w-full h-16 px-4 bg-white dark:bg-dark-panel shadow-md flex justify-between items-center text-black dark:text-dark-text-primary transition-colors duration-300 relative">
-      {/* Mobile Navigation Toggle - FAR LEFT on mobile */}
-      <button
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
-        className="lg:hidden p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-raised rounded-xl transition-all"
-        aria-label="Toggle Navigation"
-      >
-        {isMenuOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
-      </button>
-
-      {/* Logo - Hidden on mobile */}
-      <div className="hidden lg:block">
-        <Link href="/">
-          <img src="/whitelogo.png" alt="Ojest Logo" className="h-10 w-auto" />
+      {/* Logo Section - Left Side */}
+      <div className="flex items-center">
+        <Link href="/" className="flex items-center">
+          <img src="/logo.png" alt="Ojest" className="h-8 md:h-9 w-auto object-contain dark:hidden" />
+          <img src="/whitelogo.png" alt="Ojest" className="h-8 md:h-9 w-auto object-contain hidden dark:block" />
         </Link>
       </div>
-
-      <div className="flex-1 lg:hidden" /> {/* Spacer for mobile */}
 
       <div className="flex items-center space-x-2 md:space-x-3">
         {/* Theme Toggle */}
@@ -217,19 +207,39 @@ const Navbar = () => {
           </div>
         )}
 
-        {/* User Account Section - Profile Dropdown Hidden on Mobile */}
-        {isSignedIn ? (
-          <div className="hidden lg:block">
+        {/* User Account Section - Desktop Only */}
+        <div className="hidden lg:block">
+          {isSignedIn ? (
             <UserAccountDropdown />
+          ) : (
+            <button
+              onClick={handleSignIn}
+              className="flex items-center gap-2 px-6 py-2 rounded-full bg-blue-600 text-white text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/25"
+            >
+              Login
+            </button>
+          )}
+        </div>
+
+        {/* Mobile Navigation Toggle - Merged with User Info */}
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="lg:hidden flex items-center gap-2 p-1.5 pl-2 pr-3 bg-gray-50 dark:bg-dark-raised border border-gray-200 dark:border-dark-divider rounded-full transition-all active:scale-95"
+          aria-label="Toggle Navigation"
+        >
+          {isSignedIn && user && (
+            <Avatar
+              src={user?.profilePicture || user?.image}
+              alt={user?.firstName || "User"}
+              size={24}
+              className="ring-1 ring-blue-500/20"
+            />
+          )}
+          {!isSignedIn && <FiUser className="w-5 h-5 text-gray-500" />}
+          <div className="text-gray-700 dark:text-gray-300">
+            {isMenuOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
           </div>
-        ) : (
-          <button
-            onClick={handleSignIn}
-            className="flex items-center gap-2 px-6 py-2 rounded-full bg-blue-600 text-white text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/25"
-          >
-            Login
-          </button>
-        )}
+        </button>
       </div>
 
       {/* Mobile Navigation Dropdown - Full Page Cover */}
@@ -244,12 +254,10 @@ const Navbar = () => {
           >
             {/* Top Bar for Mobile Menu */}
             <div className="h-16 px-4 border-b border-gray-100 dark:border-dark-divider flex justify-between items-center sticky top-0 bg-white/80 dark:bg-dark-panel/80 backdrop-blur-md z-10">
-              <button
-                onClick={() => setIsMenuOpen(false)}
-                className="p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-raised rounded-xl transition-all"
-              >
-                <FiX size={24} />
-              </button>
+              <div className="flex items-center">
+                <img src="/logo.png" alt="Ojest" className="h-7 w-auto object-contain dark:hidden" />
+                <img src="/whitelogo.png" alt="Ojest" className="h-7 w-auto object-contain hidden dark:block" />
+              </div>
 
               <div className="flex items-center gap-2">
                 <ThemeToggle size={20} />
@@ -258,10 +266,15 @@ const Navbar = () => {
                 </Link>
                 {isSignedIn && (
                   <div className="flex items-center gap-2">
-                    <FiBell size={20} className="text-gray-700 dark:text-gray-300" />
                     <Avatar src={user?.profilePicture || user?.image} alt="User" size={32} />
                   </div>
                 )}
+                <button
+                  onClick={() => setIsMenuOpen(false)}
+                  className="p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-raised rounded-xl transition-all"
+                >
+                  <FiX size={24} />
+                </button>
               </div>
             </div>
 
@@ -275,7 +288,7 @@ const Navbar = () => {
                       {user?.firstName || "Użytkownik"}
                     </h3>
                     <p className="text-xs text-gray-400 font-bold uppercase tracking-widest leading-none mt-1">
-                      Zalogowany
+                      {user?.sellerType === 'company' ? 'Konto Firmowe' : 'Konto Prywatne'}
                     </p>
                   </div>
                 </div>
@@ -283,76 +296,96 @@ const Navbar = () => {
 
               {/* UNIFIED TILE GRID (All Actions) */}
               <div className="grid grid-cols-2 gap-3">
-                {/* Website Navigation Links */}
-                {navLinks.map((link) => (
+                <QuickAccessBubble
+                  href="/"
+                  icon={<FiHome />}
+                  label="Home"
+                  onClick={() => setIsMenuOpen(false)}
+                />
+                <QuickAccessBubble
+                  href="/dashboard/home"
+                  icon={<RiDashboardHorizontalLine />}
+                  label="Panel"
+                  primary
+                  onClick={() => setIsMenuOpen(false)}
+                />
+                <QuickAccessBubble
+                  href="/dashboard/cars/add"
+                  icon={<BiAddToQueue />}
+                  label="Wystaw"
+                  onClick={() => setIsMenuOpen(false)}
+                />
+                <QuickAccessBubble
+                  href="/dashboard/cars"
+                  icon={<FaCar />}
+                  label="Moje Auta"
+                  onClick={() => setIsMenuOpen(false)}
+                />
+                {user?.sellerType === 'company' && (
                   <QuickAccessBubble
-                    key={link.name}
-                    href={link.href}
-                    icon={link.icon}
-                    label={link.name}
+                    href="/dashboard/seller-opportunities"
+                    icon={<FiClipboard />}
+                    label="Okazje"
                     onClick={() => setIsMenuOpen(false)}
                   />
-                ))}
-
-                {/* Dashboard Specific Links (Only if signed in) */}
-                {isSignedIn && (
-                  <>
-                    <QuickAccessBubble
-                      href="/dashboard/home"
-                      icon={<RiDashboardHorizontalLine />}
-                      label="Panel"
-                      primary
-                      onClick={() => setIsMenuOpen(false)}
-                    />
-                    <QuickAccessBubble
-                      href="/dashboard/cars/add"
-                      icon={<BiAddToQueue />}
-                      label="Wystaw"
-                      onClick={() => setIsMenuOpen(false)}
-                    />
-                    <QuickAccessBubble
-                      href="/dashboard/cars"
-                      icon={<FaCar />}
-                      label="Moje Auta"
-                      onClick={() => setIsMenuOpen(false)}
-                    />
-                    <QuickAccessBubble
-                      href="/dashboard/messages"
-                      icon={<BsChatLeftDots />}
-                      label="Czaty"
-                      badge={chatCount || 0}
-                      onClick={() => setIsMenuOpen(false)}
-                    />
-                    {user?.sellerType === 'private' && (
-                      <QuickAccessBubble
-                        href="/dashboard/buyer-requests"
-                        icon={<FiShoppingBag />}
-                        label="Zapytania"
-                        onClick={() => setIsMenuOpen(false)}
-                      />
-                    )}
-                    {user?.sellerType === 'company' && (
-                      <QuickAccessBubble
-                        href="/dashboard/seller-opportunities"
-                        icon={<FiClipboard />}
-                        label="Okazje"
-                        onClick={() => setIsMenuOpen(false)}
-                      />
-                    )}
-                    <QuickAccessBubble
-                      href="/dashboard/photo-enhancer"
-                      icon={<MdPhotoFilter />}
-                      label="Zdjęcia"
-                      onClick={() => setIsMenuOpen(false)}
-                    />
-                    <QuickAccessBubble
-                      href="/dashboard/profile"
-                      icon={<BsPersonGear />}
-                      label="Profil"
-                      onClick={() => setIsMenuOpen(false)}
-                    />
-                  </>
                 )}
+                {user?.sellerType === 'private' && (
+                  <QuickAccessBubble
+                    href="/dashboard/buyer-requests"
+                    icon={<FiShoppingBag />}
+                    label="Zapytania"
+                    onClick={() => setIsMenuOpen(false)}
+                  />
+                )}
+                <QuickAccessBubble
+                  href="/dashboard/messages"
+                  icon={<BsChatLeftDots />}
+                  label="Czaty"
+                  badge={chatCount || 0}
+                  onClick={() => setIsMenuOpen(false)}
+                />
+                <QuickAccessBubble
+                  href="/dashboard/photo-enhancer"
+                  icon={<MdPhotoFilter />}
+                  label="Zdjęcia"
+                  onClick={() => setIsMenuOpen(false)}
+                />
+                <QuickAccessBubble
+                  href="/dashboard/profile"
+                  icon={<BsPersonGear />}
+                  label="Profil"
+                  onClick={() => setIsMenuOpen(false)}
+                />
+                <QuickAccessBubble
+                  href="/discovery"
+                  icon={<FiSearch />}
+                  label="Discovery"
+                  onClick={() => setIsMenuOpen(false)}
+                />
+                <QuickAccessBubble
+                  href="/wishlist"
+                  icon={<FiHeart />}
+                  label="Wishlist"
+                  onClick={() => setIsMenuOpen(false)}
+                />
+                <QuickAccessBubble
+                  href="/website/blog"
+                  icon={<FiBook />}
+                  label="Blog"
+                  onClick={() => setIsMenuOpen(false)}
+                />
+                <QuickAccessBubble
+                  href="/website/faq"
+                  icon={<FiLifeBuoy />}
+                  label="FAQ"
+                  onClick={() => setIsMenuOpen(false)}
+                />
+                <QuickAccessBubble
+                  href="/website/contact"
+                  icon={<FiPhone />}
+                  label="Contact"
+                  onClick={() => setIsMenuOpen(false)}
+                />
               </div>
 
               {!isSignedIn ? (

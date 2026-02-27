@@ -76,18 +76,15 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
 
   return (
     <header className="w-full h-16 px-4 bg-white dark:bg-dark-panel shadow-md flex justify-between items-center z-30 sticky top-0 transition-colors duration-300">
-      {/* Mobile Sidebar Toggle - Left Side */}
-      <div className="flex items-center">
-        <button
-          onClick={toggleSidebar}
-          className="p-2 text-gray-700 dark:text-gray-300 md:hidden hover:bg-gray-100 dark:hover:bg-dark-raised rounded-xl transition-all"
-          aria-label="Toggle Sidebar"
-        >
-          {isOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
-        </button>
+      {/* Logo Section - Left Side */}
+      <div className="flex items-center gap-3">
+        <Link href="/" className="flex items-center">
+          <img src="/logo.png" alt="Ojest" className="h-8 md:h-9 w-auto object-contain dark:hidden" />
+          <img src="/whitelogo.png" alt="Ojest" className="h-8 md:h-9 w-auto object-contain hidden dark:block" />
+        </Link>
       </div>
 
-      <div className="flex items-center space-x-2 md:space-x-3">
+      <div className="flex items-center space-x-1 md:space-x-3">
         {/* Theme Toggle */}
         <ThemeToggle size={22} />
 
@@ -127,7 +124,7 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
                     {(notifications || []).slice(0, 8).map((n) => (
                       <li
                         key={n.id}
-                        className={`px-3 py-2 flex items-start gap-3 ${n.read ? "opacity-80" : ""} cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-raised`}
+                        className={`px-3 py-2 flex items-start gap-3 ${n.read ? "opacity-80" : ""} cursor-pointer hover:bg-gray-100 dark:hover:bg-dark-raised`}
                         onClick={() => handleNotifClick(n)}
                       >
                         <div className={`mt-1 w-2 h-2 rounded-full ${n.read ? "bg-gray-300" : "bg-blue-500"}`} />
@@ -150,10 +147,29 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
           )}
         </div>
 
-        {/* User Dropdown (Unified) - Hidden on Mobile */}
+        {/* User Dropdown (Unified) - Desktop Only */}
         <div className="hidden md:block">
           <UserAccountDropdown />
         </div>
+
+        {/* Mobile Sidebar Toggle - Merged with User Profile info */}
+        <button
+          onClick={toggleSidebar}
+          className="md:hidden flex items-center gap-2 p-1.5 pl-2 pr-3 bg-gray-50 dark:bg-dark-raised border border-gray-200 dark:border-dark-divider rounded-full transition-all active:scale-95"
+          aria-label="Toggle Navigation"
+        >
+          {user && (
+            <Avatar
+              src={user?.image || user?.profilePicture}
+              alt={user?.firstName || "User"}
+              size={24}
+              className="ring-1 ring-blue-500/20"
+            />
+          )}
+          <div className="text-gray-700 dark:text-gray-300">
+            {isOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
+          </div>
+        </button>
       </div>
     </header>
   );
