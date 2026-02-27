@@ -255,20 +255,13 @@ const Navbar = () => {
             {/* Top Bar for Mobile Menu */}
             <div className="h-16 px-4 border-b border-gray-100 dark:border-dark-divider flex justify-between items-center sticky top-0 bg-white/80 dark:bg-dark-panel/80 backdrop-blur-md z-10">
               <div className="flex items-center">
-                <img src="/logo.png" alt="Ojest" className="h-7 w-auto object-contain dark:hidden" />
-                <img src="/whitelogo.png" alt="Ojest" className="h-7 w-auto object-contain hidden dark:block" />
+                <Link href="/" onClick={() => setIsMenuOpen(false)} className="flex items-center">
+                  <img src="/logo.png" alt="Ojest" className="h-8 md:h-9 w-auto object-contain dark:hidden" />
+                  <img src="/whitelogo.png" alt="Ojest" className="h-8 md:h-9 w-auto object-contain hidden dark:block" />
+                </Link>
               </div>
 
               <div className="flex items-center gap-2">
-                <ThemeToggle size={20} />
-                <Link href="/dashboard/messages" onClick={() => setIsMenuOpen(false)} className="p-2 text-gray-700 dark:text-gray-300">
-                  <BsChatLeftDots size={20} />
-                </Link>
-                {isSignedIn && (
-                  <div className="flex items-center gap-2">
-                    <Avatar src={user?.profilePicture || user?.image} alt="User" size={32} />
-                  </div>
-                )}
                 <button
                   onClick={() => setIsMenuOpen(false)}
                   className="p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-raised rounded-xl transition-all"
