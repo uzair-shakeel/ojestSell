@@ -180,14 +180,19 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
   // Helper to check if link is active
   const isActive = (href) => {
     if (!pathname || !href) return false;
-    if (pathname === href) return true;
+
+    // Normalize paths: remove trailing slash for comparison, but preserve root
+    const p = pathname === "/" ? "/" : pathname.replace(/\/$/, "");
+    const h = href === "/" ? "/" : href.replace(/\/$/, "");
+
+    if (h === "/") return p === "/";
 
     // Special case for Moje Auta: don't highlight if on Wystaw Auto (/dashboard/cars/add)
     if (href === '/dashboard/cars' && pathname.startsWith('/dashboard/cars/add')) {
       return false;
     }
 
-    return pathname.startsWith(href + '/');
+    return p === h || p.startsWith(h + '/');
   };
 
   return (

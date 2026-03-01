@@ -10,12 +10,13 @@ import { useNotifications } from "../../lib/notifications/NotificationsContext";
 import Avatar from "../both/Avatar";
 import UserAccountDropdown from "../both/UserAccountDropdown";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiBell, FiMenu, FiX, FiSearch, FiHeart, FiBook, FiLifeBuoy, FiPhone, FiLayout, FiUser, FiLogOut, FiShoppingBag, FiClipboard, FiHome } from "react-icons/fi";
+import { FiBell, FiMenu, FiX, FiSearch, FiHeart, FiBook, FiLifeBuoy, FiPhone, FiLayout, FiUser, FiLogOut, FiShoppingBag, FiClipboard, FiHome, FiChevronDown } from "react-icons/fi";
 import { BsChatLeftDots, BsPersonGear } from "react-icons/bs";
 import { RiDashboardHorizontalLine } from "react-icons/ri";
 import { BiAddToQueue } from "react-icons/bi";
 import { FaCar } from "react-icons/fa";
 import { MdPhotoFilter } from "react-icons/md";
+import { usePathname } from "next/navigation";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -24,6 +25,7 @@ const Navbar = () => {
   const router = useRouter();
   const { t } = useLanguage();
   const { isSignedIn, logout, user } = useAuth();
+  const pathname = usePathname();
   const notifRef = useRef(null);
 
   // Get notifications (hook must be called unconditionally)
@@ -84,13 +86,79 @@ const Navbar = () => {
     router.push("/");
   };
 
-  const navLinks = [
-    { name: "Discover", href: "/discovery", icon: <FiSearch className="w-6 h-6" /> },
-    { name: "Wishlist", href: "/wishlist", icon: <FiHeart className="w-6 h-6" /> },
-    { name: "Blog", href: "/website/blog", icon: <FiBook className="w-6 h-6" /> },
-    { name: "FAQ", href: "/website/faq", icon: <FiLifeBuoy className="w-6 h-6" /> },
-    { name: "Contact", href: "/website/contact", icon: <FiPhone className="w-6 h-6" /> },
+  const dashboardMenuItems = [
+    {
+      label: "Panel",
+      href: "/dashboard/home",
+      icon: <RiDashboardHorizontalLine className="w-6 h-6" />,
+    },
+    {
+      label: "Wystaw Auto",
+      href: "/dashboard/cars/add",
+      icon: <BiAddToQueue className="w-6 h-6" />,
+    },
+    {
+      label: "Moje Auta",
+      href: "/dashboard/cars",
+      icon: <FaCar className="w-6 h-6" />,
+    },
+    ...(user?.sellerType === "company"
+      ? [
+        {
+          label: "Możliwości Dla Sprzedawców",
+          href: "/dashboard/seller-opportunities",
+          icon: <FiClipboard className="w-6 h-6" />,
+        },
+      ]
+      : user?.sellerType === "private"
+        ? [
+          {
+            label: "Zapytania Kupujących",
+            href: "/dashboard/buyer-requests",
+            icon: <FiShoppingBag className="w-6 h-6" />,
+          },
+        ]
+        : []),
+    {
+      label: "Wiadomości",
+      href: "/dashboard/messages",
+      icon: <BsChatLeftDots className="w-6 h-6" />,
+    },
+    {
+      label: "Ulepszacz Zdjęć",
+      href: "/dashboard/photo-enhancer",
+      icon: <MdPhotoFilter className="w-6 h-6" />,
+    },
+    {
+      label: "Profil",
+      href: "/dashboard/profile",
+      icon: <BsPersonGear className="w-6 h-6" />,
+    },
   ];
+
+  const websiteLinks = [
+    { label: "Home", href: "/", icon: <FiHome className="w-6 h-6" /> },
+    { label: "Discovery", href: "/discovery", icon: <FiSearch className="w-6 h-6" /> },
+    { label: "Wishlist", href: "/wishlist", icon: <FiHeart className="w-6 h-6" /> },
+    { label: "Blog", href: "/website/blog", icon: <FiBook className="w-6 h-6" /> },
+    { label: "FAQ", href: "/website/faq", icon: <FiLifeBuoy className="w-6 h-6" /> },
+    { label: "Contact", href: "/website/contact", icon: <FiPhone className="w-6 h-6" /> },
+  ];
+
+  const mobileMenuItems = [
+    websiteLinks[0], // Home
+    ...(isSignedIn ? dashboardMenuItems : []),
+    ...websiteLinks.slice(1),
+  ];
+
+  const isActive = (href) => {
+    if (!pathname || !href) return false;
+    const p = pathname === "/" ? "/" : pathname.replace(/\/$/, "");
+    const h = href === "/" ? "/" : href.replace(/\/$/, "");
+    if (h === "/") return p === "/";
+    if (href === '/dashboard/cars' && pathname.startsWith('/dashboard/cars/add')) return false;
+    return p === h || p.startsWith(h + '/');
+  };
 
   // Close notification popup when clicking outside
   useEffect(() => {
@@ -289,96 +357,17 @@ const Navbar = () => {
 
               {/* UNIFIED TILE GRID (All Actions) */}
               <div className="grid grid-cols-2 gap-3">
-                <QuickAccessBubble
-                  href="/"
-                  icon={<FiHome />}
-                  label="Home"
-                  onClick={() => setIsMenuOpen(false)}
-                />
-                <QuickAccessBubble
-                  href="/dashboard/home"
-                  icon={<RiDashboardHorizontalLine />}
-                  label="Panel"
-                  primary
-                  onClick={() => setIsMenuOpen(false)}
-                />
-                <QuickAccessBubble
-                  href="/dashboard/cars/add"
-                  icon={<BiAddToQueue />}
-                  label="Wystaw"
-                  onClick={() => setIsMenuOpen(false)}
-                />
-                <QuickAccessBubble
-                  href="/dashboard/cars"
-                  icon={<FaCar />}
-                  label="Moje Auta"
-                  onClick={() => setIsMenuOpen(false)}
-                />
-                {user?.sellerType === 'company' && (
+                {mobileMenuItems.map((item) => (
                   <QuickAccessBubble
-                    href="/dashboard/seller-opportunities"
-                    icon={<FiClipboard />}
-                    label="Okazje"
+                    key={item.label}
+                    href={item.href}
+                    icon={item.icon}
+                    label={item.label}
                     onClick={() => setIsMenuOpen(false)}
+                    active={isActive(item.href)}
+                    badge={item.label === "Wiadomości" ? chatCount : 0}
                   />
-                )}
-                {user?.sellerType === 'private' && (
-                  <QuickAccessBubble
-                    href="/dashboard/buyer-requests"
-                    icon={<FiShoppingBag />}
-                    label="Zapytania"
-                    onClick={() => setIsMenuOpen(false)}
-                  />
-                )}
-                <QuickAccessBubble
-                  href="/dashboard/messages"
-                  icon={<BsChatLeftDots />}
-                  label="Czaty"
-                  badge={chatCount || 0}
-                  onClick={() => setIsMenuOpen(false)}
-                />
-                <QuickAccessBubble
-                  href="/dashboard/photo-enhancer"
-                  icon={<MdPhotoFilter />}
-                  label="Zdjęcia"
-                  onClick={() => setIsMenuOpen(false)}
-                />
-                <QuickAccessBubble
-                  href="/dashboard/profile"
-                  icon={<BsPersonGear />}
-                  label="Profil"
-                  onClick={() => setIsMenuOpen(false)}
-                />
-                <QuickAccessBubble
-                  href="/discovery"
-                  icon={<FiSearch />}
-                  label="Discovery"
-                  onClick={() => setIsMenuOpen(false)}
-                />
-                <QuickAccessBubble
-                  href="/wishlist"
-                  icon={<FiHeart />}
-                  label="Wishlist"
-                  onClick={() => setIsMenuOpen(false)}
-                />
-                <QuickAccessBubble
-                  href="/website/blog"
-                  icon={<FiBook />}
-                  label="Blog"
-                  onClick={() => setIsMenuOpen(false)}
-                />
-                <QuickAccessBubble
-                  href="/website/faq"
-                  icon={<FiLifeBuoy />}
-                  label="FAQ"
-                  onClick={() => setIsMenuOpen(false)}
-                />
-                <QuickAccessBubble
-                  href="/website/contact"
-                  icon={<FiPhone />}
-                  label="Contact"
-                  onClick={() => setIsMenuOpen(false)}
-                />
+                ))}
               </div>
 
               {!isSignedIn ? (
@@ -417,26 +406,26 @@ const Navbar = () => {
 
 const ArrowRight = ({ className }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
 
-function QuickAccessBubble({ href, icon, label, onClick, primary = false, badge = 0 }) {
+function QuickAccessBubble({ href, icon, label, onClick, active = false, badge = 0 }) {
   return (
     <Link
       href={href}
       onClick={onClick}
       className={`
-        group flex flex-col items-center justify-center h-28 rounded-[2rem] text-[10px] font-black uppercase tracking-[0.3em] transition-all text-center px-4 gap-3 relative
-        ${primary
-          ? "bg-blue-600 text-white shadow-lg shadow-blue-500/25"
+        group flex flex-col items-center justify-center h-28 rounded-[2rem] text-[10px] font-black uppercase tracking-[0.2em] transition-all text-center px-4 gap-3 relative
+        ${active
+          ? "bg-blue-600 text-white shadow-xl shadow-blue-500/30"
           : "bg-gray-50 dark:bg-dark-card text-gray-900 dark:text-white border border-gray-100 dark:border-dark-divider hover:bg-blue-600 hover:text-white"
         }
       `}
     >
-      <span className={`${primary ? "text-white" : "text-blue-500 group-hover:text-white"} transition-colors`}>
+      <span className={`${active ? "" : "text-blue-500 group-hover:text-white"} transition-colors`}>
         {React.cloneElement(icon, { className: "w-6 h-6" })}
       </span>
       <span>{label}</span>
 
       {badge > 0 && (
-        <span className={`absolute top-4 right-4 h-5 w-auto min-w-[20px] px-1.5 flex items-center justify-center rounded-full text-[10px] font-black ${primary ? "bg-white text-blue-600" : "bg-red-500 text-white"}`}>
+        <span className={`absolute top-4 right-4 h-5 w-auto min-w-[20px] px-1.5 flex items-center justify-center rounded-full text-[10px] font-black ${active ? "bg-white text-blue-600" : "bg-red-500 text-white"}`}>
           {badge}
         </span>
       )}
