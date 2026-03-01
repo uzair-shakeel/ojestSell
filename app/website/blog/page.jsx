@@ -22,7 +22,7 @@ const BlogPage = () => {
             backgroundPosition: "center",
           }}
         >
-          <div className="bg-black/20 flex justify-start md:justify-end py-4 md:py-24 px-4 h-full">
+          {/* <div className="bg-black/20 flex justify-start md:justify-end py-4 md:py-24 px-4 h-full">
             <div className="relative z-10 md:w-1/3 px-6 flex flex-col justify-center">
               <h1 className="text-xl font-extrabold pt-24 md:pt-0 text-white sm:text-4xl">
                 {t("blog.hero.title")}
@@ -31,7 +31,7 @@ const BlogPage = () => {
                 {t("blog.hero.subtitle")}
               </p>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 

@@ -53,13 +53,13 @@ const ContactPage = () => {
             backgroundPosition: "center",
           }}
         >
-          <div className="bg-black/20 flex justify-start md:justify-end py-4 md:py-24 px-4 h-full">
+          {/* <div className="bg-black/20 flex justify-start md:justify-end py-4 md:py-24 px-4 h-full">
             <div className="relative z-10 w-full md:w-2/5 px-6 flex flex-col justify-center">
               <h1 className="text-xl font-extrabold pt-24 md:pt-0 text-white sm:text-4xl">
                 {t("contact.hero.title")}
               </h1>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">

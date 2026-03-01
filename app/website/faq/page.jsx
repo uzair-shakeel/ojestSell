@@ -81,11 +81,11 @@ const FAQPage = () => {
         </div>
 
         <div className="relative z-10 container h-full flex flex-col justify-between py-[50px] md:py-[20px] items-center text-center text-white">
-          <div>
+          {/* <div>
             <h1 className="text-xl md:text-5xl font-bold mb-4">
               {t("faq.hero.title")}
             </h1>
-          </div>
+          </div> */}
           <div className="absolute md:bottom-20 bottom-10 left-5 right-5 bg-white/70 dark:bg-dark-main/70 backdrop-blur-sm p-2 rounded-xl shadow-lg max-w-3xl mx-auto transition-colors duration-300">
             <FAQItem question={firstFaq.question} answer={firstFaq.answer} />
           </div>
