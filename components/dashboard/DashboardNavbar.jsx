@@ -21,7 +21,7 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, getToken, userId, updateUserState } = useAuth();
   const router = useRouter();
-  const { notifications, unreadCount, markRead, markAll, add } = useNotifications();
+  const { notifications, unreadCount, messageCount, markRead, markAll, add } = useNotifications();
   const [openNotif, setOpenNotif] = useState(false);
   const notifRef = useRef(null);
 
@@ -91,10 +91,15 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
         {/* Messages Icon */}
         <Link
           href="/dashboard/messages"
-          className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-dark-raised text-gray-700 dark:text-dark-text-secondary transition-colors"
+          className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-dark-raised text-gray-700 dark:text-dark-text-secondary transition-colors"
           title="Messages"
         >
           <BsChatLeftDots className="w-5 h-5" />
+          {messageCount > 0 && (
+            <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-red-600 text-white text-[10px] flex items-center justify-center">
+              {messageCount > 9 ? "9+" : messageCount}
+            </span>
+          )}
         </Link>
 
         {/* Notifications */}

@@ -21,7 +21,6 @@ import { usePathname } from "next/navigation";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openNotif, setOpenNotif] = useState(false);
-  const [chatCount, setChatCount] = useState(0);
   const router = useRouter();
   const { t } = useLanguage();
   const { isSignedIn, logout, user } = useAuth();
@@ -32,6 +31,7 @@ const Navbar = () => {
   let notificationsContext = null;
   let notificationsList = [];
   let unreadCount = 0;
+  let messageCount = 0;
   let notificationsError = false;
   let markRead = null;
   let markAll = null;
@@ -40,6 +40,7 @@ const Navbar = () => {
     notificationsContext = useNotifications();
     notificationsList = notificationsContext?.notifications || [];
     unreadCount = notificationsContext?.unreadCount || 0;
+    messageCount = notificationsContext?.messageCount || 0;
     markRead = notificationsContext?.markRead;
     markAll = notificationsContext?.markAll;
   } catch (e) {
@@ -212,6 +213,11 @@ const Navbar = () => {
               title="Messages"
             >
               <BsChatLeftDots className="w-5 h-5 md:w-[22px] md:h-[22px]" />
+              {messageCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-red-600 text-white text-[10px] flex items-center justify-center">
+                  {messageCount > 9 ? "9+" : messageCount}
+                </span>
+              )}
             </Link>
 
             {/* Notification Bell */}
@@ -365,7 +371,7 @@ const Navbar = () => {
                     label={item.label}
                     onClick={() => setIsMenuOpen(false)}
                     active={isActive(item.href)}
-                    badge={item.label === "Wiadomości" ? chatCount : 0}
+                    badge={item.label === "Wiadomości" ? messageCount : 0}
                   />
                 ))}
               </div>

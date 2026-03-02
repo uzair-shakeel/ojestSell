@@ -13,14 +13,15 @@ import { useAuth } from "../../lib/auth/AuthContext";
 import { useRouter, usePathname } from "next/navigation";
 import Avatar from "../both/Avatar";
 import ThemeToggle from "../ThemeToggle";
+import { useNotifications } from "../../lib/notifications/NotificationsContext";
 
 // Prefer same-origin proxy (/api) unless a full external base is explicitly provided
 const RAW_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 const API_BASE = RAW_BASE ? RAW_BASE.replace(/\/$/, "") : "";
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
-  const [chatCount, setChatCount] = useState(0);
   const { userId, getToken, user, logout } = useAuth();
+  const { messageCount } = useNotifications();
   const router = useRouter();
   const [profileImage, setProfileImage] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -56,48 +57,6 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
       setProfileImage(raw || null);
     }
   }, [user]);
-
-  // Fetch chat count when component mounts
-  useEffect(() => {
-    if (!userId) return;
-
-    const fetchChats = async () => {
-      try {
-        const token = await getToken();
-        if (!token) {
-          console.error("No token available for chat fetch");
-          return;
-        }
-
-        console.log("Fetching chats with token");
-        // If external base provided, hit it directly, otherwise use Next.js rewrite via /api
-        const chatUrl = API_BASE
-          ? `${API_BASE}/api/chat/my-chats`
-          : `/api/chat/my-chats`;
-        const response = await fetch(chatUrl, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          console.error("Failed to fetch chats, status:", response.status);
-          return;
-        }
-
-        const data = await response.json();
-        const chatsArray = Array.isArray(data) ? data : data.chats || [];
-        // Set the chat count to the total unread messages across chats
-        const unreadTotal = chatsArray.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
-        setChatCount(unreadTotal);
-      } catch (err) {
-        console.error("Error fetching chats:", err);
-      }
-    };
-
-    fetchChats();
-  }, [userId, getToken]);
-
 
   const dashboardMenuItems = [
     {
@@ -249,7 +208,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                     item={item}
                     onClick={toggleSidebar}
                     active={isActive(item.href)}
-                    badge={item.label === "Wiadomości" ? chatCount : 0}
+                    badge={item.label === "Wiadomości" ? messageCount : 0}
                   />
                 ))}
               </div>
@@ -328,9 +287,9 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                 >
                   <span className={`transition-transform duration-200 ${active ? "" : "group-hover:scale-110"}`}>{item.icon}</span>
                   <span className="flex-grow">{item.label}</span>
-                  {item.label === "Wiadomości" && chatCount > 0 && (
+                  {item.label === "Wiadomości" && messageCount > 0 && (
                     <span className={`flex h-5 w-auto min-w-[20px] items-center justify-center rounded-full px-1.5 text-[10px] ${active ? "bg-white text-blue-600" : "bg-red-500 text-white"}`}>
-                      {chatCount}
+                      {messageCount}
                     </span>
                   )}
                 </Link>

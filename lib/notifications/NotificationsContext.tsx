@@ -1,7 +1,9 @@
 "use client";
 import React, { createContext, useContext, useEffect, useMemo, useState, useCallback, useRef } from "react";
 import io from "socket.io-client";
+import axios from "axios";
 import { useAuth } from "../auth/AuthContext";
+import { usePathname } from "next/navigation";
 import {
   fetchNotifications,
   createNotification,
@@ -17,9 +19,11 @@ const SOCKET_PATH = process.env.NEXT_PUBLIC_SOCKET_PATH || "/socket.io/";
 
 export type NotificationsContextType = {
   notifications: NotificationItem[];
-  unreadCount: number;
+  unreadCount: number; // For the bell (excludes messages)
+  messageCount: number; // For the messages icon
   add: (n: Omit<NotificationItem, "id" | "createdAt" | "read">) => Promise<void>;
   markRead: (id: string) => Promise<void>;
+  markTypeRead: (type: string) => Promise<void>;
   markAll: () => Promise<void>;
   refresh: () => Promise<void>;
 };
@@ -28,11 +32,19 @@ const NotificationsContext = createContext<NotificationsContextType | undefined>
 
 export function NotificationsProvider({ children }: { children: React.ReactNode }) {
   const { user, getToken, userId } = useAuth();
+  const pathname = usePathname();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const prevCarsRef = useRef<Record<string, any>>({});
   const recentNotificationsRef = useRef<Set<string>>(new Set());
 
-  const unreadCount = useMemo(() => notifications.filter((n) => !n.read).length, [notifications]);
+  // Separate counts for the bell and the messages icon
+  const unreadCount = useMemo(() =>
+    notifications.filter((n) => !n.read && n.type !== "message").length,
+    [notifications]);
+
+  const messageCount = useMemo(() =>
+    notifications.filter((n) => !n.read && n.type === "message").length,
+    [notifications]);
 
   const refresh = useCallback(async () => {
     const list = await fetchNotifications();
@@ -78,6 +90,16 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
   }, []);
 
+  const markTypeRead = useCallback(async (type: string) => {
+    // Optimistically update UI
+    setNotifications((prev) => prev.map((n) => (n.type === type ? { ...n, read: true } : n)));
+    try {
+      await axios.post(`${API_BASE}/api/notifications/mark-type-read`, { type });
+    } catch (e) {
+      console.error(`[Notifications] Failed to mark ${type} read on server:`, e);
+    }
+  }, []);
+
   const markAll = useCallback(async () => {
     await markAllNotificationsRead();
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
@@ -86,6 +108,13 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
   useEffect(() => {
     refresh();
   }, [refresh]);
+
+  // Automatically clear message notifications when viewing the messages page
+  useEffect(() => {
+    if (pathname === "/dashboard/messages" && messageCount > 0) {
+      markTypeRead("message");
+    }
+  }, [pathname, messageCount, markTypeRead]);
 
   // Listen to custom DOM events from other parts of the app
   useEffect(() => {
@@ -105,13 +134,13 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
     if (!user || typeof window === 'undefined') return;
     const token = getToken();
     console.log('[Notifications] Connecting to socket:', SOCKET_BASE, 'with path:', SOCKET_PATH);
-    const socket = io(SOCKET_BASE, { 
+    const socket = io(SOCKET_BASE, {
       path: SOCKET_PATH,
       autoConnect: true,
       withCredentials: true,
-      auth: { 
+      auth: {
         token,
-        userId: user.id || user._id 
+        userId: user.id || user._id
       }
     });
 
@@ -139,11 +168,11 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
 
     socket.on("chat:message:received", (payload: any) => {
       const senderName = payload?.senderName || payload?.sender?.name || payload?.sender?.firstName || "Ktoś";
-      add({ 
-        type: "message", 
-        title: "Nowa wiadomość", 
-        body: `Otrzymałeś wiadomość od ${senderName}`, 
-        meta: payload 
+      add({
+        type: "message",
+        title: "Nowa wiadomość",
+        body: `Otrzymałeś wiadomość od ${senderName}`,
+        meta: payload
       });
     });
 
@@ -154,7 +183,7 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
     socket.on("car:status", (data: any) => {
       let title = "Aktualizacja statusu";
       let body = "Status zaktualizowany";
-      
+
       if (data?.status === "Approved") {
         title = "Samochód zatwierdzony";
         body = "Twój samochód został zatwierdzony";
@@ -165,7 +194,7 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
         title = "Status samochodu";
         body = "Twój samochód oczekuje na zatwierdzenie";
       }
-      
+
       add({ type: "status", title, body, meta: data });
     });
 
@@ -174,15 +203,15 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
       if (!payload || !payload.message) return;
       const { chatId, message } = payload;
       const myUserId = user?.id || user?._id;
-      
+
       // Only notify if message is from someone else
       if (String(message.sender) !== String(myUserId)) {
         console.log("[Notifications] New message received:", { chatId, sender: message.sender, content: message.content });
-        add({ 
-          type: "message", 
-          title: "Nowa wiadomość", 
-          body: message.content || "Masz nową wiadomość", 
-          meta: { chatId, messageId: message.id } 
+        add({
+          type: "message",
+          title: "Nowa wiadomość",
+          body: message.content || "Masz nową wiadomość",
+          meta: { chatId, messageId: message.id }
         });
       }
     });
@@ -218,10 +247,10 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
             const prev = prevCarsRef.current[id];
             if (prev && prev.status !== map[id].status) {
               console.log("[Notifications] Status changed:", id, prev.status, "->", map[id].status);
-              
+
               let title = "Aktualizacja statusu";
               let body = "Status zaktualizowany";
-              
+
               if (map[id].status === "Approved") {
                 title = "Samochód zatwierdzony";
                 body = "Twój samochód został zatwierdzony";
@@ -232,7 +261,7 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
                 title = "Status samochodu";
                 body = "Twój samochód oczekuje na zatwierdzenie";
               }
-              
+
               add({
                 type: "status",
                 title,
@@ -261,7 +290,7 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
     };
   }, [userId, getToken, add]);
 
-  const value: NotificationsContextType = { notifications, unreadCount, add, markRead, markAll, refresh };
+  const value: NotificationsContextType = { notifications, unreadCount, messageCount, add, markRead, markTypeRead, markAll, refresh };
   return <NotificationsContext.Provider value={value}>{children}</NotificationsContext.Provider>;
 }
 
