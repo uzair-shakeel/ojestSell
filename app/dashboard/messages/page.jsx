@@ -335,14 +335,18 @@ const MessagesPage = () => {
       // Backend emits: { chatId, message: { id, content, sender, timestamp } }
       if (!payload || !payload.message) return;
       const { chatId, message } = payload;
-      const myUserId = user?.id || user?._id;
+      const currentUserId = user?.id || user?._id || authUserId;
 
-      console.log("🔔 Raw socket payload:", { chatId, message, myUserId });
+      console.log("🔔 Raw socket payload:", { chatId, message, currentUserId });
+
+      const senderId = (typeof message.sender === 'object' && message.sender?._id)
+        ? message.sender._id
+        : message.sender;
 
       const processedMessage = {
         _id: message.id,
         chatId,
-        sender: message.sender,
+        sender: senderId, // We store string ID for internal consistency
         content: message.content,
         text: message.content,
         createdAt: message.timestamp,
@@ -351,7 +355,7 @@ const MessagesPage = () => {
       console.log("📦 Processed message:", processedMessage);
 
       // Emit notification if message is from someone else
-      if (String(message.sender) !== String(myUserId)) {
+      if (String(senderId) !== String(currentUserId)) {
         try {
           window.dispatchEvent(
             new CustomEvent("ojest:notify", {
@@ -370,7 +374,7 @@ const MessagesPage = () => {
 
       // Add a readable senderName for display
       try {
-        if (String(message.sender) === String(myUserId)) {
+        if (String(senderId) === String(currentUserId)) {
           processedMessage.senderName = "You";
         } else if (selectedChat) {
           // Try to resolve other participant name from selectedChat
@@ -394,12 +398,12 @@ const MessagesPage = () => {
       setChats((prevChats) => {
         const updated = (prevChats || []).map((c) => {
           if (c._id !== chatId) return c;
-          const isIncoming = String(message.sender) !== String(myUserId);
+          const isIncoming = String(senderId) !== String(currentUserId);
           return {
             ...c,
             lastMessage: {
               content: message.content,
-              sender: message.sender,
+              sender: senderId,
               timestamp: message.timestamp,
             },
             unreadCount:
@@ -420,19 +424,28 @@ const MessagesPage = () => {
           console.log("📨 Received newMessage event", { chatId, message, currentMessages: prev.length });
 
           // Check if this is our own message by matching sender
-          const isOwnMessage = String(message.sender) === String(myUserId);
+          const isOwnMessage = String(senderId) === String(currentUserId);
 
           if (isOwnMessage) {
-            // Find the most recent pending message with matching content
-            // Search from end to start to get the latest one
-            let pendingIdx = -1;
-            const searchText = (processedMessage.text || "").trim();
+            console.log("👤 Own message received via socket, attempting to replace pending bubble...");
+            // Match by tempId if possible (backend should return it if we sent it)
+            const incomingTempId = payload.tempId || message.tempId;
 
-            for (let i = prev.length - 1; i >= 0; i--) {
-              const pendingText = (prev[i].text || "").trim();
-              if (prev[i].pending && pendingText === searchText) {
-                pendingIdx = i;
-                break;
+            let pendingIdx = -1;
+
+            if (incomingTempId) {
+              pendingIdx = prev.findIndex(m => m.pending && (m.tempId === incomingTempId || m._id === incomingTempId));
+            }
+
+            // Fallback to content matching if no tempId match
+            if (pendingIdx === -1) {
+              const searchText = (processedMessage.text || "").trim();
+              for (let i = prev.length - 1; i >= 0; i--) {
+                const pendingText = (prev[i].text || "").trim();
+                if (prev[i].pending && pendingText === searchText) {
+                  pendingIdx = i;
+                  break;
+                }
               }
             }
 
@@ -469,8 +482,8 @@ const MessagesPage = () => {
         });
 
         // If an incoming message arrives while chat is open, mark it read now
-        if (String(message.sender) !== String(myUserId)) {
-          socket.emit("markAsRead", { chatId, userId: myUserId });
+        if (String(senderId) !== String(currentUserId)) {
+          socket.emit("markAsRead", { chatId, userId: currentUserId });
           // Also ensure its unreadCount is 0 locally
           setChats((prev) =>
             (prev || []).map((c) => (c._id === chatId ? { ...c, unreadCount: 0 } : c))
@@ -813,7 +826,10 @@ const MessagesPage = () => {
               messages.length > 0 ? (
                 <>
                   {messages.map((message, index) => {
-                    const isMe = String(message.sender) === String(myUserId) || String(message.senderId) === String(myUserId);
+                    const messageSenderId = (typeof message.sender === 'object' && message.sender?._id)
+                      ? message.sender._id
+                      : (message.sender || message.senderId);
+                    const isMe = String(messageSenderId) === String(myUserId);
                     const isLast = index === messages.length - 1;
 
                     return (
@@ -831,12 +847,11 @@ const MessagesPage = () => {
                               : "bg-white dark:bg-dark-card text-gray-800 dark:text-gray-100 border border-gray-100 dark:border-gray-600 rounded-bl-none shadow-black/5"
                               } ${message.pending ? "opacity-80" : "opacity-100"}`}
                           >
-                            {String(message.sender) !== String(myUserId) &&
-                              String(message.senderId) !== String(myUserId) && (
-                                <div className="font-bold text-[10px] uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2">
-                                  {message.senderName || "Użytkownik"}
-                                </div>
-                              )}
+                            {String(messageSenderId) !== String(myUserId) && (
+                              <div className="font-bold text-[10px] uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2">
+                                {message.senderName || "Użytkownik"}
+                              </div>
+                            )}
                             {message.text || message.content}
 
                             <div className={`text-right text-[10px] font-bold mt-2 ${isMe ? 'text-blue-200' : 'text-gray-300 dark:text-gray-500'}`}>

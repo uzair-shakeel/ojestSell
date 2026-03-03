@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import LanguageSwitcher from "../LanguageSwitcher";
@@ -21,11 +21,13 @@ import { usePathname } from "next/navigation";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openNotif, setOpenNotif] = useState(false);
+  const [openMsg, setOpenMsg] = useState(false);
   const router = useRouter();
   const { t } = useLanguage();
   const { isSignedIn, logout, user } = useAuth();
   const pathname = usePathname();
   const notifRef = useRef(null);
+  const msgRef = useRef(null);
 
   // Get notifications (hook must be called unconditionally)
   let notificationsContext = null;
@@ -50,6 +52,23 @@ const Navbar = () => {
       console.warn('[Navbar] Notifications not available for signed-in user:', e);
     }
   }
+
+  // Group messages by chatId to avoid duplicates (Facebook style)
+  const displayMessages = useMemo(() => {
+    const msgNotifs = notificationsList.filter(n => n.type === 'message');
+    const grouped = msgNotifs.reduce((acc, n) => {
+      const chatId = n.meta?.chatId;
+      if (!chatId) return acc;
+      if (!acc[chatId] || new Date(n.createdAt) > new Date(acc[chatId].createdAt)) {
+        acc[chatId] = n;
+      }
+      return acc;
+    }, {});
+
+    return Object.values(grouped).sort((a, b) =>
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }, [notificationsList]);
 
   const getNotifTarget = (n) => {
     try {
@@ -161,18 +180,15 @@ const Navbar = () => {
     return p === h || p.startsWith(h + '/');
   };
 
-  // Close notification popup when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handler = (e) => {
-      if (notifRef.current && !notifRef.current.contains(e.target)) {
-        setOpenNotif(false);
-      }
+      if (notifRef.current && !notifRef.current.contains(e.target)) setOpenNotif(false);
+      if (msgRef.current && !msgRef.current.contains(e.target)) setOpenMsg(false);
     };
-    if (openNotif) {
-      document.addEventListener('mousedown', handler);
-      return () => document.removeEventListener('mousedown', handler);
-    }
-  }, [openNotif]);
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   // Smooth dropdown: animate max-height from 0 to content height
   const dropdownRef = useRef(null);
@@ -206,19 +222,60 @@ const Navbar = () => {
         {/* Status Icons: Messages & Notifications */}
         {isSignedIn && (
           <div className="flex items-center gap-1 md:gap-2">
-            {/* Messages Icon */}
-            <Link
-              href="/dashboard/messages"
-              className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors duration-300"
-              title="Messages"
-            >
-              <BsChatLeftDots className="w-5 h-5 md:w-[22px] md:h-[22px]" />
-              {messageCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-red-600 text-white text-[10px] flex items-center justify-center">
-                  {messageCount > 9 ? "9+" : messageCount}
-                </span>
+            {/* Messages Icon & Dropdown */}
+            <div className="relative" ref={msgRef}>
+              <button
+                onClick={() => setOpenMsg((v) => !v)}
+                className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors duration-300"
+                title="Messages"
+              >
+                <BsChatLeftDots className="w-5 h-5 md:w-[22px] md:h-[22px]" />
+                {messageCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-red-600 text-white text-[10px] flex items-center justify-center">
+                    {messageCount > 9 ? "9+" : messageCount}
+                  </span>
+                )}
+              </button>
+
+              {openMsg && (
+                <div className="fixed md:absolute inset-x-4 md:inset-auto md:right-0 mt-2 md:w-80 bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-divider rounded-xl shadow-xl z-50 overflow-hidden transform md:translate-x-0">
+                  <div className="flex items-center justify-between px-3 py-2 border-b border-gray-100 dark:border-dark-divider">
+                    <div className="text-sm font-semibold text-gray-900 dark:text-white">Wiadomości</div>
+                    <Link href="/dashboard/messages" onClick={() => setOpenMsg(false)} className="text-xs text-blue-600 hover:underline">Otwórz czat</Link>
+                  </div>
+                  <div className="max-h-96 overflow-auto">
+                    {displayMessages.length === 0 ? (
+                      <div className="px-3 py-4 text-sm text-gray-500">Brak nowych wiadomości</div>
+                    ) : (
+                      <ul className="divide-y divide-gray-100 dark:divide-dark-divider">
+                        {displayMessages.slice(0, 8).map((n) => (
+                          <li
+                            key={n.id}
+                            className={`px-3 py-3 flex items-start gap-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-dark-raised ${n.read ? "opacity-60" : ""}`}
+                            onClick={() => handleNotifClick(n)}
+                          >
+                            <Avatar src={n.meta?.senderImage} alt={n.meta?.senderName} size={36} />
+                            <div className="min-w-0 flex-1">
+                              <div className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                                {n.meta?.senderName || "Użytkownik"}
+                              </div>
+                              <div className="text-xs text-gray-500 dark:text-dark-text-muted line-clamp-1">{n.body?.split(': ')[1] || n.body}</div>
+                              <div className="text-[10px] text-gray-400 mt-1">{new Date(n.createdAt).toLocaleString()}</div>
+                            </div>
+                            {!n.read && <div className="mt-2 w-2 h-2 rounded-full bg-blue-500 shrink-0" />}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                  <div className="px-3 py-2 border-t border-gray-100 dark:border-dark-divider text-center">
+                    <Link href="/dashboard/messages" onClick={() => setOpenMsg(false)} className="text-xs font-bold text-blue-600 hover:underline uppercase tracking-widest">
+                      Zobacz wszystkie wiadomości
+                    </Link>
+                  </div>
+                </div>
               )}
-            </Link>
+            </div>
 
             {/* Notification Bell */}
             <div className="relative" ref={notifRef}>
@@ -234,7 +291,7 @@ const Navbar = () => {
                 )}
               </button>
               {openNotif && (
-                <div className="absolute right-0 mt-2 w-80 max-w-[90vw] bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-divider rounded-xl shadow-xl z-50 overflow-hidden">
+                <div className="fixed md:absolute inset-x-4 md:inset-auto md:right-0 mt-2 md:w-80 bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-divider rounded-xl shadow-xl z-50 overflow-hidden transform md:translate-x-0">
                   <div className="flex items-center justify-between px-3 py-2 border-b border-gray-100 dark:border-gray-700">
                     <div className="text-sm font-semibold text-gray-900 dark:text-gray-200 dark:text-white">Powiadomienia</div>
                     {markAll && (

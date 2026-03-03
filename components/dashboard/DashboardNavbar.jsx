@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import { useAuth } from "../../lib/auth/AuthContext";
 import { FiMenu, FiX, FiBell } from "react-icons/fi";
@@ -23,7 +23,9 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
   const router = useRouter();
   const { notifications, unreadCount, messageCount, markRead, markAll, add } = useNotifications();
   const [openNotif, setOpenNotif] = useState(false);
+  const [openMsg, setOpenMsg] = useState(false);
   const notifRef = useRef(null);
+  const msgRef = useRef(null);
 
   const getNotifTarget = (n) => {
     try {
@@ -52,25 +54,31 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
 
   // No dropdown anymore
 
-  // Ensure we have the latest user image (handles stale localStorage)
+  // Close dropboxes when clicking outside
   useEffect(() => {
-    const fetchLatestUser = async () => {
-      if (!userId || !user || user.image || user.profilePicture) return;
-      try {
-        const token = await getToken();
-        const res = await fetch(buildApiUrl(`/api/users/${userId}`), {
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-        });
-        if (res.ok) {
-          const fresh = await res.json();
-          updateUserState(fresh);
-        }
-      } catch (e) {
-        console.warn("Navbar: failed to refresh user image", e);
-      }
+    const handler = (e) => {
+      if (notifRef.current && !notifRef.current.contains(e.target)) setOpenNotif(false);
+      if (msgRef.current && !msgRef.current.contains(e.target)) setOpenMsg(false);
     };
-    fetchLatestUser();
-  }, [user, userId, getToken, updateUserState]);
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  // Ensure we have the latest user image
+  const displayMessages = useMemo(() => {
+    const msgNotifs = (notifications || []).filter(n => n.type === 'message');
+    const grouped = msgNotifs.reduce((acc, n) => {
+      const chatId = n.meta?.chatId;
+      if (!chatId) return acc;
+      if (!acc[chatId] || new Date(n.createdAt) > new Date(acc[chatId].createdAt)) {
+        acc[chatId] = n;
+      }
+      return acc;
+    }, {});
+    return Object.values(grouped).sort((a, b) =>
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }, [notifications]);
 
   // Logout moved to Sidebar
 
@@ -88,19 +96,60 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
         {/* Theme Toggle */}
         <ThemeToggle size={22} />
 
-        {/* Messages Icon */}
-        <Link
-          href="/dashboard/messages"
-          className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-dark-raised text-gray-700 dark:text-dark-text-secondary transition-colors"
-          title="Messages"
-        >
-          <BsChatLeftDots className="w-5 h-5" />
-          {messageCount > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-red-600 text-white text-[10px] flex items-center justify-center">
-              {messageCount > 9 ? "9+" : messageCount}
-            </span>
+        {/* Messages Icon & Dropdown */}
+        <div className="relative" ref={msgRef}>
+          <button
+            onClick={() => setOpenMsg(!openMsg)}
+            className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-dark-raised text-gray-700 dark:text-dark-text-secondary transition-colors"
+            title="Messages"
+          >
+            <BsChatLeftDots className="w-5 h-5" />
+            {messageCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-red-600 text-white text-[10px] flex items-center justify-center">
+                {messageCount > 9 ? "9+" : messageCount}
+              </span>
+            )}
+          </button>
+
+          {openMsg && (
+            <div className="fixed md:absolute inset-x-4 md:inset-auto md:right-0 mt-2 md:w-80 bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-divider rounded-xl shadow-xl z-50 overflow-hidden transform md:translate-x-0">
+              <div className="flex items-center justify-between px-3 py-2 border-b border-gray-100 dark:border-dark-divider">
+                <div className="text-sm font-semibold text-gray-900 dark:text-white">Wiadomości</div>
+                <Link href="/dashboard/messages" onClick={() => setOpenMsg(false)} className="text-xs text-blue-600 hover:underline">Otwórz czat</Link>
+              </div>
+              <div className="max-h-96 overflow-auto">
+                {displayMessages.length === 0 ? (
+                  <div className="px-3 py-4 text-sm text-gray-500">Brak nowych wiadomości</div>
+                ) : (
+                  <ul className="divide-y divide-gray-100 dark:divide-dark-divider">
+                    {displayMessages.slice(0, 8).map((n) => (
+                      <li
+                        key={n.id}
+                        className={`px-3 py-3 flex items-start gap-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-dark-raised ${n.read ? "opacity-60" : ""}`}
+                        onClick={() => handleNotifClick(n)}
+                      >
+                        <Avatar src={n.meta?.senderImage} alt={n.meta?.senderName} size={36} />
+                        <div className="min-w-0 flex-1">
+                          <div className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                            {n.meta?.senderName || "Użytkownik"}
+                          </div>
+                          <div className="text-xs text-gray-500 dark:text-dark-text-muted line-clamp-1">{n.body?.split(': ')[1] || n.body}</div>
+                          <div className="text-[10px] text-gray-400 mt-1">{new Date(n.createdAt).toLocaleString()}</div>
+                        </div>
+                        {!n.read && <div className="mt-2 w-2 h-2 rounded-full bg-blue-500 shrink-0" />}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <div className="px-3 py-2 border-t border-gray-100 dark:border-dark-divider text-center">
+                <Link href="/dashboard/messages" onClick={() => setOpenMsg(false)} className="text-xs font-bold text-blue-600 hover:underline uppercase tracking-widest">
+                  Zobacz wszystkie wiadomości
+                </Link>
+              </div>
+            </div>
           )}
-        </Link>
+        </div>
 
         {/* Notifications */}
         <div className="relative" ref={notifRef}>
@@ -116,7 +165,7 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
             )}
           </button>
           {openNotif && (
-            <div className="absolute right-0 mt-2 w-80 max-w-[90vw] bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-divider rounded-xl shadow-xl z-50 overflow-hidden">
+            <div className="fixed md:absolute inset-x-4 md:inset-auto md:right-0 mt-2 md:w-80 bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-divider rounded-xl shadow-xl z-50 overflow-hidden transform md:translate-x-0">
               <div className="flex items-center justify-between px-3 py-2 border-b border-gray-100 dark:border-dark-divider">
                 <div className="text-sm font-semibold text-gray-900 dark:text-gray-200 dark:text-white">Powiadomienia</div>
                 <button onClick={markAll} className="text-xs text-blue-600 hover:underline">Oznacz wszystkie jako przeczytane</button>

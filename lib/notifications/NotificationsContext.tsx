@@ -167,12 +167,19 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
     });
 
     socket.on("chat:message:received", (payload: any) => {
-      const senderName = payload?.senderName || payload?.sender?.name || payload?.sender?.firstName || "Ktoś";
+      const senderObj = payload?.sender || {};
+      const senderName = payload?.senderName || senderObj.name || senderObj.firstName || "Ktoś";
+      const senderImage = payload?.senderImage || senderObj.profilePicture || senderObj.image || "";
+
       add({
         type: "message",
         title: "Nowa wiadomość",
-        body: `Otrzymałeś wiadomość od ${senderName}`,
-        meta: payload
+        body: `${senderName}: ${payload.content || payload.message?.content || "Otrzymałeś wiadomość"}`,
+        meta: {
+          ...payload,
+          senderName,
+          senderImage
+        }
       });
     });
 
@@ -202,16 +209,29 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
     socket.on("newMessage", (payload: any) => {
       if (!payload || !payload.message) return;
       const { chatId, message } = payload;
-      const myUserId = user?.id || user?._id;
+
+      // Use userId from useAuth hook (already robust)
+      const currentUserId = userId;
+
+      // Extract sender info from payload.message.sender (now populated from backend)
+      const senderObj = message.sender || {};
+      const senderId = senderObj._id || senderObj.id || message.sender; // fallback to raw
+      const senderName = senderObj.firstName || senderObj.name || "Ktoś";
+      const senderImage = senderObj.profilePicture || senderObj.image || "";
 
       // Only notify if message is from someone else
-      if (String(message.sender) !== String(myUserId)) {
-        console.log("[Notifications] New message received:", { chatId, sender: message.sender, content: message.content });
+      if (currentUserId && String(senderId) !== String(currentUserId)) {
+        console.log("[Notifications] New message received:", { chatId, senderId, content: message.content });
         add({
           type: "message",
           title: "Nowa wiadomość",
-          body: message.content || "Masz nową wiadomość",
-          meta: { chatId, messageId: message.id }
+          body: `${senderName}: ${message.content || "Masz nową wiadomość"}`,
+          meta: {
+            chatId,
+            messageId: message.id,
+            senderName,
+            senderImage
+          }
         });
       }
     });
