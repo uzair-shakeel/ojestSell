@@ -312,11 +312,13 @@ export default function ImageEditStep({
 
     const process = async () => {
       for (const f of selectedFiles) {
-        // convertHeicToJpeg returns Promise<File>
+        // 1. Convert HEIC → JPEG if needed
         const converted = isHeicFile(f) ? await convertHeicToJpeg(f) : f;
-        images.push(converted);
+        // 2. Compress to ≤1 MB, max 1920px (mirrors Step01 compression)
+        const compressed = await compressImage(converted, 1_000_000, 1920, 0.5);
+        images.push(compressed);
         try {
-          const dataUrl = await fileToDataURL(converted);
+          const dataUrl = await fileToDataURL(compressed);
           newPreviews.push(dataUrl);
         } catch (_) {
           newPreviews.push("");

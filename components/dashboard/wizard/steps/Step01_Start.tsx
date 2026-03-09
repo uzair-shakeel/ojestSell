@@ -2,9 +2,10 @@
 
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Upload, X, Car, Info, Camera, ScanLine, ArrowRight, CheckCircle } from "lucide-react";
+import { Upload, X, Car, Info, Camera, ScanLine, ArrowRight, CheckCircle, Loader2 } from "lucide-react";
 import Image from "next/image";
 import QuestionCard from "../shared/QuestionCard";
+import { compressImage, isHeicFile, convertHeicToJpeg } from "../../../../lib/imageUtils";
 
 interface Step01Props {
     formData: any;
@@ -14,25 +15,38 @@ interface Step01Props {
 
 export default function Step01_Start({ formData, updateFormData, nextStep }: Step01Props) {
     const [dragActive, setDragActive] = useState(false);
+    const [isProcessing, setIsProcessing] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    // Handle file selection
-    const handleFiles = (files: FileList | File[]) => {
-        const validFiles = Array.from(files).filter(file =>
-            file.type.startsWith("image/") && file.size <= 20 * 1024 * 1024 // 20MB limit
+    // Handle file selection — compresses every image before storing
+    const handleFiles = async (files: FileList | File[]) => {
+        const rawFiles = Array.from(files).filter(file =>
+            (file.type.startsWith("image/") || isHeicFile(file)) &&
+            file.size <= 30 * 1024 * 1024 // 30 MB hard limit
         );
 
-        if (validFiles.length > 0) {
-            const newImages = [...(formData.images || []), ...validFiles];
-            const newPreviews = [
-                ...(formData.imagePreviews || []),
-                ...validFiles.map(file => URL.createObjectURL(file))
-            ];
+        if (rawFiles.length === 0) return;
+
+        setIsProcessing(true);
+        try {
+            const processedImages: File[] = [];
+            const processedPreviews: string[] = [];
+
+            for (const raw of rawFiles) {
+                // 1. Convert HEIC → JPEG if needed
+                const converted = isHeicFile(raw) ? await convertHeicToJpeg(raw) : raw;
+                // 2. Compress to ≤1 MB, max 1920px on the longest side
+                const compressed = await compressImage(converted, 1_000_000, 1920, 0.5);
+                processedImages.push(compressed);
+                processedPreviews.push(URL.createObjectURL(compressed));
+            }
 
             updateFormData({
-                images: newImages,
-                imagePreviews: newPreviews
+                images: [...(formData.images || []), ...processedImages],
+                imagePreviews: [...(formData.imagePreviews || []), ...processedPreviews],
             });
+        } finally {
+            setIsProcessing(false);
         }
     };
 
@@ -73,34 +87,43 @@ export default function Step01_Start({ formData, updateFormData, nextStep }: Ste
                 subtitle="Upload at least one photo. Use good lighting for better AI detection."
             >
                 <div
-                    className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all ${dragActive
-                        ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-                        : "border-gray-300 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500"
+                    className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all ${isProcessing
+                            ? "border-amber-400 bg-amber-50 dark:bg-amber-900/20 cursor-wait"
+                            : dragActive
+                                ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                                : "border-gray-300 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500"
                         }`}
-                    onDragEnter={(e) => { e.preventDefault(); setDragActive(true); }}
+                    onDragEnter={(e) => { e.preventDefault(); if (!isProcessing) setDragActive(true); }}
                     onDragLeave={(e) => { e.preventDefault(); setDragActive(false); }}
                     onDragOver={(e) => { e.preventDefault(); }}
                     onDrop={handleDrop}
-                    onClick={() => inputRef.current?.click()}
+                    onClick={() => { if (!isProcessing) inputRef.current?.click(); }}
                 >
                     <input
                         ref={inputRef}
                         type="file"
                         multiple
-                        accept="image/*"
+                        accept="image/*,.heic,.heif"
                         className="hidden"
                         onChange={(e) => e.target.files && handleFiles(e.target.files)}
                     />
 
                     <div className="flex flex-col items-center justify-center cursor-pointer">
-                        <div className="h-16 w-16 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mb-4">
-                            <Upload className="h-8 w-8" />
+                        <div className={`h-16 w-16 rounded-full flex items-center justify-center mb-4 ${isProcessing
+                                ? "bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400"
+                                : "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                            }`}>
+                            {isProcessing
+                                ? <Loader2 className="h-8 w-8 animate-spin" />
+                                : <Upload className="h-8 w-8" />}
                         </div>
                         <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">
-                            Click to upload or drag and drop
+                            {isProcessing ? "Compressing images…" : "Click to upload or drag and drop"}
                         </h3>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                            JPG, PNG or WEBP (max 20MB)
+                            {isProcessing
+                                ? "Please wait while we optimise your photos"
+                                : "JPG, PNG, WEBP or HEIC (max 30 MB each)"}
                         </p>
                     </div>
                 </div>
