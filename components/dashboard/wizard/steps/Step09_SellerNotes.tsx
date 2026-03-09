@@ -15,7 +15,7 @@ export default function Step09_SellerNotes({ formData, updateFormData, nextStep,
 
     return (
         <div className="space-y-6">
-            <QuestionCard title="Final Context" subtitle="Add anything else you want the AI to include in your listing and choose your visibility.">
+            <QuestionCard title="Final Context" subtitle="Add any extra details about your car and choose your visibility. We'll use these to complete your listing.">
 
                 {/* Seller Notes / Instructions for AI */}
                 <div className="mb-10">
@@ -39,15 +39,15 @@ export default function Step09_SellerNotes({ formData, updateFormData, nextStep,
                 <div className="pt-6 border-t border-gray-100 dark:border-gray-800">
                     <div
                         className={`group relative p-6 rounded-2xl border-2 transition-all cursor-pointer ${formData.isFeatured
-                                ? "bg-blue-50/50 dark:bg-blue-900/10 border-blue-500 shadow-lg shadow-blue-500/10"
-                                : "bg-white dark:bg-dark-bg border-gray-100 dark:border-gray-800 hover:border-blue-200 dark:hover:border-blue-800 shadow-sm"
+                            ? "bg-blue-50/50 dark:bg-blue-900/10 border-blue-500 shadow-lg shadow-blue-500/10"
+                            : "bg-white dark:bg-dark-bg border-gray-100 dark:border-gray-800 hover:border-blue-200 dark:hover:border-blue-800 shadow-sm"
                             }`}
                         onClick={() => updateFormData({ isFeatured: !formData.isFeatured })}
                     >
                         <div className="flex items-start gap-4">
                             <div className={`p-3 rounded-xl transition-colors ${formData.isFeatured
-                                    ? "bg-blue-600 text-white"
-                                    : "bg-gray-100 dark:bg-gray-800 text-gray-400"
+                                ? "bg-blue-600 text-white"
+                                : "bg-gray-100 dark:bg-gray-800 text-gray-400"
                                 }`}>
                                 <Star className={`h-6 w-6 ${formData.isFeatured ? "fill-white" : ""}`} />
                             </div>
@@ -86,7 +86,7 @@ export default function Step09_SellerNotes({ formData, updateFormData, nextStep,
                     onClick={nextStep}
                     className="px-8 py-2.5 rounded-lg font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg transition-all flex items-center gap-2"
                 >
-                    Generate AI Description <ArrowRight className="h-4 w-4" />
+                    Preview Listing <ArrowRight className="h-4 w-4" />
                 </button>
             </div>
             <div className="h-8" />

@@ -211,8 +211,8 @@ export default function Step11_AIPreview({ formData, updateFormData, nextStep, p
     return (
         <div className="space-y-6">
             <QuestionCard
-                title="AI Listing Preview"
-                subtitle="Your listing has been drafted by our AI. Review each section below."
+                title="Listing Preview"
+                subtitle="Your listing has been prepared based on your inputs. Review each section below."
             >
                 {loading ? (
                     /* ── Loading State ─────────────────────────────── */
@@ -224,10 +224,10 @@ export default function Step11_AIPreview({ formData, updateFormData, nextStep, p
                             <div className="absolute -inset-2 bg-gradient-to-br from-blue-400 to-sky-300 rounded-full blur-lg opacity-20 animate-ping" />
                         </div>
                         <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                            Crafting your listing...
+                            Analysing your listing...
                         </h3>
                         <p className="text-gray-500 dark:text-gray-400 max-w-xs text-sm leading-relaxed">
-                            Our AI is analysing your car's specs, condition, and equipment to write a precise Polish-language listing.
+                            We're reviewing your car's specs, condition, and equipment to prepare a complete listing.
                         </p>
                         <div className="mt-6 flex gap-1.5">
                             {[0, 1, 2].map(i => (
@@ -245,7 +245,7 @@ export default function Step11_AIPreview({ formData, updateFormData, nextStep, p
                         <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-2xl flex items-center justify-center mb-4">
                             <AlertCircle className="h-8 w-8 text-red-500" />
                         </div>
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Generation Failed</h3>
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Something went wrong</h3>
                         <p className="text-sm text-red-500 dark:text-red-400 mb-6 max-w-sm">{error}</p>
                         <button
                             onClick={generateListing}
@@ -257,31 +257,6 @@ export default function Step11_AIPreview({ formData, updateFormData, nextStep, p
                 ) : sections.length > 0 ? (
                     /* ── Success State ─────────────────────────────── */
                     <div className="space-y-3">
-                        {/* Metadata Bar */}
-                        {aiMeta && (
-                            <div className="flex items-center justify-between px-4 py-2.5 bg-gray-50 dark:bg-gray-800/60 rounded-xl mb-4">
-                                <div className="flex items-center gap-2">
-                                    <img src="/logooo.png" alt="Ojest" className="h-5 w-5 object-contain" />
-                                    <span className="text-xs font-semibold text-gray-600 dark:text-gray-400">
-                                        Generated with{" "}
-                                        <span className="text-gray-900 dark:text-white font-black">
-                                            {aiMeta.model_used || "Grok AI"}
-                                        </span>
-                                    </span>
-                                    {aiMeta.degraded && (
-                                        <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 text-[10px] font-black rounded-full uppercase">
-                                            Fallback Mode
-                                        </span>
-                                    )}
-                                </div>
-                                <button
-                                    onClick={generateListing}
-                                    className="text-xs text-blue-600 dark:text-blue-400 font-bold hover:underline flex items-center gap-1"
-                                >
-                                    <RefreshCw className="h-3 w-3" /> Regenerate
-                                </button>
-                            </div>
-                        )}
 
                         {/* Section Cards */}
                         {sections.map((section, i) => (
