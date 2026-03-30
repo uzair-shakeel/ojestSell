@@ -38,8 +38,13 @@ interface Step11Props {
 
 // Maps formData fields to the car_listing payload format the AI API expects
 function buildPayload(formData: any) {
+    // Collect only already-uploaded CDN URLs (strings), skip any pending File objects
+    const imageUrls: string[] = (formData.images || [])
+        .filter((img: any) => typeof img === "string");
+
     return {
         car_listing: {
+            images: imageUrls,
             core_info: {
                 vin: formData.vin || "",
             },
