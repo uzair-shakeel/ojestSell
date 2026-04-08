@@ -9,6 +9,7 @@ import {
   createNotification,
   markNotificationRead,
   markAllNotificationsRead,
+  markTypeReadAsync,
   type NotificationItem,
 } from "../../services/notificationService";
 import { getCarsByUserId } from "../../services/carService";
@@ -94,9 +95,9 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
     // Optimistically update UI
     setNotifications((prev) => prev.map((n) => (n.type === type ? { ...n, read: true } : n)));
     try {
-      await axios.post(`${API_BASE}/api/notifications/mark-type-read`, { type });
+      await markTypeReadAsync(type);
     } catch (e) {
-      console.error(`[Notifications] Failed to mark ${type} read on server:`, e);
+      console.error(`[Notifications] Failed to mark ${type} read on server/local:`, e);
     }
   }, []);
 

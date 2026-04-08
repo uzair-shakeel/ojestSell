@@ -78,3 +78,12 @@ export async function markAllNotificationsRead(): Promise<void> {
     saveLocal(list);
   }
 }
+
+export async function markTypeReadAsync(type: string): Promise<void> {
+  try {
+    await axios.post(`${API}/notifications/mark-type-read`, { type });
+  } catch (e) {
+    const list = loadLocal().map((n) => (n.type === type ? { ...n, read: true } : n));
+    saveLocal(list);
+  }
+}
