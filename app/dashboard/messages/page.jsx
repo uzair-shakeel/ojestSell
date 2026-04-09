@@ -2,7 +2,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import { FaSearch, FaPaperPlane, FaBars, FaEnvelope } from "react-icons/fa";
+import { FaSearch, FaPaperPlane, FaBars, FaEnvelope, FaPaperclip, FaTimes, FaFileAlt, FaFileImage } from "react-icons/fa";
 import { useAuth } from "../../../lib/auth/AuthContext";
 import io from "socket.io-client";
 import Avatar from "../../../components/both/Avatar";
@@ -32,6 +32,8 @@ const MessagesPage = () => {
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [attachments, setAttachments] = useState([]);
+  const fileInputRef = useRef(null);
   const [showSidebar, setShowSidebar] = useState(true);
   const [typing, setTyping] = useState(false);
   const [error, setError] = useState(null);
@@ -73,6 +75,32 @@ const MessagesPage = () => {
     const hh = String(date.getHours()).padStart(2, "0");
     const mi = String(date.getMinutes()).padStart(2, "0");
     return `${hh}:${mi}`;
+  };
+
+  // Format date for separators (Today, Yesterday, or DD/MM/YYYY)
+  const fmtDateSeparator = (d) => {
+    const date = new Date(d);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (date.toDateString() === today.toDateString()) {
+      return "Today";
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return "Yesterday";
+    } else {
+      const dd = String(date.getDate()).padStart(2, "0");
+      const mm = String(date.getMonth() + 1).padStart(2, "0");
+      const yyyy = date.getFullYear();
+      return `${dd}/${mm}/${yyyy}`;
+    }
+  };
+
+  // Check if two dates are the same day
+  const isSameDay = (d1, d2) => {
+    const date1 = new Date(d1);
+    const date2 = new Date(d2);
+    return date1.toDateString() === date2.toDateString();
   };
 
   // Generate temporary ID for optimistic updates
@@ -533,11 +561,18 @@ const MessagesPage = () => {
 
   // Handle sending a message
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || !selectedChat || !user) return;
+    if ((!newMessage.trim() && attachments.length === 0) || !selectedChat || !user) return;
 
     const tempId = generateTempId();
     const messageContent = newMessage;
     const timestamp = new Date();
+
+    // Process attachments for optimistic update
+    const processedAttachments = attachments.map(file => ({
+      name: file.name,
+      type: file.type,
+      size: file.size
+    }));
 
     // Add optimistic message immediately
     const optimisticMessage = {
@@ -550,6 +585,7 @@ const MessagesPage = () => {
       senderName: `${user.firstName || ""} ${user.lastName || ""}`.trim() || "You",
       content: messageContent,
       text: messageContent,
+      attachments: processedAttachments,
       pending: true, // Mark as pending
       tempId: tempId, // Store temp ID for matching
     };
@@ -559,6 +595,7 @@ const MessagesPage = () => {
       return [...prev, optimisticMessage];
     });
     setNewMessage("");
+    setAttachments([]); // Clear attachments after sending
 
     // Check socket connection before sending
     console.log("🔍 Socket state before sending:", {
@@ -601,6 +638,7 @@ const MessagesPage = () => {
       senderId: myUserId,
       content: messageContent,
       tempId: tempId, // Send temp ID to backend for matching
+      attachments: processedAttachments, // Send attachments
     });
   };
 
@@ -826,6 +864,8 @@ const MessagesPage = () => {
               messages.length > 0 ? (
                 <>
                   {messages.map((message, index) => {
+                    // Show date separator if this is the first message or if the date changed
+                    const showDateSeparator = index === 0 || !isSameDay(message.createdAt, messages[index - 1].createdAt);
                     const messageSenderId = (typeof message.sender === 'object' && message.sender?._id)
                       ? message.sender._id
                       : (message.sender || message.senderId);
@@ -833,44 +873,67 @@ const MessagesPage = () => {
                     const isLast = index === messages.length - 1;
 
                     return (
-                      <div
-                        key={message._id || message.tempId}
-                        className={`flex ${isMe ? "justify-end" : "justify-start"} group`}
-                      >
-                        <div className={`max-w-[75%] md:max-w-[60%] flex gap-3 ${isMe ? "flex-row-reverse" : "flex-row"}`}>
-                          {/* Optional small avatar next to message bubbles */}
-                          {/* <Avatar src={isMe ? user?.image : getParticipantImage(selectedChat)} size={32} imgClassName="rounded-lg self-end" /> */}
+                      <React.Fragment key={message._id || message.tempId}>
+                        {showDateSeparator && (
+                          <div className="flex justify-center my-4">
+                            <span className="px-4 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-medium rounded-full">
+                              {fmtDateSeparator(message.createdAt)}
+                            </span>
+                          </div>
+                        )}
+                        <div
+                          className={`flex ${isMe ? "justify-end" : "justify-start"} group`}
+                        >
+                          <div className={`max-w-[75%] md:max-w-[60%] flex gap-3 ${isMe ? "flex-row-reverse" : "flex-row"}`}>
+                            {/* Optional small avatar next to message bubbles */}
+                            {/* <Avatar src={isMe ? user?.image : getParticipantImage(selectedChat)} size={32} imgClassName="rounded-lg self-end" /> */}
 
-                          <div
-                            className={`px-6 py-4 rounded-2xl shadow-sm text-sm whitespace-pre-line relative transition-all duration-200 ${isMe
-                              ? "bg-blue-600 text-white rounded-br-none shadow-blue-900/20"
-                              : "bg-white dark:bg-dark-card text-gray-800 dark:text-gray-100 border border-gray-100 dark:border-gray-600 rounded-bl-none shadow-black/5"
-                              } ${message.pending ? "opacity-80" : "opacity-100"}`}
-                          >
-                            {String(messageSenderId) !== String(myUserId) && (
-                              <div className="font-bold text-[10px] uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2">
-                                {message.senderName || "Użytkownik"}
-                              </div>
-                            )}
-                            {message.text || message.content}
-
-                            <div className={`text-right text-[10px] font-bold mt-2 ${isMe ? 'text-blue-200' : 'text-gray-300 dark:text-gray-500'}`}>
-                              {fmtTime(message.createdAt)}
-                              {isMe && (
-                                <span className="ml-2 inline-block">
-                                  {message.pending ? (
-                                    <span className="animate-pulse">●</span>
-                                  ) : message.seenBy && message.seenBy.length > 1 ? (
-                                    "✓✓"
-                                  ) : (
-                                    "✓"
-                                  )}
-                                </span>
+                            <div
+                              className={`px-6 py-4 rounded-2xl shadow-sm text-sm whitespace-pre-line relative transition-all duration-200 ${isMe
+                                ? "bg-blue-600 text-white rounded-br-none shadow-blue-900/20"
+                                : "bg-white dark:bg-dark-card text-gray-800 dark:text-gray-100 rounded-bl-none shadow-black/5"
+                                } ${message.pending ? "opacity-80" : "opacity-100"}`}
+                            >
+                              {String(messageSenderId) !== String(myUserId) && (
+                                <div className="font-bold text-[10px] uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2">
+                                  {message.senderName || "Użytkownik"}
+                                </div>
                               )}
+                              {/* Attachment preview */}
+                              {message.attachments && message.attachments.length > 0 && (
+                                <div className="mb-3 space-y-2">
+                                  {message.attachments.map((att, attIdx) => (
+                                    <div key={attIdx} className="flex items-center gap-2 p-2 bg-white/20 rounded-lg">
+                                      {att.type?.startsWith('image/') ? (
+                                        <FaFileImage className="text-lg" />
+                                      ) : (
+                                        <FaFileAlt className="text-lg" />
+                                      )}
+                                      <span className="text-xs truncate max-w-[150px]">{att.name}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              {message.text || message.content}
+
+                              <div className={`text-right text-[10px] font-bold mt-2 ${isMe ? 'text-blue-200' : 'text-gray-300 dark:text-gray-500'}`}>
+                                {fmtTime(message.createdAt)}
+                                {isMe && (
+                                  <span className="ml-2 inline-block">
+                                    {message.pending ? (
+                                      <span className="animate-pulse">●</span>
+                                    ) : message.seenBy && message.seenBy.length > 1 ? (
+                                      "✓✓"
+                                    ) : (
+                                      "✓"
+                                    )}
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </React.Fragment>
                     )
                   })}
                   {typing && (
@@ -903,22 +966,60 @@ const MessagesPage = () => {
           {/* Message Input - Integrated */}
           {selectedChat && (
             <div className="p-4 bg-white dark:bg-dark-panel border-t border-gray-100 dark:border-gray-700 z-10 transition-colors">
+              {/* Attachment preview area */}
+              {attachments.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-3 px-1">
+                  {attachments.map((file, idx) => (
+                    <div key={idx} className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-700 rounded-lg text-xs">
+                      {file.type.startsWith('image/') ? <FaFileImage /> : <FaFileAlt />}
+                      <span className="truncate max-w-[100px]">{file.name}</span>
+                      <button
+                        onClick={() => setAttachments(prev => prev.filter((_, i) => i !== idx))}
+                        className="ml-1 text-gray-500 hover:text-red-500"
+                      >
+                        <FaTimes size={10} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
               <div className="flex items-center gap-3 bg-gray-50/50 dark:bg-dark-card/50 border border-gray-100 dark:border-gray-700/50 rounded-xl p-1.5 focus-within:border-blue-500/50 transition-all">
+                {/* Attachment button */}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={(e) => {
+                    const files = Array.from(e.target.files || []);
+                    setAttachments(prev => [...prev, ...files]);
+                    e.target.value = ''; // Reset input
+                  }}
+                  multiple
+                  accept="image/*,.pdf,.doc,.docx,.txt"
+                  className="hidden"
+                />
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="p-3 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all"
+                  title="Add attachment"
+                >
+                  <FaPaperclip size={18} />
+                </button>
                 <input
                   type="text"
                   value={newMessage}
                   onChange={handleTyping}
-                  className="flex-1 bg-transparent outline-none border-none focus:ring-0 p-2.5 pl-4 text-sm font-bold text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+                  className="flex-1 bg-transparent outline-none border-none focus:ring-0 p-2.5 pl-2 text-sm font-bold text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                   placeholder="Napisz wiadomość..."
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
                       handleSendMessage();
                     }
                   }}
                 />
                 <button
                   onClick={handleSendMessage}
-                  disabled={!newMessage.trim()}
+                  disabled={!newMessage.trim() && attachments.length === 0}
                   className="p-3.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-200 dark:disabled:bg-gray-700 disabled:text-gray-400 dark:disabled:text-gray-600 transition-all shadow-lg shadow-blue-500/20 active:scale-95 flex items-center justify-center shrink-0"
                 >
                   <FaPaperPlane size={14} />
