@@ -571,6 +571,25 @@ const MessagesPage = () => {
     };
   }, [selectedChat?._id, user]);
 
+  // Helper to download files (especially for extensionless raw files)
+  const handleDownload = async (url, fileName) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Download failed:", error);
+      window.open(url, '_blank'); // Fallback
+    }
+  };
+
   // Using carService's uploadImageBatch for consistency
   const getTokenCallback = async () => token || (typeof window !== "undefined" ? localStorage.getItem("token") : null);
 
@@ -985,15 +1004,16 @@ const MessagesPage = () => {
                                           </div>
                                         </a>
                                       ) : (
-                                        <a
-                                          href={url}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          className="flex items-center gap-2 p-2 bg-white/20 rounded-lg hover:bg-white/30 transition-colors"
+                                        <button
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            handleDownload(url, name);
+                                          }}
+                                          className="flex items-center gap-2 p-2 bg-white/20 rounded-lg hover:bg-white/30 transition-colors w-full text-left"
                                         >
                                           <FaFileAlt className="text-lg" />
                                           <span className="text-xs truncate max-w-[150px] underline">{name}</span>
-                                        </a>
+                                        </button>
                                       )}
                                     </div>
                                   );
