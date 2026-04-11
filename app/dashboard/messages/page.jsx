@@ -6,6 +6,7 @@ import { FaSearch, FaPaperPlane, FaBars, FaEnvelope, FaPaperclip, FaTimes, FaFil
 import { useAuth } from "../../../lib/auth/AuthContext";
 import io from "socket.io-client";
 import Avatar from "../../../components/both/Avatar";
+import { uploadImageBatch } from "../../../services/carService";
 
 // Use empty string (same-origin) if NEXT_PUBLIC_API_BASE_URL is not set
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
@@ -377,6 +378,8 @@ const MessagesPage = () => {
         sender: senderId, // We store string ID for internal consistency
         content: message.content,
         text: message.content,
+        attachments: message.attachments || [],
+        tempId: payload.tempId, // Pass through tempId for matching
         createdAt: message.timestamp,
       };
 
@@ -456,14 +459,21 @@ const MessagesPage = () => {
 
           if (isOwnMessage) {
             console.log("👤 Own message received via socket, attempting to replace pending bubble...");
+            console.log("📦 Payload received:", payload);
+            console.log("📦 Processed message:", processedMessage);
             // Match by tempId if possible (backend should return it if we sent it)
             const incomingTempId = payload.tempId || message.tempId;
+            console.log("🔍 Looking for tempId:", incomingTempId);
 
             let pendingIdx = -1;
 
             if (incomingTempId) {
-              pendingIdx = prev.findIndex(m => m.pending && (m.tempId === incomingTempId || m._id === incomingTempId));
+              pendingIdx = prev.findIndex(m => {
+                console.log("  Checking message:", m._id, "pending:", m.pending, "tempId:", m.tempId);
+                return m.pending && (m.tempId === incomingTempId || m._id === incomingTempId);
+              });
             }
+            console.log("🔍 Found pendingIdx:", pendingIdx);
 
             // Fallback to content matching if no tempId match
             if (pendingIdx === -1) {
@@ -479,26 +489,19 @@ const MessagesPage = () => {
 
             if (pendingIdx !== -1) {
               // Replace the optimistic message with the real one
-              console.log("✅ Replacing pending message", {
-                index: pendingIdx,
-                tempId: prev[pendingIdx]._id,
-                realId: processedMessage._id,
-                content: processedMessage.text
-              });
+              console.log("✅ Replacing pending message at index", pendingIdx);
               const copy = [...prev];
-              copy[pendingIdx] = { ...processedMessage, pending: false };
+              copy[pendingIdx] = { ...processedMessage, pending: false, senderName: "You" };
               return copy;
             } else {
-              console.log("⚠️ No pending message found", {
-                pendingCount: prev.filter(m => m.pending).length,
-                searchingFor: processedMessage.text,
-                allPending: prev.filter(m => m.pending).map(m => ({ id: m._id, text: m.text }))
-              });
+              console.log("⚠️ No pending message found!");
+              // If we couldn't find it but it's our own message, it might have arrived before we even finished our local state update
+              // (rare but possible). In this case, just treat it as a new message.
             }
           }
 
           // Check if message already exists (avoid duplicates)
-          const exists = prev.some((m) => m._id === processedMessage._id);
+          const exists = prev.some((m) => m._id === processedMessage._id || (processedMessage.tempId && m.tempId === processedMessage.tempId && !m.pending));
           if (exists) {
             console.log("ℹ️ Message already exists, skipping", processedMessage._id);
             return prev;
@@ -551,13 +554,25 @@ const MessagesPage = () => {
       }
     });
 
+    socket.on("error", (error) => {
+      console.error("❌ Socket error:", error);
+      alert(`Socket Error: ${error.message || "Something went wrong"}`);
+      if (error.tempId) {
+        setMessages(prev => prev.filter(m => m._id !== error.tempId));
+      }
+    });
+
     return () => {
       socket.off("chatHistory");
       socket.off("newMessage");
       socket.off("messagesSeen");
       socket.off("typing");
+      socket.off("error");
     };
   }, [selectedChat?._id, user]);
+
+  // Using carService's uploadImageBatch for consistency
+  const getTokenCallback = async () => token || (typeof window !== "undefined" ? localStorage.getItem("token") : null);
 
   // Handle sending a message
   const handleSendMessage = async () => {
@@ -567,79 +582,111 @@ const MessagesPage = () => {
     const messageContent = newMessage;
     const timestamp = new Date();
 
-    // Process attachments for optimistic update
-    const processedAttachments = attachments.map(file => ({
-      name: file.name,
-      type: file.type,
-      size: file.size
-    }));
+    // Optimistic attachments (with local preview URLs)
+    const optimisticAttachments = attachments.map(file => {
+      let previewUrl = null;
+      try {
+        if (file.type.startsWith('image/')) {
+          previewUrl = URL.createObjectURL(file);
+        }
+      } catch (e) {
+        console.error("Failed to create preview URL:", e);
+      }
+
+      return {
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        url: previewUrl,
+        isLocal: true, // Tag to know we should revoke it later
+      };
+    });
 
     // Add optimistic message immediately
     const optimisticMessage = {
       _id: tempId,
-      chatId: selectedChat._id, // Add chatId for filtering
+      chatId: selectedChat._id,
       sender: myUserId,
       senderId: myUserId,
       createdAt: timestamp,
       seenBy: [myUserId],
-      senderName: `${user.firstName || ""} ${user.lastName || ""}`.trim() || "You",
+      senderName: "You",
       content: messageContent,
       text: messageContent,
-      attachments: processedAttachments,
-      pending: true, // Mark as pending
-      tempId: tempId, // Store temp ID for matching
+      attachments: optimisticAttachments,
+      pending: true,
+      tempId: tempId,
     };
 
-    setMessages((prev) => {
-      console.log("📤 Adding optimistic message", optimisticMessage);
-      return [...prev, optimisticMessage];
-    });
+    setMessages((prev) => [...prev, optimisticMessage]);
     setNewMessage("");
-    setAttachments([]); // Clear attachments after sending
+    // We don't clear attachments yet, in case upload fails
+    const currentAttachments = [...attachments];
+    setAttachments([]);
 
-    // Check socket connection before sending
-    console.log("🔍 Socket state before sending:", {
-      connected: socket.connected,
-      disconnected: socket.disconnected,
-      id: socket.id,
-      auth: socket.auth
-    });
+    try {
+      // Upload attachments to Cloudinary using the "normal way"
+      let finalAttachments = [];
+      if (currentAttachments.length > 0) {
+        console.log("📤 [NormalWay] Uploading to Cloudinary...");
+        const result = await uploadImageBatch(currentAttachments, undefined, getTokenCallback);
 
-    if (!socket.connected) {
-      console.error("❌❌❌ Socket NOT connected! Attempting to reconnect...");
-      console.error("Socket state:", {
-        connected: socket.connected,
-        disconnected: socket.disconnected,
-        id: socket.id
-      });
-      socket.connect();
+        if (!result.success) {
+          throw new Error(result.errors?.[0] || "Cloudinary upload failed");
+        }
 
-      // Wait a bit for connection
-      await new Promise(resolve => setTimeout(resolve, 1000));
+        console.log("✅ [NormalWay] Cloudinary Success. URLs:", result.urls);
 
-      if (!socket.connected) {
-        console.error("❌ Still not connected after reconnect attempt!");
-        alert("Cannot send message - socket connection failed. Please refresh the page.");
-        return;
+        // Construct full attachment objects
+        finalAttachments = currentAttachments.map((file, idx) => ({
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          url: result.urls[idx]
+        }));
       }
+
+      console.log("🚀 Sending via socket. attachments:", finalAttachments);
+
+      // Check socket connection
+      if (!socket.connected) {
+        socket.connect(); // Try to reconnect
+        // Wait a bit
+        await new Promise(r => setTimeout(r, 1000));
+        if (!socket.connected) throw new Error("Connection lost. Please refresh.");
+      }
+
+      // Emit message with Cloudinary URLs
+      const payload = {
+        chatId: selectedChat._id,
+        senderId: myUserId,
+        content: messageContent,
+        tempId: tempId,
+        attachments: JSON.parse(JSON.stringify(finalAttachments)),
+      };
+
+      socket.emit("sendMessage", payload);
+
+      console.log("🚀 Message emitted via socket");
+
+      // Revoke local URLs after a short delay
+      setTimeout(() => {
+        optimisticAttachments.forEach(att => {
+          if (att.isLocal && att.url) URL.revokeObjectURL(att.url);
+        });
+      }, 10000);
+
+    } catch (error) {
+      console.error("❌ Failed to send message:", error);
+      alert(`Failed to send message: ${error.message}`);
+
+      // Remove the optimistic message
+      setMessages(prev => prev.filter(m => m._id !== tempId));
+      // Restore attachments so user can try again
+      setAttachments(currentAttachments);
+      // Restore message text
+      setNewMessage(messageContent);
     }
-
-    // Emit to backend
-    console.log("🚀 Emitting message to server...", {
-      socketConnected: socket.connected,
-      chatId: selectedChat._id,
-      senderId: myUserId,
-      content: messageContent,
-      tempId
-    });
-
-    socket.emit("sendMessage", {
-      chatId: selectedChat._id,
-      senderId: myUserId,
-      content: messageContent,
-      tempId: tempId, // Send temp ID to backend for matching
-      attachments: processedAttachments, // Send attachments
-    });
   };
 
   // Handle typing
@@ -859,7 +906,7 @@ const MessagesPage = () => {
           </div>
 
           {/* Messages Container */}
-          <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 bg-gray-50/30 dark:bg-dark-card/10 custom-scrollbar transition-colors">
+          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-1 bg-gray-50/30 dark:bg-dark-card/10 custom-scrollbar transition-colors">
             {selectedChat ? (
               messages.length > 0 ? (
                 <>
@@ -900,20 +947,58 @@ const MessagesPage = () => {
                                 </div>
                               )}
                               {/* Attachment preview */}
-                              {message.attachments && message.attachments.length > 0 && (
-                                <div className="mb-3 space-y-2">
-                                  {message.attachments.map((att, attIdx) => (
-                                    <div key={attIdx} className="flex items-center gap-2 p-2 bg-white/20 rounded-lg">
-                                      {att.type?.startsWith('image/') ? (
-                                        <FaFileImage className="text-lg" />
+                              <div className="mb-3 space-y-2">
+                                {message.attachments.map((att, attIdx) => {
+                                  const url = typeof att === 'string' ? att : att.url;
+                                  const name = att.name || (typeof att === 'string' ? url.split('/').pop() : 'Attachment');
+                                  const type = att.type || '';
+                                  const isImage = type.startsWith('image/') || /\.(jpg|jpeg|png|webp|gif|svg)(\?.*)?$/i.test(url);
+
+                                  if (!url) {
+                                    return (
+                                      <div key={attIdx} className="flex items-center gap-2 p-2 bg-white/20 rounded-lg opacity-60">
+                                        {type.startsWith('image/') ? <FaFileImage className="text-lg" /> : <FaFileAlt className="text-lg" />}
+                                        <span className="text-xs truncate max-w-[150px]">{name}</span>
+                                        {message.pending && <span className="animate-pulse ml-1">●</span>}
+                                      </div>
+                                    );
+                                  }
+
+                                  return (
+                                    <div key={attIdx}>
+                                      {isImage ? (
+                                        <a href={url} target="_blank" rel="noopener noreferrer" className="block">
+                                          <img
+                                            src={url}
+                                            alt={name}
+                                            className="max-w-[200px] max-h-[200px] rounded-lg object-cover hover:opacity-90 transition-opacity border border-white/20"
+                                            loading="lazy"
+                                            onError={(e) => {
+                                              // Fallback for broken images
+                                              e.target.style.display = 'none';
+                                              e.target.nextSibling.style.display = 'flex';
+                                            }}
+                                          />
+                                          <div style={{ display: 'none' }} className="flex items-center gap-2 p-2 bg-white/20 rounded-lg">
+                                            <FaFileAlt className="text-lg" />
+                                            <span className="text-xs underline">{name}</span>
+                                          </div>
+                                        </a>
                                       ) : (
-                                        <FaFileAlt className="text-lg" />
+                                        <a
+                                          href={url}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="flex items-center gap-2 p-2 bg-white/20 rounded-lg hover:bg-white/30 transition-colors"
+                                        >
+                                          <FaFileAlt className="text-lg" />
+                                          <span className="text-xs truncate max-w-[150px] underline">{name}</span>
+                                        </a>
                                       )}
-                                      <span className="text-xs truncate max-w-[150px]">{att.name}</span>
                                     </div>
-                                  ))}
-                                </div>
-                              )}
+                                  );
+                                })}
+                              </div>
                               {message.text || message.content}
 
                               <div className={`text-right text-[10px] font-bold mt-2 ${isMe ? 'text-blue-200' : 'text-gray-300 dark:text-gray-500'}`}>
