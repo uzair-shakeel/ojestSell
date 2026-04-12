@@ -5,6 +5,7 @@ import { GoogleMapsProvider } from "../lib/GoogleMapsContext";
 import Providers from "../components/Providers";
 import CookieConsent from "../components/website/CookieConsent";
 import ErrorBoundary from "../components/ErrorBoundary";
+import ScrollToTop from "../components/ScrollToTop";
 
 
 export const metadata = {
@@ -25,7 +26,10 @@ export default function RootLayout({ children }) {
         <ErrorBoundary>
 
           <Providers>
-            <GoogleMapsProvider>{children}</GoogleMapsProvider>
+            <GoogleMapsProvider>
+              <ScrollToTop />
+              {children}
+            </GoogleMapsProvider>
           </Providers>
           <CookieConsent />
         </ErrorBoundary>
