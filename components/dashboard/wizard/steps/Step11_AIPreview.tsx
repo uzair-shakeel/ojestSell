@@ -186,13 +186,29 @@ export default function Step11_AIPreview({ formData, updateFormData, nextStep, p
             let updatedFormData = formData;
 
             if (fileObjects.length > 0) {
-                console.log(`[Step11] Uploading ${fileObjects.length} images to Cloudinary...`);
-                const uploadResult = await uploadImageBatch(fileObjects, undefined, getToken);
+                console.log(`[Step11] Uploading ${fileObjects.length} images one by one to avoid size limits...`);
+                const uploadedUrls: string[] = [];
+                const existingUrls = (formData.images || []).filter((img: any) => typeof img === "string");
 
-                if (uploadResult.success && uploadResult.urls.length > 0) {
-                    // Merge new URLs with existing string URLs
-                    const existingUrls = (formData.images || []).filter((img: any) => typeof img === "string");
-                    const allUrls = [...existingUrls, ...uploadResult.urls];
+                for (let i = 0; i < fileObjects.length; i++) {
+                    const file = fileObjects[i];
+                    console.log(`[Step11] Uploading image ${i + 1}/${fileObjects.length}: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)`);
+
+                    try {
+                        const uploadResult = await uploadImageBatch([file], undefined, getToken);
+                        if (uploadResult.success && uploadResult.urls.length > 0) {
+                            uploadedUrls.push(...uploadResult.urls);
+                            console.log(`[Step11] Image ${i + 1} uploaded successfully`);
+                        } else {
+                            console.error(`[Step11] Failed to upload image ${i + 1}:`, uploadResult.errors);
+                        }
+                    } catch (err) {
+                        console.error(`[Step11] Error uploading image ${i + 1}:`, err);
+                    }
+                }
+
+                if (uploadedUrls.length > 0) {
+                    const allUrls = [...existingUrls, ...uploadedUrls];
 
                     updatedFormData = {
                         ...formData,
@@ -202,9 +218,9 @@ export default function Step11_AIPreview({ formData, updateFormData, nextStep, p
                     // Update formData so images persist
                     updateFormData({ images: allUrls });
 
-                    console.log("[Step11] Images uploaded successfully:", uploadResult.urls);
+                    console.log("[Step11] All images uploaded successfully:", uploadedUrls);
                 } else {
-                    console.error("[Step11] Failed to upload images:", uploadResult.errors);
+                    console.error("[Step11] All image uploads failed");
                 }
             }
 
