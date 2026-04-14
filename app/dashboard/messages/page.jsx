@@ -1095,6 +1095,13 @@ const MessagesPage = () => {
                   ref={fileInputRef}
                   onChange={(e) => {
                     const files = Array.from(e.target.files || []);
+                    const MAX_SIZE = 10 * 1024 * 1024; // 10MB (Cloudinary free tier limit)
+                    const oversized = files.filter(f => f.size > MAX_SIZE);
+                    if (oversized.length > 0) {
+                      alert(`File too large: ${oversized[0].name}\nMax size: 10MB (Cloudinary limit)\nYour file: ${(oversized[0].size / 1024 / 1024).toFixed(2)}MB\n\nTo upload larger files, upgrade your Cloudinary plan.`);
+                      e.target.value = '';
+                      return;
+                    }
                     setAttachments(prev => [...prev, ...files]);
                     e.target.value = ''; // Reset input
                   }}

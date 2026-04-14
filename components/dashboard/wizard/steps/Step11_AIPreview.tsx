@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, RefreshCw, ChevronDown, ChevronUp, AlertCircle, 
 import QuestionCard from "../shared/QuestionCard";
 import { useAuth } from "../../../../lib/auth/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
+import { uploadImageBatch } from "../../../../services/carService";
 
 // The deployed AI generation service
 const AI_API_URL = "https://ojest.pl/getting/data/api/generate";
@@ -166,6 +167,7 @@ export default function Step11_AIPreview({ formData, updateFormData, nextStep, p
     const [error, setError] = useState<string | null>(null);
     const [sections, setSections] = useState<ListingSection[]>(formData.aiSections || []);
     const [aiMeta, setAiMeta] = useState<AIResponse["metadata"] | null>(formData.aiMeta || null);
+    const { getToken } = useAuth();
 
     // Auto-generate on first mount if not already done
     useEffect(() => {
@@ -179,7 +181,38 @@ export default function Step11_AIPreview({ formData, updateFormData, nextStep, p
         setError(null);
 
         try {
-            const payload = buildPayload(formData);
+            // Check if there are File objects that need to be uploaded
+            const fileObjects = (formData.images || []).filter((img: any) => img instanceof File);
+            let updatedFormData = formData;
+
+            if (fileObjects.length > 0) {
+                console.log(`[Step11] Uploading ${fileObjects.length} images to Cloudinary...`);
+                const uploadResult = await uploadImageBatch(fileObjects, undefined, getToken);
+
+                if (uploadResult.success && uploadResult.urls.length > 0) {
+                    // Merge new URLs with existing string URLs
+                    const existingUrls = (formData.images || []).filter((img: any) => typeof img === "string");
+                    const allUrls = [...existingUrls, ...uploadResult.urls];
+
+                    updatedFormData = {
+                        ...formData,
+                        images: allUrls
+                    };
+
+                    // Update formData so images persist
+                    updateFormData({ images: allUrls });
+
+                    console.log("[Step11] Images uploaded successfully:", uploadResult.urls);
+                } else {
+                    console.error("[Step11] Failed to upload images:", uploadResult.errors);
+                }
+            }
+
+            const payload = buildPayload(updatedFormData);
+
+            console.log("========== PAYLOAD SENT TO API ==========");
+            console.log(payload);
+            console.log("========== END PAYLOAD ==========");
 
             const response = await fetch(AI_API_URL, {
                 method: "POST",
@@ -192,6 +225,10 @@ export default function Step11_AIPreview({ formData, updateFormData, nextStep, p
             }
 
             const data: AIResponse = await response.json();
+
+            console.log("========== FRONTEND RAW API RESPONSE ==========");
+            console.log(data);
+            console.log("========== END FRONTEND RAW RESPONSE ==========");
 
             setSections(data.sections);
             setAiMeta(data.metadata);
