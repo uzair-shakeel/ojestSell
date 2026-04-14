@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import { useAuth } from "../../lib/auth/AuthContext";
 import { FiMenu, FiX, FiBell } from "react-icons/fi";
@@ -10,6 +10,7 @@ import Avatar from "../both/Avatar";
 import Link from "next/link";
 import { useNotifications } from "../../lib/notifications/NotificationsContext";
 import UserAccountDropdown from "../both/UserAccountDropdown";
+import { fetchRecentMessages, markChatAsSeen } from "../../services/chatService";
 
 const RAW_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 const buildApiUrl = (path) => {
@@ -24,6 +25,8 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
   const { notifications, unreadCount, messageCount, markRead, markAll, add } = useNotifications();
   const [openNotif, setOpenNotif] = useState(false);
   const [openMsg, setOpenMsg] = useState(false);
+  const [recentMessages, setRecentMessages] = useState([]);
+  const [loadingMessages, setLoadingMessages] = useState(false);
   const notifRef = useRef(null);
   const msgRef = useRef(null);
 
@@ -64,21 +67,31 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Ensure we have the latest user image
-  const displayMessages = useMemo(() => {
-    const msgNotifs = (notifications || []).filter(n => n.type === 'message');
-    const grouped = msgNotifs.reduce((acc, n) => {
-      const chatId = n.meta?.chatId;
-      if (!chatId) return acc;
-      if (!acc[chatId] || new Date(n.createdAt) > new Date(acc[chatId].createdAt)) {
-        acc[chatId] = n;
-      }
-      return acc;
-    }, {});
-    return Object.values(grouped).sort((a, b) =>
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-  }, [notifications]);
+  // Fetch real messages from API when messages dropdown opens
+  const loadRecentMessages = useCallback(async () => {
+    if (!user) return;
+    setLoadingMessages(true);
+    try {
+      const messages = await fetchRecentMessages();
+      // Filter out own messages
+      const myId = String(user?.id || user?._id);
+      const filtered = messages.filter(msg => String(msg.sender?.id) !== myId);
+      setRecentMessages(filtered);
+    } catch (e) {
+      console.error('[DashboardNavbar] Failed to load recent messages:', e);
+    } finally {
+      setLoadingMessages(false);
+    }
+  }, [user]);
+
+  // Load messages when dropdown opens
+  useEffect(() => {
+    if (openMsg) {
+      loadRecentMessages();
+    }
+  }, [openMsg, loadRecentMessages]);
+
+  const displayMessages = useMemo(() => recentMessages, [recentMessages]);
 
   // Logout moved to Sidebar
 
@@ -118,25 +131,41 @@ export default function DashboardNavbar({ isOpen, toggleSidebar }) {
                 <Link href="/dashboard/messages" onClick={() => setOpenMsg(false)} className="text-xs text-blue-600 hover:underline">Otwórz czat</Link>
               </div>
               <div className="max-h-96 overflow-auto">
-                {displayMessages.length === 0 ? (
-                  <div className="px-3 py-4 text-sm text-gray-500">Brak nowych wiadomości</div>
+                {loadingMessages ? (
+                  <div className="px-3 py-4 text-sm text-gray-500">Ładowanie...</div>
+                ) : displayMessages.length === 0 ? (
+                  <div className="px-3 py-4 text-sm text-gray-500">Brak wiadomości</div>
                 ) : (
                   <ul className="divide-y divide-gray-100 dark:divide-dark-divider">
-                    {displayMessages.slice(0, 8).map((n) => (
+                    {displayMessages.map((msg) => (
                       <li
-                        key={n.id}
-                        className={`px-3 py-3 flex items-start gap-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-dark-raised ${n.read ? "opacity-60" : ""}`}
-                        onClick={() => handleNotifClick(n)}
+                        key={msg.chatId}
+                        className={`px-3 py-3 flex items-start gap-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-dark-raised ${msg.unreadCount === 0 ? "opacity-60" : ""}`}
+                        onClick={async () => {
+                          setOpenMsg(false);
+                          await markChatAsSeen(msg.chatId);
+                          // Refresh to update unread counts
+                          loadRecentMessages();
+                          router.push(`/dashboard/messages?chatId=${encodeURIComponent(msg.chatId)}`);
+                        }}
                       >
-                        <Avatar src={n.meta?.senderImage} alt={n.meta?.senderName} size={36} />
+                        <Avatar src={msg.sender?.image} alt={msg.sender?.name} size={36} />
                         <div className="min-w-0 flex-1">
                           <div className="text-sm font-bold text-gray-900 dark:text-white truncate">
-                            {n.meta?.senderName || "Użytkownik"}
+                            {msg.sender?.name || "Użytkownik"}
                           </div>
-                          <div className="text-xs text-gray-500 dark:text-dark-text-muted line-clamp-1">{n.body?.split(': ')[1] || n.body}</div>
-                          <div className="text-[10px] text-gray-400 mt-1">{new Date(n.createdAt).toLocaleString()}</div>
+                          <div className="text-xs text-gray-500 dark:text-dark-text-muted line-clamp-1">
+                            {msg.attachments?.length > 0
+                              ? `${msg.attachments.length} załącznik${msg.attachments.length > 1 ? 'ów' : ''}`
+                              : msg.content || "Nowa wiadomość"}
+                          </div>
+                          <div className="text-[10px] text-gray-400 mt-1">{new Date(msg.createdAt).toLocaleString()}</div>
                         </div>
-                        {!n.read && <div className="mt-2 w-2 h-2 rounded-full bg-blue-500 shrink-0" />}
+                        {msg.unreadCount > 0 && (
+                          <div className="mt-2 min-w-[18px] h-[18px] px-1.5 rounded-full bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center shrink-0">
+                            {msg.unreadCount > 9 ? '9+' : msg.unreadCount}
+                          </div>
+                        )}
                       </li>
                     ))}
                   </ul>
