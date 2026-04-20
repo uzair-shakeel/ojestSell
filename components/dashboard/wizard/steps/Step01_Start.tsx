@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Upload, X, Car, Info, Camera, ScanLine, ArrowRight, CheckCircle, Loader2 } from "lucide-react";
+import { Upload, X, Car, Info, Camera, ScanLine, ArrowRight, CheckCircle, Loader2, Shield } from "lucide-react";
 import Image from "next/image";
 import QuestionCard from "../shared/QuestionCard";
 import { compressImage, isHeicFile, convertHeicToJpeg } from "../../../../lib/imageUtils";
@@ -16,9 +16,193 @@ interface Step01Props {
 export default function Step01_Start({ formData, updateFormData, nextStep }: Step01Props) {
     const [dragActive, setDragActive] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [isBlurringPlates, setIsBlurringPlates] = useState(false);
+    const [blurError, setBlurError] = useState<string | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    // Handle file selection — compresses every image before storing
+    // Toggle blur plates - processes all images in realtime
+    const toggleBlurPlates = async () => {
+        setBlurError(null);
+        const newBlurState = !(formData.blurNumberPlate || false);
+        const images = formData.images || [];
+        const originalImages = formData.originalImages || [...images];
+        const imagePreviews = formData.imagePreviews || [];
+
+        // If turning blur ON and we have images
+        if (newBlurState && images.length > 0 && !formData.blurNumberPlate) {
+            setIsBlurringPlates(true);
+            try {
+                const blurredImages: File[] = [];
+                const blurredPreviews: string[] = [];
+
+                for (let i = 0; i < images.length; i++) {
+                    const file = images[i];
+                    // Skip if already blurred
+                    if (file.name?.includes("-blurred")) {
+                        blurredImages.push(file);
+                        blurredPreviews.push(imagePreviews[i]);
+                        continue;
+                    }
+
+                    // Compress and blur
+                    const compressed = await compressForAPI(file, 1000 * 1000, 1920, 0.5);
+                    const blurred = await blurSingleImage(compressed);
+                    blurredImages.push(blurred);
+                    blurredPreviews.push(URL.createObjectURL(blurred));
+
+                    // Revoke old preview URL to prevent memory leak
+                    URL.revokeObjectURL(imagePreviews[i]);
+                }
+
+                updateFormData({
+                    blurNumberPlate: true,
+                    originalImages: originalImages, // Store originals
+                    images: blurredImages,
+                    imagePreviews: blurredPreviews,
+                });
+            } catch (error: any) {
+                console.error("[toggleBlurPlates] Error:", error);
+                setBlurError(error.message || "Failed to blur plates. Check console for details.");
+                updateFormData({ blurNumberPlate: false });
+            } finally {
+                setIsBlurringPlates(false);
+            }
+        }
+        // If turning blur OFF - restore originals
+        else if (!newBlurState && formData.originalImages?.length > 0) {
+            // Revoke blurred preview URLs
+            imagePreviews.forEach((url: string) => URL.revokeObjectURL(url));
+
+            // Restore original previews
+            const originalPreviews = formData.originalImages.map((file: File) => URL.createObjectURL(file));
+
+            updateFormData({
+                blurNumberPlate: false,
+                images: [...formData.originalImages],
+                imagePreviews: originalPreviews,
+            });
+        }
+        // Just toggle if no images
+        else {
+            updateFormData({ blurNumberPlate: newBlurState });
+        }
+    };
+
+    // Compress image for API upload (similar to photo enhancer)
+    const compressForAPI = async (file: File, targetBytes = 1000 * 1000, maxDimension = 1920, minQuality = 0.5): Promise<File> => {
+        try {
+            if (!file || file.size <= targetBytes) return file;
+            const bitmap = await createImageBitmap(file);
+            const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height));
+            const w = Math.max(1, Math.round(bitmap.width * scale));
+            const h = Math.max(1, Math.round(bitmap.height * scale));
+            const canvas = document.createElement("canvas");
+            canvas.width = w; canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) return file;
+            ctx.drawImage(bitmap, 0, 0, w, h);
+            let quality = 0.9; let blob: Blob | null = null;
+            for (let i = 0; i < 6; i++) {
+                blob = await new Promise((resolve) => canvas.toBlob((b) => resolve(b), file.type || "image/jpeg", quality));
+                if (!blob) break;
+                if (blob.size <= targetBytes || quality <= minQuality) break;
+                quality -= 0.1;
+            }
+            if (blob && blob.size < file.size) {
+                return new File([blob], file.name.replace(/\.(png|jpg|jpeg|webp)$/i, ".jpg"), { type: "image/jpeg", lastModified: Date.now() });
+            }
+            return file;
+        } catch (e) {
+            console.warn("Compression failed, sending original file", e);
+            return file;
+        }
+    };
+
+    // Blur a single image using the external API (same as photo-enhancer)
+    const blurSingleImage = async (file: File): Promise<File> => {
+        const externalUrl = "https://ojest.pl/detect/detect";
+        const fd = new FormData();
+
+        // Handle HEIC conversion (same as photo-enhancer)
+        let baseFile = file;
+        const isHeic = baseFile && (baseFile.type === "image/heic" || baseFile.type === "image/heif" || /\.(heic|heif)$/i.test(baseFile.name));
+        if (isHeic) {
+            try {
+                const bitmap = await createImageBitmap(baseFile);
+                const canvas = document.createElement("canvas");
+                canvas.width = bitmap.width;
+                canvas.height = bitmap.height;
+                const ctx = canvas.getContext("2d");
+                if (ctx) {
+                    ctx.drawImage(bitmap, 0, 0);
+                    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob((b) => resolve(b), "image/jpeg", 0.9));
+                    if (blob) {
+                        baseFile = new File([blob], baseFile.name.replace(/\.(heic|heif)$/i, ".jpg") || "image.jpg", { type: "image/jpeg", lastModified: Date.now() });
+                    }
+                }
+            } catch (_) {
+                // Fallback: try heic2any
+                try {
+                    const g = globalThis as any;
+                    if (!g.heic2any) {
+                        await new Promise((resolve, reject) => {
+                            const s = document.createElement("script");
+                            s.src = "https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js";
+                            s.onload = resolve;
+                            s.onerror = () => reject(new Error("heic2any load failed"));
+                            document.head.appendChild(s);
+                        });
+                    }
+                    if (g.heic2any) {
+                        const res = await g.heic2any({ blob: baseFile, toType: "image/jpeg", quality: 0.9 });
+                        const out = Array.isArray(res) ? res[0] : res;
+                        if (out) {
+                            baseFile = new File([out], baseFile.name.replace(/\.(heic|heif)$/i, ".jpg") || "image.jpg", { type: "image/jpeg", lastModified: Date.now() });
+                        }
+                    }
+                } catch (__) { }
+            }
+        }
+
+        // Compress before sending
+        const optimized = await compressForAPI(baseFile, 1000 * 1000, 1920, 0.5);
+        fd.append("file", optimized, optimized.name || "upload.jpg");
+
+        console.log("[blurSingleImage] Sending to:", externalUrl, optimized.name, optimized.size);
+
+        const resp = await fetch(externalUrl, {
+            method: "POST",
+            mode: "cors",
+            headers: { Accept: "application/json" },
+            body: fd
+        });
+
+        if (!resp.ok) {
+            throw new Error(`Blur API HTTP ${resp.status}`);
+        }
+
+        const data = await resp.json();
+
+        // Support both response shapes (same as photo-enhancer)
+        const base64 = data?.image_base64 || (data?.processed_image?.includes(",") ? data?.processed_image.split(",")[1] : data?.processed_image);
+        if (!base64) {
+            throw new Error("Blur API returned no image data");
+        }
+
+        const imageUrl = (data?.processed_image && data.processed_image.startsWith("data:"))
+            ? data.processed_image
+            : `data:image/jpeg;base64,${base64}`;
+
+        // Convert base64 to File
+        const byteString = atob(imageUrl.split(",")[1]);
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+        const blob = new Blob([ab], { type: "image/jpeg" });
+        return new File([blob], file.name.replace(/\.(png|jpg|jpeg|webp|heic|heif)$/i, "-blurred.jpg"), { type: "image/jpeg" });
+    };
+
+    // Handle file selection — compresses every image before storing, optionally blurs plates
     const handleFiles = async (files: FileList | File[]) => {
         const rawFiles = Array.from(files).filter(file =>
             (file.type.startsWith("image/") || isHeicFile(file)) &&
@@ -28,25 +212,43 @@ export default function Step01_Start({ formData, updateFormData, nextStep }: Ste
         if (rawFiles.length === 0) return;
 
         setIsProcessing(true);
+
         try {
             const processedImages: File[] = [];
             const processedPreviews: string[] = [];
+            const currentImages = formData.images || [];
+            const currentOriginals = formData.originalImages || [];
 
             for (const raw of rawFiles) {
                 // 1. Convert HEIC → JPEG if needed
                 const converted = isHeicFile(raw) ? await convertHeicToJpeg(raw) : raw;
                 // 2. Compress to ≤1 MB, max 1920px on the longest side
-                const compressed = await compressImage(converted, 1_000_000, 1920, 0.5);
+                let compressed = await compressImage(converted, 1_000_000, 1920, 0.5);
+
+                // 3. Blur number plate if option is enabled
+                if (formData.blurNumberPlate) {
+                    setIsBlurringPlates(true);
+                    compressed = await blurSingleImage(compressed);
+                }
+
                 processedImages.push(compressed);
                 processedPreviews.push(URL.createObjectURL(compressed));
             }
 
+            // Update both images and originalImages (for blur toggle restore)
+            const newImages = [...currentImages, ...processedImages];
+            const newOriginals = formData.blurNumberPlate
+                ? [...currentOriginals, ...processedImages.map((f, i) => processedImages[i])] // Store blurred as original when blur is on
+                : [...currentOriginals, ...processedImages]; // Store originals
+
             updateFormData({
-                images: [...(formData.images || []), ...processedImages],
+                images: newImages,
+                originalImages: newOriginals,
                 imagePreviews: [...(formData.imagePreviews || []), ...processedPreviews],
             });
         } finally {
             setIsProcessing(false);
+            setIsBlurringPlates(false);
         }
     };
 
@@ -88,10 +290,10 @@ export default function Step01_Start({ formData, updateFormData, nextStep }: Ste
             >
                 <div
                     className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all ${isProcessing
-                            ? "border-amber-400 bg-amber-50 dark:bg-amber-900/20 cursor-wait"
-                            : dragActive
-                                ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-                                : "border-gray-300 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500"
+                        ? "border-amber-400 bg-amber-50 dark:bg-amber-900/20 cursor-wait"
+                        : dragActive
+                            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                            : "border-gray-300 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500"
                         }`}
                     onDragEnter={(e) => { e.preventDefault(); if (!isProcessing) setDragActive(true); }}
                     onDragLeave={(e) => { e.preventDefault(); setDragActive(false); }}
@@ -110,8 +312,8 @@ export default function Step01_Start({ formData, updateFormData, nextStep }: Ste
 
                     <div className="flex flex-col items-center justify-center cursor-pointer">
                         <div className={`h-16 w-16 rounded-full flex items-center justify-center mb-4 ${isProcessing
-                                ? "bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400"
-                                : "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                            ? "bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400"
+                            : "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
                             }`}>
                             {isProcessing
                                 ? <Loader2 className="h-8 w-8 animate-spin" />
@@ -127,6 +329,59 @@ export default function Step01_Start({ formData, updateFormData, nextStep }: Ste
                         </p>
                     </div>
                 </div>
+
+                {/* Blur Number Plate Option - Themed Card Style */}
+                <div className="mt-4">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 ml-1">Privacy Protection</label>
+                    <button
+                        onClick={toggleBlurPlates}
+                        disabled={isBlurringPlates}
+                        className={`relative w-full p-4 rounded-xl border-2 text-left transition-all ${formData.blurNumberPlate
+                            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md ring-1 ring-blue-500/20"
+                            : "border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                            }`}
+                    >
+                        <div className={`h-5 w-5 rounded-full border-2 absolute top-4 right-4 flex items-center justify-center transition-colors ${formData.blurNumberPlate ? "border-blue-500 bg-blue-500" : "border-gray-300 dark:border-gray-600"
+                            }`}>
+                            {formData.blurNumberPlate && <div className="h-2 w-2 bg-white rounded-full" />}
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <div className={`h-10 w-10 rounded-full flex items-center justify-center ${formData.blurNumberPlate ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" : "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500"
+                                }`}>
+                                {isBlurringPlates ? (
+                                    <Loader2 className="h-5 w-5 animate-spin" />
+                                ) : (
+                                    <Shield className="h-5 w-5" />
+                                )}
+                            </div>
+                            <div>
+                                <h3 className={`font-bold ${formData.blurNumberPlate ? "text-blue-700 dark:text-blue-300" : "text-gray-900 dark:text-white"}`}>
+                                    {isBlurringPlates ? "Blurring Plates..." : (formData.blurNumberPlate ? "Plate Blur Enabled" : "Blur Number Plates")}
+                                </h3>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                                    {formData.blurNumberPlate
+                                        ? "All number plates are hidden using AI detection"
+                                        : "Automatically detect and blur all license plates"}
+                                </p>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+
+                {/* Error message */}
+                {blurError && (
+                    <div className="mt-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
+                        <strong>Blur Failed:</strong> {blurError}
+                    </div>
+                )}
+
+                {/* Processing indicator for blur */}
+                {isBlurringPlates && (
+                    <div className="mt-2 flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span>Blurring number plates with AI...</span>
+                    </div>
+                )}
 
                 {/* Image Previews */}
                 {formData.imagePreviews?.length > 0 && (
@@ -156,6 +411,11 @@ export default function Step01_Start({ formData, updateFormData, nextStep }: Ste
                                     {idx === 0 && (
                                         <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/60 text-white text-[10px] font-bold uppercase tracking-wider rounded backdrop-blur-sm">
                                             Main Photo
+                                        </div>
+                                    )}
+                                    {formData.blurNumberPlate && (
+                                        <div className="absolute top-2 left-2 px-2 py-1 bg-blue-600/80 text-white text-[10px] font-bold uppercase tracking-wider rounded backdrop-blur-sm flex items-center gap-1">
+                                            <Shield className="h-3 w-3" /> Plate Hidden
                                         </div>
                                     )}
                                 </motion.div>
