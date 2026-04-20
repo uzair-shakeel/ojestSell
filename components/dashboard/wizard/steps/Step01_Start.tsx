@@ -118,6 +118,20 @@ export default function Step01_Start({ formData, updateFormData, nextStep }: Ste
         }
     };
 
+    // Get CSS filter style based on selected preset
+    const getFilterStyle = (filterKey: string | undefined): React.CSSProperties => {
+        const presets: Record<string, React.CSSProperties> = {
+            none: {},
+            showroom: {
+                filter: "brightness(1.05) contrast(1.15) saturate(1.1)",
+            },
+            sports: {
+                filter: "brightness(1.02) contrast(1.25) saturate(1.15)",
+            },
+        };
+        return presets[filterKey || "none"] || {};
+    };
+
     // Blur a single image using the external API (same as photo-enhancer)
     const blurSingleImage = async (file: File): Promise<File> => {
         const externalUrl = "https://ojest.pl/detect/detect";
@@ -383,6 +397,38 @@ export default function Step01_Start({ formData, updateFormData, nextStep }: Ste
                     </div>
                 )}
 
+                {/* Photo Style Presets */}
+                {formData.images?.length > 0 && (
+                    <div className="mt-6">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 ml-1">Photo Style</label>
+                        <div className="grid grid-cols-3 gap-3">
+                            {[
+                                { key: "none", name: "Natural", desc: "No adjustments" },
+                                { key: "showroom", name: "Showroom", desc: "Bright & vivid" },
+                                { key: "sports", name: "Sport", desc: "Bold contrast" },
+                            ].map((preset) => (
+                                <button
+                                    key={preset.key}
+                                    onClick={() => updateFormData({ photoFilter: preset.key })}
+                                    className={`relative p-3 rounded-xl border-2 text-left transition-all ${formData.photoFilter === preset.key || (!formData.photoFilter && preset.key === "none")
+                                        ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md ring-1 ring-blue-500/20"
+                                        : "border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                                        }`}
+                                >
+                                    <div className={`h-5 w-5 rounded-full border-2 absolute top-3 right-3 flex items-center justify-center transition-colors ${formData.photoFilter === preset.key || (!formData.photoFilter && preset.key === "none") ? "border-blue-500 bg-blue-500" : "border-gray-300 dark:border-gray-600"
+                                        }`}>
+                                        {(formData.photoFilter === preset.key || (!formData.photoFilter && preset.key === "none")) && <div className="h-2 w-2 bg-white rounded-full" />}
+                                    </div>
+                                    <div className={`text-sm font-bold mb-1 ${formData.photoFilter === preset.key || (!formData.photoFilter && preset.key === "none") ? "text-blue-700 dark:text-blue-300" : "text-gray-900 dark:text-white"}`}>
+                                        {preset.name}
+                                    </div>
+                                    <div className="text-xs text-gray-500 dark:text-gray-400">{preset.desc}</div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 {/* Image Previews */}
                 {formData.imagePreviews?.length > 0 && (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
@@ -400,6 +446,7 @@ export default function Step01_Start({ formData, updateFormData, nextStep }: Ste
                                         alt={`Preview ${idx + 1}`}
                                         fill
                                         className="object-cover"
+                                        style={getFilterStyle(formData.photoFilter)}
                                     />
                                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                                     <button
