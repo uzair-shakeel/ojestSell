@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import LanguageSwitcher from "../LanguageSwitcher";
 import ThemeToggle from "../ThemeToggle";
@@ -224,8 +225,8 @@ const Navbar = () => {
       {/* Logo Section - Left Side */}
       <div className="flex items-center">
         <Link href="/" className="flex items-center">
-          <img src="/logo.png" alt="Ojest" className="h-8 md:h-9 w-auto object-contain dark:hidden" />
-          <img src="/whitelogo.png" alt="Ojest" className="h-8 md:h-9 w-auto object-contain hidden dark:block" />
+          <Image src="/logo.png" alt="Ojest" width={120} height={36} className="h-8 md:h-9 w-auto object-contain dark:hidden" priority />
+          <Image src="/whitelogo.png" alt="Ojest" width={120} height={36} className="h-8 md:h-9 w-auto object-contain hidden dark:block" priority />
         </Link>
       </div>
 
@@ -417,8 +418,8 @@ const Navbar = () => {
             <div className="h-16 px-4 border-b border-gray-100 dark:border-dark-divider flex justify-between items-center sticky top-0 bg-white/80 dark:bg-dark-panel/80 backdrop-blur-md z-10">
               <div className="flex items-center">
                 <Link href="/" onClick={() => setIsMenuOpen(false)} className="flex items-center">
-                  <img src="/logo.png" alt="Ojest" className="h-8 md:h-9 w-auto object-contain dark:hidden" />
-                  <img src="/whitelogo.png" alt="Ojest" className="h-8 md:h-9 w-auto object-contain hidden dark:block" />
+                  <Image src="/logo.png" alt="Ojest" width={120} height={36} className="h-8 md:h-9 w-auto object-contain dark:hidden" priority />
+                  <Image src="/whitelogo.png" alt="Ojest" width={120} height={36} className="h-8 md:h-9 w-auto object-contain hidden dark:block" priority />
                 </Link>
               </div>
 

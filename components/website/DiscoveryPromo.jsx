@@ -78,7 +78,7 @@ export function DiscoveryPromo() {
                                     {/* Mock App Header */}
                                     <div className="absolute top-0 left-0 w-full h-12 flex items-center justify-between px-6 border-b border-gray-100 dark:border-dark-divider bg-white/80 dark:bg-dark-panel/80 backdrop-blur-md z-30">
                                         <div className="flex items-center gap-2">
-                                            <img src="/logooo.png" alt="" className="h-3 w-3" />
+                                            <Image src="/logooo.png" alt="" width={12} height={12} className="h-3 w-3" />
                                             <span className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-900 dark:text-white">Ojest Discover</span>
                                         </div>
                                     </div>
@@ -100,10 +100,13 @@ export function DiscoveryPromo() {
                                                     className="h-full w-full absolute inset-0 rounded-2xl overflow-hidden shadow-lg bg-gray-100 dark:bg-gray-900"
                                                 >
                                                     <div className="relative h-full w-full">
-                                                        <img
+                                                        <Image
                                                             src={getImageUrl(currentCar)}
                                                             alt={currentCar?.title || "Car"}
-                                                            className="h-full w-full object-cover"
+                                                            fill
+                                                            className="object-cover"
+                                                            loading="lazy"
+                                                            sizes="350px"
                                                         />
                                                         <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent opacity-90" />
 

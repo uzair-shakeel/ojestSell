@@ -699,7 +699,7 @@ const Page = () => {
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-dark-card flex-shrink-0 overflow-hidden relative">
             {seller?.image ? (
-              <img src={formatImageUrl(seller?.image)} alt="" className="w-full h-full object-cover" />
+              <Image src={formatImageUrl(seller?.image)} alt="" fill className="object-cover" loading="lazy" sizes="24px" />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-500">?</div>
             )}
@@ -773,10 +773,13 @@ const Page = () => {
                       setIsCategorizationModalOpen(true);
                     }}
                   >
-                    <img
+                    <Image
                       src={img}
                       alt={`${car?.make} ${car?.model} - Image ${index + 1}`}
-                      className="max-w-full max-h-[90vh] object-contain"
+                      fill
+                      className="object-contain"
+                      sizes="100vw"
+                      priority
                     />
                   </div>
                 </SwiperSlide>
@@ -866,15 +869,20 @@ const Page = () => {
             <div className="hidden md:flex md:flex-row gap-2 bg-white dark:bg-dark-card overflow-hidden h-[380px] sm:h-[430px] md:h-[461px] lg:h-[520px] xl:h-[560px] 2xl:h-[600px]">
               {/* Main Image - Left Side */}
               <div className={`relative group h-full ${galleryMode === "single" ? "w-full" : "w-full md:w-[calc(100%-320px)]"}`}>
-                <div className="relative w-full h-full">
-                  <img
+                <div
+                  className="relative w-full h-full cursor-pointer"
+                  onClick={() => {
+                    setClickedImageUrl(mainImage || images[currentImageIndex] || images[0]);
+                    setIsCategorizationModalOpen(true);
+                  }}
+                >
+                  <Image
                     src={mainImage || images[currentImageIndex] || images[0]}
                     alt={`${car?.make} ${car?.model} - Image ${currentImageIndex + 1}`}
-                    className="w-full h-full object-cover cursor-pointer"
-                    onClick={() => {
-                      setClickedImageUrl(mainImage || images[currentImageIndex] || images[0]);
-                      setIsCategorizationModalOpen(true);
-                    }}
+                    fill
+                    className="object-cover"
+                    priority
+                    sizes="(max-width: 768px) 100vw, 70vw"
                   />
                 </div>
 
@@ -932,10 +940,13 @@ const Page = () => {
                             setIsCategorizationModalOpen(true);
                           }}
                         >
-                          <img
+                          <Image
                             src={img}
                             alt={`Thumbnail ${realIndex + 1}`}
-                            className="w-full h-full object-cover"
+                            fill
+                            className="object-cover"
+                            loading="lazy"
+                            sizes="(max-width: 768px) 25vw, 20vw"
                           />
 
                           {(isExteriorThumb || isInteriorThumb) && (
@@ -972,15 +983,20 @@ const Page = () => {
             {/* Force full width breakout for single image on mobile if inside padding */}
             <div className={`flex md:hidden overflow-x-auto snap-x snap-mandatory scrollbar-hide scroll-x-touch min-h-[250px] w-full ${images.length > 1 ? "gap-[3px]" : ""}`}>
               {/* Slide 1: Main Image */}
-              <div className={`snap-start shrink-0 ${images.length === 1 ? "w-full" : "w-[88vw]"} aspect-[4/3] relative overflow-hidden bg-white dark:bg-dark-card`}>
-                <img
+              <div
+                className={`snap-start shrink-0 ${images.length === 1 ? "w-full" : "w-[88vw]"} aspect-[4/3] relative overflow-hidden bg-white dark:bg-dark-card cursor-pointer`}
+                onClick={() => {
+                  setClickedImageUrl(mainImage || images[currentImageIndex] || images[0]);
+                  setIsCategorizationModalOpen(true);
+                }}
+              >
+                <Image
                   src={mainImage || images[currentImageIndex] || images[0]}
                   alt={`${car?.make} ${car?.model} - Image 1`}
-                  className="w-full h-full object-cover cursor-pointer"
-                  onClick={() => {
-                    setClickedImageUrl(mainImage || images[currentImageIndex] || images[0]);
-                    setIsCategorizationModalOpen(true);
-                  }}
+                  fill
+                  className="object-cover"
+                  priority
+                  sizes="88vw"
                 />
 
                 {/* Categorization badge for the main image if it's the start of a category */}
@@ -1049,10 +1065,13 @@ const Page = () => {
                             setIsCategorizationModalOpen(true);
                           }}
                         >
-                          <img
+                          <Image
                             src={img}
                             alt={`Thumbnail ${realIndex + 1}`}
-                            className="w-full h-full object-cover"
+                            fill
+                            className="object-cover"
+                            loading="lazy"
+                            sizes="44vw"
                           />
 
                           {(isExteriorThumb || isInteriorThumb) && (
@@ -1291,10 +1310,13 @@ const Page = () => {
                       <div className="flex items-center gap-4 min-w-0">
                         <div className="relative">
                           <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white dark:border-gray-700 shadow-md ring-2 ring-gray-50 dark:ring-gray-800">
-                            <img
+                            <Image
                               src={formatImageUrl(seller?.image)}
                               alt={sellerName}
-                              className="w-full h-full object-cover"
+                              fill
+                              className="object-cover"
+                              loading="lazy"
+                              sizes="64px"
                             />
                           </div>
                           {/* Online indicator dot example - optional */}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useGoogleMaps } from "../../lib/GoogleMapsContext";
 import { getPublicUserInfo } from "../../services/userService";
@@ -150,47 +151,65 @@ export default function CarCard({ car, viewMode = 'grid' }) {
             {car?.isFeatured && (car?.images?.length ?? 0) >= 3 ? (
               <div className="grid grid-cols-2 grid-rows-2 h-full gap-0.5">
                 <div className="relative col-span-2 row-span-1">
-                  <img
+                  <Image
                     src={formatCarImage(car.images[0])}
                     alt={`${car.year} ${car.make} ${car.model} - 1`}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    loading="lazy"
+                    sizes="(max-width: 768px) 100vw, 50vw"
                   />
                 </div>
                 <div className="relative col-start-1 col-end-2 row-start-2 row-end-3">
-                  <img
+                  <Image
                     src={formatCarImage(car.images[1])}
                     alt={`${car.year} ${car.make} ${car.model} - 2`}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    loading="lazy"
+                    sizes="(max-width: 768px) 50vw, 25vw"
                   />
                 </div>
                 <div className="relative col-start-2 col-end-3 row-start-2 row-end-3">
                   {(car?.images?.length ?? 0) >= 4 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-0.5 h-full">
-                      <img
+                      <Image
                         src={formatCarImage(car.images[2])}
                         alt={`${car.year} ${car.make} ${car.model} - 3`}
-                        className="w-full h-full object-cover"
+                        fill
+                        className="object-cover"
+                        loading="lazy"
+                        sizes="(max-width: 768px) 50vw, 25vw"
                       />
-                      <img
+                      <Image
                         src={formatCarImage(car.images[3])}
                         alt={`${car.year} ${car.make} ${car.model} - 4`}
-                        className="w-full h-full object-cover hidden md:block"
+                        fill
+                        className="object-cover hidden md:block"
+                        loading="lazy"
+                        sizes="25vw"
                       />
                     </div>
                   ) : (
-                    <img
+                    <Image
                       src={formatCarImage(car.images[2])}
                       alt={`${car.year} ${car.make} ${car.model} - 3`}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
+                      loading="lazy"
+                      sizes="(max-width: 768px) 50vw, 25vw"
                     />
                   )}
                 </div>
               </div>
             ) : (
-              <img
+              <Image
                 src={firstImage}
                 alt={`${car.year} ${car.make} ${car.model}`}
-                className="w-full h-full object-cover  transition-transform duration-500"
+                fill
+                className="object-cover transition-transform duration-500"
+                loading="lazy"
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
             )}
 
@@ -206,10 +225,12 @@ export default function CarCard({ car, viewMode = 'grid' }) {
             {/* Simple Featured Shade & Logo */}
             {car?.isFeatured && (
               <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-bl from-blue-900/30 to-transparent pointer-events-none z-20 flex items-start justify-end p-3 rounded-tr-2xl">
-                <img
+                <Image
                   src="/logooo.png"
                   alt="Premium"
-                  className="w-8 h-8 object-contain brightness-0 invert opacity-70"
+                  width={32}
+                  height={32}
+                  className="object-contain brightness-0 invert opacity-70"
                 />
               </div>
             )}
@@ -271,34 +292,46 @@ export default function CarCard({ car, viewMode = 'grid' }) {
           {car?.isFeatured && (car?.images?.length ?? 0) >= 3 ? (
             <div className="flex h-full w-full gap-0.5">
               <div className="relative w-2/3 h-full">
-                <img
+                <Image
                   src={formatCarImage(car.images[0])}
                   alt={`${car.year} ${car.make} ${car.model} - 1`}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  loading="lazy"
+                  sizes="(max-width: 768px) 30vw, 20vw"
                 />
               </div>
               <div className="w-1/3 flex flex-col gap-0.5 h-full">
-                <div className="h-1/2">
-                  <img
+                <div className="relative h-1/2">
+                  <Image
                     src={formatCarImage(car.images[1])}
                     alt={`${car.year} ${car.make} ${car.model} - 2`}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    loading="lazy"
+                    sizes="(max-width: 768px) 15vw, 10vw"
                   />
                 </div>
-                <div className="h-1/2">
-                  <img
+                <div className="relative h-1/2">
+                  <Image
                     src={formatCarImage(car.images[2])}
                     alt={`${car.year} ${car.make} ${car.model} - 3`}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    loading="lazy"
+                    sizes="(max-width: 768px) 15vw, 10vw"
                   />
                 </div>
               </div>
             </div>
           ) : (
-            <img
+            <Image
               src={firstImage}
               alt={`${car.year} ${car.make} ${car.model}`}
-              className="w-full h-full object-cover  transition-transform duration-700"
+              fill
+              className="object-cover transition-transform duration-700"
+              loading="lazy"
+              sizes="(max-width: 768px) 40vw, 30vw"
             />
           )}
 
@@ -308,10 +341,12 @@ export default function CarCard({ car, viewMode = 'grid' }) {
           {/* Simple Featured Shade & Logo (List View) */}
           {car?.isFeatured && (
             <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-bl from-black/50 to-transparent pointer-events-none z-20 flex items-start justify-end p-2 sm:p-4">
-              <img
+              <Image
                 src="/logooo.png"
                 alt="Premium"
-                className="w-5 h-5 sm:w-8 sm:h-8 object-contain brightness-0 invert opacity-70"
+                width={32}
+                height={32}
+                className="object-contain brightness-0 invert opacity-70"
               />
             </div>
           )}
