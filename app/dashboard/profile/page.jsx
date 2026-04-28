@@ -8,7 +8,6 @@ import CustomMap from "../../../components/dashboard/GoogleMapComponent";
 import { motion } from "framer-motion";
 import { getUserById, updateUser } from "../../../services/userService";
 import Avatar from "../../../components/both/Avatar";
-import axios from "axios"; // Added axios import
 import { toast } from "react-hot-toast";
 
 const ProfileComponent = () => {
