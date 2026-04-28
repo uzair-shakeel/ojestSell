@@ -117,15 +117,14 @@ const MessagesPage = () => {
   useEffect(() => {
     if (!user) {
       console.warn("⚠️ No user, skipping socket connection");
+
       return;
     }
 
-    console.log("👤 Current user:", user);
-    console.log("🆔 Resolved user ID:", myUserId);
-    console.log("🔑 User ID type:", typeof myUserId, "Value:", myUserId);
+    // Socket connection established
 
     if (!myUserId) {
-      console.error("❌ No valid user ID found! Cannot connect socket.");
+      console.error("No valid user ID found");
       return;
     }
 
@@ -136,64 +135,38 @@ const MessagesPage = () => {
 
     // Set new auth for this user
     socket.auth = { userId: myUserId };
-    console.log("[Socket] connecting to:", SOCKET_BASE, "with auth:", socket.auth);
-    console.log("🔧 Socket options:", {
-      path: SOCKET_PATH,
-      transports: SOCKET_TRANSPORT,
-      withCredentials: true,
-      timeout: 20000
-    });
+    // Connect socket
 
     socket.connect();
 
     // Add timeout to detect if connection is hanging
     const connectionTimeout = setTimeout(() => {
       if (!socket.connected) {
-        console.error("⏰ Socket connection TIMEOUT after 5 seconds!");
-        console.error("Socket is still trying to connect but hasn't succeeded");
-        console.error("This usually means:");
-        console.error("1. Server is not running");
-        console.error("2. Wrong URL/port");
-        console.error("3. CORS blocking the connection");
-        console.error("4. Firewall blocking the connection");
+        console.error("Socket connection timeout");
       }
     }, 5000);
 
     socket.on("connect", () => {
       clearTimeout(connectionTimeout);
-      console.log("✅✅✅ [Socket] CONNECTED SUCCESSFULLY! ✅✅✅");
-      console.log("Socket ID:", socket.id);
-      console.log("🔌 Transport:", socket.io.engine.transport.name);
-      console.log("⚡ Socket.connected:", socket.connected);
-      console.log("🔐 Auth used:", socket.auth);
+      console.log("[Socket] Connected");
 
       // Join room after connection is established
       if (myUserId) {
         socket.emit("join", myUserId);
-        console.log("🚪 Emitted join event for room:", myUserId);
-      } else {
-        console.error("❌ Cannot join room - myUserId is undefined!");
       }
     });
 
     socket.on("connect_error", (err) => {
-      console.error("❌❌❌ [Socket] CONNECT ERROR! ❌❌❌");
-      console.error("Error:", err);
-      console.error("Error message:", err?.message);
-      console.error("🔍 Auth being used:", socket.auth);
-      console.error("🔍 Socket URL:", SOCKET_BASE);
-      console.error("🔍 Socket path:", SOCKET_PATH);
+      console.error("[Socket] Connect error:", err?.message);
     });
 
     socket.on("disconnect", (reason) => {
-      console.warn("⚠️⚠️⚠️ [Socket] DISCONNECTED! ⚠️⚠️⚠️");
-      console.warn("Reason:", reason);
-      console.warn("Socket.connected:", socket.connected);
+      console.warn("[Socket] Disconnected:", reason);
     });
 
     const fetchChats = async () => {
       try {
-        console.log("Fetching chats for user ID:", myUserId);
+        // Fetching chats
 
         // Use fetch with explicit error handling
         const authToken = token || (typeof window !== "undefined" ? localStorage.getItem("token") : null);
@@ -204,7 +177,6 @@ const MessagesPage = () => {
           },
         });
 
-        console.log("Response status:", response.status);
 
         if (!response.ok) {
           const errorText = await response.text();
@@ -215,7 +187,6 @@ const MessagesPage = () => {
         }
 
         const data = await response.json();
-        console.log("Initial chats data:", data);
         const chatsArray = Array.isArray(data) ? data : data.chats || [];
         const sortedChats = [...chatsArray].sort((a, b) => {
           const ta = new Date(a?.lastMessage?.timestamp || a?.updatedAt || 0).getTime();
@@ -245,7 +216,7 @@ const MessagesPage = () => {
 
     // Listen for errors
     socket.on("error", (message) => {
-      console.error("Socket error:", message);
+      console.error("Socket error");
       setError(
         typeof message === "string"
           ? message
@@ -255,7 +226,6 @@ const MessagesPage = () => {
 
     // Listen for chat updates (if emitted by backend elsewhere)
     socket.on("updatedChats", (updatedChats) => {
-      console.log("Received updated chats:", updatedChats);
       const sorted = [...(updatedChats || [])].sort((a, b) => {
         const ta = new Date(a?.lastMessage?.timestamp || a?.updatedAt || 0).getTime();
         const tb = new Date(b?.lastMessage?.timestamp || b?.updatedAt || 0).getTime();
@@ -268,7 +238,6 @@ const MessagesPage = () => {
         const unreadCount = chat.unreadCount || 0;
         return sum + unreadCount;
       }, 0);
-      console.log("Calculated new total unread:", newTotalUnread);
       setTotalUnread(newTotalUnread);
 
       // If we have a selected chat, update it with the latest data
@@ -285,7 +254,6 @@ const MessagesPage = () => {
 
     // Listen for total unread count updates
     socket.on("totalUnreadCount", (count) => {
-      console.log("Received total unread count:", count);
       setTotalUnread(count || 0);
     });
 
@@ -315,7 +283,6 @@ const MessagesPage = () => {
 
     const fetchMessages = async () => {
       try {
-        console.log(`🔄 Fetching messages for chat: ${selectedChat._id}`);
 
         const authToken = token || (typeof window !== "undefined" ? localStorage.getItem("token") : null);
         const response = await fetch(
@@ -328,7 +295,6 @@ const MessagesPage = () => {
           }
         );
 
-        console.log("Messages response status:", response.status);
 
         if (!response.ok) {
           const errorText = await response.text();
@@ -339,7 +305,6 @@ const MessagesPage = () => {
         }
 
         const data = await response.json();
-        console.log("Received messages:", data);
 
         // Ensure messages have text field for display consistency
         const processedData = data.map((msg) => ({
@@ -366,7 +331,6 @@ const MessagesPage = () => {
       const { chatId, message } = payload;
       const currentUserId = user?.id || user?._id || authUserId;
 
-      console.log("🔔 Raw socket payload:", { chatId, message, currentUserId });
 
       const senderId = (typeof message.sender === 'object' && message.sender?._id)
         ? message.sender._id
@@ -452,28 +416,19 @@ const MessagesPage = () => {
       // If current chat is open, append/replace in thread
       if (selectedChat && selectedChat._id === chatId) {
         setMessages((prev) => {
-          console.log("📨 Received newMessage event", { chatId, message, currentMessages: prev.length });
 
           // Check if this is our own message by matching sender
           const isOwnMessage = String(senderId) === String(currentUserId);
 
           if (isOwnMessage) {
-            console.log("👤 Own message received via socket, attempting to replace pending bubble...");
-            console.log("📦 Payload received:", payload);
-            console.log("📦 Processed message:", processedMessage);
             // Match by tempId if possible (backend should return it if we sent it)
             const incomingTempId = payload.tempId || message.tempId;
-            console.log("🔍 Looking for tempId:", incomingTempId);
 
             let pendingIdx = -1;
 
             if (incomingTempId) {
-              pendingIdx = prev.findIndex(m => {
-                console.log("  Checking message:", m._id, "pending:", m.pending, "tempId:", m.tempId);
-                return m.pending && (m.tempId === incomingTempId || m._id === incomingTempId);
-              });
+              pendingIdx = prev.findIndex(m => m.pending && (m.tempId === incomingTempId || m._id === incomingTempId));
             }
-            console.log("🔍 Found pendingIdx:", pendingIdx);
 
             // Fallback to content matching if no tempId match
             if (pendingIdx === -1) {
@@ -489,12 +444,11 @@ const MessagesPage = () => {
 
             if (pendingIdx !== -1) {
               // Replace the optimistic message with the real one
-              console.log("✅ Replacing pending message at index", pendingIdx);
               const copy = [...prev];
               copy[pendingIdx] = { ...processedMessage, pending: false, senderName: "You" };
               return copy;
             } else {
-              console.log("⚠️ No pending message found!");
+              // No pending message found
               // If we couldn't find it but it's our own message, it might have arrived before we even finished our local state update
               // (rare but possible). In this case, just treat it as a new message.
             }
@@ -503,12 +457,10 @@ const MessagesPage = () => {
           // Check if message already exists (avoid duplicates)
           const exists = prev.some((m) => m._id === processedMessage._id || (processedMessage.tempId && m.tempId === processedMessage.tempId && !m.pending));
           if (exists) {
-            console.log("ℹ️ Message already exists, skipping", processedMessage._id);
             return prev;
           }
 
           // Add new message
-          console.log("➕ Adding new message", { id: processedMessage._id, text: processedMessage.text });
           return [...prev, processedMessage];
         });
 

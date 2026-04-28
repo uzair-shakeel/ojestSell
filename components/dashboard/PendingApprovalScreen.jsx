@@ -12,7 +12,6 @@ const PendingApprovalScreen = ({ user }) => {
   // Auto-check approval status every 10 seconds
   useEffect(() => {
     const interval = setInterval(async () => {
-      console.log("🔄 Auto-checking approval status...");
       await checkApprovalStatus();
     }, 10000); // Check every 10 seconds
 
@@ -36,10 +35,8 @@ const PendingApprovalScreen = ({ user }) => {
 
       if (response.ok) {
         const userData = await response.json();
-        console.log("🔄 Auto-check result:", userData.approvalStatus);
 
         if (userData.approvalStatus === "approved") {
-          console.log("✅ User approved! Redirecting to dashboard...");
           updateUserState(userData);
           // Redirect immediately
           window.location.href = "/dashboard/home";
@@ -78,27 +75,12 @@ const PendingApprovalScreen = ({ user }) => {
 
       if (response.ok) {
         const userData = await response.json();
-        console.log("🔍 Raw API response:", userData);
-        console.log("🔍 User object structure:", userData);
-        console.log("🔍 All user fields:", Object.keys(userData || {}));
-        console.log("🔍 Approval status value:", userData?.approvalStatus);
-        console.log("🔍 User ID:", userData?._id || userData?.id);
-
-        // Check if the user object exists and has the right structure
-        if (!userData) {
-          console.error("❌ No user data in response");
-          alert("Error: No user data received from server");
-          return;
-        }
 
         // Add a flag to show this is a fresh approval
         const updatedUser = {
           ...userData,
-          hasSeenApproval: false, // This will trigger the success screen
+          hasSeenApproval: false,
         };
-
-        console.log("🔍 Final updated user object:", updatedUser);
-        console.log("🔍 Final approval status:", updatedUser.approvalStatus);
 
         // Update the user state in AuthContext
         updateUserState(updatedUser);
@@ -108,7 +90,6 @@ const PendingApprovalScreen = ({ user }) => {
           alert(
             "🎉 Congratulations! Your account has been approved! Redirecting to dashboard..."
           );
-          // Redirect to dashboard after a short delay
           setTimeout(() => {
             window.location.href = "/dashboard/home";
           }, 1500);
@@ -120,12 +101,10 @@ const PendingApprovalScreen = ({ user }) => {
           alert("❌ Your account has been rejected. Please contact support.");
         } else {
           alert(
-            `Status refreshed! Current status: ${updatedUser.approvalStatus || "Unknown"
-            }`
+            `Status refreshed! Current status: ${updatedUser.approvalStatus || "Unknown"}`
           );
         }
       } else {
-        console.error("Failed to refresh user status");
         alert("Failed to refresh status. Please try again.");
       }
     } catch (error) {

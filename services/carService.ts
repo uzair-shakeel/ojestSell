@@ -5,8 +5,6 @@ import axios from "axios";
 const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || "").trim().replace(/\/$/, "");
 const API_BASE_URL = API_BASE ? `${API_BASE}/api` : "/api";
 
-console.log("Using API_BASE_URL:", API_BASE_URL);
-console.log("Original process.env.NEXT_PUBLIC_API_BASE_URL:", process.env.NEXT_PUBLIC_API_BASE_URL);
 
 // Backend base for admin endpoints (bypass Next API if no proxies exist)
 const BACKEND_BASE = API_BASE_URL;
@@ -127,7 +125,6 @@ export const uploadImageBatch = async (
     images.forEach((file) => formData.append("images", file));
 
     const uploadUrl = `${API_BASE_URL}/cars/upload-images`;
-    console.log("Uploading batch to:", uploadUrl);
 
     const response = await axios.post(uploadUrl, formData, {
       headers: {
@@ -223,10 +220,6 @@ export const getAllCars = async (): Promise<CarData[]> => {
 
   const tryFetch = async (): Promise<CarData[]> => {
     try {
-      console.log(
-        `Attempt ${retryCount + 1} to fetch cars from:`,
-        `${API_BASE_URL}/cars`
-      );
 
       const response = await axios.get(`${API_BASE_URL}/cars`, {
         headers: {
@@ -297,10 +290,7 @@ export const getAllCars = async (): Promise<CarData[]> => {
 // Get car by ID
 export const getCarById = async (carId: string): Promise<CarData> => {
   try {
-    console.log(
-      `Calling API: ${API_BASE_URL}/cars/${carId} with carId:`,
-      carId
-    ); // Debug log
+ // Debug log
     const response = await axios.get(`${API_BASE_URL}/cars/${carId}`);
     return response.data;
   } catch (error: any) {
@@ -421,11 +411,7 @@ export const getCarsByUserId = async (
   getToken: () => Promise<string | null>
 ): Promise<CarData[]> => {
   try {
-    console.log("Getting cars for authenticated user");
-    console.log("getToken function available:", !!getToken);
-
     const token = await getToken();
-    console.log("Token available:", !!token);
 
     if (!token) {
       throw new Error("No authentication token found");
@@ -437,7 +423,6 @@ export const getCarsByUserId = async (
       },
     });
 
-    console.log("Cars response:", response.data);
     return response.data;
   } catch (error: any) {
     console.error("Error fetching user cars:", error);
@@ -562,12 +547,8 @@ export const getCarDetailsByVin = async (
   country?: string;
 }> => {
   try {
-    console.log(`Fetching car details for VIN: ${vin}`);
     const apiUrl = `/api/vin-lookup?vin=${encodeURIComponent(vin)}`;
-    console.log(`Making request to: ${apiUrl}`);
-
     const response = await axios.get(apiUrl);
-    console.log("VIN lookup response:", response.data);
 
     if (!response.data) {
       throw new Error("No vehicle data found");

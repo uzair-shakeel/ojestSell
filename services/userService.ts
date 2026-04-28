@@ -13,11 +13,7 @@ try {
         const method = (config.method || "").toUpperCase();
         // Log only relevant user endpoints to reduce noise
         if (url.includes("/api/users/")) {
-          console.log("[Axios][Request]", {
-            method,
-            url,
-            headers: config.headers,
-          });
+          // Request logging removed
           // Attempt to log FormData keys for multipart
           if (config.data instanceof FormData) {
             const entries: Record<string, any> = {};
@@ -27,9 +23,9 @@ try {
                   ? { name: v.name, type: v.type, size: v.size }
                   : v;
             });
-            console.log("[Axios][Request][FormData]", entries);
+            // FormData logging removed
           } else if (config.data) {
-            console.log("[Axios][Request][Data]", config.data);
+            // Data logging removed
           }
         }
       } catch (e) {
@@ -43,11 +39,7 @@ try {
         try {
           const url = response.config?.url || "";
           if (url.includes("/api/users/")) {
-            console.log("[Axios][Response]", {
-              url,
-              status: response.status,
-              data: response.data,
-            });
+            // Response logging removed
           }
         } catch (e) {
           console.warn("[Axios][Response] logging failed:", e);
@@ -131,8 +123,6 @@ export const getUserById = async (
   getToken?: () => string | null | Promise<string | null>
 ): Promise<UserData> => {
   try {
-    console.log("Fetching user with ID:", userId);
-    console.log("API URL:", API_URL);
 
     let headers: Record<string, string> = {};
     if (getToken) {
@@ -146,7 +136,6 @@ export const getUserById = async (
     const response = await axios.get(`${API_URL}/users/${userId}`, {
       headers,
     });
-    console.log("User data received:", response.data);
     return response.data;
   } catch (error: any) {
     console.error("Error fetching user:", error);
@@ -171,15 +160,12 @@ export const getUserById = async (
 // Get public user information (no authentication required)
 export const getPublicUserInfo = async (userId: string): Promise<any> => {
   try {
-    console.log("Fetching public user info for ID:", userId);
-    console.log("API URL:", API_URL);
 
     if (!userId) {
       throw new Error("User ID is required");
     }
 
     const response = await axios.get(`${API_URL}/users/public/${userId}`);
-    console.log("Public user data received:", response.data);
     return response.data;
   } catch (error: any) {
     console.error("Error fetching public user info:", error);
@@ -257,7 +243,6 @@ export const updateUser = async (
       throw new Error("No authentication token found");
     }
 
-    console.log("Raw input data:", JSON.stringify(data, null, 2));
 
     // Create a FormData object
     const formData = new FormData();
@@ -317,10 +302,6 @@ export const updateUser = async (
     });
 
     // Log FormData contents
-    console.log("FormData contents:");
-    for (const [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
-    }
 
     const response = await axios.put(`${API_URL}/users/profile`, formData, {
       headers: {
@@ -329,7 +310,6 @@ export const updateUser = async (
       },
     });
 
-    console.log("Server response:", JSON.stringify(response.data, null, 2));
     return response.data; // Return the updated user data
   } catch (error) {
     console.error("Error updating user:", error);

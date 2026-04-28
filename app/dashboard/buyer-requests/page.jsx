@@ -61,14 +61,9 @@ const BuyerRequestsDashboard = () => {
   const fetchRequests = async (status) => {
     setLoading(true);
     try {
-      console.log("Fetching buyer requests with status:", status);
-      console.log("getToken function available:", !!getToken);
-
-      // Create a proper getToken function
       const getTokenFn = async () => {
         try {
           const token = await getToken();
-          console.log("Token available:", !!token);
           return token;
         } catch (error) {
           console.error("Error getting token:", error);
@@ -77,13 +72,10 @@ const BuyerRequestsDashboard = () => {
       };
 
       const response = await getMyBuyerRequests({ status }, getTokenFn);
-      console.log("Buyer requests response:", response);
       setRequests(response.buyerRequests);
     } catch (error) {
       console.error("Error fetching requests:", error);
       if (error.response) {
-        console.error("Response data:", error.response.data);
-        console.error("Response status:", error.response.status);
       }
       toast.error("Nie udało się załadować Twojego zapytania");
     } finally {
@@ -106,8 +98,6 @@ const BuyerRequestsDashboard = () => {
       };
 
       const offersData = await getOffersForRequest(requestId, getTokenFn);
-      console.log("Offers response:", offersData);
-      // The backend returns { offers: [...] }, so we need to extract the offers array
       setOffers(offersData.offers || offersData);
     } catch (error) {
       console.error("Error fetching offers:", error);
@@ -156,9 +146,6 @@ const BuyerRequestsDashboard = () => {
         }
       }
 
-      console.log("All offers data:", allOffersData);
-      console.log("Sample offer carInfo:", allOffersData[0]?.carInfo);
-      console.log("Sample offer images:", allOffersData[0]?.carInfo?.images);
       setAllOffers(allOffersData);
     } catch (error) {
       console.error("Error fetching all offers:", error);
@@ -202,9 +189,6 @@ const BuyerRequestsDashboard = () => {
 
       const offersData = await getOffersForRequest(requestId, getTokenFn);
       const offers = offersData.offers || offersData;
-      console.log(`Offers for request ${requestId}:`, offers);
-      console.log(`Sample offer carInfo:`, offers[0]?.carInfo);
-      console.log(`Sample offer images:`, offers[0]?.carInfo?.images);
       setRequestOffers((prev) => ({
         ...prev,
         [requestId]: offers,

@@ -31,7 +31,6 @@ export default function DashboardLayout({ children }) {
   useEffect(() => {
     if (user && user.approvalStatus === "pending") {
       const interval = setInterval(() => {
-        console.log("🔄 Auto-refreshing user status...");
         setRefreshKey((prev) => prev + 1);
       }, 30000); // 30 seconds
 

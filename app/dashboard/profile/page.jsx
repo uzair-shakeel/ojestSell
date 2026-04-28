@@ -133,18 +133,7 @@ const ProfileComponent = () => {
       }
 
       try {
-        console.log("Loading user data for ID:", userId);
         const userData = await getUserById(userId, getToken);
-        console.log("User data loaded:", userData);
-        console.log("Image fields:", {
-          image: userData.image,
-          profilePicture: userData.profilePicture,
-          formattedImage: formatImageUrl(
-            userData.image || userData.profilePicture
-          ),
-          hasImage: !!userData.image,
-          hasProfilePicture: !!userData.profilePicture,
-        });
 
         setUser(userData);
 
@@ -176,7 +165,6 @@ const ProfileComponent = () => {
           brands: userData.brands || [],
         };
 
-        console.log("Form data set:", newFormData);
         setFormData(newFormData);
       } catch (err) {
         console.error("Error fetching user:", err);
@@ -337,34 +325,23 @@ const ProfileComponent = () => {
         data.image = imageFile;
       }
 
-      console.log("Submitting data:", JSON.stringify(data, null, 2));
-
       // Call the updateUser function from userServices
       const result = await updateUser(data, getToken);
-      console.log("Updated user result:", JSON.stringify(result, null, 2));
 
       // Update the user state with the new data
       if (result.user) {
         setUser(result.user);
         // Update AuthContext to sync changes across the app
         updateUserState(result.user);
-        console.log(
-          "Profile updated successfully, new user data:",
-          result.user
-        );
       }
 
       toast.success("Profil zaktualizowany pomyślnie!");
     } catch (error) {
       console.error("Error updating user:", error);
 
-      // More detailed error handling
       let errorMessage = "Failed to update profile";
 
       if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.error("Error response data:", error.response.data);
 
         // Try to extract a meaningful error message
         if (Array.isArray(error.response.data.details)) {

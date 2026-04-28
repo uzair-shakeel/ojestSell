@@ -518,7 +518,6 @@ export default function PhotoEnhancer() {
       setBgRemovalError(null);
       setShowBgRemovalModal(true);
 
-      console.log("Using fallback background removal method");
 
       // Use our utility function for fallback background removal
       const blob = await removeBackgroundFallback(imageRef.current);
@@ -544,7 +543,6 @@ export default function PhotoEnhancer() {
       setImageHasTransparency(true);
       setShowBackgroundOptions(true);
 
-      console.log("Fallback background removal completed");
       setShowBgRemovalModal(false);
     } catch (error) {
       console.error("Fallback background removal failed:", error);
@@ -680,7 +678,6 @@ export default function PhotoEnhancer() {
 
     // Restore original image if available
     if (originalImage && originalImageUrl) {
-      console.log("Restoring original image:", originalImageUrl);
 
       // Only revoke the current URL if it's different from the original
       if (previewUrl !== originalImageUrl) {
@@ -1844,7 +1841,6 @@ export default function PhotoEnhancer() {
     if (!selectedImage) return;
 
     try {
-      console.log("Applying background color:", color);
 
       // Create a temporary image to load the current image
       const img = new Image();
@@ -1901,7 +1897,6 @@ export default function PhotoEnhancer() {
       // Close the color options modal
       setShowBackgroundOptions(false);
 
-      console.log("Background color applied successfully");
     } catch (error) {
       console.error("Error applying background color:", error);
       alert("Failed to apply background color: " + error.message);
@@ -2009,7 +2004,6 @@ export default function PhotoEnhancer() {
         ),
       };
 
-      console.log("Detected background color:", avgColor);
       setDetectedBgColor(avgColor);
 
       // Show car background options
@@ -2075,7 +2069,6 @@ export default function PhotoEnhancer() {
       // Show background options
       setShowBackgroundOptions(true);
 
-      console.log("Car background removal completed successfully");
       setShowBgRemovalModal(false);
     } catch (error) {
       console.error("Car background removal failed:", error);
@@ -2177,13 +2170,11 @@ export default function PhotoEnhancer() {
             for (let i = 3; i < data.length; i += 4) {
               if (data[i] < 240) {
                 // Less strict threshold
-                console.log("Transparency detected in image");
                 resolve(true);
                 return;
               }
             }
 
-            console.log("No transparency detected in image");
             resolve(false);
           } catch (error) {
             console.error("Error checking transparency:", error);
@@ -2201,9 +2192,6 @@ export default function PhotoEnhancer() {
 
       // Update the state if needed
       if (hasTransparency !== imageHasTransparency) {
-        console.log(
-          `Updating transparency flag from ${imageHasTransparency} to ${hasTransparency}`
-        );
         setImageHasTransparency(hasTransparency);
       }
 
