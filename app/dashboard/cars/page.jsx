@@ -4,6 +4,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../../../lib/auth/AuthContext";
 import { getCarsByUserId, deleteCar } from "../../../services/carService";
 import CarCard from "../../../components/website/CarCard";
+import Link from 'next/link';
 
 export default function DashboardCarsPage() {
   const { user } = useAuth();
@@ -57,13 +58,13 @@ export default function DashboardCarsPage() {
           <h1 className="text-4xl font-extrabold text-gray-900 dark:text-gray-200 dark:text-white tracking-tight transition-colors">Moje Auta</h1>
           <p className="text-dark-text-secondary mt-2 font-medium transition-colors">Zarządzaj swoją flotą i ogłoszeniami sprzedaży.</p>
         </div>
-        <a
+        <Link
           href="/dashboard/cars/add"
           className="bg-blue-600 text-white px-4 sm:px-8 py-2 sm:py-4 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg dark:shadow-blue-900/40 shadow-blue-200 flex items-center  gap-2 hover:-translate-y-1"
         >
           <span className="text-xl">+</span>
           Dodaj Nowe
-        </a>
+        </Link>
       </div>
 
       {cars && cars.length > 0 && cars.some((c) => c.status !== "Approved") && (
@@ -103,12 +104,12 @@ export default function DashboardCarsPage() {
           <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-md mx-auto">
             Nie masz jeszcze żadnych ogłoszeń. Dodaj swoje pierwsze auto, aby dotrzeć do kupujących.
           </p>
-          <a
+          <Link
             href="/dashboard/cars/add"
             className="inline-flex items-center px-8 py-4 border border-transparent text-sm font-bold rounded-xl shadow-lg text-white bg-blue-600 hover:bg-blue-700 transition-all hover:scale-105 hover:shadow-blue-200"
           >
             Utwórz pierwsze ogłoszenie
-          </a>
+          </Link>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
