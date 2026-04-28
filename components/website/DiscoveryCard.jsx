@@ -3,6 +3,8 @@ import React, { useMemo } from 'react';
 import { motion, useMotionValue, useTransform, usePresence } from 'framer-motion';
 import { Fuel, Gauge, Settings2, MapPin, Heart, X, Info, Activity } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { optimizeCloudinaryUrl } from '../../lib/imageUtils';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
@@ -10,10 +12,13 @@ const DiscoveryCard = React.memo(function DiscoveryCard({ car, onAction, active 
     const imageUrl = useMemo(() => {
         const imagePath = car.images?.[0];
         if (!imagePath) return "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?q=80&w=1000&auto=format&fit=crop";
+        let finalUrl;
         if (typeof imagePath === "string" && /^(https?:)?\/\//i.test(imagePath)) {
-            return imagePath;
+            finalUrl = imagePath;
+        } else {
+            finalUrl = `${API_BASE}/${String(imagePath).replace("\\", "/")}`;
         }
-        return `${API_BASE}/${String(imagePath).replace("\\", "/")}`;
+        return optimizeCloudinaryUrl(finalUrl, 800);
     }, [car.images]);
 
     const displayTitle = useMemo(() => {
@@ -26,10 +31,13 @@ const DiscoveryCard = React.memo(function DiscoveryCard({ car, onAction, active 
         <div className="h-full w-full flex flex-col bg-white dark:bg-gray-950 relative overflow-hidden group">
             {/* Image Section - Cinematic Style */}
             <div className="relative flex-1 overflow-hidden">
-                <img
+                <Image
                     src={imageUrl}
-                    className="h-full w-full object-cover transition-transform duration-10000 ease-linear group-hover:scale-110"
+                    className="object-cover transition-transform duration-10000 ease-linear group-hover:scale-110"
                     alt={displayTitle}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    priority
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
 

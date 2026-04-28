@@ -20,6 +20,10 @@ if (!API_URL || !API_BASE_URL) {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  
+  experimental: {
+    optimizePackageImports: ["lucide-react", "react-icons", "framer-motion", "chart.js", "react-chartjs-2"],
+  },
 
   env: {
     NEXT_PUBLIC_API_URL: API_URL,

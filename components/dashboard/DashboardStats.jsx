@@ -7,6 +7,7 @@ import KPICard from "./KPICard";
 import { BsChatLeftDots } from "react-icons/bs";
 import { FaCar } from "react-icons/fa";
 import { HiOutlineUser } from "react-icons/hi";
+import Link from "next/link";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
@@ -86,9 +87,9 @@ export default function DashboardStats({ user: userProp }) {
           </p>
         </div>
         <div className="flex gap-3">
-          <a href="/dashboard/cars/add" className="inline-flex items-center gap-2 bg-blue-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-blue-700 transition-all shadow-lg dark:shadow-blue-900/40 shadow-blue-200 hover:-translate-y-1">
+          <Link href="/dashboard/cars/add" className="inline-flex items-center gap-2 bg-blue-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-blue-700 transition-all shadow-lg dark:shadow-blue-900/40 shadow-blue-200 hover:-translate-y-1">
             <FaCar /> Sprzedaj Auto
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -109,9 +110,9 @@ export default function DashboardStats({ user: userProp }) {
                 carsCount
               )}
             </div>
-            <a href="/dashboard/cars" className="inline-block mt-4 text-sm font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">
+            <Link href="/dashboard/cars" className="inline-block mt-4 text-sm font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">
               Zarządzaj autami →
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -130,9 +131,9 @@ export default function DashboardStats({ user: userProp }) {
                 chatsCount
               )}
             </div>
-            <a href="/dashboard/messages" className="inline-block mt-4 text-sm font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300">
+            <Link href="/dashboard/messages" className="inline-block mt-4 text-sm font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300">
               Przejdź do czatu →
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -149,9 +150,9 @@ export default function DashboardStats({ user: userProp }) {
             </div>
             <p className="text-xs text-gray-400 dark:text-dark-text-muted font-medium mb-1">Typ konta: {user?.sellerType === 'company' ? 'Firma' : 'Prywatne'}</p>
 
-            <a href="/dashboard/profile" className="inline-block mt-3 text-sm font-bold text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
+            <Link href="/dashboard/profile" className="inline-block mt-3 text-sm font-bold text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
               Edytuj profil →
-            </a>
+            </Link>
           </div>
         </div>
       </div>

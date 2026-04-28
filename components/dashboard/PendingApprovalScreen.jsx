@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FiClock, FiMail, FiShield, FiRefreshCw } from "react-icons/fi";
 import { useAuth } from "../../lib/auth/AuthContext";
+import { useRouter } from "next/navigation";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 const PendingApprovalScreen = ({ user }) => {
   const { logout, updateUserState } = useAuth();
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const router = useRouter();
 
   // Auto-check approval status every 10 seconds
   useEffect(() => {
@@ -39,7 +41,7 @@ const PendingApprovalScreen = ({ user }) => {
         if (userData.approvalStatus === "approved") {
           updateUserState(userData);
           // Redirect immediately
-          window.location.href = "/dashboard/home";
+          router.push("/dashboard/home");
         }
       }
     } catch (error) {
@@ -91,7 +93,7 @@ const PendingApprovalScreen = ({ user }) => {
             "🎉 Congratulations! Your account has been approved! Redirecting to dashboard..."
           );
           setTimeout(() => {
-            window.location.href = "/dashboard/home";
+            router.push("/dashboard/home");
           }, 1500);
         } else if (updatedUser.approvalStatus === "pending") {
           alert(

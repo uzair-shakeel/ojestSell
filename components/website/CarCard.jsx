@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useGoogleMaps } from "../../lib/GoogleMapsContext";
 import { getPublicUserInfo } from "../../services/userService";
+import { optimizeCloudinaryUrl } from "../../lib/imageUtils";
 import {
   Calendar,
   Gauge,
@@ -59,18 +60,24 @@ export default function CarCard({ car, viewMode = 'grid' }) {
 
   const formatImageUrl = (imagePath) => {
     if (!imagePath) return "/website/seller.jpg";
+    let finalUrl;
     if (typeof imagePath === "string" && /^(https?:)?\/\//i.test(imagePath)) {
-      return imagePath;
+      finalUrl = imagePath;
+    } else {
+      finalUrl = `${API_BASE}/${String(imagePath).replace("\\", "/")}`;
     }
-    return `${API_BASE}/${String(imagePath).replace("\\", "/")}`;
+    return optimizeCloudinaryUrl(finalUrl, 400); // avatar size
   };
 
   const formatCarImage = (imagePath) => {
     if (!imagePath) return "https://via.placeholder.com/500";
+    let finalUrl;
     if (typeof imagePath === "string" && /^(https?:)?\/\//i.test(imagePath)) {
-      return imagePath;
+      finalUrl = imagePath;
+    } else {
+      finalUrl = `${API_BASE}/${String(imagePath).replace("\\", "/")}`;
     }
-    return `${API_BASE}/${String(imagePath).replace("\\", "/")}`;
+    return optimizeCloudinaryUrl(finalUrl, 800);
   };
 
   useEffect(() => {

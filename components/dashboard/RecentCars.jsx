@@ -1,4 +1,5 @@
 "use client";
+import { optimizeCloudinaryUrl } from "../../lib/imageUtils";
 
 export default function RecentCars({ cars = [] }) {
   const items = Array.isArray(cars) ? cars.slice(-5).reverse() : [];
@@ -30,7 +31,12 @@ export default function RecentCars({ cars = [] }) {
           </div>
         )}
         {items.map((car) => {
-          const img = car?.images?.[0] || "/images/placeholder-car.jpg";
+          let img = "/images/placeholder-car.jpg";
+          if (car?.images?.[0]) {
+             img = car.images[0];
+          }
+          img = optimizeCloudinaryUrl(img, 400);
+
           const title =
             car?.title ||
             `${car?.make || ""} ${car?.model || ""}`.trim() ||

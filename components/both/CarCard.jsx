@@ -3,17 +3,26 @@ import { FaCar, FaGasPump } from "react-icons/fa";
 import { FaDeviantart } from "react-icons/fa";
 import { PiEngineBold } from "react-icons/pi";
 import { FaRegImage } from "react-icons/fa6";
-
-
-
+import { optimizeCloudinaryUrl } from "../../lib/imageUtils";
 
 const CarCard = () => {
+  const formatCarImage = (imagePath) => {
+    if (!imagePath) return "https://via.placeholder.com/500";
+    let finalUrl;
+    if (typeof imagePath === "string" && /^(https?:)?\/\//i.test(imagePath)) {
+      finalUrl = imagePath;
+    } else {
+      finalUrl = `${API_BASE}/${String(imagePath).replace("\\", "/")}`;
+    }
+    return optimizeCloudinaryUrl(finalUrl, 800);
+  };
+
   return (
     <div className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200 w-full">
       {/* Image Section */}
       <div className="relative">
         <img
-          src="https://via.placeholder.com/300" // Replace with actual image source
+          src={formatCarImage("https://via.placeholder.com/300")} // Replace with actual image source
           alt="Car"
           className="w-full h-52 object-cover"
         />
