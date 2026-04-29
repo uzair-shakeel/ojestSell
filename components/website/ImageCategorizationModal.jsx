@@ -376,9 +376,9 @@ export default function ImageCategorizationModal({
           </div>
         </div>
 
-        {/* Bottom Row: Navigation Controls (only when in slider mode) */}
+        {/* Navigation Controls (Top layout for Desktop) */}
         {showSlider && (
-          <div className="max-w-[1600px] mx-auto px-4 md:px-20 pb-3 flex justify-center items-center gap-3 border-t border-gray-100 dark:border-gray-800 pt-3">
+          <div className="hidden md:flex max-w-[1600px] mx-auto px-4 md:px-20 pb-3 justify-center items-center gap-3 border-t border-gray-100 dark:border-gray-800 pt-3">
             {/* Compact Chevron Navigation */}
             <button
               onClick={handleSwiperPrev}
@@ -450,6 +450,10 @@ export default function ImageCategorizationModal({
                       alt={image.detected_label || "Car image"}
                       className="w-full h-full object-cover"
                       loading="lazy"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.parentElement.style.backgroundColor = '#f3f4f6';
+                      }}
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                   </div>
@@ -502,14 +506,37 @@ export default function ImageCategorizationModal({
                           src={img.url}
                           alt={img.detected_label || "Gallery image"}
                           className="rounded-none md:rounded-2xl shadow-2xl bg-gray-100 dark:bg-gray-900"
+                          onError={(e) => {
+                            e.target.src = "/images/hamer1.png";
+                          }}
                         />
                       </div>
                     </SwiperSlide>
                   ))}
                 </Swiper>
 
+                {/* Desktop: Bottom Right Counter */}
                 <div className="fixed bottom-4 right-4 text-white dark:text-white text-lg md:text-base font-medium z-[110] bg-gray-900/70 dark:bg-black/70 px-3 py-2 rounded">
                   {sliderIndex + 1} of {sliderImages.length}
+                </div>
+
+                {/* Mobile: Bottom Centered Arrows */}
+                <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-6 z-[110]">
+                  <button
+                    onClick={handleSwiperPrev}
+                    className="h-12 w-12 rounded-full bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center hover:bg-black/80 text-white transition-all shadow-lg active:scale-95"
+                    aria-label="Previous image"
+                  >
+                    <IoIosArrowBack className="w-6 h-6 -ml-1 text-white" />
+                  </button>
+
+                  <button
+                    onClick={handleSwiperNext}
+                    className="h-12 w-12 rounded-full bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center hover:bg-black/80 text-white transition-all shadow-lg active:scale-95"
+                    aria-label="Next image"
+                  >
+                    <IoIosArrowForward className="w-6 h-6 ml-1 text-white" />
+                  </button>
                 </div>
               </div>
             </div>

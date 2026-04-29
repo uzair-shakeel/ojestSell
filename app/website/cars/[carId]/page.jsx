@@ -22,6 +22,7 @@ import { getPublicUserInfo } from "../../../../services/userService";
 import { useAuth } from "../../../../lib/auth/AuthContext";
 import io from "socket.io-client";
 import ImageCategorizationModal from "../../../../components/website/ImageCategorizationModal";
+import { optimizeCloudinaryUrl } from "../../../../lib/imageUtils";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 const socket = io(API_BASE || undefined, {
@@ -59,6 +60,17 @@ const Page = () => {
       return imagePath;
     }
     return `${API_BASE}/${imagePath.replace("\\", "/")}`;
+  };
+
+  const formatCarImageUrl = (imagePath, width = 1200) => {
+    if (!imagePath) return "/images/hamer1.png";
+    let finalUrl;
+    if (typeof imagePath === "string" && /^(https?:)?\/\//i.test(imagePath)) {
+      finalUrl = imagePath;
+    } else {
+      finalUrl = `${API_BASE}/${String(imagePath).replace("\\", "/")}`;
+    }
+    return optimizeCloudinaryUrl(finalUrl, width);
   };
 
   // Ensure links open correctly even if user saved without protocol
@@ -120,7 +132,9 @@ const Page = () => {
     }
   };
 
-  const images = car?.images || ["/images/hamer1.png"];
+  // Format all car images with proper URLs
+  const rawImages = car?.images || ["/images/hamer1.png"];
+  const images = rawImages.map(img => formatCarImageUrl(img, 1200));
 
   let galleryMode = "full"; // default 1 main + 8 thumbs (for 9+ images)
   if (images.length < 5) {
@@ -753,12 +767,13 @@ const Page = () => {
                 setMainImage(images[swiper.activeIndex]);
               }}
               grabCursor={true}
-              touchRatio={1}
-              touchAngle={45}
               threshold={10}
               allowTouchMove={true}
-              simulateTouch={true}
+              simulateTouch={false}
+              resistance={true}
+              resistanceRatio={0.5}
               className="w-full h-full"
+              style={{ touchAction: 'pan-y' }}
             >
               {images.map((img, index) => (
                 <SwiperSlide
@@ -780,6 +795,10 @@ const Page = () => {
                       className="object-contain"
                       sizes="100vw"
                       priority
+                      unoptimized={true}
+                      onError={(e) => {
+                        e.target.src = "/images/hamer1.png";
+                      }}
                     />
                   </div>
                 </SwiperSlide>
@@ -883,6 +902,10 @@ const Page = () => {
                     className="object-cover"
                     priority
                     sizes="(max-width: 768px) 100vw, 70vw"
+                    unoptimized={true}
+                    onError={(e) => {
+                      e.target.src = "/images/hamer1.png";
+                    }}
                   />
                 </div>
 
@@ -947,6 +970,10 @@ const Page = () => {
                             className="object-cover"
                             loading="lazy"
                             sizes="(max-width: 768px) 25vw, 20vw"
+                            unoptimized={true}
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                            }}
                           />
 
                           {(isExteriorThumb || isInteriorThumb) && (
@@ -981,7 +1008,12 @@ const Page = () => {
 
             {/* Mobile gallery: horizontally scrollable carousel with PEEK effect */}
             {/* Force full width breakout for single image on mobile if inside padding */}
-            <div className={`flex md:hidden overflow-x-auto snap-x snap-mandatory scrollbar-hide scroll-x-touch min-h-[250px] w-full ${images.length > 1 ? "gap-[3px]" : ""}`}>
+            <div
+              className={`flex md:hidden overflow-x-auto snap-x snap-mandatory scrollbar-hide scroll-x-touch min-h-[250px] w-full ${images.length > 1 ? "gap-[3px]" : ""}`}
+              style={{ touchAction: 'pan-x pan-y', WebkitOverflowScrolling: 'touch' }}
+              onTouchStart={(e) => e.stopPropagation()}
+              onTouchMove={(e) => e.stopPropagation()}
+            >
               {/* Slide 1: Main Image */}
               <div
                 className={`snap-start shrink-0 ${images.length === 1 ? "w-full" : "w-[88vw]"} aspect-[4/3] relative overflow-hidden bg-white dark:bg-dark-card cursor-pointer`}
@@ -997,6 +1029,10 @@ const Page = () => {
                   className="object-cover"
                   priority
                   sizes="88vw"
+                  unoptimized={true}
+                  onError={(e) => {
+                    e.target.src = "/images/hamer1.png";
+                  }}
                 />
 
                 {/* Categorization badge for the main image if it's the start of a category */}
@@ -1072,6 +1108,10 @@ const Page = () => {
                             className="object-cover"
                             loading="lazy"
                             sizes="44vw"
+                            unoptimized={true}
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                            }}
                           />
 
                           {(isExteriorThumb || isInteriorThumb) && (
