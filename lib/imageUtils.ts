@@ -138,3 +138,13 @@ export function fileToDataURL(file: File): Promise<string> {
     reader.readAsDataURL(file);
   });
 }
+
+export const optimizeCloudinaryUrl = (url: string, width: number = 800): string => {
+  if (!url) return url;
+  // Check if it's a Cloudinary URL and hasn't been transformed yet
+  if (typeof url === 'string' && url.includes('res.cloudinary.com') && url.includes('/upload/') && !url.includes('/upload/w_')) {
+      return url.replace('/upload/', `/upload/w_${width},f_auto,q_auto/`);
+  }
+  return url;
+};
+
