@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Zoom, Navigation } from "swiper/modules";
+import { Zoom, Navigation, A11y } from "swiper/modules";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 import "swiper/css";
@@ -202,6 +202,9 @@ export default function ImageCategorizationModal({
     } else if (!isOpen) {
       setIsProcessing(false);
       setProcessingStatus({});
+      // Clear slider images to free memory when modal closes
+      setSliderImages([]);
+      setShowSlider(false);
     }
   }, [isOpen, images.length, clickedImageUrl, categorizedImages]);
 
@@ -218,9 +221,9 @@ export default function ImageCategorizationModal({
 
   useEffect(() => {
     if (swiperRef.current && swiperRef.current.swiper) {
-      // Use realIndex for loop mode consistency
-      if (swiperRef.current.swiper.realIndex !== sliderIndex) {
-        swiperRef.current.swiper.slideToLoop(sliderIndex, 0);
+      // Navigate to correct slide without loop mode
+      if (swiperRef.current.swiper.activeIndex !== sliderIndex) {
+        swiperRef.current.swiper.slideTo(sliderIndex, 0);
       }
     }
   }, [sliderIndex, sliderImages]);
@@ -476,19 +479,16 @@ export default function ImageCategorizationModal({
               <div className="flex items-center justify-center relative w-full h-full">
                 <Swiper
                   ref={swiperRef}
-                  // Removed dynamic key to prevent re-mounting on category change
-                  key="main-slider"
-                  modules={[Zoom, Navigation]}
-                  zoom={{ maxRatio: 3, toggle: true }}
+                  key={`slider-${sliderImages.length}`}
+                  modules={[Zoom, Navigation, A11y]}
+                  zoom={{ maxRatio: 2, toggle: true }}
                   spaceBetween={10}
                   slidesPerView={1}
                   grabCursor={true}
                   initialSlide={sliderIndex}
                   onSlideChange={(swiper) => {
-                    // Use realIndex for loop mode to get the actual slide position
-                    const idx = swiper.realIndex;
+                    const idx = swiper.activeIndex;
                     setSliderIndex(idx);
-                    // Sync category tab with current image
                     if (sliderImages[idx]) {
                       const newCat = sliderImages[idx].category;
                       if (newCat && newCat !== currentCategory) {
@@ -497,7 +497,9 @@ export default function ImageCategorizationModal({
                     }
                   }}
                   className="modal-swiper !h-full !w-full"
-                  loop={true}
+                  cssMode={true}
+                  resistance={true}
+                  resistanceRatio={0.8}
                 >
                   {sliderImages.map((img, index) => (
                     <SwiperSlide key={`${img.url}-${index}`}>
@@ -506,6 +508,8 @@ export default function ImageCategorizationModal({
                           src={img.url}
                           alt={img.detected_label || "Gallery image"}
                           className="rounded-none md:rounded-2xl shadow-2xl bg-gray-100 dark:bg-gray-900"
+                          loading="lazy"
+                          decoding="async"
                           onError={(e) => {
                             e.target.src = "/images/hamer1.png";
                           }}

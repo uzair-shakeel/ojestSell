@@ -770,8 +770,9 @@ const Page = () => {
               threshold={10}
               allowTouchMove={true}
               simulateTouch={false}
+              cssMode={true}
               resistance={true}
-              resistanceRatio={0.5}
+              resistanceRatio={0.8}
               className="w-full h-full"
               style={{ touchAction: 'pan-y' }}
             >
