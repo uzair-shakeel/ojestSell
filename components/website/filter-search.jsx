@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "../../lib/utils";
 import { useRouter } from "next/navigation";
 import { useMakesModels } from "../../hooks/useMakesModels";
@@ -42,6 +42,11 @@ export function FilterSearch() {
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
 
+  // Warm the cars route JS + RSC payload before the user searches
+  useEffect(() => {
+    router.prefetch("/website/cars");
+  }, [router]);
+
   // Get models for selected make
   const availableModels = make ? getModelsForMake(make) : [];
 
@@ -58,8 +63,12 @@ export function FilterSearch() {
     if (startYear) params.set("yearFrom", startYear);
     if (endYear) params.set("yearTo", endYear);
 
-    // Navigate
-    router.push(`/website/cars?${params.toString()}`);
+    const href = `/website/cars?${params.toString()}`;
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("ojest:navstart"));
+    }
+    router.prefetch(href);
+    router.push(href);
   };
 
   const handleMakeChange = (e) => {

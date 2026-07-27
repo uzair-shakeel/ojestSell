@@ -5,6 +5,8 @@ import { AuthProvider } from "../lib/auth/AuthContext";
 import { ThemeProvider } from "../lib/theme/ThemeContext";
 import { Toaster } from "react-hot-toast";
 import { NotificationsProvider } from "../lib/notifications/NotificationsContext";
+import RoutePrefetcher from "./RoutePrefetcher";
+import NavigationOverlay from "./NavigationOverlay";
 
 export default function Providers({ children }) {
   return (
@@ -12,6 +14,8 @@ export default function Providers({ children }) {
       <LanguageProvider>
         <AuthProvider>
           <NotificationsProvider>
+            <RoutePrefetcher />
+            <NavigationOverlay />
             {children}
 
             <Toaster

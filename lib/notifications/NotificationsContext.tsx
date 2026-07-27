@@ -1,6 +1,5 @@
 "use client";
 import React, { createContext, useContext, useEffect, useMemo, useState, useCallback, useRef } from "react";
-import io from "socket.io-client";
 import axios from "axios";
 import { useAuth } from "../auth/AuthContext";
 import { usePathname } from "next/navigation";
@@ -130,117 +129,106 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
     return () => window.removeEventListener("ojest:notify", handler as EventListener);
   }, [add]);
 
-  // Optional: Socket listeners for backend events
+  // Optional: Socket listeners for backend events (lazy-load socket.io)
   useEffect(() => {
-    if (!user || typeof window === 'undefined') return;
-    const token = getToken();
-    console.log('[Notifications] Connecting to socket:', SOCKET_BASE, 'with path:', SOCKET_PATH);
-    const socket = io(SOCKET_BASE, {
-      path: SOCKET_PATH,
-      autoConnect: true,
-      withCredentials: true,
-      auth: {
-        token,
-        userId: user.id || user._id
-      }
-    });
+    if (!user || typeof window === "undefined") return;
+    let cancelled = false;
+    let socket: any;
 
-    socket.on("connect", () => {
-      console.log("[Notifications] Socket connected, joining room:", user.id || user._id);
-      socket.emit("auth", { userId: user.id || user._id, token });
-      socket.emit("join", user.id || user._id);
-    });
+    (async () => {
+      const { default: io } = await import("socket.io-client");
+      if (cancelled) return;
 
-    socket.on("connect_error", (err: any) => {
-      console.error("[Notifications] Socket connection error:", err?.message || err);
-      console.error("[Notifications] Attempted connection to:", SOCKET_BASE);
-      console.error("[Notifications] With path:", SOCKET_PATH);
-      console.error("[Notifications] Full error:", err);
-    });
-
-    socket.on("disconnect", (reason: string) => {
-      console.warn("[Notifications] Socket disconnected:", reason);
-      if (reason === "io server disconnect") {
-        // Server disconnected, try to reconnect
-        console.log("[Notifications] Attempting to reconnect...");
-        socket.connect();
-      }
-    });
-
-    socket.on("chat:message:received", (payload: any) => {
-      const senderObj = payload?.sender || {};
-      const senderName = payload?.senderName || senderObj.name || senderObj.firstName || "Ktoś";
-      const senderImage = payload?.senderImage || senderObj.profilePicture || senderObj.image || "";
-
-      add({
-        type: "message",
-        title: "Nowa wiadomość",
-        body: `${senderName}: ${payload.content || payload.message?.content || "Otrzymałeś wiadomość"}`,
-        meta: {
-          ...payload,
-          senderName,
-          senderImage
-        }
+      const token = getToken();
+      socket = io(SOCKET_BASE, {
+        path: SOCKET_PATH,
+        autoConnect: true,
+        withCredentials: true,
+        auth: {
+          token,
+          userId: user.id || user._id,
+        },
       });
-    });
 
-    socket.on("car:created", (car: any) => {
-      add({ type: "car", title: "Dodano ogłoszenie", body: `${car?.make || "Samochód"} ${car?.model || ""}`.trim(), meta: { carId: car?._id } });
-    });
+      socket.on("connect", () => {
+        socket.emit("auth", { userId: user.id || user._id, token });
+        socket.emit("join", user.id || user._id);
+      });
 
-    socket.on("car:status", (data: any) => {
-      let title = "Aktualizacja statusu";
-      let body = "Status zaktualizowany";
+      socket.on("chat:message:received", (payload: any) => {
+        const senderObj = payload?.sender || {};
+        const senderName = payload?.senderName || senderObj.name || senderObj.firstName || "Ktoś";
+        const senderImage = payload?.senderImage || senderObj.profilePicture || senderObj.image || "";
 
-      if (data?.status === "Approved") {
-        title = "Samochód zatwierdzony";
-        body = "Twój samochód został zatwierdzony";
-      } else if (data?.status === "Rejected") {
-        title = "Samochód odrzucony";
-        body = "Twój samochód został odrzucony, spróbuj ponownie";
-      } else if (data?.status === "Pending") {
-        title = "Status samochodu";
-        body = "Twój samochód oczekuje na zatwierdzenie";
-      }
-
-      add({ type: "status", title, body, meta: data });
-    });
-
-    // Global message listener - works on ALL pages
-    socket.on("newMessage", (payload: any) => {
-      if (!payload || !payload.message) return;
-      const { chatId, message } = payload;
-
-      // Use userId from useAuth hook (already robust)
-      const currentUserId = userId;
-
-      // Extract sender info from payload.message.sender (now populated from backend)
-      const senderObj = message.sender || {};
-      const senderId = senderObj._id || senderObj.id || message.sender; // fallback to raw
-      const senderName = senderObj.firstName || senderObj.name || "Ktoś";
-      const senderImage = senderObj.profilePicture || senderObj.image || "";
-
-      // Only notify if message is from someone else
-      if (currentUserId && String(senderId) !== String(currentUserId)) {
-        console.log("[Notifications] New message received:", { chatId, senderId, content: message.content });
         add({
           type: "message",
           title: "Nowa wiadomość",
-          body: `${senderName}: ${message.content || "Masz nową wiadomość"}`,
+          body: `${senderName}: ${payload.content || payload.message?.content || "Otrzymałeś wiadomość"}`,
           meta: {
-            chatId,
-            messageId: message.id,
+            ...payload,
             senderName,
-            senderImage
-          }
+            senderImage,
+          },
         });
-      }
-    });
+      });
+
+      socket.on("car:created", (car: any) => {
+        add({
+          type: "car",
+          title: "Dodano ogłoszenie",
+          body: `${car?.make || "Samochód"} ${car?.model || ""}`.trim(),
+          meta: { carId: car?._id },
+        });
+      });
+
+      socket.on("car:status", (data: any) => {
+        let title = "Aktualizacja statusu";
+        let body = "Status zaktualizowany";
+
+        if (data?.status === "Approved") {
+          title = "Samochód zatwierdzony";
+          body = "Twój samochód został zatwierdzony";
+        } else if (data?.status === "Rejected") {
+          title = "Samochód odrzucony";
+          body = "Twój samochód został odrzucony, spróbuj ponownie";
+        } else if (data?.status === "Pending") {
+          title = "Status samochodu";
+          body = "Twój samochód oczekuje na zatwierdzenie";
+        }
+
+        add({ type: "status", title, body, meta: data });
+      });
+
+      socket.on("newMessage", (payload: any) => {
+        if (!payload || !payload.message) return;
+        const { chatId, message } = payload;
+        const currentUserId = userId;
+        const senderObj = message.sender || {};
+        const senderId = senderObj._id || senderObj.id || message.sender;
+        const senderName = senderObj.firstName || senderObj.name || "Ktoś";
+        const senderImage = senderObj.profilePicture || senderObj.image || "";
+
+        if (currentUserId && String(senderId) !== String(currentUserId)) {
+          add({
+            type: "message",
+            title: "Nowa wiadomość",
+            body: `${senderName}: ${message.content || "Masz nową wiadomość"}`,
+            meta: {
+              chatId,
+              messageId: message.id,
+              senderName,
+              senderImage,
+            },
+          });
+        }
+      });
+    })();
 
     return () => {
-      socket.disconnect();
+      cancelled = true;
+      socket?.disconnect();
     };
-  }, [user, add]);
+  }, [user, add, getToken, userId]);
 
   // Fallback: poll user's cars for status changes — dashboard only
   useEffect(() => {

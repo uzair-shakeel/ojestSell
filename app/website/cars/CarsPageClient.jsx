@@ -1,0 +1,598 @@
+"use client";
+
+import { useState, useEffect, Suspense, useRef, useCallback } from "react";
+import dynamic from "next/dynamic";
+import FilterSidebar from "../../../components/website/FilterSidebar";
+import FilterNavbar from "../../../components/website/FilterNavbar";
+import CarCard from "../../../components/website/CarCard";
+import Pagination from "../../../components/website/Pagination";
+import { searchCars } from "../../../services/carService";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useLanguage } from "../../../lib/i18n/LanguageContext";
+
+const HeroFeaturedCarousel = dynamic(
+  () => import("../../../components/website/HeroFeaturedCarousel"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[220px] md:h-[280px] w-full animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800" />
+    ),
+  }
+);
+
+// Constants
+
+const SLUG_TO_COUNTRY = {
+  "germany": "Niemcy",
+  "france": "Francja",
+  "belgium": "Belgia",
+  "netherlands": "Holandia",
+  "italy": "Włochy",
+  "australia": "Australia",
+  "austria": "Austria",
+  "switzerland": "Szwajcaria",
+  "sweden": "Szwecja",
+  "denmark": "Dania",
+  "czech-republic": "Czechy",
+  "slovakia": "Słowacja",
+  "spain": "Hiszpania",
+  "portugal": "Portugalia",
+  "united-kingdom": "Wielka Brytania",
+  "ireland": "Irlandia",
+  "luxembourg": "Luksemburg",
+  "finland": "Finlandia",
+  "norway": "Norwegia",
+  "iceland": "Islandia",
+  "hungary": "Węgry",
+  "romania": "Rumunia",
+  "bulgaria": "Bułgaria",
+  "croatia": "Chorwacja",
+  "slovenia": "Słowenia",
+  "serbia": "Serbia",
+  "montenegro": "Czarnogóra",
+  "north-macedonia": "Macedonia Północna",
+  "albania": "Albania",
+  "lithuania": "Litwa",
+  "latvia": "Łotwa",
+  "estonia": "Estonia",
+  "belarus": "Białoruś",
+  "ukraine": "Ukraina",
+  "united-states": "Stany Zjednoczone",
+  "canada": "Kanada",
+  "japan": "Japonia",
+  "south-korea": "Korea Południowa",
+  "china": "Chiny",
+  "united-arab-emirates": "Zjednoczone Emiraty Arabskie",
+  "dubai": "Dubaj",
+  "qatar": "Katar",
+  "kuwait": "Kuwejt",
+  "saudi-arabia": "Arabia Saudyjska",
+  "oman": "Oman",
+  "bahrain": "Bahrajn",
+  "israel": "Izrael",
+  "turkey": "Turcja",
+  "kazakhstan": "Kazachstan",
+  "georgia": "Gruzja",
+  "armenia": "Armenia",
+  "azerbaijan": "Azerbejdżan",
+  "india": "Indie",
+  "russia": "Rosja"
+};
+
+const SLUG_TO_ORIGIN = {
+  "australia": "Australia",
+  "china": "Chiny",
+  "czech-republic": "Czechy",
+  "france": "Francja",
+  "spain": "Hiszpania",
+  "netherlands": "Holandia",
+  "india": "Indie",
+  "japan": "Japonia",
+  "canada": "Kanada",
+  "south-korea": "Korea Południowa",
+  "germany": "Niemcy",
+  "russia": "Rosja",
+  "romania": "Rumunia",
+  "united-states": "Stany Zjednoczone",
+  "sweden": "Szwecja",
+  "united-kingdom": "Wielka Brytania",
+  "italy": "Włochy"
+};
+
+// Main Content Component
+
+const CarsContent = ({ initialData = null }) => {
+  const { t } = useLanguage();
+
+  // State Management
+
+  // View Mode (Default is Grid)
+  const [viewMode, setViewMode] = useState("grid");
+
+  // Data State — seed from server so first paint has cars (no post-hydrate wait)
+  const [cars, setCars] = useState(() => initialData?.cars || []);
+  const [totalItems, setTotalItems] = useState(() => initialData?.total || 0);
+
+  // UI State
+  const [showMobileFilter, setShowMobileFilter] = useState(false);
+  const [isLoading, setIsLoading] = useState(() => !initialData);
+  const [error, setError] = useState(null);
+
+  // Sorting & Pagination State
+  const [sortBy, setSortBy] = useState("best-match");
+  const [currentPage, setCurrentPage] = useState(() => initialData?.page || 1);
+  const [itemsPerPage, setItemsPerPage] = useState(() => initialData?.limit || 12);
+  const hasUsedInitial = useRef(Boolean(initialData));
+
+  // Hooks
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const sortListRef = useRef(null);
+
+  // Effects
+
+  // 1. Handle Resize: Ensure View Mode logic
+  useEffect(() => {
+    const handleResize = () => {
+      // Force grid on mobile
+      if (window.innerWidth < 768) {
+        setViewMode("grid");
+      }
+      // Note: We removed the 'else { setViewMode("list") }' block 
+      // to respect the user's preference or default "grid" on desktop.
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // 2. Handle Drag Scroll for Sort List (Desktop/Mobile touch)
+  useEffect(() => {
+    const el = sortListRef.current;
+    if (!el) return;
+
+    let isDown = false;
+    let startX = 0;
+    let startScrollLeft = 0;
+
+    const onPointerDown = (e) => {
+      isDown = true;
+      el.classList.add("dragging");
+      startX = (e.touches ? e.touches[0].pageX : e.pageX) - el.offsetLeft;
+      startScrollLeft = el.scrollLeft;
+    };
+
+    const onPointerMove = (e) => {
+      if (!isDown) return;
+      const x = (e.touches ? e.touches[0].pageX : e.pageX) - el.offsetLeft;
+      const walk = (x - startX) * 1;
+      el.scrollLeft = startScrollLeft - walk;
+    };
+
+    const onPointerUp = () => {
+      isDown = false;
+      el.classList.remove("dragging");
+    };
+
+    el.addEventListener("mousedown", onPointerDown, { passive: true });
+    el.addEventListener("mousemove", onPointerMove, { passive: true });
+    el.addEventListener("mouseleave", onPointerUp, { passive: true });
+    el.addEventListener("mouseup", onPointerUp, { passive: true });
+    el.addEventListener("touchstart", onPointerDown, { passive: true });
+    el.addEventListener("touchmove", onPointerMove, { passive: true });
+    el.addEventListener("touchend", onPointerUp, { passive: true });
+
+    return () => {
+      el.removeEventListener("mousedown", onPointerDown);
+      el.removeEventListener("mousemove", onPointerMove);
+      el.removeEventListener("mouseleave", onPointerUp);
+      el.removeEventListener("mouseup", onPointerUp);
+      el.removeEventListener("touchstart", onPointerDown);
+      el.removeEventListener("touchmove", onPointerMove);
+      el.removeEventListener("touchend", onPointerUp);
+    };
+  }, []);
+
+  // 3. Listen for Custom View Mode Events
+  useEffect(() => {
+    const onViewMode = (e) => {
+      const mode = e.detail;
+      if (mode === 'grid' || mode === 'list') setViewMode(mode);
+    };
+    window.addEventListener('ojest:viewMode', onViewMode);
+    return () => window.removeEventListener('ojest:viewMode', onViewMode);
+  }, []);
+
+  // 4. Lock Scroll when Mobile Filter is Open
+  useEffect(() => {
+    if (showMobileFilter) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [showMobileFilter]);
+
+  // Helper: Parse URL to API Filters
+  const getFiltersFromUrl = useCallback(() => {
+    const params = new URLSearchParams(searchParams);
+    const apiFilters = {};
+
+    // Helper to get param safely
+    const get = (key) => params.get(key);
+
+    // Direct Mappings
+    if (get("make")) apiFilters.make = get("make");
+    if (get("model")) apiFilters.model = get("model");
+    if (get("bodyType") || get("type")) apiFilters.type = get("bodyType") || get("type");
+    if (get("fuel")) apiFilters.fuel = get("fuel");
+
+    // FIX: Drivetrain (Frontend now sends English values like FWD, RWD)
+    if (get("drivetrain")) apiFilters.drivetrain = get("drivetrain");
+
+    if (get("transmission")) apiFilters.transmission = get("transmission");
+    if (get("location")) apiFilters.location = get("location");
+    if (get("condition") || get("stan")) apiFilters.condition = get("condition") || get("stan");
+    if (get("color")) apiFilters.color = get("color");
+    if (get("serviceHistory")) apiFilters.serviceHistory = get("serviceHistory");
+    if (get("accidentHistory")) apiFilters.accidentHistory = get("accidentHistory");
+
+    // Numeric Mappings
+    if (get("priceFrom")) apiFilters.minPrice = Number(get("priceFrom"));
+    if (get("priceTo")) apiFilters.maxPrice = Number(get("priceTo"));
+
+    // Year Mapping
+    if (get("yearFrom") || get("minYear")) apiFilters.yearFrom = Number(get("yearFrom") || get("minYear"));
+    if (get("yearTo") || get("maxYear")) apiFilters.yearTo = Number(get("yearTo") || get("maxYear"));
+
+    // Default Years logic to ensure valid range for backend
+    if (apiFilters.yearFrom && !apiFilters.yearTo) {
+      apiFilters.yearTo = new Date().getFullYear() + 1;
+    }
+    if (!apiFilters.yearFrom && apiFilters.yearTo) {
+      apiFilters.yearFrom = 1900;
+    }
+
+    if (get("maxDistance") || get("distance")) apiFilters.maxDistance = Number(get("maxDistance") || get("distance"));
+
+    // Mileage Range Mapping
+    const mileageRange = get("mileageRange");
+    if (mileageRange) {
+      if (mileageRange.includes("+")) {
+        apiFilters.minMileage = parseInt(mileageRange.replace("+", ""), 10);
+      } else if (mileageRange.includes("-")) {
+        const [min, max] = mileageRange.split("-");
+        apiFilters.minMileage = parseInt(min, 10);
+        apiFilters.mileage = parseInt(max, 10); // Map 'max' to API's 'mileage' param
+      }
+    }
+
+    // FIX: Engine Capacity Range Mapping (Parsing ranges like "2000-3000")
+    const engineRange = get("engineCapacityRange");
+    if (engineRange) {
+      if (engineRange.includes("+")) {
+        apiFilters.minEngine = parseInt(engineRange.replace("+", ""), 10);
+      } else if (engineRange.includes("-")) {
+        const [min, max] = engineRange.split("-");
+        apiFilters.minEngine = parseInt(min, 10);
+        apiFilters.maxEngine = parseInt(max, 10);
+      }
+    }
+
+    // FIX: Country/Origin Mapping (Checks for 'krajPochodzenia' and maps slug)
+    const origin = get("krajPochodzenia") || get("country") || get("origin");
+    if (origin) {
+      apiFilters.country = SLUG_TO_ORIGIN[origin] || origin;
+    }
+
+    // Manufacturer Country Mapping
+    const manufacturer = get("krajProducenta") || get("countryOfManufacturer");
+    if (manufacturer) {
+      apiFilters.countryOfManufacturer = SLUG_TO_COUNTRY[manufacturer] || manufacturer;
+    }
+
+    // Page Sync
+    const pageParam = get("page");
+    if (pageParam) setCurrentPage(Number(pageParam));
+
+    return apiFilters;
+  }, [searchParams]);
+
+  // 5. Fetch Data Effect (server-side pagination + sort)
+  useEffect(() => {
+    // Skip the first client fetch when RSC already provided matching data
+    if (hasUsedInitial.current) {
+      hasUsedInitial.current = false;
+      return;
+    }
+
+    const fetchData = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const filters = getFiltersFromUrl();
+        const pageFromUrl = Number(searchParams.get("page")) || currentPage || 1;
+
+        const apiPayload = {
+          ...filters,
+          page: pageFromUrl,
+          limit: itemsPerPage,
+          sortBy,
+        };
+
+        Object.keys(apiPayload).forEach((key) => {
+          if (
+            apiPayload[key] === undefined ||
+            apiPayload[key] === "" ||
+            Number.isNaN(apiPayload[key])
+          ) {
+            delete apiPayload[key];
+          }
+        });
+
+        const response = await searchCars(apiPayload);
+        setCars(response.cars || []);
+        setTotalItems(response.total || 0);
+      } catch (err) {
+        console.error("Fetch error:", err);
+        setError(t("cars.error.tryAgain"));
+        setCars([]);
+        setTotalItems(0);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [getFiltersFromUrl, t, currentPage, itemsPerPage, sortBy, searchParams]);
+
+  // Event Handlers
+
+  const handleSort = (sortValue) => {
+    setSortBy(sortValue);
+    setCurrentPage(1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleApplyFilters = (newFilters) => {
+    const params = new URLSearchParams();
+
+    // Map UI Keys to URL Keys
+    const mapping = {
+      make: newFilters.make,
+      model: newFilters.model,
+      bodyType: newFilters.bodyType || newFilters.type,
+      location: newFilters.location,
+      maxDistance: newFilters.distance || newFilters.maxDistance,
+      yearFrom: newFilters.yearFrom,
+      yearTo: newFilters.yearTo,
+      priceFrom: newFilters.priceFrom,
+      priceTo: newFilters.priceTo,
+      stan: newFilters.stan || newFilters.condition,
+      fuel: newFilters.fuel,
+      transmission: newFilters.transmission,
+      drivetrain: newFilters.drivetrain,
+      color: newFilters.color,
+      serviceHistory: newFilters.serviceHistory,
+      accidentHistory: newFilters.accidentHistory,
+      mileageRange: newFilters.mileage,
+      engineCapacityRange: newFilters.engineCapacity,
+      krajPochodzenia: newFilters.krajPochodzenia,
+      krajProducenta: newFilters.krajProducenta,
+    };
+
+    Object.entries(mapping).forEach(([key, value]) => {
+      if (value !== undefined && value !== "" && value !== null) {
+        params.set(key, value);
+      }
+    });
+
+    params.set("page", "1");
+    setCurrentPage(1);
+
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    setShowMobileFilter(false);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    const params = new URLSearchParams(searchParams);
+    params.set("page", page);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
+  };
+
+  // Render
+
+  return (
+    <div className="min-h-screen bg-white dark:bg-dark-main">
+      {/* Hero Section */}
+      <div className="dark:bg-dark-main py-3">
+        <HeroFeaturedCarousel />
+      </div>
+
+      {/* Horizontal Filter Navbar */}
+      <div className="w-full">
+        <FilterNavbar onApplyFilters={handleApplyFilters} />
+      </div>
+
+      <div className="max-w-screen-2xl dark:bg-dark-main mx-auto sm:py-12 flex flex-row lg:space-x-4 h-full ">
+        {/* Desktop Sidebar (Hidden in favor of navbar) */}
+        <aside className="w-[380px] hidden sticky top-0 self-start h-fit">
+          <FilterSidebar onApplyFilters={handleApplyFilters} />
+        </aside>
+
+        {/* Main Content Area */}
+        <main className="h-full w-full px-0 sm:px-4">
+          {/* Controls: View Toggle & Sort */}
+          <div className="bg-white dark:bg-dark-main flex flex-col lg:flex-row justify-between items-center py-1 pb-2 px-[10px] sm:px-2 gap-2 lg:gap-4">
+
+            {/* View Toggle Buttons */}
+            <div className="hidden lg:flex justify-center lg:justify-end w-full lg:w-auto order-1 lg:order-2">
+              <div className="bg-white rounded-lg p-1 shadow-sm border flex gap-1">
+                <button
+                  type="button"
+                  onClick={() => setViewMode("grid")}
+                  className={`px-3 py-2 lg:px-4 lg:py-3 rounded-md text-sm font-medium transition-all duration-200 flex items-center justify-center ${viewMode === "grid"
+                    ? "bg-blue-500 text-white shadow-md"
+                    : "text-gray-600 dark:text-dark-text-secondary hover:text-gray-900 dark:text-gray-200 hover:bg-gray-100 dark:hover:text-dark-text-primary dark:hover:bg-transparent"
+                    }`}
+                >
+                  {/* Grid Icon */}
+                  <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode("list")}
+                  className={`px-3 py-2 lg:px-4 lg:py-3 rounded-md text-sm font-medium transition-all duration-200 flex items-center justify-center ${viewMode === "list"
+                    ? "bg-blue-500 text-white shadow-md"
+                    : "text-gray-600 dark:text-dark-text-secondary hover:text-gray-900 dark:text-gray-200 hover:bg-gray-100 dark:hover:text-dark-text-primary dark:hover:bg-transparent"
+                    }`}
+                >
+                  {/* List Icon */}
+                  <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Sort Options List */}
+            <div className="order-2 lg:order-1 w-full -mt-[28px] lg:mt-4 lg:w-auto">
+              <ul ref={sortListRef} className="filter-sorts flex flex-nowrap items-center overflow-x-scroll scroll-x-touch scrollbar-hide whitespace-nowrap -mx-2 px-2 pr-4 gap-2 lg:gap-4 cursor-grab select-none active:cursor-grabbing">
+                <li className="sort-option pr-3 flex-none">
+                  <button
+                    onClick={() => handleSort("best-match")}
+                    className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "best-match"
+                      ? "text-gray-900 dark:text-gray-200 dark:text-dark-text-primary border-gray-900 dark:border-dark-text-primary relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current"
+                      : "text-gray-500 dark:text-dark-text-muted border-transparent hover:text-gray-700 dark:hover:text-dark-text-primary"
+                      } bg-transparent focus:outline-none appearance-none`}
+                  >
+                    Najlepsze dopasowanie
+                  </button>
+                </li>
+                {/* Additional Sort Options */}
+                <li className="sort-option pr-3 flex-none">
+                  <button onClick={() => handleSort("lowest-price")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "lowest-price" ? "text-gray-900 dark:text-gray-200 dark:text-dark-text-primary border-gray-900 dark:border-dark-text-primary relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-dark-text-muted border-transparent hover:text-gray-700 dark:hover:text-dark-text-primary"} bg-transparent focus:outline-none appearance-none`}>
+                    Najniższa cena
+                  </button>
+                </li>
+                <li className="sort-option pr-3 flex-none">
+                  <button onClick={() => handleSort("highest-price")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "highest-price" ? "text-gray-900 dark:text-gray-200 dark:text-dark-text-primary border-gray-900 dark:border-dark-text-primary relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-dark-text-muted border-transparent hover:text-gray-700 dark:hover:text-dark-text-primary"} bg-transparent focus:outline-none appearance-none`}>
+                    Najwyższa cena
+                  </button>
+                </li>
+                <li className="sort-option pr-3 flex-none">
+                  <button onClick={() => handleSort("lowest-mileage")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "lowest-mileage" ? "text-gray-900 dark:text-gray-200 dark:text-dark-text-primary border-gray-900 dark:border-dark-text-primary relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-dark-text-muted border-transparent hover:text-gray-700 dark:hover:text-dark-text-primary"} bg-transparent focus:outline-none appearance-none`}>
+                    Najniższy przebieg
+                  </button>
+                </li>
+                <li className="sort-option pr-3 flex-none">
+                  <button onClick={() => handleSort("highest-mileage")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "highest-mileage" ? "text-gray-900 dark:text-gray-200 dark:text-dark-text-primary border-gray-900 dark:border-dark-text-primary relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-dark-text-muted border-transparent hover:text-gray-700 dark:hover:text-dark-text-primary"} bg-transparent focus:outline-none appearance-none`}>
+                    Najwyższy przebieg
+                  </button>
+                </li>
+                <li className="sort-option pr-3 flex-none">
+                  <button onClick={() => handleSort("newest-year")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "newest-year" ? "text-gray-900 dark:text-gray-200 dark:text-dark-text-primary border-gray-900 dark:border-dark-text-primary relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-dark-text-muted border-transparent hover:text-gray-700 dark:hover:text-dark-text-primary"} bg-transparent focus:outline-none appearance-none`}>
+                    Najnowszy rok
+                  </button>
+                </li>
+                <li className="sort-option pr-3 flex-none">
+                  <button onClick={() => handleSort("oldest-year")} className={`text-[14px] leading-[17px] font-medium text-center px-0 transition-none shrink-0 border-b-2 ${sortBy === "oldest-year" ? "text-gray-900 dark:text-gray-200 dark:text-dark-text-primary border-gray-900 dark:border-dark-text-primary relative after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[3px] after:border-b-2 after:border-current" : "text-gray-500 dark:text-dark-text-muted border-transparent hover:text-gray-700 dark:hover:text-dark-text-primary"} bg-transparent focus:outline-none appearance-none`}>
+                    Najstarszy rok
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Car Listing Grid/List */}
+          <div className="relative min-h-[240px]">
+            {isLoading && (
+              <div className="absolute inset-0 z-20 flex items-center justify-center rounded-xl bg-white/55 dark:bg-black/45 backdrop-blur-md">
+                <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-600/20 border-t-blue-600" />
+              </div>
+            )}
+            <div
+              className={
+                viewMode === "grid"
+                  ? `grid gap-1 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1 -mt-[5px] lg:mt-4 ${isLoading ? "opacity-40 pointer-events-none" : ""}`
+                  : `flex flex-col space-y-4 -mt-[5px] lg:mt-4 ${isLoading ? "opacity-40 pointer-events-none" : ""}`
+              }
+            >
+              {cars.length > 0 ? (
+                cars.map((car, index) => (
+                  <CarCard key={`${index} ${car._id}`} car={car} viewMode={viewMode} />
+                ))
+              ) : error ? (
+                <div className="text-center py-8">
+                  <p className="text-red-500">{error}</p>
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  >
+                    {t("cars.error.tryAgain")}
+                  </button>
+                </div>
+              ) : !isLoading ? (
+                <div className="text-center py-12">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-200">
+                    {t("cars.noResults.title")}
+                  </h3>
+                  <p className="mt-2 text-sm text-gray-500">
+                    {t("cars.noResults.message")}
+                  </p>
+                </div>
+              ) : null}
+            </div>
+          </div>
+
+          {/* Pagination */}
+          {!isLoading && !error && totalItems > 0 && (
+            <Pagination
+              currentPage={currentPage}
+              totalItems={totalItems}
+              itemsPerPage={itemsPerPage}
+              onPageChange={handlePageChange}
+              onItemsPerPageChange={handleItemsPerPageChange}
+              showItemsPerPage={true}
+              className="border-t border-gray-200"
+            />
+          )}
+
+          {/* Mobile Filter Sidebar Overlay */}
+          {showMobileFilter && (
+            <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+              <FilterSidebar
+                onApplyFilters={handleApplyFilters}
+                setShowMobileFilter={setShowMobileFilter}
+                isVisible={showMobileFilter}
+              />
+            </div>
+          )}
+        </main>
+      </div>
+    </div>
+  );
+};
+
+const CarsPageClient = ({ initialData = null }) => {
+  return (
+    <Suspense fallback={null}>
+      <CarsContent initialData={initialData} />
+    </Suspense>
+  );
+};
+
+export default CarsPageClient;

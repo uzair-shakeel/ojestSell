@@ -38,7 +38,19 @@ export default function DashboardLayout({ children }) {
     }
   }, [user?.approvalStatus]);
 
-  if (!mounted) return null;
+  if (!mounted) {
+    return (
+      <div className="absolute w-full min-h-screen top-0 bg-white dark:bg-gray-950">
+        <div className="flex min-h-screen">
+          <div className="hidden md:block w-64 animate-pulse bg-gray-100 dark:bg-gray-900" />
+          <main className="flex-1 p-6">
+            <div className="h-10 w-48 animate-pulse rounded bg-gray-100 dark:bg-gray-800 mb-6" />
+            <div className="h-64 animate-pulse rounded-xl bg-gray-100 dark:bg-gray-800" />
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   // Check if user is pending approval (show pending screen)
   if (user && user.approvalStatus === "pending") {
