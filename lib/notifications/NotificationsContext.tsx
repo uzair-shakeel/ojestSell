@@ -242,9 +242,11 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
     };
   }, [user, add]);
 
-  // Fallback: poll user's cars and detect new cars or status changes
+  // Fallback: poll user's cars for status changes — dashboard only
   useEffect(() => {
-    if (!userId) return;
+    if (!userId || typeof window === "undefined") return;
+    if (!pathname?.startsWith("/dashboard")) return;
+
     let cancelled = false;
     let isFirstRun = true;
 
@@ -302,14 +304,13 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
       }
     };
 
-    // initial and interval
     poll();
-    const t = setInterval(poll, 30000); // Check every 30 seconds
+    const t = setInterval(poll, 60000);
     return () => {
       cancelled = true;
       clearInterval(t);
     };
-  }, [userId, getToken, add]);
+  }, [userId, getToken, add, pathname]);
 
   const value: NotificationsContextType = { notifications, unreadCount, messageCount, add, markRead, markTypeRead, markAll, refresh };
   return <NotificationsContext.Provider value={value}>{children}</NotificationsContext.Provider>;

@@ -24,12 +24,10 @@ export function CarsNearMe() {
       setError(null);
       try {
         const data = await getAllCars();
-        console.log("Fetched cars:", data);
-        // Ensure data is an array
         if (Array.isArray(data)) {
           setCars(data);
         } else if (data?.cars && Array.isArray(data.cars)) {
-          setCars(data.cars); // Handle case where backend returns { cars: [...] }
+          setCars(data.cars);
         } else {
           throw new Error("Fetched data is not an array");
         }

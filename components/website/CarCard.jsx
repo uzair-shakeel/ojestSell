@@ -3,33 +3,18 @@
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { useGoogleMaps } from "../../lib/GoogleMapsContext";
-import { getPublicUserInfo } from "../../services/userService";
+import { getGeocodingData } from "../../lib/geocode";
 import { optimizeCloudinaryUrl } from "../../lib/imageUtils";
-import {
-  Calendar,
-  Gauge,
-  Fuel,
-  Settings2,
-  MapPin,
-  User,
-  ShieldCheck,
-  Zap
-} from "lucide-react";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 export default function CarCard({ car, viewMode = 'grid' }) {
   const router = useRouter();
-  const { getGeocodingData } = useGoogleMaps();
   const [locationDetails, setLocationDetails] = useState({
-    city: "",
-    state: "",
+    city: car?.city || car?.location?.city || "",
+    state: car?.location?.state || "",
   });
 
-  const [seller, setSeller] = useState(null);
-
-  // Translation helper functions
   const translateFuelType = (fuel) => {
     const translations = {
       'Petrol': 'Benzyna',
@@ -49,24 +34,12 @@ export default function CarCard({ car, viewMode = 'grid' }) {
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
 
-
   const translateTransmission = (transmission) => {
     const translations = {
       'Automatic': 'Automat',
       'Manual': 'Manual'
     };
     return translations[transmission] || transmission;
-  };
-
-  const formatImageUrl = (imagePath) => {
-    if (!imagePath) return "/website/seller.jpg";
-    let finalUrl;
-    if (typeof imagePath === "string" && /^(https?:)?\/\//i.test(imagePath)) {
-      finalUrl = imagePath;
-    } else {
-      finalUrl = `${API_BASE}/${String(imagePath).replace("\\", "/")}`;
-    }
-    return optimizeCloudinaryUrl(finalUrl, 400); // avatar size
   };
 
   const formatCarImage = (imagePath) => {
@@ -81,58 +54,30 @@ export default function CarCard({ car, viewMode = 'grid' }) {
   };
 
   useEffect(() => {
-    const fetchLocationDetails = async () => {
-      if (!car.location?.coordinates) return;
-
-      const [longitude, latitude] = car.location.coordinates;
-      const details = await getGeocodingData(latitude, longitude);
-      setLocationDetails(details);
-    };
-
-    if (car.location?.coordinates) {
-      fetchLocationDetails();
+    const existingCity = car?.city || car?.location?.city;
+    if (existingCity) {
+      setLocationDetails({
+        city: existingCity,
+        state: car?.location?.state || "",
+      });
+      return;
     }
-  }, [car, getGeocodingData]);
 
-  useEffect(() => {
-    let mounted = true;
-    const loadSeller = async () => {
-      try {
-        if (!car?.createdBy) return;
-        const info = await getPublicUserInfo(car.createdBy);
-        if (mounted) setSeller(info);
-      } catch (e) {
-        if (mounted)
-          setSeller({ firstName: "Unknown", lastName: "Seller", sellerType: car?.financialInfo?.sellerType || "private", image: null });
-      }
-    };
-    loadSeller();
+    if (!car?.location?.coordinates) return;
+
+    let cancelled = false;
+    const [longitude, latitude] = car.location.coordinates;
+
+    getGeocodingData(latitude, longitude).then((details) => {
+      if (!cancelled) setLocationDetails(details);
+    });
+
     return () => {
-      mounted = false;
+      cancelled = true;
     };
-  }, [car?.createdBy, car?.financialInfo?.sellerType]);
+  }, [car?._id, car?.city, car?.location?.city, car?.location?.coordinates]);
 
   const firstImage = car?.images && car?.images?.length > 0 ? formatCarImage(car.images[0]) : "https://via.placeholder.com/500";
-
-  const getSellerName = () => {
-    if (!seller) return "Seller";
-    const type = seller?.sellerType || car?.financialInfo?.sellerType;
-    if (type === "company") return seller?.companyName || `${seller?.firstName || ""} ${seller?.lastName || ""}`.trim() || "Company";
-    const full = `${seller?.firstName || ""} ${seller?.lastName || ""}`.trim();
-    return full || seller?.companyName || "Sprzedawca prywatny";
-  };
-
-  const getSellerType = () => {
-    if (!seller) return "Seller";
-    const type = seller?.sellerType || car?.financialInfo?.sellerType;
-    if (type === "company") return "Firma";
-    return "Sprzedawca prywatny";
-  };
-
-  const getSellerImage = () => {
-    if (!seller?.image) return "/website/seller.jpg";
-    return formatImageUrl(seller.image);
-  };
 
   const handleCardClick = () => {
     router.push(`/website/cars/${car._id}`);

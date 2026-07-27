@@ -7,7 +7,7 @@ import CarCard from "../../../components/website/CarCard";
 import HeroFeaturedCarousel from "../../../components/website/HeroFeaturedCarousel";
 import Pagination from "../../../components/website/Pagination";
 import Image from "next/image";
-import { getAllCars, searchCars } from "../../../services/carService";
+import { searchCars } from "../../../services/carService";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
@@ -101,7 +101,6 @@ const CarsContent = () => {
   const [viewMode, setViewMode] = useState("grid");
 
   // Data State
-  const [allCars, setAllCars] = useState([]);
   const [cars, setCars] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
 
@@ -292,7 +291,7 @@ const CarsContent = () => {
     return apiFilters;
   }, [searchParams]);
 
-  // 5. Fetch Data Effect
+  // 5. Fetch Data Effect (server-side pagination + sort)
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
@@ -300,67 +299,31 @@ const CarsContent = () => {
 
       try {
         const filters = getFiltersFromUrl();
+        const pageFromUrl = Number(searchParams.get("page")) || currentPage || 1;
 
-        // Strategy: Fetch a large batch to allow client-side sorting/pagination accuracy
-        filters.limit = 1000;
-        filters.page = 1;
+        const apiPayload = {
+          ...filters,
+          page: pageFromUrl,
+          limit: itemsPerPage,
+          sortBy,
+        };
 
-        // Cleanup empty keys before sending
-        const apiPayload = { ...filters };
-        Object.keys(apiPayload).forEach(key => {
-          if (apiPayload[key] === undefined || apiPayload[key] === "" || Number.isNaN(apiPayload[key])) {
+        Object.keys(apiPayload).forEach((key) => {
+          if (
+            apiPayload[key] === undefined ||
+            apiPayload[key] === "" ||
+            Number.isNaN(apiPayload[key])
+          ) {
             delete apiPayload[key];
           }
         });
 
         const response = await searchCars(apiPayload);
-
-        // Normalize API response
-        let fetchedCars = [];
-        if (Array.isArray(response)) {
-          fetchedCars = response;
-        } else if (response?.cars && Array.isArray(response.cars)) {
-          fetchedCars = response.cars;
-        }
-
-        // Client-Side Filtering (for fields backend might ignore)
-
-        // 1. Price Filtering (Safety net)
-        if (filters.minPrice) fetchedCars = fetchedCars.filter(c => (c.financialInfo?.priceNetto || 0) >= filters.minPrice);
-        if (filters.maxPrice) fetchedCars = fetchedCars.filter(c => (c.financialInfo?.priceNetto || 0) <= filters.maxPrice);
-
-        // 2. Color Filtering
-        if (filters.color) {
-          fetchedCars = fetchedCars.filter(c => c.color && c.color.toLowerCase() === filters.color.toLowerCase());
-        }
-
-        // 3. Min Mileage Filtering
-        if (filters.minMileage !== undefined) {
-          fetchedCars = fetchedCars.filter(c => (c.mileage || 0) >= filters.minMileage);
-        }
-
-        // 4. Origin/Country Filtering
-        if (filters.country) {
-          fetchedCars = fetchedCars.filter(c => c.country === filters.country);
-        }
-
-        // 5. Engine Capacity Filtering (Client Side Fallback)
-        if (filters.minEngine !== undefined || filters.maxEngine !== undefined) {
-          fetchedCars = fetchedCars.filter(c => {
-            const carEngine = parseInt(c.engine || "0", 10);
-            if (filters.minEngine !== undefined && carEngine < filters.minEngine) return false;
-            if (filters.maxEngine !== undefined && carEngine > filters.maxEngine) return false;
-            return true;
-          });
-        }
-
-        setAllCars(fetchedCars);
-        setTotalItems(fetchedCars.length);
-
+        setCars(response.cars || []);
+        setTotalItems(response.total || 0);
       } catch (err) {
         console.error("Fetch error:", err);
         setError(t("cars.error.tryAgain"));
-        setAllCars([]);
         setCars([]);
         setTotalItems(0);
       } finally {
@@ -369,50 +332,7 @@ const CarsContent = () => {
     };
 
     fetchData();
-  }, [getFiltersFromUrl, t]);
-
-  // 6. Sorting & Pagination Effect (Client Side)
-  useEffect(() => {
-    let data = [...allCars];
-
-    // Sorting
-    if (sortBy !== 'best-match') {
-      data.sort((a, b) => {
-        const priceA = Number(a.financialInfo?.priceNetto || 0);
-        const priceB = Number(b.financialInfo?.priceNetto || 0);
-
-        // Clean mileage strings for sorting
-        const getMileage = (car) => Number(String(car.mileage || "0").replace(/\D/g, ""));
-        const mileA = getMileage(a);
-        const mileB = getMileage(b);
-
-        const yearA = Number(a.year || 0);
-        const yearB = Number(b.year || 0);
-
-        const dateA = new Date(a.createdAt || 0);
-        const dateB = new Date(b.createdAt || 0);
-
-        switch (sortBy) {
-          case "lowest-price": return priceA - priceB;
-          case "highest-price": return priceB - priceA;
-          case "lowest-mileage": return mileA - mileB;
-          case "highest-mileage": return mileB - mileA;
-          case "newest-year": return yearB - yearA;
-          case "oldest-year": return yearA - yearB;
-          case "newest-listed": return dateB - dateA;
-          case "oldest-listed": return dateA - dateB;
-          default: return 0;
-        }
-      });
-    }
-
-    // Pagination Slicing
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedCars = data.slice(startIndex, endIndex);
-
-    setCars(paginatedCars);
-  }, [allCars, sortBy, currentPage, itemsPerPage]);
+  }, [getFiltersFromUrl, t, currentPage, itemsPerPage, sortBy]);
 
   // Event Handlers
 

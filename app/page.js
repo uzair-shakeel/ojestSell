@@ -3,35 +3,45 @@
 import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { CarsNearMe } from "../components/website/cars-near-me.jsx";
-import { BrowseCategories } from "../components/website/browse-categories";
-import { BrowseLocations } from "../components/website/browse-locations";
-import { BrowseByMake } from "../components/website/browse-by-make";
+import dynamic from "next/dynamic";
 import Navbar from "../components/website/Navbar.jsx";
-import { FeaturedCategories } from "../components/website/featured-categories";
 import { FilterSearch } from "../components/website/filter-search";
-import { BlogSection } from "../components/website/blog-section.jsx";
 import { Footer } from "../components/website/Footer.jsx";
-import VideoSection from "../components/website/VideoSection";
-import { FeaturedCars } from "../components/website/FeaturedCars.jsx";
-import { DiscoveryPromo } from "../components/website/DiscoveryPromo.jsx";
-import { CarsGridSection } from "../components/website/CarsGridSection.jsx";
 import { useLanguage } from "../lib/i18n/LanguageContext";
 
-// Component that uses useSearchParams
+const CarsNearMe = dynamic(
+  () => import("../components/website/cars-near-me.jsx").then((m) => m.CarsNearMe),
+  { ssr: false }
+);
+const BrowseCategories = dynamic(
+  () => import("../components/website/browse-categories").then((m) => m.BrowseCategories),
+  { ssr: false }
+);
+const BrowseLocations = dynamic(
+  () => import("../components/website/browse-locations").then((m) => m.BrowseLocations),
+  { ssr: false }
+);
+const DiscoveryPromo = dynamic(
+  () => import("../components/website/DiscoveryPromo.jsx").then((m) => m.DiscoveryPromo),
+  { ssr: false }
+);
+const CarsGridSection = dynamic(
+  () => import("../components/website/CarsGridSection.jsx").then((m) => m.CarsGridSection),
+  { ssr: false }
+);
+const BlogSection = dynamic(
+  () => import("../components/website/blog-section.jsx").then((m) => m.BlogSection),
+  { ssr: false }
+);
+
 function HomeContent() {
-  const { t } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    // Check if __clerk_db_jwt parameter exists
     const clerkJwt = searchParams.get("__clerk_db_jwt");
     if (clerkJwt) {
-      // Redirect directly to dashboard profile
       router.replace("/dashboard/profile");
-      return;
     }
   }, [searchParams, router]);
 
@@ -39,7 +49,6 @@ function HomeContent() {
     <div className="flex flex-col min-h-screen bg-white dark:bg-dark-main transition-colors duration-300">
       <Navbar />
 
-      {/* Hero Section - Restored and Styled Premiumly */}
       <section className="relative h-[650px] w-[98%] mx-auto my-4 rounded-[2.5rem] overflow-hidden shadow-2xl bg-gray-900">
         <div className="absolute inset-0">
           <Image
@@ -56,19 +65,15 @@ function HomeContent() {
             className="object-cover md:hidden brightness-[0.7] scale-105"
             priority
           />
-          {/* Subtle Color Overlay */}
           <div className="absolute inset-0 bg-blue-900/10 mix-blend-multiply" />
         </div>
 
         <div className="relative w-full z-10 h-full flex justify-center  items-end text-center text-white pb-24 px-6">
-
-
           <div className="w-full  max-w-5xl">
             <FilterSearch />
           </div>
         </div>
 
-        {/* Ambient Bottom Fade */}
         <div className="absolute bottom-0 left-0 w-full h-1/4 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
       </section>
 
@@ -85,7 +90,6 @@ function HomeContent() {
   );
 }
 
-// Main component with Suspense boundary
 export default function Home() {
   return (
     <Suspense

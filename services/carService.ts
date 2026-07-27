@@ -213,27 +213,34 @@ export const addCar = async (
   }
 };
 
-// Get all cars (public route, no token required)
+// Get all cars (public route, no token required) — deduped + short TTL cache
+let allCarsCache: { data: CarData[]; ts: number } | null = null;
+let allCarsInflight: Promise<CarData[]> | null = null;
+const ALL_CARS_TTL_MS = 60_000;
+
 export const getAllCars = async (): Promise<CarData[]> => {
+  if (allCarsCache && Date.now() - allCarsCache.ts < ALL_CARS_TTL_MS) {
+    return allCarsCache.data;
+  }
+  if (allCarsInflight) return allCarsInflight;
+
   const maxRetries = 3;
   let retryCount = 0;
 
   const tryFetch = async (): Promise<CarData[]> => {
     try {
-
       const response = await axios.get(`${API_BASE_URL}/cars`, {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        timeout: 30000, // 30 second timeout
+        timeout: 15000,
       });
 
       if (!response.data) {
         throw new Error("No data received from API");
       }
 
-      // Handle both array and object responses
       const cars = Array.isArray(response.data)
         ? response.data
         : response.data.cars || [];
@@ -244,7 +251,6 @@ export const getAllCars = async (): Promise<CarData[]> => {
 
       return cars;
     } catch (error: any) {
-      // Enhanced error logging
       const errorDetails = {
         message: error.message,
         code: error.code,
@@ -258,13 +264,11 @@ export const getAllCars = async (): Promise<CarData[]> => {
 
       console.error("getAllCars error details:", errorDetails);
 
-      // If we haven't reached max retries, try again
       if (
         retryCount < maxRetries - 1 &&
         (error.message === "Network Error" || error.code === "ECONNABORTED")
       ) {
         retryCount++;
-        // Add exponential backoff
         await new Promise((resolve) =>
           setTimeout(resolve, Math.pow(2, retryCount) * 1000)
         );
@@ -284,7 +288,16 @@ export const getAllCars = async (): Promise<CarData[]> => {
     }
   };
 
-  return tryFetch();
+  allCarsInflight = tryFetch()
+    .then((cars) => {
+      allCarsCache = { data: cars, ts: Date.now() };
+      return cars;
+    })
+    .finally(() => {
+      allCarsInflight = null;
+    });
+
+  return allCarsInflight;
 };
 
 // Get car by ID
@@ -370,35 +383,42 @@ export const updateCarStatus = async (
 };
 
 // Search cars with filters
-export const searchCars = async (queryParams: {
-  make?: string;
-  model?: string;
-  yearFrom?: string;
-  yearTo?: string;
-  type?: string;
-  condition?: "New" | "Used";
-  mileageMin?: number;
-  mileageMax?: number;
-  drivetrain?: "FWD" | "RWD" | "AWD" | "4WD" | "2WD";
-  transmission?: "Manual" | "Automatic" | "Semi-Automatic";
-  fuel?: "Petrol" | "Diesel" | "Electric" | "Hybrid";
-  engine?: string;
-  serviceHistory?: "Yes" | "No";
-  accidentHistory?: "Yes" | "No";
-  countryOfManufacturer?: string;
-  location?: [number, number]; // [longitude, latitude]
-  radius?: number; // in kilometers
-}): Promise<CarData[]> => {
+export type SearchCarsResult = {
+  cars: CarData[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+};
+
+export const searchCars = async (queryParams: Record<string, any>): Promise<SearchCarsResult> => {
   try {
     const response = await axios.get(`${API_BASE_URL}/cars/search`, {
       params: queryParams,
+      timeout: 15000,
     });
-    // Handle both array and object responses
-    const cars = Array.isArray(response.data)
-      ? response.data
-      : response.data.cars || [];
 
-    return cars;
+    if (Array.isArray(response.data)) {
+      return {
+        cars: response.data,
+        total: response.data.length,
+        page: Number(queryParams.page) || 1,
+        limit: Number(queryParams.limit) || response.data.length,
+        totalPages: 1,
+      };
+    }
+
+    const cars = Array.isArray(response.data?.cars) ? response.data.cars : [];
+    return {
+      cars,
+      total: Number(response.data?.total ?? cars.length),
+      page: Number(response.data?.page ?? queryParams.page ?? 1),
+      limit: Number(response.data?.limit ?? queryParams.limit ?? cars.length),
+      totalPages: Number(
+        response.data?.totalPages ??
+          Math.max(1, Math.ceil((response.data?.total ?? cars.length) / (queryParams.limit || 12)))
+      ),
+    };
   } catch (error: any) {
     console.error("searchCars error:", error);
     throw new Error(error?.response?.data?.message || "Failed to search cars");
@@ -440,10 +460,13 @@ export const getCarsByUserId = async (
 export const getRecommendedCars = async (carId: string): Promise<CarData[]> => {
   try {
     const response = await axios.get(
-      `${API_BASE_URL}/cars/recommended/${carId}`
+      `${API_BASE_URL}/cars/recommended/${carId}`,
+      { timeout: 10000 }
     );
-    return response.data;
+    return Array.isArray(response.data) ? response.data : [];
   } catch (error: any) {
+    // Treat "no matches" as empty list so similar-vehicles UI can hide quietly
+    if (error?.response?.status === 404) return [];
     throw new Error(
       error?.response?.data?.message || "Failed to fetch recommended cars"
     );

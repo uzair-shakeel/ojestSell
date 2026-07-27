@@ -1,3 +1,4 @@
+"use client";
 import { useState, useRef, useEffect } from "react";
 import {
   GoogleMap,
@@ -5,10 +6,10 @@ import {
   Autocomplete,
   InfoWindow,
 } from "@react-google-maps/api";
-import { useGoogleMaps } from "../../lib/GoogleMapsContext";
+import { GoogleMapsProvider, useGoogleMaps } from "../../lib/GoogleMapsContext";
 import { FaSearch, FaMapMarkerAlt } from "react-icons/fa";
 
-const CustomMap = ({ location, setLocation }) => {
+const CustomMapInner = ({ location, setLocation }) => {
   const { isLoaded, getGeocodingData } = useGoogleMaps();
   const [autocomplete, setAutocomplete] = useState(null);
   const [showInfoWindow, setShowInfoWindow] = useState(false);
@@ -156,5 +157,11 @@ const CustomMap = ({ location, setLocation }) => {
     </div>
   );
 };
+
+const CustomMap = (props) => (
+  <GoogleMapsProvider>
+    <CustomMapInner {...props} />
+  </GoogleMapsProvider>
+);
 
 export default CustomMap;

@@ -31,13 +31,13 @@ const nextConfig = {
   },
 
   images: {
-    domains: [
-      "res.cloudinary.com",
-      "images.unsplash.com",
-      "img.clerk.com",
-      "localhost",
+    remotePatterns: [
+      { protocol: "https", hostname: "res.cloudinary.com" },
+      { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "img.clerk.com" },
+      { protocol: "https", hostname: "via.placeholder.com" },
+      { protocol: "http", hostname: "localhost" },
     ],
-    unoptimized: true,
   },
 
   async rewrites() {

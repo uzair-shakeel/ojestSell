@@ -1,12 +1,9 @@
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import React, { Suspense } from "react";
-import { GoogleMapsProvider } from "../lib/GoogleMapsContext";
+import React from "react";
 import Providers from "../components/Providers";
 import CookieConsent from "../components/website/CookieConsent";
 import ErrorBoundary from "../components/ErrorBoundary";
 import ScrollToTop from "../components/ScrollToTop";
-
 
 export const metadata = {
   title: "OjestSell - Premium Car Marketplace",
@@ -15,21 +12,17 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-  // Check if we're in a static build environment
-  const isStaticBuild = process.env.NEXT_PHASE === "phase-production-build";
-
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="preconnect" href="https://res.cloudinary.com" />
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
       </head>
       <body>
         <ErrorBoundary>
-
           <Providers>
-            <GoogleMapsProvider>
-              <ScrollToTop />
-              {children}
-            </GoogleMapsProvider>
+            <ScrollToTop />
+            {children}
           </Providers>
           <CookieConsent />
         </ErrorBoundary>

@@ -1441,7 +1441,7 @@ const Page = () => {
                     </div>
                   </div>
                   <div className="">
-                    <SimilarVehicles />
+                    <SimilarVehicles carId={car?._id || carId} />
                   </div>
                 </div>
               </aside>
