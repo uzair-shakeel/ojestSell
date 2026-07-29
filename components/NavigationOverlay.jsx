@@ -2,6 +2,7 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
+import { carImageTransitionFlag } from "../lib/carImageTransition/CarImageTransitionContext";
 
 function NavigationOverlayInner() {
   const pathname = usePathname();
@@ -21,9 +22,11 @@ function NavigationOverlayInner() {
       if (event.defaultPrevented) return;
       if (event.button !== 0) return;
       if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      if (carImageTransitionFlag.active) return;
 
       const anchor = event.target?.closest?.("a");
       if (!anchor) return;
+      if (anchor.hasAttribute("data-skip-nav-overlay")) return;
 
       const href = anchor.getAttribute("href");
       if (!href || href.startsWith("#")) return;

@@ -2,18 +2,25 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { getGeocodingData } from "../../lib/geocode";
 import { optimizeCloudinaryUrl } from "../../lib/imageUtils";
+import { useCarImageTransition } from "../../lib/carImageTransition/CarImageTransitionContext";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 export default function CarCard({ car, viewMode = "grid" }) {
   const href = `/website/cars/${car._id}`;
+  const router = useRouter();
+  const { startTransition, isTransitioningFor } = useCarImageTransition();
+  const imageWrapRef = useRef(null);
   const [locationDetails, setLocationDetails] = useState({
     city: car?.city || car?.location?.city || "",
     state: car?.location?.state || "",
   });
+
+  const isMorphingAway = isTransitioningFor(car?._id);
 
   const translateFuelType = (fuel) => {
     const translations = {
@@ -82,16 +89,45 @@ export default function CarCard({ car, viewMode = "grid" }) {
       ? formatCarImage(car.images[0])
       : "https://via.placeholder.com/500";
 
+  const handleNavigate = useCallback(
+    (event) => {
+      if (event.defaultPrevented) return;
+      if (event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+      // If the card image isn't painted yet, use normal navigation (no grey morph)
+      const started = startTransition({
+        carId: car._id,
+        href,
+        imageSrc: firstImage,
+        sourceEl: imageWrapRef.current,
+      });
+
+      if (!started) return;
+
+      event.preventDefault();
+      router.push(href);
+    },
+    [car?._id, firstImage, href, router, startTransition]
+  );
+
   if (viewMode === "grid") {
     return (
       <Link
         href={href}
         prefetch={true}
+        data-skip-nav-overlay
+        onClick={handleNavigate}
         className="group cursor-pointer focus:outline-none block"
       >
         <div className="mx-2 bg-transparent rounded-2xl overflow-hidden relative transition-all duration-300">
           <div className="absolute inset-0 bg-black/0 hover:bg-black/20 dark:hover:bg-white/20 transition-all duration-300 z-10 pointer-events-none rounded-2xl" />
-          <div className="relative h-[260px] md:h-48 lg:h-[220px] overflow-hidden rounded-2xl">
+          <div
+            ref={imageWrapRef}
+            className={`relative h-[260px] md:h-48 lg:h-[220px] overflow-hidden rounded-2xl ${
+              isMorphingAway ? "opacity-0" : ""
+            }`}
+          >
             {car?.isFeatured && (car?.images?.length ?? 0) >= 3 ? (
               <div className="grid grid-cols-2 grid-rows-2 h-full gap-0.5">
                 <div className="relative col-span-2 row-span-1">
@@ -216,11 +252,18 @@ export default function CarCard({ car, viewMode = "grid" }) {
     <Link
       href={href}
       prefetch={true}
+      data-skip-nav-overlay
+      onClick={handleNavigate}
       className="group cursor-pointer focus:outline-none block"
     >
       <div className="mx-2 bg-transparent rounded-2xl overflow-hidden transition-all duration-500 flex flex-row h-[140px] xs:h-[160px] sm:h-[200px] md:h-[260px] relative">
         <div className="absolute inset-0 bg-black/0 hover:bg-black/20 dark:hover:bg-dark-raised/20 transition-all duration-300 z-10 pointer-events-none rounded-2xl" />
-        <div className="relative w-[120px] xs:w-[150px] sm:w-[200px] md:w-[400px] h-full flex-shrink-0 overflow-hidden rounded-2xl">
+        <div
+          ref={imageWrapRef}
+          className={`relative w-[120px] xs:w-[150px] sm:w-[200px] md:w-[400px] h-full flex-shrink-0 overflow-hidden rounded-2xl ${
+            isMorphingAway ? "opacity-0" : ""
+          }`}
+        >
           {car?.isFeatured && (car?.images?.length ?? 0) >= 3 ? (
             <div className="flex h-full w-full gap-0.5">
               <div className="relative w-2/3 h-full">

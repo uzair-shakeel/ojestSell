@@ -20,6 +20,7 @@ import { getCarById } from "../../../../services/carService";
 import { getPublicUserInfo } from "../../../../services/userService";
 import { useAuth } from "../../../../lib/auth/AuthContext";
 import { optimizeCloudinaryUrl } from "../../../../lib/imageUtils";
+import { useCarImageTransition } from "../../../../lib/carImageTransition/CarImageTransitionContext";
 
 const LocationTab = dynamic(
   () => import("../../../../components/website/LocationTab"),
@@ -74,8 +75,12 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
   const [clickedImageUrl, setClickedImageUrl] = useState(null);
   const mainSwiperRef = useRef(null);
   const fullscreenSwiperRef = useRef(null);
+  const desktopMainImageRef = useRef(null);
+  const mobileMainImageRef = useRef(null);
 
   const thumbnailScrollRef = useRef(null);
+  const { registerTarget, isTransitioningFor } = useCarImageTransition();
+  const hideMainDuringMorph = isTransitioningFor(carId);
 
   const formatImageUrl = (imagePath) => {
     // Use a known local fallback avatar if seller image is missing
@@ -315,6 +320,42 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isFullscreen, currentImageIndex, images]);
+
+  // Shared card→detail image expand: register the visible main gallery as morph target
+  useEffect(() => {
+    if (!carId || !car) return undefined;
+
+    const resolveTarget = () => {
+      const isDesktop =
+        typeof window !== "undefined" &&
+        window.matchMedia("(min-width: 768px)").matches;
+      const el = isDesktop
+        ? desktopMainImageRef.current
+        : mobileMainImageRef.current;
+      if (!el) return () => {};
+      return registerTarget(carId, el);
+    };
+
+    let cleanup = resolveTarget();
+    // Layout can settle a frame later (SSR → client gallery heights)
+    const retry = requestAnimationFrame(() => {
+      cleanup?.();
+      cleanup = resolveTarget();
+    });
+
+    const mql = window.matchMedia("(min-width: 768px)");
+    const onChange = () => {
+      cleanup?.();
+      cleanup = resolveTarget();
+    };
+    mql.addEventListener("change", onChange);
+
+    return () => {
+      cancelAnimationFrame(retry);
+      cleanup?.();
+      mql.removeEventListener("change", onChange);
+    };
+  }, [carId, car, registerTarget, galleryMode]);
 
   // Seed gallery from server-provided car immediately
   useEffect(() => {
@@ -932,6 +973,7 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
               {/* Main Image - Left Side */}
               <div className={`relative group h-full ${galleryMode === "single" ? "w-full" : "w-full md:w-[calc(100%-320px)]"}`}>
                 <div
+                  ref={desktopMainImageRef}
                   className="relative w-full h-full cursor-pointer"
                   onClick={() => {
                     setClickedImageUrl(mainImage || images[currentImageIndex] || images[0]);
@@ -942,7 +984,9 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
                     src={mainImage || images[currentImageIndex] || images[0]}
                     alt={`${car?.make} ${car?.model} - Image ${currentImageIndex + 1}`}
                     fill
-                    className="object-cover"
+                    className={`object-cover transition-opacity duration-150 ${
+                      hideMainDuringMorph ? "opacity-0" : "opacity-100"
+                    }`}
                     priority
                     sizes="(max-width: 768px) 100vw, 70vw"
                     unoptimized={true}
@@ -1059,6 +1103,7 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
             >
               {/* Slide 1: Main Image */}
               <div
+                ref={mobileMainImageRef}
                 className={`snap-start shrink-0 ${images.length === 1 ? "w-full" : "w-[88vw]"} aspect-[4/3] relative overflow-hidden bg-white dark:bg-dark-card cursor-pointer`}
                 onClick={() => {
                   setClickedImageUrl(mainImage || images[currentImageIndex] || images[0]);
@@ -1069,7 +1114,9 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
                   src={mainImage || images[currentImageIndex] || images[0]}
                   alt={`${car?.make} ${car?.model} - Image 1`}
                   fill
-                  className="object-cover"
+                  className={`object-cover transition-opacity duration-150 ${
+                    hideMainDuringMorph ? "opacity-0" : "opacity-100"
+                  }`}
                   priority
                   sizes="88vw"
                   unoptimized={true}
