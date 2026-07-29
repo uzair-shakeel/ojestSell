@@ -13,14 +13,12 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 export default function CarCard({ car, viewMode = "grid" }) {
   const href = `/website/cars/${car._id}`;
   const router = useRouter();
-  const { startTransition, isTransitioningFor } = useCarImageTransition();
+  const { startTransition } = useCarImageTransition();
   const imageWrapRef = useRef(null);
   const [locationDetails, setLocationDetails] = useState({
     city: car?.city || car?.location?.city || "",
     state: car?.location?.state || "",
   });
-
-  const isMorphingAway = isTransitioningFor(car?._id);
 
   const translateFuelType = (fuel) => {
     const translations = {
@@ -95,12 +93,14 @@ export default function CarCard({ car, viewMode = "grid" }) {
       if (event.button !== 0) return;
       if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
 
-      // If the card image isn't painted yet, use normal navigation (no grey morph)
+      // Morph from the exact collage tile under the click (not the full card frame)
       const started = startTransition({
         carId: car._id,
         href,
         imageSrc: firstImage,
         sourceEl: imageWrapRef.current,
+        clientX: event.clientX,
+        clientY: event.clientY,
       });
 
       if (!started) return;
@@ -124,13 +124,11 @@ export default function CarCard({ car, viewMode = "grid" }) {
           <div className="absolute inset-0 bg-black/0 hover:bg-black/20 dark:hover:bg-white/20 transition-all duration-300 z-10 pointer-events-none rounded-2xl" />
           <div
             ref={imageWrapRef}
-            className={`relative h-[260px] md:h-48 lg:h-[220px] overflow-hidden rounded-2xl ${
-              isMorphingAway ? "opacity-0" : ""
-            }`}
+            className="relative h-[260px] md:h-48 lg:h-[220px] overflow-hidden rounded-2xl [&_[data-car-morph-source]]:opacity-0"
           >
             {car?.isFeatured && (car?.images?.length ?? 0) >= 3 ? (
               <div className="grid grid-cols-2 grid-rows-2 h-full gap-0.5">
-                <div className="relative col-span-2 row-span-1">
+                <div data-car-tile className="relative col-span-2 row-span-1">
                   <Image
                     src={formatCarImage(car.images[0])}
                     alt={`${car.year} ${car.make} ${car.model} - 1`}
@@ -140,7 +138,7 @@ export default function CarCard({ car, viewMode = "grid" }) {
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
                 </div>
-                <div className="relative col-start-1 col-end-2 row-start-2 row-end-3">
+                <div data-car-tile className="relative col-start-1 col-end-2 row-start-2 row-end-3">
                   <Image
                     src={formatCarImage(car.images[1])}
                     alt={`${car.year} ${car.make} ${car.model} - 2`}
@@ -150,25 +148,29 @@ export default function CarCard({ car, viewMode = "grid" }) {
                     sizes="(max-width: 768px) 50vw, 25vw"
                   />
                 </div>
-                <div className="relative col-start-2 col-end-3 row-start-2 row-end-3">
+                <div data-car-tile className="relative col-start-2 col-end-3 row-start-2 row-end-3">
                   {(car?.images?.length ?? 0) >= 4 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-0.5 h-full">
-                      <Image
-                        src={formatCarImage(car.images[2])}
-                        alt={`${car.year} ${car.make} ${car.model} - 3`}
-                        fill
-                        className="object-cover"
-                        loading="lazy"
-                        sizes="(max-width: 768px) 50vw, 25vw"
-                      />
-                      <Image
-                        src={formatCarImage(car.images[3])}
-                        alt={`${car.year} ${car.make} ${car.model} - 4`}
-                        fill
-                        className="object-cover hidden md:block"
-                        loading="lazy"
-                        sizes="25vw"
-                      />
+                      <div data-car-tile className="relative min-h-0">
+                        <Image
+                          src={formatCarImage(car.images[2])}
+                          alt={`${car.year} ${car.make} ${car.model} - 3`}
+                          fill
+                          className="object-cover"
+                          loading="lazy"
+                          sizes="(max-width: 768px) 50vw, 25vw"
+                        />
+                      </div>
+                      <div data-car-tile className="relative min-h-0 hidden md:block">
+                        <Image
+                          src={formatCarImage(car.images[3])}
+                          alt={`${car.year} ${car.make} ${car.model} - 4`}
+                          fill
+                          className="object-cover"
+                          loading="lazy"
+                          sizes="25vw"
+                        />
+                      </div>
                     </div>
                   ) : (
                     <Image
@@ -183,14 +185,16 @@ export default function CarCard({ car, viewMode = "grid" }) {
                 </div>
               </div>
             ) : (
-              <Image
-                src={firstImage}
-                alt={`${car.year} ${car.make} ${car.model}`}
-                fill
-                className="object-cover transition-transform duration-500"
-                loading="lazy"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
+              <div data-car-tile className="absolute inset-0">
+                <Image
+                  src={firstImage}
+                  alt={`${car.year} ${car.make} ${car.model}`}
+                  fill
+                  className="object-cover transition-transform duration-500"
+                  loading="lazy"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              </div>
             )}
 
             <div className="absolute bottom-3 left-3 bg-gray-900/90 backdrop-blur-md px-3 py-1.5 rounded-xl shadow-lg border border-white/10">
@@ -260,13 +264,11 @@ export default function CarCard({ car, viewMode = "grid" }) {
         <div className="absolute inset-0 bg-black/0 hover:bg-black/20 dark:hover:bg-dark-raised/20 transition-all duration-300 z-10 pointer-events-none rounded-2xl" />
         <div
           ref={imageWrapRef}
-          className={`relative w-[120px] xs:w-[150px] sm:w-[200px] md:w-[400px] h-full flex-shrink-0 overflow-hidden rounded-2xl ${
-            isMorphingAway ? "opacity-0" : ""
-          }`}
+          className="relative w-[120px] xs:w-[150px] sm:w-[200px] md:w-[400px] h-full flex-shrink-0 overflow-hidden rounded-2xl [&_[data-car-morph-source]]:opacity-0"
         >
           {car?.isFeatured && (car?.images?.length ?? 0) >= 3 ? (
             <div className="flex h-full w-full gap-0.5">
-              <div className="relative w-2/3 h-full">
+              <div data-car-tile className="relative w-2/3 h-full">
                 <Image
                   src={formatCarImage(car.images[0])}
                   alt={`${car.year} ${car.make} ${car.model} - 1`}
@@ -277,7 +279,7 @@ export default function CarCard({ car, viewMode = "grid" }) {
                 />
               </div>
               <div className="w-1/3 flex flex-col gap-0.5 h-full">
-                <div className="relative h-1/2">
+                <div data-car-tile className="relative h-1/2">
                   <Image
                     src={formatCarImage(car.images[1])}
                     alt={`${car.year} ${car.make} ${car.model} - 2`}
@@ -287,7 +289,7 @@ export default function CarCard({ car, viewMode = "grid" }) {
                     sizes="(max-width: 768px) 15vw, 10vw"
                   />
                 </div>
-                <div className="relative h-1/2">
+                <div data-car-tile className="relative h-1/2">
                   <Image
                     src={formatCarImage(car.images[2])}
                     alt={`${car.year} ${car.make} ${car.model} - 3`}
@@ -300,14 +302,16 @@ export default function CarCard({ car, viewMode = "grid" }) {
               </div>
             </div>
           ) : (
-            <Image
-              src={firstImage}
-              alt={`${car.year} ${car.make} ${car.model}`}
-              fill
-              className="object-cover transition-transform duration-700"
-              loading="lazy"
-              sizes="(max-width: 768px) 40vw, 30vw"
-            />
+            <div data-car-tile className="absolute inset-0">
+              <Image
+                src={firstImage}
+                alt={`${car.year} ${car.make} ${car.model}`}
+                fill
+                className="object-cover transition-transform duration-700"
+                loading="lazy"
+                sizes="(max-width: 768px) 40vw, 30vw"
+              />
+            </div>
           )}
 
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60" />

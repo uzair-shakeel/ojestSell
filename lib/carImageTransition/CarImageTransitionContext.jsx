@@ -45,45 +45,88 @@ function parseRadiusPx(value) {
 }
 
 /**
- * Prefer the already-painted <img> inside the card (Next/Image currentSrc),
- * so the morph reuses pixels that are already on screen.
- * Same-origin Next optimizer URLs can be snapshotted to a data URL for zero-flash paint.
+ * Snapshot one already-painted <img> (Next/Image currentSrc / canvas).
  */
-function getReadyImageSrc(sourceEl, fallbackSrc) {
+function snapshotReadyImg(img) {
+  if (!img || !(img.complete && img.naturalWidth > 0)) return null;
+
+  try {
+    const canvas = document.createElement("canvas");
+    const maxEdge = 1600;
+    const scale = Math.min(
+      1,
+      maxEdge / Math.max(img.naturalWidth, img.naturalHeight)
+    );
+    canvas.width = Math.max(1, Math.round(img.naturalWidth * scale));
+    canvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      return canvas.toDataURL("image/jpeg", 0.88);
+    }
+  } catch {
+    // Cross-origin without CORS — fall through to URL
+  }
+
+  return img.currentSrc || img.src || null;
+}
+
+function isCarPhotoImg(img) {
+  if (!img || img.tagName !== "IMG") return false;
+  const alt = (img.getAttribute("alt") || "").toLowerCase();
+  // Skip chrome overlays (premium badge, etc.)
+  if (alt === "premium") return false;
+  const r = img.getBoundingClientRect();
+  return r.width >= 8 && r.height >= 8;
+}
+
+/**
+ * Pick the collage tile under the click (or the primary tile as fallback).
+ * Returns { tileEl, img } so morph starts from that exact photo size.
+ */
+export function resolveTransitionSource(wrapperEl, clientX, clientY) {
+  if (!wrapperEl || typeof window === "undefined") return null;
+
+  const imgs = [...wrapperEl.querySelectorAll("img")].filter(isCarPhotoImg);
+  if (!imgs.length) return null;
+
+  let hitImg = null;
+  if (typeof clientX === "number" && typeof clientY === "number") {
+    hitImg =
+      imgs.find((img) => {
+        const r = img.getBoundingClientRect();
+        return (
+          clientX >= r.left &&
+          clientX <= r.right &&
+          clientY >= r.top &&
+          clientY <= r.bottom
+        );
+      }) || null;
+  }
+
+  const img = hitImg || imgs[0];
+  const tileEl =
+    img.closest("[data-car-tile]") || img.parentElement || img;
+
+  return { tileEl, img };
+}
+
+function getReadyImageSrc(sourceEl, fallbackSrc, preferredImg) {
   if (typeof window === "undefined") return null;
 
-  const candidates = [];
+  if (preferredImg) {
+    const snapped = snapshotReadyImg(preferredImg);
+    if (snapped) return snapped;
+  }
+
   if (sourceEl) {
-    sourceEl.querySelectorAll("img").forEach((img) => candidates.push(img));
-  }
-
-  for (const img of candidates) {
-    if (!(img.complete && img.naturalWidth > 0)) continue;
-
-    // Snapshot avoids a second decode/fetch of a different URL (raw Cloudinary vs /_next/image)
-    try {
-      const canvas = document.createElement("canvas");
-      const maxEdge = 1600;
-      const scale = Math.min(
-        1,
-        maxEdge / Math.max(img.naturalWidth, img.naturalHeight)
-      );
-      canvas.width = Math.max(1, Math.round(img.naturalWidth * scale));
-      canvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        return canvas.toDataURL("image/jpeg", 0.88);
-      }
-    } catch {
-      // Cross-origin without CORS — fall through to URL
+    const imgs = [...sourceEl.querySelectorAll("img")].filter(isCarPhotoImg);
+    for (const img of imgs) {
+      const snapped = snapshotReadyImg(img);
+      if (snapped) return snapped;
     }
-
-    const src = img.currentSrc || img.src;
-    if (src) return src;
   }
 
-  // Fallback URL only if it's already in the browser image cache
   if (fallbackSrc) {
     const probe = new window.Image();
     probe.src = fallbackSrc;
@@ -128,6 +171,9 @@ export function CarImageTransitionProvider({ children }) {
       animControlsRef.current.stop();
       animControlsRef.current = null;
     }
+    document
+      .querySelectorAll("[data-car-morph-source]")
+      .forEach((el) => el.removeAttribute("data-car-morph-source"));
     carImageTransitionFlag.active = false;
     morphStartedRef.current = false;
     morphRetryCountRef.current = 0;
@@ -245,12 +291,18 @@ export function CarImageTransitionProvider({ children }) {
   }, [phase, payload, runMorph]);
 
   const startTransition = useCallback(
-    ({ carId, href, imageSrc, sourceEl }) => {
-      const from = rectFromElement(sourceEl);
-      if (!from || !href || !carId) return false;
+    ({ carId, href, imageSrc, sourceEl, clientX, clientY }) => {
+      if (!href || !carId || !sourceEl) return false;
 
-      // Never morph a grey box — skip shared transition until a real image is painted
-      const readySrc = getReadyImageSrc(sourceEl, imageSrc);
+      // Collage cards: morph from the exact tile under the click, not the whole card frame
+      const resolved = resolveTransitionSource(sourceEl, clientX, clientY);
+      const tileEl = resolved?.tileEl || sourceEl;
+      const photoImg = resolved?.img || null;
+
+      const from = rectFromElement(tileEl);
+      if (!from) return false;
+
+      const readySrc = getReadyImageSrc(tileEl, imageSrc, photoImg);
       if (!readySrc) return false;
 
       if (animControlsRef.current) {
@@ -260,7 +312,16 @@ export function CarImageTransitionProvider({ children }) {
       morphStartedRef.current = false;
       morphRetryCountRef.current = 0;
 
-      const borderRadius = readBorderRadius(sourceEl);
+      const tileRadius = readBorderRadius(tileEl);
+      const wrapRadius = readBorderRadius(sourceEl);
+      const borderRadius =
+        parseRadiusPx(tileRadius) > 0 ? tileRadius : wrapRadius;
+
+      document
+        .querySelectorAll("[data-car-morph-source]")
+        .forEach((el) => el.removeAttribute("data-car-morph-source"));
+      tileEl.setAttribute("data-car-morph-source", "1");
+
       carImageTransitionFlag.active = true;
 
       const next = {
