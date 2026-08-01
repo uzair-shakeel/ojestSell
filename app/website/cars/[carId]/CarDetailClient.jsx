@@ -846,26 +846,26 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
   const formattedNetPrice = formatCurrency(basePriceNetto);
 
   const allSpecs = [
-    { label: "Make", value: car?.make || "-" },
-    { label: "Model", value: car?.model || "-" },
+    { label: "Marka", value: car?.make || "-", linkKey: "Make" },
+    { label: "Model", value: car?.model || "-", linkKey: "Model" },
     {
-      label: "Mileage",
+      label: "Przebieg",
       value:
         typeof car?.mileage === "number"
-          ? `${car.mileage.toLocaleString("en-US")}`
+          ? `${car.mileage.toLocaleString("pl-PL")} km`
           : "-",
     },
     { label: "VIN", value: car?.vin || "-" },
-    { label: "Engine", value: car?.engine || car?.financialInfo?.engine || "-" },
-    { label: "Drivetrain", value: car?.drivetrain || "-" },
-    { label: "Transmission", value: car?.transmission || "-" },
-    { label: "Body Style", value: car?.type || "-" },
-    { label: "Exterior Color", value: car?.color || "-" },
-    { label: "Interior Color", value: car?.interiorColor || "-" },
-    { label: "Title Status", value: car?.titleStatus || "Clean" },
-    { label: "Location", value: locationDisplay },
-    { label: "Seller", value: sellerName },
-    { label: "Seller Type", value: sellerTypeLabel },
+    { label: "Silnik", value: car?.engine || car?.financialInfo?.engine || "-" },
+    { label: "Napęd", value: car?.drivetrain || "-" },
+    { label: "Skrzynia", value: car?.transmission || "-" },
+    { label: "Nadwozie", value: car?.type || "-" },
+    { label: "Kolor nadwozia", value: car?.color || "-" },
+    { label: "Kolor wnętrza", value: car?.interiorColor || "-" },
+    { label: "Status tytułu", value: car?.titleStatus || "Clean" },
+    { label: "Lokalizacja", value: locationDisplay, linkKey: "Location" },
+    { label: "Sprzedający", value: sellerName, linkKey: "Seller" },
+    { label: "Typ sprzedawcy", value: sellerTypeLabel },
   ];
 
   const breadcrumbs = [
@@ -880,29 +880,42 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
     .replace(/\s+/g, " ")
     .trim();
 
-  const renderSpecValue = (item) => {
-    const isLink = ["Make", "Model", "Location"].includes(item.label);
-    if (item.label === "Seller") {
+  const renderSpecValue = (item, { stacked = false } = {}) => {
+    const isLink = ["Make", "Model", "Location"].includes(item.linkKey);
+    const valueClass = stacked
+      ? `text-base sm:text-lg font-bold leading-snug ${
+          isLink
+            ? "text-blue-600 dark:text-blue-400"
+            : "text-gray-900 dark:text-white"
+        }`
+      : `text-base sm:text-[17px] font-bold leading-snug ${
+          isLink
+            ? "text-blue-600 dark:text-blue-400"
+            : "text-gray-900 dark:text-white"
+        }`;
+
+    if (item.linkKey === "Seller") {
       return (
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-dark-card flex-shrink-0 overflow-hidden relative">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gray-200 dark:bg-white/10 flex-shrink-0 overflow-hidden relative">
             {seller?.image ? (
-              <Image src={formatImageUrl(seller?.image)} alt="" fill className="object-cover" loading="lazy" sizes="24px" />
+              <Image src={formatImageUrl(seller?.image)} alt="" fill className="object-cover" loading="lazy" sizes="32px" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-500">?</div>
+              <div className="w-full h-full flex items-center justify-center text-[11px] text-gray-500">?</div>
             )}
           </div>
-          <span className="text-sm font-medium text-gray-900 dark:text-gray-200 dark:text-gray-100">{item.value}</span>
+          <span className={`${valueClass} truncate`}>{item.value}</span>
         </div>
       );
     }
     return (
-      <div className="flex items-center gap-2">
-        <span className={`text-sm ${isLink ? "underline decoration-1 underline-offset-2 hover:text-blue-600 cursor-pointer text-blue-600 dark:text-blue-400 font-medium" : "text-gray-900 dark:text-gray-200 dark:text-gray-100"}`}>
-          {item.value}
-        </span>
-
-      </div>
+      <span
+        className={`${valueClass} ${
+          isLink ? "underline decoration-1 underline-offset-2 cursor-pointer hover:opacity-80" : ""
+        }`}
+      >
+        {item.value}
+      </span>
     );
   };
 
@@ -910,6 +923,50 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
   for (let i = 0; i < allSpecs.length; i += 2) {
     specPairs.push([allSpecs[i], allSpecs[i + 1]]);
   }
+
+  const renderSzczegolyTable = () => (
+    <div className="mt-2 w-full">
+      {/* Desktop / tablet: 2-column grid, label above value */}
+      <div className="hidden sm:block">
+        {specPairs.map((pair, rowIdx) => (
+          <div
+            key={rowIdx}
+            className="grid grid-cols-2 gap-x-12 border-b border-gray-200 dark:border-white/10 last:border-b-0 py-5"
+          >
+            {pair.map((item, colIdx) =>
+              item ? (
+                <div key={colIdx} className="min-w-0 pr-2">
+                  <div className="text-[15px] sm:text-base text-gray-500 dark:text-gray-400 font-normal">
+                    {item.label}
+                  </div>
+                  <div className="mt-2">{renderSpecValue(item, { stacked: true })}</div>
+                </div>
+              ) : (
+                <div key={colIdx} />
+              )
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Mobile: label left / value right rows */}
+      <div className="sm:hidden">
+        {allSpecs.map((item, idx) => (
+          <div
+            key={idx}
+            className="flex items-center justify-between gap-4 border-b border-gray-200 dark:border-white/10 last:border-b-0 py-4"
+          >
+            <span className="text-[15px] text-gray-500 dark:text-gray-400 shrink-0">
+              {item.label}
+            </span>
+            <div className="text-right min-w-0">
+              {renderSpecValue(item)}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
   return (
     <>
@@ -1379,67 +1436,8 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
                       {/* Two-column spec table - only for OPIS tab */}
                       {activeTab !== "opis" && renderContent()}
                       {activeTab === "opis" && (
-                        <div className="space-y-0 text-gray-900 dark:text-gray-200 dark:text-gray-100">
-
-                          {/* Technical Specs Table - Responsive Table */}
-                          <div className="mt-2 w-full border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm">
-                            {/* Desktop View - 4 column grid matching reference */}
-                            <div className="hidden sm:block">
-                              <table className="w-full text-left border-collapse">
-                                <tbody>
-                                  {specPairs.map((pair, rowIdx) => (
-                                    <tr key={rowIdx} className="border-b border-gray-200 dark:border-gray-700/50 last:border-0">
-                                      {/* First Spec in Pair */}
-                                      <td className="py-2.5 px-4 w-[160px] bg-gray-50/50  dark:bg-dark-card font-bold text-sm text-gray-900 dark:text-gray-200 dark:text-gray-100 border-r border-gray-200 dark:border-gray-700/50">
-                                        {pair[0].label}
-                                      </td>
-                                      <td className="py-2.5 px-4 text-sm border-r border-gray-200 dark:border-gray-700/50">
-                                        {renderSpecValue(pair[0])}
-                                      </td>
-
-                                      {/* Second Spec in Pair (if exists) */}
-                                      {pair[1] ? (
-                                        <>
-                                          <td className="py-2.5 px-4 w-[160px] bg-gray-50/50 dark:bg-dark-card font-bold text-sm text-gray-900 dark:text-gray-200 dark:text-gray-100 border-r border-gray-200 dark:border-gray-700/50">
-                                            {pair[1].label}
-                                          </td>
-                                          <td className="py-2.5 px-4 text-sm">
-                                            {renderSpecValue(pair[1])}
-                                          </td>
-                                        </>
-                                      ) : (
-                                        <>
-                                          <td className="py-2.5 px-4 bg-gray-50/50 dark:bg-dark-main/30 border-r border-gray-200 dark:border-gray-700/50"></td>
-                                          <td className="py-2.5 px-4"></td>
-                                        </>
-                                      )}
-                                    </tr>
-                                  ))}
-                                </tbody>
-                              </table>
-                            </div>
-
-                            {/* Mobile View - 2 column list */}
-                            <div className="sm:hidden">
-                              <table className="w-full text-left border-collapse">
-                                <tbody>
-                                  {allSpecs && allSpecs.map((item, idx) => (
-                                    <tr
-                                      key={idx}
-                                      className="border-b text-sm border-gray-200 dark:border-gray-700/50 last:border-0"
-                                    >
-                                      <td className="py-2.5 px-4 w-[120px] bg-gray-50/50 dark:bg-dark-card font-bold text-gray-900 dark:text-gray-200 dark:text-gray-100 text-sm border-r border-gray-200 dark:border-gray-700/50">
-                                        {item.label}
-                                      </td>
-                                      <td className="py-2.5 px-4 align-middle">
-                                        {renderSpecValue(item)}
-                                      </td>
-                                    </tr>
-                                  ))}
-                                </tbody>
-                              </table>
-                            </div>
-                          </div>
+                        <div className="space-y-0 text-gray-900 dark:text-gray-100">
+                          {renderSzczegolyTable()}
                         </div>
                       )}
                     </div>
