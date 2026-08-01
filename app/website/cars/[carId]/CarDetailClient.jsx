@@ -58,12 +58,28 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
   const carId = initialCar?._id || routeCarId;
   const router = useRouter();
   const { user, token } = useAuth();
+  const {
+    registerTarget,
+    isTransitioningFor,
+    peekImageIndex,
+    confirmHandoff,
+    phase: imageTransitionPhase,
+  } = useCarImageTransition();
+
+  const readPendingIndex = (carData) => {
+    const pending = peekImageIndex(carId);
+    const len = Array.isArray(carData?.images) ? carData.images.length : 0;
+    if (pending == null || !len) return 0;
+    return Math.min(Math.max(0, pending), len - 1);
+  };
+
+  const bootIndex = readPendingIndex(initialCar);
   const [car, setCar] = useState(initialCar);
   const [seller, setSeller] = useState(initialSeller);
   const [mainImage, setMainImage] = useState(
-    () => initialCar?.images?.[0] || ""
+    () => initialCar?.images?.[bootIndex] || initialCar?.images?.[0] || ""
   );
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentImageIndex, setCurrentImageIndex] = useState(bootIndex);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [error, setError] = useState(null);
   const [city, setCity] = useState("");
@@ -79,8 +95,23 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
   const mobileMainImageRef = useRef(null);
 
   const thumbnailScrollRef = useRef(null);
-  const { registerTarget, isTransitioningFor } = useCarImageTransition();
-  const hideMainDuringMorph = isTransitioningFor(carId);
+  // Keep the real hero painted under the morph cover — never opacity-fade it
+  // (fading 0→1 when the overlay drops is what caused the blink).
+  const isMorphActive = isTransitioningFor(carId);
+  const handoffDoneRef = useRef(false);
+
+  const clampImageIndex = (carData, index) => {
+    const len = Array.isArray(carData?.images) ? carData.images.length : 0;
+    if (!len) return 0;
+    const n = typeof index === "number" && !Number.isNaN(index) ? index : 0;
+    return Math.min(Math.max(0, n), len - 1);
+  };
+
+  const pickStartIndex = (carData) => {
+    const pending = peekImageIndex(carId);
+    if (pending == null) return 0;
+    return clampImageIndex(carData, pending);
+  };
 
   const formatImageUrl = (imagePath) => {
     // Use a known local fallback avatar if seller image is missing
@@ -361,8 +392,10 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
   useEffect(() => {
     if (!initialCar) return;
     setCar(initialCar);
-    setMainImage(initialCar?.images?.[0] || "/images/hamer1.png");
-    setCurrentImageIndex(0);
+    const idx = pickStartIndex(initialCar);
+    setCurrentImageIndex(idx);
+    setMainImage(initialCar?.images?.[idx] || "/images/hamer1.png");
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only re-seed when server car identity changes
   }, [initialCar]);
 
   useEffect(() => {
@@ -376,9 +409,9 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
         // If RSC already provided the car, only fill seller/city (or skip car refetch)
         const carData = initialCar?._id === carId ? initialCar : await getCarById(carId);
         setCar(carData);
-        const firstImage = carData?.images?.[0] || "/images/hamer1.png";
-        setMainImage(firstImage);
-        setCurrentImageIndex(0);
+        const idx = pickStartIndex(carData);
+        setCurrentImageIndex(idx);
+        setMainImage(carData?.images?.[idx] || "/images/hamer1.png");
 
         let sellerData = initialSeller;
         if (!sellerData) {
@@ -423,7 +456,65 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
     };
 
     if (carId) fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- pickStartIndex reads live transition payload
   }, [carId, initialCar, initialSeller]);
+
+  // When morph finishes, wait until the hero has painted, then drop the cover
+  useEffect(() => {
+    if (imageTransitionPhase !== "done" || !isMorphActive) return;
+    handoffDoneRef.current = false;
+
+    const tryHandoff = () => {
+      if (handoffDoneRef.current) return;
+      const isDesktop = window.matchMedia("(min-width: 768px)").matches;
+      const wrap = isDesktop
+        ? desktopMainImageRef.current
+        : mobileMainImageRef.current;
+      const img = wrap?.querySelector?.("img");
+      if (img && img.complete && img.naturalWidth > 0) {
+        handoffDoneRef.current = true;
+        confirmHandoff();
+      }
+    };
+
+    tryHandoff();
+    const t = setTimeout(tryHandoff, 80);
+    const t2 = setTimeout(tryHandoff, 250);
+    const t3 = setTimeout(() => {
+      // Last resort so we never leave the overlay stuck
+      if (!handoffDoneRef.current) {
+        handoffDoneRef.current = true;
+        confirmHandoff();
+      }
+    }, 900);
+    return () => {
+      clearTimeout(t);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, [
+    imageTransitionPhase,
+    isMorphActive,
+    confirmHandoff,
+    mainImage,
+    currentImageIndex,
+  ]);
+
+  const handleMainImageReady = () => {
+    if (imageTransitionPhase === "done" && isMorphActive) {
+      if (handoffDoneRef.current) return;
+      handoffDoneRef.current = true;
+      confirmHandoff();
+    }
+  };
+
+  const handleBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+      return;
+    }
+    router.push("/website/cars");
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -909,16 +1000,24 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
         {/* Sticky Price / Actions Bar - Now at the VERY top of the gallery section */}
         <div className="sticky top-0 z-40 bg-white/80 dark:bg-dark-card backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm transition-all duration-300">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between gap-4 py-3 md:py-4">
+            <div className="flex items-center justify-between gap-3 sm:gap-4 py-3 md:py-4">
               <div className="min-w-0 flex-1">
-                <div className="flex flex-col">
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="group mb-1.5 sm:mb-2 inline-flex items-center gap-1 text-[11px] sm:text-xs font-semibold uppercase tracking-[0.14em] text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                >
+                  <IoIosArrowBack className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
+                  <span>Wróć</span>
+                </button>
+                <div className="min-w-0 flex flex-col">
                   {stickyTitle && (
                     <p className="text-[20px] sm:text-3xl md:text-4xl font-black text-gray-900 dark:text-gray-200 dark:text-white uppercase tracking-tight leading-none break-words whitespace-normal">
                       {stickyTitle}
                     </p>
                   )}
                   {formattedNetPrice && (
-                    <div className="flex items-center gap-2 md:hidden">
+                    <div className="flex items-center gap-2 md:hidden mt-1">
                       <span className="text-[20px] font-black text-blue-600 dark:text-blue-400">
                         {formattedNetPrice}
                       </span>
@@ -927,7 +1026,6 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
                       </span>
                     </div>
                   )}
-
                 </div>
               </div>
               <div className="flex items-center gap-4">
@@ -984,12 +1082,11 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
                     src={mainImage || images[currentImageIndex] || images[0]}
                     alt={`${car?.make} ${car?.model} - Image ${currentImageIndex + 1}`}
                     fill
-                    className={`object-cover transition-opacity duration-150 ${
-                      hideMainDuringMorph ? "opacity-0" : "opacity-100"
-                    }`}
+                    className="object-cover"
                     priority
                     sizes="(max-width: 768px) 100vw, 70vw"
                     unoptimized={true}
+                    onLoadingComplete={handleMainImageReady}
                     onError={(e) => {
                       e.target.src = "/images/hamer1.png";
                     }}
@@ -1114,12 +1211,11 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
                   src={mainImage || images[currentImageIndex] || images[0]}
                   alt={`${car?.make} ${car?.model} - Image 1`}
                   fill
-                  className={`object-cover transition-opacity duration-150 ${
-                    hideMainDuringMorph ? "opacity-0" : "opacity-100"
-                  }`}
+                  className="object-cover"
                   priority
                   sizes="88vw"
                   unoptimized={true}
+                  onLoadingComplete={handleMainImageReady}
                   onError={(e) => {
                     e.target.src = "/images/hamer1.png";
                   }}

@@ -128,7 +128,7 @@ export default function CarCard({ car, viewMode = "grid" }) {
           >
             {car?.isFeatured && (car?.images?.length ?? 0) >= 3 ? (
               <div className="grid grid-cols-2 grid-rows-2 h-full gap-0.5">
-                <div data-car-tile className="relative col-span-2 row-span-1">
+                <div data-car-tile data-car-tile-index="0" className="relative col-span-2 row-span-1">
                   <Image
                     src={formatCarImage(car.images[0])}
                     alt={`${car.year} ${car.make} ${car.model} - 1`}
@@ -138,7 +138,7 @@ export default function CarCard({ car, viewMode = "grid" }) {
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
                 </div>
-                <div data-car-tile className="relative col-start-1 col-end-2 row-start-2 row-end-3">
+                <div data-car-tile data-car-tile-index="1" className="relative col-start-1 col-end-2 row-start-2 row-end-3">
                   <Image
                     src={formatCarImage(car.images[1])}
                     alt={`${car.year} ${car.make} ${car.model} - 2`}
@@ -148,10 +148,10 @@ export default function CarCard({ car, viewMode = "grid" }) {
                     sizes="(max-width: 768px) 50vw, 25vw"
                   />
                 </div>
-                <div data-car-tile className="relative col-start-2 col-end-3 row-start-2 row-end-3">
+                <div data-car-tile data-car-tile-index="2" className="relative col-start-2 col-end-3 row-start-2 row-end-3">
                   {(car?.images?.length ?? 0) >= 4 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-0.5 h-full">
-                      <div data-car-tile className="relative min-h-0">
+                      <div data-car-tile data-car-tile-index="2" className="relative min-h-0">
                         <Image
                           src={formatCarImage(car.images[2])}
                           alt={`${car.year} ${car.make} ${car.model} - 3`}
@@ -161,7 +161,7 @@ export default function CarCard({ car, viewMode = "grid" }) {
                           sizes="(max-width: 768px) 50vw, 25vw"
                         />
                       </div>
-                      <div data-car-tile className="relative min-h-0 hidden md:block">
+                      <div data-car-tile data-car-tile-index="3" className="relative min-h-0 hidden md:block">
                         <Image
                           src={formatCarImage(car.images[3])}
                           alt={`${car.year} ${car.make} ${car.model} - 4`}
@@ -185,7 +185,7 @@ export default function CarCard({ car, viewMode = "grid" }) {
                 </div>
               </div>
             ) : (
-              <div data-car-tile className="absolute inset-0">
+              <div data-car-tile data-car-tile-index="0" className="absolute inset-0">
                 <Image
                   src={firstImage}
                   alt={`${car.year} ${car.make} ${car.model}`}
@@ -268,7 +268,7 @@ export default function CarCard({ car, viewMode = "grid" }) {
         >
           {car?.isFeatured && (car?.images?.length ?? 0) >= 3 ? (
             <div className="flex h-full w-full gap-0.5">
-              <div data-car-tile className="relative w-2/3 h-full">
+              <div data-car-tile data-car-tile-index="0" className="relative w-2/3 h-full">
                 <Image
                   src={formatCarImage(car.images[0])}
                   alt={`${car.year} ${car.make} ${car.model} - 1`}
@@ -279,7 +279,7 @@ export default function CarCard({ car, viewMode = "grid" }) {
                 />
               </div>
               <div className="w-1/3 flex flex-col gap-0.5 h-full">
-                <div data-car-tile className="relative h-1/2">
+                <div data-car-tile data-car-tile-index="1" className="relative h-1/2">
                   <Image
                     src={formatCarImage(car.images[1])}
                     alt={`${car.year} ${car.make} ${car.model} - 2`}
@@ -289,7 +289,7 @@ export default function CarCard({ car, viewMode = "grid" }) {
                     sizes="(max-width: 768px) 15vw, 10vw"
                   />
                 </div>
-                <div data-car-tile className="relative h-1/2">
+                <div data-car-tile data-car-tile-index="2" className="relative h-1/2">
                   <Image
                     src={formatCarImage(car.images[2])}
                     alt={`${car.year} ${car.make} ${car.model} - 3`}
@@ -302,7 +302,7 @@ export default function CarCard({ car, viewMode = "grid" }) {
               </div>
             </div>
           ) : (
-            <div data-car-tile className="absolute inset-0">
+            <div data-car-tile data-car-tile-index="0" className="absolute inset-0">
               <Image
                 src={firstImage}
                 alt={`${car.year} ${car.make} ${car.model}`}

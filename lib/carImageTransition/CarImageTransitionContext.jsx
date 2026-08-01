@@ -82,7 +82,7 @@ function isCarPhotoImg(img) {
 
 /**
  * Pick the collage tile under the click (or the primary tile as fallback).
- * Returns { tileEl, img } so morph starts from that exact photo size.
+ * Returns { tileEl, img, imageIndex } so morph starts from that exact photo.
  */
 export function resolveTransitionSource(wrapperEl, clientX, clientY) {
   if (!wrapperEl || typeof window === "undefined") return null;
@@ -108,7 +108,14 @@ export function resolveTransitionSource(wrapperEl, clientX, clientY) {
   const tileEl =
     img.closest("[data-car-tile]") || img.parentElement || img;
 
-  return { tileEl, img };
+  const rawIndex = tileEl.getAttribute?.("data-car-tile-index");
+  let imageIndex = rawIndex != null ? parseInt(rawIndex, 10) : NaN;
+  if (Number.isNaN(imageIndex)) {
+    // Fallback: order among car photos in the card
+    imageIndex = Math.max(0, imgs.indexOf(img));
+  }
+
+  return { tileEl, img, imageIndex };
 }
 
 function getReadyImageSrc(sourceEl, fallbackSrc, preferredImg) {
@@ -138,10 +145,11 @@ function getReadyImageSrc(sourceEl, fallbackSrc, preferredImg) {
 
 export function CarImageTransitionProvider({ children }) {
   const pathname = usePathname();
-  const [phase, setPhase] = useState("idle"); // idle | departing | waiting | morphing | done
+  const [phase, setPhase] = useState("idle"); // idle | departing | waiting | morphing | done | releasing
   const [payload, setPayload] = useState(null);
   const [visual, setVisual] = useState(null);
   const [mounted, setMounted] = useState(false);
+  const [veilOpacity, setVeilOpacity] = useState(0.35);
 
   const phaseRef = useRef(phase);
   const payloadRef = useRef(payload);
@@ -180,6 +188,7 @@ export function CarImageTransitionProvider({ children }) {
     setPhase("idle");
     setPayload(null);
     setVisual(null);
+    setVeilOpacity(0.35);
   }, [clearSafety]);
 
   const armSafety = useCallback(() => {
@@ -260,10 +269,9 @@ export function CarImageTransitionProvider({ children }) {
           });
         },
         onComplete: () => {
+          // Stay in "done" with the floating image covering the hero until
+          // the detail page confirms the matching main image has painted.
           setPhase("done");
-          requestAnimationFrame(() => {
-            setTimeout(() => finish(), 48);
-          });
         },
       }
     );
@@ -330,6 +338,8 @@ export function CarImageTransitionProvider({ children }) {
         imageSrc: readySrc,
         from,
         borderRadius,
+        imageIndex:
+          typeof resolved?.imageIndex === "number" ? resolved.imageIndex : 0,
       };
 
       setPayload(next);
@@ -338,10 +348,12 @@ export function CarImageTransitionProvider({ children }) {
         borderRadius,
         opacity: 1,
       });
+      setVeilOpacity(0.2);
       setPhase("departing");
       armSafety();
 
       requestAnimationFrame(() => {
+        setVeilOpacity(0.35);
         setPhase("waiting");
       });
 
@@ -376,22 +388,86 @@ export function CarImageTransitionProvider({ children }) {
   const isTransitioningFor = useCallback(
     (carId) => {
       if (!payload || !carId) return false;
-      if (phase === "idle" || phase === "done") return false;
+      if (phase === "idle") return false;
       return String(payload.carId) === String(carId);
     },
     [payload, phase]
   );
+
+  const peekImageIndex = useCallback(
+    (id) => {
+      if (!payload || !id) return null;
+      if (phase === "idle") return null;
+      if (String(payload.carId) !== String(id)) return null;
+      return typeof payload.imageIndex === "number" ? payload.imageIndex : 0;
+    },
+    [payload, phase]
+  );
+
+  const confirmHandoff = useCallback(() => {
+    if (phaseRef.current !== "done") return;
+    phaseRef.current = "releasing";
+    setPhase("releasing");
+
+    const target = targetRef.current;
+    const to = target?.el ? rectFromElement(target.el) : null;
+    if (to) {
+      setVisual((prev) =>
+        prev
+          ? {
+              ...prev,
+              top: to.top,
+              left: to.left,
+              width: to.width,
+              height: to.height,
+              borderRadius: readBorderRadius(target.el) || prev.borderRadius,
+              opacity: 1,
+            }
+          : prev
+      );
+    }
+
+    // Soft dissolve of the cover over the already-painted hero (kills the hard blink)
+    const proxy = { cover: 1, veil: 0.35 };
+    if (animControlsRef.current) animControlsRef.current.stop();
+    animControlsRef.current = animate(
+      proxy,
+      { cover: 0, veil: 0 },
+      {
+        duration: 0.16,
+        ease: "easeOut",
+        onUpdate: () => {
+          setVeilOpacity(proxy.veil);
+          setVisual((prev) =>
+            prev ? { ...prev, opacity: proxy.cover } : prev
+          );
+        },
+        onComplete: () => finish(),
+      }
+    );
+  }, [finish]);
 
   const value = useMemo(
     () => ({
       startTransition,
       registerTarget,
       isTransitioningFor,
+      peekImageIndex,
+      confirmHandoff,
       phase,
       activeCarId: payload?.carId ?? null,
       finish,
     }),
-    [startTransition, registerTarget, isTransitioningFor, phase, payload, finish]
+    [
+      startTransition,
+      registerTarget,
+      isTransitioningFor,
+      peekImageIndex,
+      confirmHandoff,
+      phase,
+      payload,
+      finish,
+    ]
   );
 
   const showOverlay =
@@ -401,7 +477,8 @@ export function CarImageTransitionProvider({ children }) {
     (phase === "departing" ||
       phase === "waiting" ||
       phase === "morphing" ||
-      phase === "done");
+      phase === "done" ||
+      phase === "releasing");
 
   return (
     <CarImageTransitionContext.Provider value={value}>
@@ -414,22 +491,25 @@ export function CarImageTransitionProvider({ children }) {
             style={{ contain: "layout paint" }}
           >
             <div
-              className="absolute inset-0 bg-white/40 dark:bg-black/35 transition-opacity duration-300"
-              style={{
-                opacity:
-                  phase === "done" ? 0 : phase === "departing" ? 0.25 : 0.5,
-              }}
+              className="absolute inset-0 bg-white dark:bg-black"
+              style={{ opacity: veilOpacity }}
             />
             <div
-              className="absolute overflow-hidden bg-transparent shadow-2xl"
+              className="absolute overflow-hidden bg-transparent"
               style={{
                 top: visual.top,
                 left: visual.left,
                 width: visual.width,
                 height: visual.height,
                 borderRadius: visual.borderRadius,
-                opacity: visual.opacity,
-                willChange: "top, left, width, height, border-radius",
+                opacity: visual.opacity ?? 1,
+                boxShadow:
+                  phase === "done" ||
+                  phase === "morphing" ||
+                  phase === "releasing"
+                    ? "none"
+                    : "0 25px 50px -12px rgb(0 0 0 / 0.35)",
+                willChange: "top, left, width, height, border-radius, opacity",
               }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -455,6 +535,8 @@ export function useCarImageTransition() {
       startTransition: () => false,
       registerTarget: () => () => {},
       isTransitioningFor: () => false,
+      peekImageIndex: () => null,
+      confirmHandoff: () => {},
       phase: "idle",
       activeCarId: null,
       finish: () => {},
