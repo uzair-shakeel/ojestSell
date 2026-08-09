@@ -74,6 +74,8 @@ export default function NewCarListingWizard() {
 
   const handleSubmit = async () => {
     setLoading(true);
+    // Let React paint the publishing loader before heavy FormData / upload work
+    await new Promise((resolve) => setTimeout(resolve, 50));
     try {
       // Construct standard car object
       const title = `${formData.year} ${formData.make} ${formData.model} ${formData.trim || ''}`.trim();
@@ -168,14 +170,16 @@ export default function NewCarListingWizard() {
 
       await addCar(formDataToSend, getToken);
 
-      // Show success
+      // Trigger the same page-transition loader used elsewhere, then navigate
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("ojest:navstart"));
+      }
       router.push("/dashboard/cars?success=true");
 
     } catch (error) {
       console.error("Submission error:", error);
-      alert("Failed to publish listing. Please check required fields and try again.");
-    } finally {
       setLoading(false);
+      alert("Failed to publish listing. Please check required fields and try again.");
     }
   };
 

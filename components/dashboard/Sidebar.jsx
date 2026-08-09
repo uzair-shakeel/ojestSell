@@ -4,7 +4,7 @@ import { FaCar } from "react-icons/fa";
 import { BiAddToQueue } from "react-icons/bi";
 import { BsChatLeftDots, BsPersonGear } from "react-icons/bs";
 import { RiDashboardHorizontalLine } from "react-icons/ri";
-import { FiMenu, FiX, FiShoppingBag, FiClipboard, FiLogOut, FiHome, FiSearch, FiHeart, FiPhone, FiChevronDown, FiBook, FiLifeBuoy } from "react-icons/fi";
+import { FiMenu, FiX, FiClipboard, FiLogOut, FiHome, FiSearch, FiHeart, FiPhone, FiChevronDown, FiBook, FiLifeBuoy } from "react-icons/fi";
 import { MdPhotoFilter } from "react-icons/md";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -82,15 +82,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
           icon: <FiClipboard className="w-6 h-6" />,
         },
       ]
-      : sellerType === "private"
-        ? [
-          {
-            label: "Zapytania Kupujących",
-            href: "/dashboard/buyer-requests",
-            icon: <FiShoppingBag className="w-6 h-6" />,
-          },
-        ]
-        : []),
+      : []),
     {
       label: "Wiadomości",
       href: "/dashboard/messages",

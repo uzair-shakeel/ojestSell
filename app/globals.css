@@ -100,10 +100,18 @@ html:not(.loading-active) [class*="VideoLoader"] {
 }
 
 /* Make sure content is interactive after loading */
-html:not(.loading-active) body>*:not(.loader-container) {
+html:not(.loading-active) body > *:not(.loader-container):not(#_rht_toaster) {
   visibility: visible !important;
   opacity: 1 !important;
   pointer-events: auto !important;
+}
+
+/* Toast container must never block the page (OTP / auth toasts) */
+#_rht_toaster {
+  pointer-events: none !important;
+}
+#_rht_toaster > div {
+  pointer-events: none !important;
 }
 
 /* Enhanced Card Styling Utilities */

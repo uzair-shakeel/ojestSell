@@ -152,7 +152,7 @@ function ProfileContent({ sellerId }) {
                                 <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {cars.map((car) => (
                                         <motion.div key={car._id} variants={itemVariants}>
-                                            <CarCard car={car} viewMode="grid" />
+                                            <CarCard car={car} viewMode="grid" section="profile" />
                                         </motion.div>
                                     ))}
                                 </motion.div>

@@ -27,7 +27,7 @@ const SimilarVehicles = ({ carId }) => {
   return (
     <div className="space-y-3 py-2">
       {cars.map((car) => (
-        <CarCard key={car._id} car={car} />
+        <CarCard key={car._id} car={car} section="similar" />
       ))}
     </div>
   );

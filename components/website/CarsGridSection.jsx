@@ -99,7 +99,7 @@ export function CarsGridSection() {
                                 transitionDelay: `${(index % 4) * 100}ms`
                             }}
                         >
-                            <CarCard car={car} viewMode="grid" />
+                            <CarCard car={car} viewMode="grid" section="home-grid" />
                         </div>
                     ))}
                 </div>

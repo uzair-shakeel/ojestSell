@@ -63,6 +63,8 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
     isTransitioningFor,
     peekImageIndex,
     confirmHandoff,
+    startBackTransition,
+    getBackHref,
     phase: imageTransitionPhase,
   } = useCarImageTransition();
 
@@ -509,11 +511,32 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
   };
 
   const handleBack = () => {
+    const isDesktop =
+      typeof window !== "undefined" &&
+      window.matchMedia("(min-width: 768px)").matches;
+    const sourceEl = isDesktop
+      ? desktopMainImageRef.current
+      : mobileMainImageRef.current;
+
+    const heroSrc =
+      (typeof mainImage === "string" && mainImage) ||
+      images[currentImageIndex] ||
+      images[0];
+
+    startBackTransition({
+      carId,
+      sourceEl,
+      // Tile target comes from origin meta; this is only a fallback
+      imageIndex: currentImageIndex,
+      imageSrc: heroSrc,
+    });
+
+    // Prefer history back so we land on the same listing scroll context
     if (typeof window !== "undefined" && window.history.length > 1) {
       router.back();
       return;
     }
-    router.push("/website/cars");
+    router.push(getBackHref());
   };
 
   useEffect(() => {
@@ -523,14 +546,14 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
     getSocket().then((s) => {
       if (!active) return;
       socket = s;
-      socket.auth = { userId: user?.id };
+      socket.auth = { token: token || undefined };
       socket.connect();
     });
     return () => {
       active = false;
       socket?.disconnect();
     };
-  }, [user]);
+  }, [user, token]);
 
   const startChat = async () => {
     if (!user) {
@@ -880,23 +903,24 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
     .replace(/\s+/g, " ")
     .trim();
 
-  const renderSpecValue = (item, { stacked = false } = {}) => {
+  const renderSpecValue = (item, { variant = "mobile" } = {}) => {
     const isLink = ["Make", "Model", "Location"].includes(item.linkKey);
-    const valueClass = stacked
-      ? `text-base sm:text-lg font-bold leading-snug ${
-          isLink
-            ? "text-blue-600 dark:text-blue-400"
-            : "text-gray-900 dark:text-white"
-        }`
-      : `text-base sm:text-[17px] font-bold leading-snug ${
-          isLink
-            ? "text-blue-600 dark:text-blue-400"
-            : "text-gray-900 dark:text-white"
-        }`;
+    const valueClass =
+      variant === "desktop"
+        ? `text-base lg:text-[17px] font-medium leading-snug text-right ${
+            isLink
+              ? "text-gray-900 dark:text-white underline decoration-1 underline-offset-[3px]"
+              : "text-gray-900 dark:text-white"
+          }`
+        : `text-base sm:text-[17px] font-bold leading-snug ${
+            isLink
+              ? "text-blue-600 dark:text-blue-400 underline decoration-1 underline-offset-2"
+              : "text-gray-900 dark:text-white"
+          }`;
 
     if (item.linkKey === "Seller") {
       return (
-        <div className="flex items-center gap-2.5 min-w-0">
+        <div className={`flex items-center gap-2.5 min-w-0 ${variant === "desktop" ? "justify-end" : ""}`}>
           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gray-200 dark:bg-white/10 flex-shrink-0 overflow-hidden relative">
             {seller?.image ? (
               <Image src={formatImageUrl(seller?.image)} alt="" fill className="object-cover" loading="lazy" sizes="32px" />
@@ -911,7 +935,7 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
     return (
       <span
         className={`${valueClass} ${
-          isLink ? "underline decoration-1 underline-offset-2 cursor-pointer hover:opacity-80" : ""
+          isLink ? "cursor-pointer hover:opacity-80" : ""
         }`}
       >
         {item.value}
@@ -919,37 +943,33 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
     );
   };
 
-  const specPairs = [];
-  for (let i = 0; i < allSpecs.length; i += 2) {
-    specPairs.push([allSpecs[i], allSpecs[i + 1]]);
-  }
+  const leftSpecs = allSpecs.filter((_, i) => i % 2 === 0);
+  const rightSpecs = allSpecs.filter((_, i) => i % 2 === 1);
 
   const renderSzczegolyTable = () => (
     <div className="mt-2 w-full">
-      {/* Desktop / tablet: 2-column grid, label above value */}
-      <div className="hidden sm:block">
-        {specPairs.map((pair, rowIdx) => (
-          <div
-            key={rowIdx}
-            className="grid grid-cols-2 gap-x-12 border-b border-gray-200 dark:border-white/10 last:border-b-0 py-5"
-          >
-            {pair.map((item, colIdx) =>
-              item ? (
-                <div key={colIdx} className="min-w-0 pr-2">
-                  <div className="text-[15px] sm:text-base text-gray-500 dark:text-gray-400 font-normal">
-                    {item.label}
-                  </div>
-                  <div className="mt-2">{renderSpecValue(item, { stacked: true })}</div>
+      {/* Desktop: two columns, label left / value right per row */}
+      <div className="hidden sm:grid sm:grid-cols-2 sm:gap-x-10 lg:gap-x-16 xl:gap-x-24">
+        {[leftSpecs, rightSpecs].map((column, colIdx) => (
+          <div key={colIdx} className="min-w-0">
+            {column.map((item, idx) => (
+              <div
+                key={idx}
+                className="flex items-center justify-between gap-6 border-b border-gray-200 dark:border-white/10 py-3.5 lg:py-4"
+              >
+                <span className="text-base lg:text-[17px] text-gray-800 dark:text-gray-300 font-normal shrink-0">
+                  {item.label}
+                </span>
+                <div className="min-w-0 text-right">
+                  {renderSpecValue(item, { variant: "desktop" })}
                 </div>
-              ) : (
-                <div key={colIdx} />
-              )
-            )}
+              </div>
+            ))}
           </div>
         ))}
       </div>
 
-      {/* Mobile: label left / value right rows */}
+      {/* Mobile: label left / value right rows — unchanged */}
       <div className="sm:hidden">
         {allSpecs.map((item, idx) => (
           <div
@@ -960,7 +980,7 @@ const CarDetailClient = ({ initialCar = null, initialSeller = null }) => {
               {item.label}
             </span>
             <div className="text-right min-w-0">
-              {renderSpecValue(item)}
+              {renderSpecValue(item, { variant: "mobile" })}
             </div>
           </div>
         ))}

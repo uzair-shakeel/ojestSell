@@ -146,13 +146,11 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
         withCredentials: true,
         auth: {
           token,
-          userId: user.id || user._id,
         },
       });
 
       socket.on("connect", () => {
-        socket.emit("auth", { userId: user.id || user._id, token });
-        socket.emit("join", user.id || user._id);
+        socket.emit("join");
       });
 
       socket.on("chat:message:received", (payload: any) => {

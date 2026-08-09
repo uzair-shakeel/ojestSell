@@ -11,7 +11,7 @@ import { useNotifications } from "../../lib/notifications/NotificationsContext";
 import Avatar from "../both/Avatar";
 import UserAccountDropdown from "../both/UserAccountDropdown";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiBell, FiMenu, FiX, FiSearch, FiHeart, FiBook, FiLifeBuoy, FiPhone, FiLayout, FiUser, FiLogOut, FiShoppingBag, FiClipboard, FiHome, FiChevronDown } from "react-icons/fi";
+import { FiBell, FiMenu, FiX, FiSearch, FiHeart, FiBook, FiLifeBuoy, FiPhone, FiLayout, FiUser, FiLogOut, FiClipboard, FiHome, FiChevronDown } from "react-icons/fi";
 import { BsChatLeftDots, BsPersonGear } from "react-icons/bs";
 import { RiDashboardHorizontalLine } from "react-icons/ri";
 import { BiAddToQueue } from "react-icons/bi";
@@ -145,15 +145,7 @@ const Navbar = () => {
           icon: <FiClipboard className="w-6 h-6" />,
         },
       ]
-      : user?.sellerType === "private"
-        ? [
-          {
-            label: "Zapytania Kupujących",
-            href: "/dashboard/buyer-requests",
-            icon: <FiShoppingBag className="w-6 h-6" />,
-          },
-        ]
-        : []),
+      : []),
     {
       label: "Wiadomości",
       href: "/dashboard/messages",

@@ -90,7 +90,7 @@ export function FeaturedCars() {
             >
               {cars.map((car) => (
                 <SwiperSlide key={car._id}>
-                  <CarCard car={car} />
+                  <CarCard car={car} section="featured" />
                 </SwiperSlide>
               ))}
             </Swiper>

@@ -10,15 +10,24 @@ import { useCarImageTransition } from "../../lib/carImageTransition/CarImageTran
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
-export default function CarCard({ car, viewMode = "grid" }) {
+export default function CarCard({ car, viewMode = "grid", section }) {
   const href = `/website/cars/${car._id}`;
   const router = useRouter();
-  const { startTransition } = useCarImageTransition();
+  const { startTransition, registerReturnTarget, isReturningFor } =
+    useCarImageTransition();
   const imageWrapRef = useRef(null);
   const [locationDetails, setLocationDetails] = useState({
     city: car?.city || car?.location?.city || "",
     state: car?.location?.state || "",
   });
+
+  // Reverse morph: when returning from detail, register this card's tile as the target
+  useEffect(() => {
+    if (!isReturningFor(car?._id, section)) return undefined;
+    const el = imageWrapRef.current;
+    if (!el) return undefined;
+    return registerReturnTarget(car._id, el, section);
+  }, [car?._id, isReturningFor, registerReturnTarget, viewMode, section]);
 
   const translateFuelType = (fuel) => {
     const translations = {
@@ -101,6 +110,7 @@ export default function CarCard({ car, viewMode = "grid" }) {
         sourceEl: imageWrapRef.current,
         clientX: event.clientX,
         clientY: event.clientY,
+        section,
       });
 
       if (!started) return;
@@ -108,7 +118,7 @@ export default function CarCard({ car, viewMode = "grid" }) {
       event.preventDefault();
       router.push(href);
     },
-    [car?._id, firstImage, href, router, startTransition]
+    [car?._id, firstImage, href, router, startTransition, section]
   );
 
   if (viewMode === "grid") {
@@ -117,6 +127,7 @@ export default function CarCard({ car, viewMode = "grid" }) {
         href={href}
         prefetch={true}
         data-skip-nav-overlay
+        data-car-section={section || undefined}
         onClick={handleNavigate}
         className="group cursor-pointer focus:outline-none block"
       >
@@ -257,6 +268,7 @@ export default function CarCard({ car, viewMode = "grid" }) {
       href={href}
       prefetch={true}
       data-skip-nav-overlay
+      data-car-section={section || undefined}
       onClick={handleNavigate}
       className="group cursor-pointer focus:outline-none block"
     >

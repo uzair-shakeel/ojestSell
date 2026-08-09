@@ -15,6 +15,8 @@ import { usePathname } from "next/navigation";
 
 const CarImageTransitionContext = createContext(null);
 
+const ORIGIN_KEY = "ojest:car-transition-origin";
+
 /** Module flag so NavigationOverlay can skip without React coupling */
 export const carImageTransitionFlag = {
   active: false,
@@ -44,9 +46,6 @@ function parseRadiusPx(value) {
   return parseFloat(first) || 0;
 }
 
-/**
- * Snapshot one already-painted <img> (Next/Image currentSrc / canvas).
- */
 function snapshotReadyImg(img) {
   if (!img || !(img.complete && img.naturalWidth > 0)) return null;
 
@@ -65,7 +64,7 @@ function snapshotReadyImg(img) {
       return canvas.toDataURL("image/jpeg", 0.88);
     }
   } catch {
-    // Cross-origin without CORS — fall through to URL
+    /* CORS — fall through */
   }
 
   return img.currentSrc || img.src || null;
@@ -74,16 +73,11 @@ function snapshotReadyImg(img) {
 function isCarPhotoImg(img) {
   if (!img || img.tagName !== "IMG") return false;
   const alt = (img.getAttribute("alt") || "").toLowerCase();
-  // Skip chrome overlays (premium badge, etc.)
   if (alt === "premium") return false;
   const r = img.getBoundingClientRect();
   return r.width >= 8 && r.height >= 8;
 }
 
-/**
- * Pick the collage tile under the click (or the primary tile as fallback).
- * Returns { tileEl, img, imageIndex } so morph starts from that exact photo.
- */
 export function resolveTransitionSource(wrapperEl, clientX, clientY) {
   if (!wrapperEl || typeof window === "undefined") return null;
 
@@ -111,7 +105,6 @@ export function resolveTransitionSource(wrapperEl, clientX, clientY) {
   const rawIndex = tileEl.getAttribute?.("data-car-tile-index");
   let imageIndex = rawIndex != null ? parseInt(rawIndex, 10) : NaN;
   if (Number.isNaN(imageIndex)) {
-    // Fallback: order among car photos in the card
     imageIndex = Math.max(0, imgs.indexOf(img));
   }
 
@@ -143,9 +136,67 @@ function getReadyImageSrc(sourceEl, fallbackSrc, preferredImg) {
   return null;
 }
 
+function saveOriginMeta(meta) {
+  try {
+    sessionStorage.setItem(ORIGIN_KEY, JSON.stringify(meta));
+  } catch {
+    /* ignore */
+  }
+}
+
+function readOriginMeta() {
+  try {
+    const raw = sessionStorage.getItem(ORIGIN_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function clearOriginMeta() {
+  try {
+    sessionStorage.removeItem(ORIGIN_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+function resolveSectionKey(el, explicitSection) {
+  if (explicitSection) return String(explicitSection);
+  if (!el || typeof el.closest !== "function") return null;
+  const host = el.closest("[data-car-section]");
+  return host?.getAttribute("data-car-section") || null;
+}
+
+function documentCenterOfRect(rect) {
+  if (!rect || typeof window === "undefined") return null;
+  return {
+    x: rect.left + window.scrollX + rect.width / 2,
+    y: rect.top + window.scrollY + rect.height / 2,
+  };
+}
+
+function findTileInWrapper(wrapperEl, imageIndex) {
+  if (!wrapperEl) return null;
+  const tiles = [...wrapperEl.querySelectorAll("[data-car-tile]")];
+  if (!tiles.length) return wrapperEl;
+
+  const match = tiles.find(
+    (t) => t.getAttribute("data-car-tile-index") === String(imageIndex)
+  );
+  if (match) return match;
+
+  // Prefer outermost primary tile
+  const primary = tiles.find(
+    (t) => t.getAttribute("data-car-tile-index") === "0"
+  );
+  return primary || tiles[0] || wrapperEl;
+}
+
 export function CarImageTransitionProvider({ children }) {
   const pathname = usePathname();
-  const [phase, setPhase] = useState("idle"); // idle | departing | waiting | morphing | done | releasing
+  const [phase, setPhase] = useState("idle");
+  // idle | departing | waiting | morphing | done | releasing
   const [payload, setPayload] = useState(null);
   const [visual, setVisual] = useState(null);
   const [mounted, setMounted] = useState(false);
@@ -158,6 +209,9 @@ export function CarImageTransitionProvider({ children }) {
   const safetyTimerRef = useRef(null);
   const morphStartedRef = useRef(false);
   const morphRetryCountRef = useRef(0);
+  const releaseFnRef = useRef(null);
+  const returnCandidatesRef = useRef([]);
+  const returnPickTimerRef = useRef(null);
 
   phaseRef.current = phase;
   payloadRef.current = payload;
@@ -185,6 +239,14 @@ export function CarImageTransitionProvider({ children }) {
     carImageTransitionFlag.active = false;
     morphStartedRef.current = false;
     morphRetryCountRef.current = 0;
+    returnCandidatesRef.current = [];
+    if (returnPickTimerRef.current) {
+      clearTimeout(returnPickTimerRef.current);
+      returnPickTimerRef.current = null;
+    }
+    if (payloadRef.current?.direction === "back") {
+      clearOriginMeta();
+    }
     setPhase("idle");
     setPayload(null);
     setVisual(null);
@@ -195,6 +257,50 @@ export function CarImageTransitionProvider({ children }) {
     clearSafety();
     safetyTimerRef.current = setTimeout(() => finish(), 4500);
   }, [clearSafety, finish]);
+
+  const startRelease = useCallback(() => {
+    if (phaseRef.current !== "done" && phaseRef.current !== "releasing") return;
+    phaseRef.current = "releasing";
+    setPhase("releasing");
+
+    const target = targetRef.current;
+    const to = target?.el ? rectFromElement(target.el) : null;
+    if (to) {
+      setVisual((prev) =>
+        prev
+          ? {
+              ...prev,
+              top: to.top,
+              left: to.left,
+              width: to.width,
+              height: to.height,
+              borderRadius: readBorderRadius(target.el) || prev.borderRadius,
+              opacity: 1,
+            }
+          : prev
+      );
+    }
+
+    const proxy = { cover: 1, veil: veilOpacity > 0 ? veilOpacity : 0.35 };
+    if (animControlsRef.current) animControlsRef.current.stop();
+    animControlsRef.current = animate(
+      proxy,
+      { cover: 0, veil: 0 },
+      {
+        duration: 0.16,
+        ease: "easeOut",
+        onUpdate: () => {
+          setVeilOpacity(proxy.veil);
+          setVisual((prev) =>
+            prev ? { ...prev, opacity: proxy.cover } : prev
+          );
+        },
+        onComplete: () => finish(),
+      }
+    );
+  }, [finish, veilOpacity]);
+
+  releaseFnRef.current = startRelease;
 
   const runMorph = useCallback(() => {
     const current = payloadRef.current;
@@ -269,18 +375,24 @@ export function CarImageTransitionProvider({ children }) {
           });
         },
         onComplete: () => {
-          // Stay in "done" with the floating image covering the hero until
-          // the detail page confirms the matching main image has painted.
           setPhase("done");
+          // Reverse: card is already painted underneath — release immediately
+          if (current.direction === "back") {
+            requestAnimationFrame(() => {
+              releaseFnRef.current?.();
+            });
+          }
         },
       }
     );
-  }, [finish]);
+  }, []);
 
-  // Abort only if we already reached the detail route, then left it
+  // Abort only after morph is underway and we've left the expected destination.
+  // Do NOT run during "waiting" — we're still on the listing while the route changes.
   useEffect(() => {
     if (!payload?.href) return;
     if (phase !== "morphing" && phase !== "done") return;
+
     try {
       const expected = new URL(payload.href, window.location.origin).pathname;
       if (pathname !== expected) finish();
@@ -289,7 +401,6 @@ export function CarImageTransitionProvider({ children }) {
     }
   }, [pathname, phase, payload, finish]);
 
-  // Retry morph when phase/payload change or after resize/layout
   useEffect(() => {
     if (phase !== "waiting" && phase !== "departing") return;
     const id = requestAnimationFrame(() => {
@@ -298,54 +409,20 @@ export function CarImageTransitionProvider({ children }) {
     return () => cancelAnimationFrame(id);
   }, [phase, payload, runMorph]);
 
-  const startTransition = useCallback(
-    ({ carId, href, imageSrc, sourceEl, clientX, clientY }) => {
-      if (!href || !carId || !sourceEl) return false;
-
-      // Collage cards: morph from the exact tile under the click, not the whole card frame
-      const resolved = resolveTransitionSource(sourceEl, clientX, clientY);
-      const tileEl = resolved?.tileEl || sourceEl;
-      const photoImg = resolved?.img || null;
-
-      const from = rectFromElement(tileEl);
-      if (!from) return false;
-
-      const readySrc = getReadyImageSrc(tileEl, imageSrc, photoImg);
-      if (!readySrc) return false;
-
+  const beginOverlay = useCallback(
+    (next) => {
       if (animControlsRef.current) {
         animControlsRef.current.stop();
         animControlsRef.current = null;
       }
       morphStartedRef.current = false;
       morphRetryCountRef.current = 0;
-
-      const tileRadius = readBorderRadius(tileEl);
-      const wrapRadius = readBorderRadius(sourceEl);
-      const borderRadius =
-        parseRadiusPx(tileRadius) > 0 ? tileRadius : wrapRadius;
-
-      document
-        .querySelectorAll("[data-car-morph-source]")
-        .forEach((el) => el.removeAttribute("data-car-morph-source"));
-      tileEl.setAttribute("data-car-morph-source", "1");
-
       carImageTransitionFlag.active = true;
-
-      const next = {
-        carId: String(carId),
-        href,
-        imageSrc: readySrc,
-        from,
-        borderRadius,
-        imageIndex:
-          typeof resolved?.imageIndex === "number" ? resolved.imageIndex : 0,
-      };
 
       setPayload(next);
       setVisual({
-        ...from,
-        borderRadius,
+        ...next.from,
+        borderRadius: next.borderRadius,
         opacity: 1,
       });
       setVeilOpacity(0.2);
@@ -356,15 +433,121 @@ export function CarImageTransitionProvider({ children }) {
         setVeilOpacity(0.35);
         setPhase("waiting");
       });
+    },
+    [armSafety]
+  );
+
+  const startTransition = useCallback(
+    ({ carId, href, imageSrc, sourceEl, clientX, clientY, section }) => {
+      if (!href || !carId || !sourceEl) return false;
+
+      const resolved = resolveTransitionSource(sourceEl, clientX, clientY);
+      const tileEl = resolved?.tileEl || sourceEl;
+      const photoImg = resolved?.img || null;
+
+      const from = rectFromElement(tileEl);
+      if (!from) return false;
+
+      const readySrc =
+        getReadyImageSrc(tileEl, imageSrc, photoImg) || imageSrc || null;
+      if (!readySrc) return false;
+
+      const tileRadius = readBorderRadius(tileEl);
+      const wrapRadius = readBorderRadius(sourceEl);
+      const borderRadius =
+        parseRadiusPx(tileRadius) > 0 ? tileRadius : wrapRadius;
+      const imageIndex =
+        typeof resolved?.imageIndex === "number" ? resolved.imageIndex : 0;
+      const sectionKey = resolveSectionKey(sourceEl, section);
+      const anchor = documentCenterOfRect(from);
+
+      document
+        .querySelectorAll("[data-car-morph-source]")
+        .forEach((el) => el.removeAttribute("data-car-morph-source"));
+      tileEl.setAttribute("data-car-morph-source", "1");
+
+      saveOriginMeta({
+        carId: String(carId),
+        imageIndex,
+        originPath: `${window.location.pathname}${window.location.search}`,
+        section: sectionKey,
+        scrollY: window.scrollY,
+        anchorX: anchor?.x ?? null,
+        anchorY: anchor?.y ?? null,
+      });
+
+      beginOverlay({
+        direction: "forward",
+        carId: String(carId),
+        href,
+        imageSrc: readySrc,
+        from,
+        borderRadius,
+        imageIndex,
+        section: sectionKey,
+        scrollY: window.scrollY,
+        anchorX: anchor?.x ?? null,
+        anchorY: anchor?.y ?? null,
+      });
 
       return true;
     },
-    [armSafety]
+    [beginOverlay]
+  );
+
+  const startBackTransition = useCallback(
+    ({ carId, sourceEl, imageIndex = 0, imageSrc }) => {
+      if (!carId || !sourceEl) return false;
+
+      const photoImg = sourceEl.querySelector?.("img") || null;
+      const from = rectFromElement(sourceEl);
+      if (!from) return false;
+
+      const readySrc =
+        getReadyImageSrc(sourceEl, imageSrc, photoImg) || imageSrc || null;
+      if (!readySrc) return false;
+
+      const borderRadius = readBorderRadius(sourceEl) || "0px";
+      const origin = readOriginMeta();
+      // Prefer the tile/section we originally left from — not wherever the gallery is now
+      const idx =
+        typeof origin?.imageIndex === "number"
+          ? origin.imageIndex
+          : typeof imageIndex === "number"
+            ? imageIndex
+            : 0;
+
+      document
+        .querySelectorAll("[data-car-morph-source]")
+        .forEach((el) => el.removeAttribute("data-car-morph-source"));
+      sourceEl.setAttribute("data-car-morph-source", "1");
+
+      returnCandidatesRef.current = [];
+
+      beginOverlay({
+        direction: "back",
+        carId: String(carId),
+        href: origin?.originPath || "/website/cars",
+        imageSrc: readySrc,
+        from,
+        borderRadius,
+        imageIndex: idx,
+        section: origin?.section || null,
+        scrollY: typeof origin?.scrollY === "number" ? origin.scrollY : null,
+        anchorX: typeof origin?.anchorX === "number" ? origin.anchorX : null,
+        anchorY: typeof origin?.anchorY === "number" ? origin.anchorY : null,
+      });
+
+      return true;
+    },
+    [beginOverlay]
   );
 
   const registerTarget = useCallback(
     (carId, targetEl) => {
       if (!carId || !targetEl) return () => {};
+      // Detail hero is only the forward morph target
+      if (payloadRef.current?.direction === "back") return () => {};
 
       targetRef.current = { carId: String(carId), el: targetEl };
 
@@ -385,11 +568,143 @@ export function CarImageTransitionProvider({ children }) {
     [runMorph]
   );
 
+  const pickBestReturnTarget = useCallback(() => {
+    const current = payloadRef.current;
+    if (!current || current.direction !== "back") return;
+    if (phaseRef.current !== "waiting" && phaseRef.current !== "departing") {
+      return;
+    }
+
+    const candidates = returnCandidatesRef.current.filter(
+      (c) => c?.el && String(c.carId) === String(current.carId)
+    );
+    if (!candidates.length) return;
+
+    let pool = candidates;
+    if (current.section) {
+      const sectionMatches = candidates.filter(
+        (c) => c.section && c.section === current.section
+      );
+      if (sectionMatches.length) pool = sectionMatches;
+    }
+
+    let best = pool[0];
+    let bestDist = Number.POSITIVE_INFINITY;
+    const hasAnchor =
+      typeof current.anchorX === "number" && typeof current.anchorY === "number";
+
+    for (const candidate of pool) {
+      const tileEl = findTileInWrapper(candidate.el, current.imageIndex ?? 0);
+      if (!tileEl) continue;
+      const rect = rectFromElement(tileEl);
+      if (!rect) continue;
+      const center = documentCenterOfRect(rect);
+      if (!center) continue;
+
+      const dist = hasAnchor
+        ? (center.x - current.anchorX) ** 2 + (center.y - current.anchorY) ** 2
+        : 0;
+
+      if (dist < bestDist) {
+        bestDist = dist;
+        best = { ...candidate, tileEl };
+      }
+    }
+
+    const tileEl =
+      best?.tileEl || findTileInWrapper(best?.el, current.imageIndex ?? 0);
+    if (!tileEl) return;
+
+    try {
+      tileEl.scrollIntoView({ block: "nearest", inline: "nearest" });
+    } catch {
+      /* ignore */
+    }
+
+    document
+      .querySelectorAll("[data-car-morph-source]")
+      .forEach((el) => el.removeAttribute("data-car-morph-source"));
+    tileEl.setAttribute("data-car-morph-source", "1");
+    targetRef.current = { carId: String(current.carId), el: tileEl };
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => runMorph());
+    });
+  }, [runMorph]);
+
+  const registerReturnTarget = useCallback(
+    (carId, wrapperEl, section) => {
+      if (!carId || !wrapperEl) return () => {};
+      const current = payloadRef.current;
+      if (!current || current.direction !== "back") return () => {};
+      if (String(current.carId) !== String(carId)) return () => {};
+
+      const sectionKey = resolveSectionKey(wrapperEl, section);
+      const entry = {
+        carId: String(carId),
+        el: wrapperEl,
+        section: sectionKey,
+      };
+
+      returnCandidatesRef.current = returnCandidatesRef.current.filter(
+        (c) => c.el !== wrapperEl
+      );
+      returnCandidatesRef.current.push(entry);
+
+      // Restore origin scroll before we measure which card instance to land on
+      if (
+        typeof current.scrollY === "number" &&
+        Math.abs(window.scrollY - current.scrollY) > 8
+      ) {
+        window.scrollTo(0, current.scrollY);
+      }
+
+      if (returnPickTimerRef.current) clearTimeout(returnPickTimerRef.current);
+      // Wait so every matching card instance can register, then pick the origin one
+      returnPickTimerRef.current = setTimeout(() => {
+        returnPickTimerRef.current = null;
+        pickBestReturnTarget();
+      }, 70);
+
+      return () => {
+        returnCandidatesRef.current = returnCandidatesRef.current.filter(
+          (c) => c.el !== wrapperEl
+        );
+      };
+    },
+    [pickBestReturnTarget]
+  );
+
+  // Restore listing scroll before measuring return targets
+  useEffect(() => {
+    if (!payload || payload.direction !== "back") return;
+    if (phase !== "waiting" && phase !== "departing") return;
+    if (typeof payload.scrollY !== "number") return;
+    // Wait until we're off the detail route
+    if (/\/website\/cars\/[^/?]+/.test(pathname)) return;
+    if (Math.abs(window.scrollY - payload.scrollY) > 8) {
+      window.scrollTo(0, payload.scrollY);
+    }
+  }, [pathname, phase, payload]);
+
   const isTransitioningFor = useCallback(
     (carId) => {
       if (!payload || !carId) return false;
       if (phase === "idle") return false;
       return String(payload.carId) === String(carId);
+    },
+    [payload, phase]
+  );
+
+  const isReturningFor = useCallback(
+    (carId, section) => {
+      if (!payload || !carId) return false;
+      if (payload.direction !== "back") return false;
+      if (phase === "idle") return false;
+      if (String(payload.carId) !== String(carId)) return false;
+      // If we know the origin section, only that section's cards should register
+      if (payload.section && section && payload.section !== section) return false;
+      return true;
     },
     [payload, phase]
   );
@@ -406,64 +721,39 @@ export function CarImageTransitionProvider({ children }) {
 
   const confirmHandoff = useCallback(() => {
     if (phaseRef.current !== "done") return;
-    phaseRef.current = "releasing";
-    setPhase("releasing");
+    startRelease();
+  }, [startRelease]);
 
-    const target = targetRef.current;
-    const to = target?.el ? rectFromElement(target.el) : null;
-    if (to) {
-      setVisual((prev) =>
-        prev
-          ? {
-              ...prev,
-              top: to.top,
-              left: to.left,
-              width: to.width,
-              height: to.height,
-              borderRadius: readBorderRadius(target.el) || prev.borderRadius,
-              opacity: 1,
-            }
-          : prev
-      );
-    }
-
-    // Soft dissolve of the cover over the already-painted hero (kills the hard blink)
-    const proxy = { cover: 1, veil: 0.35 };
-    if (animControlsRef.current) animControlsRef.current.stop();
-    animControlsRef.current = animate(
-      proxy,
-      { cover: 0, veil: 0 },
-      {
-        duration: 0.16,
-        ease: "easeOut",
-        onUpdate: () => {
-          setVeilOpacity(proxy.veil);
-          setVisual((prev) =>
-            prev ? { ...prev, opacity: proxy.cover } : prev
-          );
-        },
-        onComplete: () => finish(),
-      }
-    );
-  }, [finish]);
+  const getBackHref = useCallback(() => {
+    const origin = readOriginMeta();
+    return origin?.originPath || "/website/cars";
+  }, []);
 
   const value = useMemo(
     () => ({
       startTransition,
+      startBackTransition,
       registerTarget,
+      registerReturnTarget,
       isTransitioningFor,
+      isReturningFor,
       peekImageIndex,
       confirmHandoff,
+      getBackHref,
       phase,
       activeCarId: payload?.carId ?? null,
       finish,
     }),
     [
       startTransition,
+      startBackTransition,
       registerTarget,
+      registerReturnTarget,
       isTransitioningFor,
+      isReturningFor,
       peekImageIndex,
       confirmHandoff,
+      getBackHref,
       phase,
       payload,
       finish,
@@ -533,10 +823,14 @@ export function useCarImageTransition() {
   if (!ctx) {
     return {
       startTransition: () => false,
+      startBackTransition: () => false,
       registerTarget: () => () => {},
+      registerReturnTarget: () => () => {},
       isTransitioningFor: () => false,
+      isReturningFor: () => false,
       peekImageIndex: () => null,
       confirmHandoff: () => {},
+      getBackHref: () => "/website/cars",
       phase: "idle",
       activeCarId: null,
       finish: () => {},

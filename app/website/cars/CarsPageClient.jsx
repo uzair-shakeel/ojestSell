@@ -533,7 +533,7 @@ const CarsContent = ({ initialData = null }) => {
             >
               {cars.length > 0 ? (
                 cars.map((car, index) => (
-                  <CarCard key={`${index} ${car._id}`} car={car} viewMode={viewMode} />
+                  <CarCard key={`${index} ${car._id}`} car={car} viewMode={viewMode} section="listing" />
                 ))
               ) : error ? (
                 <div className="text-center py-8">

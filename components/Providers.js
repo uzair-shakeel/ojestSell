@@ -22,9 +22,13 @@ export default function Providers({ children }) {
 
               <Toaster
                 position="top-center"
-                containerClassName="pointer-events-none fixed inset-0 z-[9999]"
+                containerStyle={{
+                  top: 16,
+                  pointerEvents: "none",
+                  zIndex: 9999,
+                }}
                 toastOptions={{
-                  // Base style
+                  // Only the toast chip itself is clickable — never a full-screen layer
                   className:
                     "pointer-events-auto rounded-xl shadow-lg ring-1 ring-black/10 dark:ring-white/10 bg-white/95 dark:bg-dark-card/95 text-gray-900 dark:text-gray-200 dark:text-gray-100 backdrop-blur px-4 py-3",
                   duration: 3500,
@@ -41,16 +45,15 @@ export default function Providers({ children }) {
                 }}
               />
 
-              {/* Fallback if you're not using Tailwind */}
               <style jsx global>{`
-            #_rht_toaster {
-              pointer-events: none !important;
-              z-index: 9999 !important;
-            }
-            #_rht_toaster > * {
-              pointer-events: auto !important;
-            }
-          `}</style>
+                /* Toaster wrappers must never steal clicks from the page */
+                #_rht_toaster {
+                  pointer-events: none !important;
+                }
+                #_rht_toaster > div {
+                  pointer-events: none !important;
+                }
+              `}</style>
             </CarImageTransitionProvider>
           </NotificationsProvider>
         </AuthProvider>

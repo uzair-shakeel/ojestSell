@@ -1,9 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowLeft, Check, MapPin, Tag, Car, DollarSign, Calendar, ShieldCheck, FileText, AlertTriangle, Gauge, Fuel } from "lucide-react";
+import { ArrowLeft, Check, Car, DollarSign, Calendar, ShieldCheck, AlertTriangle, Gauge, Fuel, Loader2 } from "lucide-react";
 import QuestionCard from "../shared/QuestionCard";
-import { motion } from "framer-motion";
 
 interface Step12Props {
     formData: any;
@@ -26,6 +24,42 @@ export default function Step12_Publish({ formData, prevStep, handleSubmit, loadi
             </div>
         </div>
     );
+
+    if (loading) {
+        return (
+            <div className="space-y-8">
+                <QuestionCard title="Publishing…" subtitle="Please wait while we upload your listing.">
+                    <div className="flex flex-col items-center justify-center py-20 text-center">
+                        <div className="relative mb-6">
+                            <div className="h-20 w-20 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-xl border border-gray-100 dark:border-gray-700">
+                                <img src="/logooo.png" alt="Ojest AI" className="h-12 w-12 object-contain animate-pulse" />
+                            </div>
+                            <div className="absolute -inset-2 bg-gradient-to-br from-green-400 to-emerald-300 rounded-full blur-lg opacity-20 animate-ping" />
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                            Publishing your listing…
+                        </h3>
+                        <p className="text-gray-500 dark:text-gray-400 max-w-xs text-sm leading-relaxed">
+                            Uploading photos and saving details. This can take a few seconds — don’t close this page.
+                        </p>
+                        <div className="mt-6 flex items-center gap-2 text-green-600 dark:text-green-400">
+                            <Loader2 className="h-5 w-5 animate-spin" />
+                            <span className="text-sm font-semibold">Working…</span>
+                        </div>
+                        <div className="mt-4 flex gap-1.5">
+                            {[0, 1, 2].map((i) => (
+                                <div
+                                    key={i}
+                                    className="h-2 w-2 rounded-full bg-green-500 animate-bounce"
+                                    style={{ animationDelay: `${i * 0.15}s` }}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                </QuestionCard>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-8">
@@ -59,18 +93,11 @@ export default function Step12_Publish({ formData, prevStep, handleSubmit, loadi
                     </p>
 
                     <button
+                        type="button"
                         onClick={handleSubmit}
-                        disabled={loading}
-                        className={`w-full max-w-sm py-4 rounded-xl font-bold text-lg text-white shadow-xl transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 ${loading
-                            ? "bg-gray-400 cursor-not-allowed"
-                            : "bg-green-600 hover:bg-green-700 hover:shadow-green-500/30"
-                            }`}
+                        className="w-full max-w-sm py-4 rounded-xl font-bold text-lg text-white shadow-xl transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 hover:shadow-green-500/30"
                     >
-                        {loading ? (
-                            <>Processing...</>
-                        ) : (
-                            <>Publish Listing Now <Check className="h-5 w-5" /></>
-                        )}
+                        Publish Listing Now <Check className="h-5 w-5" />
                     </button>
                     <p className="mt-4 text-xs text-gray-400">
                         By publishing, you agree to our Terms of Service. Listing will be pending admin approval.
@@ -82,8 +109,8 @@ export default function Step12_Publish({ formData, prevStep, handleSubmit, loadi
             {/* Navigation - Static */}
             <div className="mt-8 flex justify-start items-center pt-6 border-t border-gray-100 dark:border-gray-800">
                 <button
+                    type="button"
                     onClick={prevStep}
-                    disabled={loading}
                     className="px-6 py-2.5 rounded-lg font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center gap-2"
                 >
                     <ArrowLeft className="h-4 w-4" /> Back to Edit

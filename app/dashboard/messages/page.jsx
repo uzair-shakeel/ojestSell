@@ -134,7 +134,7 @@ const MessagesPage = () => {
     socket.removeAllListeners();
 
     // Set new auth for this user
-    socket.auth = { userId: myUserId };
+    socket.auth = { token };
     // Connect socket
 
     socket.connect();

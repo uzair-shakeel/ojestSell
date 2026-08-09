@@ -117,7 +117,7 @@ export default function WishlistPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {wishlist.map((car) => (
                             <div key={car._id} className="relative group">
-                                <CarCard car={car} />
+                                <CarCard car={car} section="wishlist" />
                                 <button
                                     onClick={() => removeFromWishlist(car._id)}
                                     className="absolute top-4 right-6 z-30 p-3 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-red-500 transition-colors border border-white/20 opacity-0 group-hover:opacity-100"
